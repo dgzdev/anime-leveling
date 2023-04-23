@@ -10,11 +10,10 @@ local Jump = {}
 
 function Jump:Start()
 	local bodyVelocity = Instance.new("BodyVelocity")
-			bodyVelocity.MaxForce = Vector3.new(0, 40000, 0)
-			bodyVelocity.Velocity = Vector3.new(0, 60, 0)
-            bodyVelocity.Parent = Character:WaitForChild("HumanoidRootPart")
-            Debris:AddItem(bodyVelocity, 0.1)
-            print("Double Jump maked")
+	bodyVelocity.MaxForce = Vector3.new(0, 40000, 0)
+	bodyVelocity.Velocity = Vector3.new(0, 60, 0)
+    bodyVelocity.Parent = Character:WaitForChild("HumanoidRootPart")
+    Debris:AddItem(bodyVelocity, 0.1)
 end
 
 return Jump
