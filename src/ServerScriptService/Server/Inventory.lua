@@ -46,6 +46,9 @@ function Inventory.OnLoad(Player: Player, Profile: {[string]: any})
         Tool:SetAttribute("Id", Id)
         Tool.Parent = Player.Backpack
 
+        local AnimationFolder = Instance.new("Folder", Tool)
+        AnimationFolder.Name = "Animations"
+
         --// Set Default Properties for Item Type, and specific properties for Item Name
         local ItemNameData = ItemData.Items[Name] or {}
         local TypeData = ItemData.Property[Type] or {}
@@ -57,6 +60,15 @@ function Inventory.OnLoad(Player: Player, Profile: {[string]: any})
             Tool[Property] = Value
         end
 
+        --// Gets Item Animations
+        local Animations = ServerStorage.Animations:FindFirstChild(Id) or ServerStorage.Animations:FindFirstChild(Type)
+        if Animations then
+            for _, Animation in pairs(Animations:GetChildren()) do
+                local Clone = Animation:Clone()
+                Clone.Parent = AnimationFolder
+            end
+        end
+
         --// Checks if the Item has a Script in Storage
         local Script = ServerStorage.Itens:FindFirstChild(Id)
         if Script then
@@ -64,9 +76,8 @@ function Inventory.OnLoad(Player: Player, Profile: {[string]: any})
             Clone.Parent = Tool
             Clone:SetAttribute("Tick", tick())
         end
-
+        
     end
-
 end
 
 -- ====================================================================================================
