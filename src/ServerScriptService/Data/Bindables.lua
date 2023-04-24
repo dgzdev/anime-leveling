@@ -1,5 +1,4 @@
 return {
-    -- Triggered when loaded a profile for a player
+    -- Ativado ao carregar o save do jogador.
     ["Profile_Load"] = Instance.new("BindableEvent"), -- (Player: Player, Profile: Profile)
-    
 }

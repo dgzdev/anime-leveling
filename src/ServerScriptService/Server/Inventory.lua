@@ -1,5 +1,10 @@
+--!strict
+-- Author: @SinceVoid
+-- Esse é o arquivo de inventário do servidor, onde os itens serão carregados e adicionados ao jogador.
+
 local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
+
 local Inventory = {}
 
 -- ====================================================================================================
@@ -29,6 +34,24 @@ type Item = {
 
 -- ====================================================================================================
 --// Functions
+-- ====================================================================================================
+local FindInChild = function(Child: Instance, Name: string): Instance | nil
+    for _, Child in ipairs(Child:GetChildren()) do
+        if Child.Name:lower() == Name:lower() then
+            return Child
+        end
+        if Child.ClassName:lower() == Name:lower()  then
+            return Child
+        end
+        if Child.Name:lower():find(Name:lower()) then
+            return Child
+        end
+    end
+    return nil
+end
+
+-- ====================================================================================================
+--// Module Functions
 -- ====================================================================================================
 function Inventory.OnLoad(Player: Player, Profile: {[string]: any})
     local PlayerInv = Profile.Inventory :: Inventory
@@ -61,7 +84,7 @@ function Inventory.OnLoad(Player: Player, Profile: {[string]: any})
         end
 
         --// Find for assets of the Item
-        local Assets = ServerStorage.Assets:FindFirstChild(Id) or ServerStorage.Assets:FindFirstChild(Type)
+        local Assets = FindInChild(ServerStorage.Assets, Id) or FindInChild(ServerStorage.Assets, Type)
         if Assets then
             for _, Asset in pairs(Assets:GetChildren()) do
                 local Clone = Asset:Clone()
@@ -70,7 +93,7 @@ function Inventory.OnLoad(Player: Player, Profile: {[string]: any})
         end
 
         --// Gets Item Animations
-        local Animations = ServerStorage.Animations:FindFirstChild(Id) or ServerStorage.Animations:FindFirstChild(Type)
+        local Animations = FindInChild(ServerStorage.Animations, Id) or FindInChild(ServerStorage.Animations, Type)
         if Animations then
             for _, Animation in pairs(Animations:GetChildren()) do
                 local Clone = Animation:Clone()
@@ -79,7 +102,7 @@ function Inventory.OnLoad(Player: Player, Profile: {[string]: any})
         end
 
         --// Checks if the Item has a Script in Storage
-        local Script = ServerStorage.Itens:FindFirstChild(Id)
+        local Script = FindInChild(ServerStorage.Itens, Id) or FindInChild(ServerStorage.Itens, Type)
         if Script then
             local Clone = Script:Clone()
             Clone.Parent = Tool
@@ -94,4 +117,7 @@ end
 -- ====================================================================================================
 Bindables.Profile_Load.Event:Connect(Inventory.OnLoad)
 
+-- ====================================================================================================
+--// Return
+-- ====================================================================================================
 return Inventory

@@ -1,9 +1,11 @@
+-- ============================================================================
+-- Sobrepõe as propriedades do tipo de item.
+-- ============================================================================
 local Items = {
-    ["Apple"] = {
-        RequiresHandle = false,
-    }
+    ["Apple"] = {}
 }
 
+--// Define as propriedades de acordo com o tipo de item.
 local Property = {
     ["Consumable"] = {
         RequiresHandle = false,

@@ -9,7 +9,7 @@ type DashOptions = {
 --// Default Dash Options
 local DashOptions = {
     Direction = Vector3.new(0,0,-1),
-    Duration = 0.1853,
+    Duration = .1853,
     Speed = 150,
 }
 
@@ -23,7 +23,22 @@ Dash.Defaults = {
 local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local Character = Players.LocalPlayer.Character or Players.LocalPlayer.CharacterAdded:Wait()
+local Pr = Character.PrimaryPart
 local Humanoid = Character:WaitForChild("Humanoid")
+
+-- ====================================================================================================
+-- // Functions
+-- ====================================================================================================
+local WaitForClass = function(Class: string, Parent: Instance, Recursive: boolean): Instance
+    local Child
+    repeat
+        Child = Parent:FindFirstChildWhichIsA(Class, Recursive)
+        if not Child then
+            Parent.ChildAdded:Wait()
+        end
+    until Child ~= nil
+    return Child
+end
 
 --// Soltar o Dash
 function Dash:Release(Options: DashOptions): BodyVelocity
@@ -31,9 +46,10 @@ function Dash:Release(Options: DashOptions): BodyVelocity
     local Duration = Options.Duration or DashOptions.Duration
     local Speed = Options.Speed or DashOptions.Speed
 
-    local BodyVelocity = Instance.new("BodyVelocity")
-    BodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-    BodyVelocity.Velocity = Direction * Speed
+    local BodyVelocity = Instance.new("LinearVelocity")
+    BodyVelocity.MaxForce = math.huge
+    BodyVelocity.VectorVelocity = Direction * Speed
+    BodyVelocity.Attachment0 = WaitForClass("Attachment", Character.PrimaryPart)
     BodyVelocity.Parent = Character.PrimaryPart
 
     Debris:AddItem(BodyVelocity, Duration)
@@ -46,7 +62,7 @@ function Dash:GetDirection(CharacterModel: Model | nil): Vector3
 
     local MoveDirection = hum.MoveDirection
     if MoveDirection.Magnitude == 0 then
-        MoveDirection = Vector3.new(0,0,-1)
+        MoveDirection = Pr.CFrame.LookVector
     end
 
     return MoveDirection

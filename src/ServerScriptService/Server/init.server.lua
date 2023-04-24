@@ -1,5 +1,6 @@
 --!strict
--- @author: SinceVoid
+-- Author: @SinceVoid
+-- Esse é o arquivo principal do servidor, onde todos os módulos serão carregados.
 
 -- ====================================================================================================
 --// Modules
