@@ -60,6 +60,15 @@ function Inventory.OnLoad(Player: Player, Profile: {[string]: any})
             Tool[Property] = Value
         end
 
+        --// Find for assets of the Item
+        local Assets = ServerStorage.Assets:FindFirstChild(Id) or ServerStorage.Assets:FindFirstChild(Type)
+        if Assets then
+            for _, Asset in pairs(Assets:GetChildren()) do
+                local Clone = Asset:Clone()
+                Clone.Parent = Tool
+            end
+        end
+
         --// Gets Item Animations
         local Animations = ServerStorage.Animations:FindFirstChild(Id) or ServerStorage.Animations:FindFirstChild(Type)
         if Animations then
