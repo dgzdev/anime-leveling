@@ -1,3 +1,5 @@
-aftman.toml
-default.project.json
-selene.toml
+# Ignore non used files
+*.rbxm
+*.rbxl
+*.env
+*.txt
