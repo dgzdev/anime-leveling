@@ -9,3 +9,4 @@ local DamageIndicator = require(ReplicatedStorage:WaitForChild("Modules"):WaitFo
 DamageIndicator.BindToAllNPCs()
 
 Interactions:Start()
+-- Testing
