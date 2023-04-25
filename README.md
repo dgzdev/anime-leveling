@@ -2,4 +2,6 @@
 ## ✨ A Game in development
 ### 🏷️ Using LUAU Platform
 
-[Link](https://www.roblox.com/games/12100085828/Deadly-Sins-Eternal-War)
+# 👋 Stay Updated:
+* [Roblox Game](https://www.roblox.com/games/12100085828/Deadly-Sins-Eternal-War)
+* [Twitter](https://twitter.com/war84130)
