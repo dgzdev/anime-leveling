@@ -18,6 +18,13 @@ local ProfileService = require(script.Parent.ProfileService)
 local Bindables = require(ServerScriptService.Data.Bindables)
 local Useful = require(ServerScriptService.Data.Useful)
 
+-- ======================================================================
+-- // Client-Server
+-- ======================================================================
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Requested = Shared:WaitForChild("Requester")
+local Trigger = Shared:WaitForChild("Events")
+
 -- ====================================================================================================
 --// Profile
 -- ====================================================================================================
@@ -30,7 +37,6 @@ local Storage = {}
 -- ====================================================================================================
 --// Events
 -- ====================================================================================================
-
 local CONNECT = {
     [Players] = {
         --[[
@@ -71,5 +77,36 @@ local CONNECT = {
         end),
     },
 }
+
+
+-- ====================================================================================================
+--// Type
+-- ====================================================================================================
+type Interaction = {
+    ProximityObject: ProximityPrompt,
+    ActionText: string,
+    ObjectText: string
+}
+
+local TRIGGERS = {
+    ["Interaction"] = function(data: Interaction)
+        print(data)
+    end
+}
+local REQUESTS = {}
+
+Requested.OnServerInvoke = function(player, action: string, ...)
+    local RQT = REQUESTS[action]
+    if RQT then
+        return RQT(...)
+    end
+end
+
+Trigger.OnServerEvent:Connect(function(player, action: string, ...)
+    local TRIGGER = TRIGGERS[action]
+    if TRIGGER then
+        TRIGGER(...)
+    end
+end)
 
 return Events
