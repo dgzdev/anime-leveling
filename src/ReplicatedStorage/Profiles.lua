@@ -5,6 +5,8 @@
     local Profiles = require(game:GetService("ReplicatedStorage").Profiles)
     local Profile = Profiles[Player]
     -> Profile será o perfil do jogador.
+
+        
 ]]
 
 local Profiles = {}
