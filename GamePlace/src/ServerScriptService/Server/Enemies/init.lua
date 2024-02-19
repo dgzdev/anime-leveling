@@ -18,10 +18,12 @@ function EnemyManager:Init()
 		local Health = Enemy:GetAttribute("Health") or 100
 		local Name = Enemy:GetAttribute("Name") or "Untitled Entity"
 		local Inteligence = Enemy:GetAttribute("Inteligence") or 5
+		local Damage = Enemy:GetAttribute("Damage") or 5
 
 		local AI = self.AI.new(Enemy, {
 			Speed = Speed,
 			Health = Health,
+			Damage = Damage,
 			Name = Name,
 			Inteligence = Inteligence,
 		})
@@ -30,6 +32,9 @@ function EnemyManager:Init()
 		NPC_HUD.Parent = Enemy:WaitForChild("Head")
 		NPC_HUD:WaitForChild("NPC_Name").Text = Name
 		NPC_HUD:WaitForChild("NPC_Image").Image = "rbxassetid://" .. Assets.Enemy
+
+		local HealthScript = ReplicatedStorage.Models.Health:Clone()
+		HealthScript.Parent = Enemy
 
 		for _, part: BasePart in ipairs(Enemy:GetDescendants()) do
 			if not (part:IsA("BasePart")) then

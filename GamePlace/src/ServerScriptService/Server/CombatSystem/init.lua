@@ -8,6 +8,7 @@ local Workspace = game:GetService("Workspace")
 local PlayerManagers = require(script.Parent.Players)
 local GameData = require(ServerStorage.GameData)
 local RaycastHitbox = require(ReplicatedStorage.Modules.RaycastHitboxV4)
+local Death = SoundService:WaitForChild("SFX"):WaitForChild("Death")
 
 local CombatSystem = {}
 
@@ -43,28 +44,42 @@ Combat.OnServerInvoke = function(player: Player)
 		-- Attack logic
 		local Hitbox = RaycastHitbox.new(Weapon)
 		Hitbox.RaycastParams = Rayparams
-		Hitbox.DebugLog = false
-		Hitbox.Visualizer = true
 		Hitbox.OnHit:Connect(function(hit, humanoid: Humanoid)
 			if humanoid and (humanoid:IsDescendantOf(Workspace.Enemies)) then
 				humanoid:TakeDamage(Damage)
+
 				local Char = humanoid:FindFirstAncestorWhichIsA("Model")
 				local Root = Char:FindFirstChild("HumanoidRootPart") :: BasePart
+
+				if humanoid.Health <= 0 then
+					local death = Death:Clone()
+
+					local Part = Instance.new("Part", Workspace.Others)
+					Part.Size = Vector3.new(1, 1, 1)
+					Part.CFrame = Char:GetPivot()
+					Part.Anchored = true
+					Part.CanCollide = false
+					Part.Transparency = 1
+
+					death.Parent = Part
+
+					death.RollOffMinDistance = 0
+					death.RollOffMaxDistance = 40
+					death.RollOffMode = Enum.RollOffMode.Linear
+
+					death:Play()
+					Debris:AddItem(death, death.TimeLength + 0.1)
+					Debris:AddItem(Part, death.TimeLength + 0.1)
+
+					return
+				end
 
 				local BodyVelocity = Instance.new("BodyVelocity")
 				BodyVelocity.Velocity = (Root.CFrame.LookVector.Unit * -1) * 25
 				BodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
 				BodyVelocity.Parent = Root
 
-				local sound = SoundService.Attack.Hit:Clone()
-				sound.RollOffMinDistance = 0
-				sound.RollOffMaxDistance = 50
-				sound.RollOffMode = Enum.RollOffMode.Inverse
-				sound.Parent = Root
-				sound:Play()
-				Debris:AddItem(sound, sound.TimeLength + 0.1)
-
-				Debris:AddItem(BodyVelocity, 0.25)
+				Debris:AddItem(BodyVelocity, 0.3)
 
 				Hitbox:HitStop()
 			end

@@ -20,6 +20,7 @@ function EnemyAI.new(Enemy: Model, Config: AIConfig)
 
 		Chasing = Instance.new("BoolValue", Enemy),
 		Target = Instance.new("ObjectValue", Enemy),
+		Attacking = Instance.new("BoolValue", Enemy),
 	}, EnemyAI)
 
 	self.Target.Name = "Target"
@@ -45,8 +46,36 @@ function EnemyAI:BindChasing()
 				continue
 			end
 
-			local Root = self.Target.Value:GetPivot().Position
+			local Root = self.Target.Value:GetPivot().Position * 0.97
 			self.Humanoid:MoveTo(Root)
+
+			if (self.Root.Position - self.Target.Value:GetPivot().Position).Magnitude < 5 then
+				self.Attacking.Value = true
+			else
+				self.Attacking.Value = false
+			end
+
+		until self.Humanoid.Health == 0
+	end)
+	task.spawn(function()
+		repeat
+			if self.Attacking.Value == true then
+				local target = self.Target.Value
+				local Humanoid = target:FindFirstChildWhichIsA("Humanoid")
+
+				self.Root.Anchored = true
+
+				if Humanoid then
+					Humanoid:TakeDamage(self.Config.Damage)
+				end
+
+				task.wait(1)
+
+				self.Root.Anchored = false
+			else
+				self.Attacking.Changed:Wait()
+			end
+
 		until self.Humanoid.Health == 0
 	end)
 end

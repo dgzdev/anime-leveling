@@ -1,3 +1,4 @@
+local ContentProvider = game:GetService("ContentProvider")
 local ContextActionService = game:GetService("ContextActionService")
 local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
@@ -17,6 +18,12 @@ local Animations = ReplicatedStorage:WaitForChild("Animations")
 
 local attack = 1
 local Cooldown = tick()
+
+ContentProvider:PreloadAsync(Animations:GetDescendants())
+ContentProvider:PreloadAsync(SoundService:WaitForChild("Attack"):GetDescendants())
+ContentProvider:PreloadAsync(SoundService:WaitForChild("SFX"):GetDescendants())
+
+print("loaded")
 
 function CombatSystem:Attack()
 	if Humanoid.Health > 0 then
@@ -44,12 +51,17 @@ function CombatSystem:Attack()
 		Cooldown = tick() + AttackAnim.Length + 0.8
 
 		local s = sound:Clone() :: Sound
-		s.Parent = Character:WaitForChild("HumanoidRootPart")
+		s.Parent = Character:WaitForChild("Head")
 		s.RollOffMaxDistance = 0
 		s.RollOffMaxDistance = 30
 		s.RollOffMode = Enum.RollOffMode.Inverse
+
+		repeat
+			task.wait()
+		until s.IsLoaded == true
+
 		s:Play()
-		Debris:AddItem(s, s.TimeLength + 0.1)
+		Debris:AddItem(s, 1.5)
 
 		AttackAnim.Priority = Enum.AnimationPriority.Action
 		AttackAnim:Play()

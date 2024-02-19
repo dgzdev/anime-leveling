@@ -2,8 +2,8 @@ local Debris = game:GetService("Debris")
 local SoundService = game:GetService("SoundService")
 -- Gradually regenerates the Humanoid's Health over time.
 
-local REGEN_RATE = 4 / 100 -- Regenerate this fraction of MaxHealth per second.
-local REGEN_STEP = 10 -- Wait this long between each regeneration step.
+local REGEN_RATE = 2 / 100 -- Regenerate this fraction of MaxHealth per second.
+local REGEN_STEP = 30 -- Wait this long between each regeneration step.
 
 --------------------------------------------------------------------------------
 
