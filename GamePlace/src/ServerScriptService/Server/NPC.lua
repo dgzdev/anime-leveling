@@ -3,6 +3,7 @@
 
 local PathfindingService = game:GetService("PathfindingService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 local Module = {}
 
@@ -83,15 +84,28 @@ function NPC.new(Character: Model)
 	BillboardGui.Adornee = self.Character.Head
 	BillboardGui.NPC_Name.Text = Name
 
+	local IKControl = Instance.new("IKControl", self.Character)
+	IKControl.EndEffector = self.Character:WaitForChild("Head")
+	IKControl.ChainRoot = self.Character:WaitForChild("Head")
+	IKControl.Type = Enum.IKControlType.LookAt
+	IKControl.Enabled = false
+	IKControl.SmoothTime = 0.1
+	IKControl.Weight = 0.6
+	self.IKControl = IKControl
+
 	--// ProximityPrompt
 	local ProximityPrompt = Instance.new("ProximityPrompt")
-	ProximityPrompt.Parent = self.HumanoidRootPart
+	ProximityPrompt.Parent = Character
 	ProximityPrompt.ActionText = "Talk"
 	ProximityPrompt.ObjectText = Name
 	ProximityPrompt.MaxActivationDistance = 5
-	ProximityPrompt.RequiresLineOfSight = false
+	ProximityPrompt.RequiresLineOfSight = true
 	ProximityPrompt.Name = "Talk"
-	ProximityPrompt.Style = Enum.ProximityPromptStyle.Default
+	ProximityPrompt:SetAttribute("Theme", "NPC")
+	ProximityPrompt.Style = Enum.ProximityPromptStyle.Custom
+	ProximityPrompt.Triggered:Connect(function(playerWhoTriggered)
+		self:trigger(playerWhoTriggered)
+	end)
 
 	--[[
     -- ProximityPrompt Gui
@@ -112,6 +126,26 @@ function NPC.new(Character: Model)
 	end)
 
 	return self
+end
+
+function NPC:trigger(player: Player)
+	local Character = player.Character or player.CharacterAdded:Wait()
+	local Head = Character:WaitForChild("Head")
+	local IKControl = self.IKControl :: IKControl
+
+	IKControl.Weight = 0
+	self.Humanoid.WalkSpeed = 0
+
+	TweenService:Create(IKControl, TweenInfo.new(1.2), {
+		Weight = 0.7,
+	}):Play()
+
+	IKControl.Enabled = true
+	IKControl.Target = Head
+
+	task.wait(15)
+	IKControl.Enabled = false
+	self.Humanoid.WalkSpeed = self.Config.NPC_Speed
 end
 
 function NPC:Destroy()
