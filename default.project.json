@@ -70,6 +70,11 @@
                 "Events": {
                     "$className": "RemoteEvent"
                 }
+            },
+            "Modules": {
+                "$className": "Folder",
+                "$ignoreUnknownInstances": true,
+                "$path": "src/Modules"
             }
         },
         "ReplicatedFirst": {
