@@ -19,37 +19,38 @@ local Jump = require(script:WaitForChild("Jump"))
 -- ====================================================================================================
 -- // ContextActionService
 -- ====================================================================================================
-local SprintKeys = {Enum.KeyCode.W}
+local SprintKeys = { Enum.KeyCode.LeftControl }
 local LastTap = 0 --// LastTime that the player pressed the key
 ContextActionService:BindAction("Sprint", function(action, state, object)
-    if state ~= Enum.UserInputState.Begin then return Enum.ContextActionResult.Pass end
+	if state ~= Enum.UserInputState.Begin then
+		return Enum.ContextActionResult.Pass
+	end
 
-    if tick() - LastTap < 0.5 then
-        Sprint.Start()
-    end
+	if Sprint.Enabled == false then
+		Sprint.Start()
+	end
 
-    LastTap = tick()
-
-    return Enum.ContextActionResult.Pass
+	return Enum.ContextActionResult.Pass
 end, false, table.unpack(SprintKeys))
 
-
-local DashKeys = {Enum.KeyCode.Q}
+local DashKeys = { Enum.KeyCode.Q }
 local DashCooldown = 1.5
 local LastDash = 0 --// LastTime that the player pressed the key
 ContextActionService:BindAction("Dash", function(action, state, object)
-    if state ~= Enum.UserInputState.Begin then return Enum.ContextActionResult.Pass end
+	if state ~= Enum.UserInputState.Begin then
+		return Enum.ContextActionResult.Pass
+	end
 
-    if (tick() - LastDash) > DashCooldown then
-        Dash:Release({
-            Direction = Dash.GetDirection(),
-            Duration = Dash.Defaults.Duration,
-            Speed = Dash.Defaults.Speed,
-        })
-        LastDash = tick()
-    end
+	if (tick() - LastDash) > DashCooldown then
+		Dash:Release({
+			Direction = Dash.GetDirection(),
+			Duration = Dash.Defaults.Duration,
+			Speed = Dash.Defaults.Speed,
+		})
+		LastDash = tick()
+	end
 
-    return Enum.ContextActionResult.Pass
+	return Enum.ContextActionResult.Pass
 end, false, table.unpack(DashKeys))
 
 -- ====================================================================================================
@@ -59,18 +60,17 @@ end, false, table.unpack(DashKeys))
 -- Variables
 -- Humanoid States
 local function OnRunning(speed: number)
-    --// Stop Sprinting
-    if speed < 0.1 then
-        Sprint.Disable()
-    end
+	--// Stop Sprinting
+	if speed < 0.1 then
+		Sprint.Disable()
+	end
 end
 
 local function OnDie() end
 local function OnSwimming() end
 local function OnJump() end
 local function OnFall() end
-local function StateChanged(old, new)
-end
+local function StateChanged(old, new) end
 
 -- ====================================================================================================
 --// Connections
