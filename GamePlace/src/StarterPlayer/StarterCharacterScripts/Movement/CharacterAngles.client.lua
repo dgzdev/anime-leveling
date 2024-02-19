@@ -30,7 +30,7 @@ ORIGINAL_C0 = RootJoint.C0
 
 local function Heartbeat()
 	if Humanoid.Health > 0 then
-		Velocity = Root.Velocity * Vector3.new(1, 0, 1)
+		Velocity = Root:GetVelocityAtPosition(Root.CFrame.Position) * Vector3.new(1, 0, 1)
 
 		if Velocity.Magnitude > 2 then
 			Direction = Velocity.Unit
