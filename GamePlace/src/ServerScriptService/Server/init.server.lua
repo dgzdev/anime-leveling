@@ -10,6 +10,7 @@ local Players = game:GetService("Players")
 require(script:WaitForChild("Players"))
 require(script:WaitForChild("Inventory"))
 require(script:WaitForChild("Enemies"))
+require(script:WaitForChild("NPC")):Start()
 
 local function OnPlayerAdded(plr: Player) end
 local function OnPlayerRemoving(plr: Player) end
