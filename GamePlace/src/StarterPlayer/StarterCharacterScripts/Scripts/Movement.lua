@@ -64,6 +64,11 @@ end
 
 MovementModule.OnProfileReceive = function(self, Profile) end --> Not used.
 
+Humanoid.Running:Connect(function(speed)
+	if speed < 0.1 then
+		MovementModule:ChangeCharacterState("WALK")
+	end
+end)
 export type CharacterState = "RUN" | "WALK"
 
 MovementModule:CreateContextBinder()

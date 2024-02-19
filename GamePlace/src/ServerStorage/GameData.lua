@@ -1,5 +1,6 @@
 export type Rank = "E" | "D" | "C" | "B" | "A" | "S"
 export type SubRank = "I" | "II" | "III" | "IV" | "V"
+export type World = "World 1" | "World 2"
 export type PlayerData = {
 	rank: Rank,
 	subRank: SubRank,
@@ -15,6 +16,8 @@ export type PlayerData = {
 		AchiveDate: number | nil,
 		Level: number,
 	} },
+
+	World: World,
 }
 
 local ProfileTemplate: PlayerData = {
@@ -27,6 +30,8 @@ local ProfileTemplate: PlayerData = {
 
 	Inventory = {},
 	Skills = {},
+
+	World = "World 1",
 }
 
 return {

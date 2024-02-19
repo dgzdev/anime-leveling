@@ -226,7 +226,7 @@ function CLASS:Update()
 	if humanoidRootPart ~= nil then
 		--// Lerp field of view //--
 		currentCamera.FieldOfView =
-			Lerp(currentCamera.FieldOfView, activeCameraSettings.FieldOfView, activeCameraSettings.LerpSpeed)
+			Lerp(currentCamera.FieldOfView, activeCameraSettings.FieldOfView, activeCameraSettings.LerpSpeed / 5)
 
 		--// Address shoulder direction //--
 		local offset = activeCameraSettings.Offset
