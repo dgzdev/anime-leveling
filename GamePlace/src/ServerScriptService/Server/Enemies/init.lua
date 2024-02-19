@@ -31,6 +31,13 @@ function EnemyManager:Init()
 		NPC_HUD:WaitForChild("NPC_Name").Text = Name
 		NPC_HUD:WaitForChild("NPC_Image").Image = "rbxassetid://" .. Assets.Enemy
 
+		for _, part: BasePart in ipairs(Enemy:GetDescendants()) do
+			if not (part:IsA("BasePart")) then
+				continue
+			end
+			part.CollisionGroup = "Enemies"
+		end
+
 		AI:Init()
 	end
 end

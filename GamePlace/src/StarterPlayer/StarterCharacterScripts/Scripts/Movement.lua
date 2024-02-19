@@ -11,6 +11,7 @@ local LeftLeg = Character:WaitForChild("Left Leg")
 local RightLeg = Character:WaitForChild("Right Leg")
 
 local Humanoid = Character:WaitForChild("Humanoid")
+local RootPart = Character:WaitForChild("HumanoidRootPart")
 
 local OTS = require(ReplicatedStorage.Modules.OTS)
 
@@ -66,6 +67,9 @@ end
 function MovementModule:CreateContextBinder(): string
 	ContextActionService:BindAction(self.ContextName, function(_, state: Enum.UserInputState)
 		if state == Enum.UserInputState.Begin and self.CharacterProperties.CharacterState == "WALK" then
+			if (RootPart:GetVelocityAtPosition(RootPart.CFrame.Position)).Magnitude < 1 then
+				return
+			end
 			self:ChangeCharacterState("RUN")
 		elseif state == Enum.UserInputState.Begin and self.CharacterProperties.CharacterState == "RUN" then
 			self:ChangeCharacterState("WALK")
