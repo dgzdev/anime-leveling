@@ -27,11 +27,10 @@ print("loaded")
 
 function CombatSystem:Attack()
 	if Humanoid.Health > 0 then
-		if tick() < Cooldown then
-			return
-		end
-
 		-- Attack logic
+
+		Cooldown = tick() + 1
+
 		local properties = Combat:InvokeServer("Attack")
 		if not properties then
 			return
@@ -48,7 +47,6 @@ function CombatSystem:Attack()
 
 		local Animator = Humanoid:WaitForChild("Animator") :: Animator
 		local AttackAnim = Animator:LoadAnimation(anim)
-		Cooldown = tick() + AttackAnim.Length + 0.8
 
 		local s = sound:Clone() :: Sound
 		s.Parent = Character:WaitForChild("Head")
@@ -88,6 +86,9 @@ function CombatSystem:Die()
 end
 
 ContextActionService:BindAction("Attack", function(action, state, input)
+	if tick() < Cooldown then
+		return
+	end
 	if state == Enum.UserInputState.Begin then
 		CombatSystem:Attack()
 	end

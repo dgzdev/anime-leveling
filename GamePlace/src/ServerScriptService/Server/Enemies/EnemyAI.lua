@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
 local EnemyAI: AI = {}
 EnemyAI.__index = EnemyAI
 
@@ -30,6 +31,45 @@ function EnemyAI.new(Enemy: Model, Config: AIConfig)
 	self.Humanoid.MaxHealth = self.Health
 	self.Humanoid.Health = self.Health
 
+	local MaxHealth = self.Humanoid.MaxHealth
+	local HealthHud = ReplicatedStorage.Models.HealthHud:Clone()
+	HealthHud.Parent = Enemy:WaitForChild("Head")
+
+	local bk = HealthHud:WaitForChild("Background")
+
+	local PH = bk:WaitForChild("PrimaryHP")
+	local SH = bk:WaitForChild("SecondaryHP")
+
+	HealthHud.Enabled = false
+
+	self.Humanoid.Died:Once(function()
+		self.Target.Value = nil
+		self.Attacking.Value = false
+		self.Chasing.Value = false
+		Enemy:Destroy()
+	end)
+
+	self.Humanoid.HealthChanged:Connect(function(health)
+		if health < MaxHealth then
+			HealthHud.Enabled = true
+		end
+
+		TweenService:Create(PH, TweenInfo.new(0.3, Enum.EasingStyle.Sine, Enum.EasingDirection.In), {
+			Size = UDim2.fromScale(health / MaxHealth, 1),
+		}):Play()
+		TweenService
+			:Create(SH, TweenInfo.new(0.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.In, 0, false, 0.5), {
+				Size = UDim2.fromScale(health / MaxHealth, 1),
+			})
+			:Play()
+
+		task.delay(0.65, function()
+			if health >= MaxHealth then
+				HealthHud.Enabled = false
+			end
+		end)
+	end)
+
 	self.Enemy.Name = self.Name or "Untitled Entity"
 
 	return self
@@ -55,14 +95,15 @@ function EnemyAI:BindChasing()
 				self.Attacking.Value = false
 			end
 
-		until self.Humanoid.Health == 0
+		until self.Humanoid.Health <= 0
 	end)
 	task.spawn(function()
 		repeat
-			if self.Attacking.Value == true then
+			while self.Attacking.Value == true do
 				local target = self.Target.Value
 				local Humanoid = target:FindFirstChildWhichIsA("Humanoid")
 
+				self.Root.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
 				self.Root.Anchored = true
 
 				if Humanoid then
@@ -72,11 +113,12 @@ function EnemyAI:BindChasing()
 				task.wait(1)
 
 				self.Root.Anchored = false
-			else
+			end
+			if self.Attacking.Value == false then
 				self.Attacking.Changed:Wait()
 			end
 
-		until self.Humanoid.Health == 0
+		until self.Humanoid.Health <= 0
 	end)
 end
 
@@ -103,7 +145,7 @@ function EnemyAI:Init()
 			self.Target.Value = closest
 			task.wait(0.5)
 
-		until self.Humanoid.Health == 0
+		until self.Humanoid.Health <= 0
 	end)
 
 	task.spawn(function()
@@ -140,7 +182,7 @@ function EnemyAI:Init()
 			end
 
 			task.wait(0.5)
-		until self.Humanoid.Health == 0
+		until self.Humanoid.Health <= 0
 	end)
 end
 

@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 local Workspace = game:GetService("Workspace")
 
 local footstepsModule = require(ReplicatedStorage:WaitForChild("FootstepsModule"))
@@ -56,6 +57,7 @@ local function createFootstep(sound: Sound, character, rootPart: BasePart)
 		newFootstep.PlaybackSpeed = 1 * math.random(90, 110) / 100
 
 		newFootstep.Parent = rootPart
+		newFootstep.SoundGroup = SoundService:WaitForChild("Character")
 
 		newFootstep:Play()
 		newFootstep.Ended:Once(function()

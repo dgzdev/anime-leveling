@@ -71,6 +71,10 @@ Combat.OnServerInvoke = function(player: Player)
 					Debris:AddItem(death, death.TimeLength + 0.1)
 					Debris:AddItem(Part, death.TimeLength + 0.1)
 
+					Char:Destroy()
+
+					-- Particles
+
 					return
 				end
 
