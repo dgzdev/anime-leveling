@@ -131,7 +131,7 @@ end
 function EnemyAI:BindChasing()
 	task.spawn(function()
 		repeat
-			task.wait(0.3)
+			task.wait(0.6)
 			if not self.Target.Value then
 				continue
 			end
@@ -159,7 +159,7 @@ function EnemyAI:BindChasing()
 				self.Root.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
 				self.Root.Anchored = true
 
-				if Humanoid and self.Humanoid.Health > 0 then
+				if Humanoid and self.Humanoid.Health > 0 and Humanoid.Health > 0 then
 					local AnimationPack = self.AnimationPack :: string
 					local Animations = ReplicatedStorage:WaitForChild("Animations")
 						:WaitForChild(AnimationPack)
@@ -167,13 +167,9 @@ function EnemyAI:BindChasing()
 						:GetChildren()
 					local Animation = Animations[self.Attack]
 
-					print(Animation)
-
 					local Animator = self.Humanoid:WaitForChild("Animator") :: Animator
 					local AttackAnim = Animator:LoadAnimation(Animation)
 					AttackAnim:Play()
-
-					print("Attacking at", self.Attack, "with", Animation.Name)
 
 					self.Attack = math.clamp(self.Attack + 1, 1, #Animations)
 
@@ -201,10 +197,15 @@ function EnemyAI:Init()
 	task.spawn(function()
 		repeat
 			local players = Players:GetPlayers()
-			local closest = nil
 
 			for _, player in ipairs(players) do
 				local Character = player.Character or player.CharacterAdded:Wait()
+				local Humanoid = Character:WaitForChild("Humanoid")
+
+				if Humanoid.Health <= 0 then
+					continue
+				end
+
 				local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
 				local Distance = (HumanoidRootPart.Position - self.Root.Position).Magnitude
 				if closest then
@@ -217,7 +218,7 @@ function EnemyAI:Init()
 			end
 
 			self.Target.Value = closest
-			task.wait(0.5)
+			task.wait(1)
 
 		until self.Humanoid.Health <= 0
 	end)
@@ -255,7 +256,7 @@ function EnemyAI:Init()
 				end
 			end
 
-			task.wait(0.5)
+			task.wait(1)
 		until self.Humanoid.Health <= 0
 	end)
 end

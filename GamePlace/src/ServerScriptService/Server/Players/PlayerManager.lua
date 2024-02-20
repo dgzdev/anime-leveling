@@ -1,3 +1,4 @@
+local BadgeService = game:GetService("BadgeService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
@@ -55,12 +56,22 @@ function PlayerManager.new(player: Player, options: Options): PlayerManager
 		Options = options,
 	})
 
+	function self:Newbie()
+		BadgeService:AwardBadge(player.UserId, GameData.newbieBadge)
+	end
+
 	local Profile = ProfileStore:LoadProfileAsync(`Player_{player.UserId}`, "ForceLoad")
 	if Profile then
 		if player:IsDescendantOf(Players) then
 			Profile:AddUserId(player.UserId)
 			Profile:Reconcile()
 			Profile:SetMetaTag("Version", game.PlaceVersion)
+			local Joins = Profile:GetMetaTag("Joins") or 0
+			Profile:SetMetaTag("Joins", Joins + 1)
+
+			if Joins < 10 then
+				self:Newbie()
+			end
 
 			if #Profile.Data.Inventory == 0 then
 				Profile.Data.Inventory = GameData.defaultInventory
@@ -77,7 +88,7 @@ function PlayerManager.new(player: Player, options: Options): PlayerManager
 		return player:Kick("[PlayerManager] Error while loading profile.")
 	end
 
-	local function Set()
+	function self:Set()
 		local character = player.Character or player.CharacterAdded:Wait()
 		repeat
 			local Parts = character:GetDescendants()
@@ -120,11 +131,11 @@ function PlayerManager.new(player: Player, options: Options): PlayerManager
 		return Profile.Data.Experience
 	end
 
-	Set()
+	self:Set()
 	player.CharacterAdded:Connect(function(character)
 		self.Character = character
 		self.Humanoid = character:WaitForChild("Humanoid")
-		Set()
+		self:Set()
 	end)
 
 	return self

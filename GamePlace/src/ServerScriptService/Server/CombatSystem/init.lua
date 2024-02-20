@@ -20,17 +20,19 @@ Combat.OnServerInvoke = function(player: Player)
 		return
 	end
 
-	local Equiped = PlayerManager.Profile.Data.Equiped
+	local EquipedData = PlayerManager.Profile.Data.Equiped
+	local Equiped = EquipedData.Weapon
 
 	local InventoryData = GameData.gameWeapons[Equiped]
 	local WeaponType = InventoryData.Type
+
 	local Damage = InventoryData.Damage
 	local Character = player.Character
 	if not Character then
 		return
 	end
 
-	local Weapon = Character:FindFirstChild(Equiped)
+	local Weapon = Character:FindFirstChild("Weapon")
 	if not Weapon then
 		return
 	end
@@ -115,18 +117,22 @@ end
 
 function CombatSystem:Equip(player: Player)
 	local PlayerManager = PlayerManagers:GetPlayerManager(player)
-	local Equiped = PlayerManager.Profile.Data.Equiped
+	local EquipedData = PlayerManager.Profile.Data.Equiped
+	local Equiped = EquipedData.Weapon
 
 	local InventoryData = GameData.gameWeapons[Equiped]
 	local WeaponType = InventoryData.Type
-
-	print("equipping: ", Equiped, WeaponType)
 
 	if WeaponType == "Sword" then
 		local Model = ReplicatedStorage.Models.Swords
 		local Sword = Model:FindFirstChild(Equiped)
 		if not Sword then
 			return error("Sword not found.")
+		end
+
+		local HaveWeaponEquiped = player.Character:FindFirstChild("Weapon")
+		if HaveWeaponEquiped then
+			HaveWeaponEquiped:Destroy()
 		end
 
 		local Character = player.Character or player.CharacterAdded:Wait()
@@ -137,6 +143,7 @@ function CombatSystem:Equip(player: Player)
 		local Position = "Right Arm"
 
 		local SwordClone = Sword:Clone() :: Model
+		SwordClone.Name = "Weapon"
 		SwordClone.Parent = Character
 
 		local RightHand = Character:WaitForChild(Position)

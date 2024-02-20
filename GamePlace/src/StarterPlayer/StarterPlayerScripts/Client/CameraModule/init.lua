@@ -1,10 +1,15 @@
 local ContextActionService = game:GetService("ContextActionService")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 local CameraModule = {}
 CameraModule.OTS = require(ReplicatedStorage.Modules.OTS) --> OTS is a module for camera manipulation.
 
 local CameraEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("CAMERA")
+
+if not (Players:GetAttribute("Loaded")) then
+	Players:GetAttributeChangedSignal("Loaded"):Wait()
+end
 
 local ScrollLimits = {
 	["Min"] = 4,
@@ -33,16 +38,20 @@ CameraModule.EnableCamera = function(self)
 		local SETTINGS = self.OTS.CameraSettings["DefaultShoulder"]
 		if inputObject.Position.Z == 1 then
 			--> MouseWheelUp
-			SETTINGS.Offset-=Vector3.new(0,0,0.5)
+			SETTINGS.Offset -= Vector3.new(0, 0, 0.5)
 		else
 			--> MouseWheelDown
-			SETTINGS.Offset+=Vector3.new(0,0,0.5)
+			SETTINGS.Offset += Vector3.new(0, 0, 0.5)
 		end
-		SETTINGS.Offset = Vector3.new(SETTINGS.Offset.X, SETTINGS.Offset.Y, math.clamp(SETTINGS.Offset.Z, ScrollLimits.Min, ScrollLimits.Max))
-		CameraSettings["ZoomedShoulder"].Offset = Vector3.new(1.1, 1.4, SETTINGS.Offset.Z/2)
+		SETTINGS.Offset = Vector3.new(
+			SETTINGS.Offset.X,
+			SETTINGS.Offset.Y,
+			math.clamp(SETTINGS.Offset.Z, ScrollLimits.Min, ScrollLimits.Max)
+		)
+		CameraSettings["ZoomedShoulder"].Offset = Vector3.new(1.1, 1.4, SETTINGS.Offset.Z / 2)
 	end, false, Enum.UserInputType.MouseWheel)
 
-	ContextActionService:BindAction("ZoomShoulder",  function(actionName, inputState, inputObject)
+	ContextActionService:BindAction("ZoomShoulder", function(actionName, inputState, inputObject)
 		if inputState == Enum.UserInputState.Begin then
 			self.OTS:SetActiveCameraSettings("ZoomedShoulder")
 		elseif inputState == Enum.UserInputState.End then

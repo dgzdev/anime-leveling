@@ -9,12 +9,23 @@ local Profiles = require(ReplicatedStorage.Modules.Profiles)
 
 local Modules: { [number]: ModuleScript } = script:GetChildren()
 
+if not (Players:GetAttribute("Loaded")) then
+	Players:GetAttributeChangedSignal("Loaded"):Wait()
+end
+
 ModuleManager.EnableModule = function(self, Module: ModuleScript)
 	if Module:IsA("ModuleScript") == false then
 		return
 	end
-	local Value = require(Module)
-	VolatileModules[#VolatileModules + 1] = Value
+	task.spawn(function()
+		local Success, Error = pcall(function()
+			require(Module)
+		end)
+		if not Success then
+			warn("Failed to load module: " .. Module.Name)
+			warn(Error)
+		end
+	end)
 end
 
 for _, Module in ipairs(Modules) do

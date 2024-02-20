@@ -19,11 +19,9 @@ local Animations = ReplicatedStorage:WaitForChild("Animations")
 local attack = 1
 local Cooldown = tick()
 
-ContentProvider:PreloadAsync(Animations:GetDescendants())
-ContentProvider:PreloadAsync(SoundService:WaitForChild("Attack"):GetDescendants())
-ContentProvider:PreloadAsync(SoundService:WaitForChild("SFX"):GetDescendants())
-
-print("loaded")
+if not (Players:GetAttribute("Loaded")) then
+	Players:GetAttributeChangedSignal("Loaded"):Wait()
+end
 
 function CombatSystem:Attack()
 	if Humanoid.Health > 0 then

@@ -9,12 +9,18 @@ export type PlayerData = {
 	Level: number,
 	Experience: number,
 	Gold: number,
-	Equiped: string,
+	Equiped: {
+		Weapon: string,
+		Id: number,
+	},
+
+	Hotbar: { number },
 
 	Inventory: {
 		[string]: {
 			AchiveDate: number,
 			Rank: Rank,
+			Id: number,
 		},
 	},
 	Skills: { [string]: {
@@ -35,7 +41,12 @@ local ProfileTemplate: PlayerData = {
 	rank = "E",
 	subRank = "I",
 
-	Equiped = "Wooden_Sword",
+	Equiped = {
+		Weapon = "Wooden_Sword",
+		Id = 1,
+	},
+
+	Hotbar = { 1 },
 
 	Level = 1,
 	Experience = 0,
@@ -64,12 +75,13 @@ local function CreateHumanoidDescription(desc: HumanoidDescription): HumanoidDes
 end
 
 return {
-	profileKey = "PLAYER_DATA",
+	profileKey = "PLAYER_DATA_2",
 	profileTemplate = ProfileTemplate,
 	defaultInventory = {
 		["Wooden_Sword"] = {
 			AchiveDate = os.time(),
 			Rank = "E",
+			Id = 1,
 		},
 	},
 	gameWeapons = {
@@ -78,6 +90,7 @@ return {
 			Damage = 10,
 		},
 	},
+	newbieBadge = 2066631008828576,
 	gameEnemies = {
 		["Teste"] = {
 			Health = 50,
