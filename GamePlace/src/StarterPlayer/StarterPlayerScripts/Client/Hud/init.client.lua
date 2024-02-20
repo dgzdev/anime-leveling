@@ -1,5 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
+local TweenService = game:GetService("TweenService")
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
@@ -14,6 +16,9 @@ local PlayerName = Slider:WaitForChild("PlayerName") :: TextLabel
 
 local Moldura = Background:WaitForChild("Moldura") :: ImageLabel
 local PlayerImage = Moldura:WaitForChild("PlayerImage") :: ImageLabel
+
+local XP = Background:WaitForChild("XP") :: ImageLabel
+local Progress = XP:WaitForChild("Progress") :: Frame
 
 repeat
 	task.wait(1)
@@ -34,10 +39,35 @@ local function UpdateHud(index: string, value: any)
 		return
 	end
 
-	Level.Text = "0"
-	PlayerName.Text = Player.Name
-	PlayerImage.Image =
-		Players:GetUserThumbnailAsync(Player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+	if index == "LevelUP" then
+		Level.Text = tostring(value)
+		TweenService:Create(Progress, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.In), {
+			Size = UDim2.fromScale(0, 1),
+		}):Play()
+
+		-- PlaySound
+		local Sound = SoundService:WaitForChild("SFX"):WaitForChild("LevelUP")
+		SoundService:PlayLocalSound(Sound)
+
+		print("levelup")
+
+		return
+	end
+
+	if index == "XP" then
+		local progress = value / (tonumber(Level.Text) * 243)
+		TweenService:Create(Progress, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.In), {
+			Size = UDim2.fromScale(progress, 1),
+		}):Play()
+	end
+
+	if index == nil then
+		Level.Text = "0"
+		PlayerName.Text = Player.Name
+		PlayerImage.Image =
+			Players:GetUserThumbnailAsync(Player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+		Progress.Size = UDim2.fromScale(0, 1)
+	end
 end
 
 UpdateHud()

@@ -6,14 +6,18 @@ local Players = game:GetService("Players")
 -- ====================================================================================================
 --// Modules
 -- ====================================================================================================
+task.spawn(function()
+	require(script:WaitForChild("Players"))
+	require(script:WaitForChild("Inventory"))
+	require(script:WaitForChild("Enemies"))
+	require(script:WaitForChild("NPC")):Start()
+end)
 
-require(script:WaitForChild("Players"))
-require(script:WaitForChild("Inventory"))
-require(script:WaitForChild("Enemies"))
-require(script:WaitForChild("CombatSystem"))
-require(script:WaitForChild("NPC")):Start()
+local combat = require(script:WaitForChild("CombatSystem"))
 
-local function OnPlayerAdded(plr: Player) end
+local function OnPlayerAdded(plr: Player)
+	combat:Equip(plr)
+end
 local function OnPlayerRemoving(plr: Player) end
 
 Players.PlayerAdded:Connect(OnPlayerAdded)

@@ -71,16 +71,15 @@ Combat.OnServerInvoke = function(player: Player)
 					Debris:AddItem(death, death.TimeLength + 0.1)
 					Debris:AddItem(Part, death.TimeLength + 0.1)
 
-					Char:Destroy()
-
 					-- Particles
+					CombatSystem:Kill(player, Char)
 
 					return
 				end
 
 				local BodyVelocity = Instance.new("BodyVelocity")
 				BodyVelocity.Velocity = (Root.CFrame.LookVector.Unit * -1) * 25
-				BodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+				BodyVelocity.MaxForce = Vector3.new(math.huge, 0, math.huge)
 				BodyVelocity.Parent = Root
 
 				Debris:AddItem(BodyVelocity, 0.3)
@@ -96,18 +95,40 @@ Combat.OnServerInvoke = function(player: Player)
 	}
 end
 
-function CombatSystem:Equip(player: Player, item: string)
-	local InventoryData = GameData.gameWeapons[item]
+function CombatSystem:Kill(player: Player, char: Model)
+	local Enemy = char:GetAttribute("Name") or char.Name
+	local EnemyAttributes = GameData.gameEnemies[Enemy]
+	if not EnemyAttributes then
+		return
+	end
+
+	local Gold, Experience = EnemyAttributes.Gold, EnemyAttributes.Experience
+
+	local PlayerManager = PlayerManagers:GetPlayerManager(player)
+	if not PlayerManager then
+		return
+	end
+
+	PlayerManager:GiveGold(Gold)
+	PlayerManager:GiveExperience(Experience)
+end
+
+function CombatSystem:Equip(player: Player)
+	local PlayerManager = PlayerManagers:GetPlayerManager(player)
+	local Equiped = PlayerManager.Profile.Data.Equiped
+
+	local InventoryData = GameData.gameWeapons[Equiped]
 	local WeaponType = InventoryData.Type
+
+	print("equipping: ", Equiped, WeaponType)
 
 	if WeaponType == "Sword" then
 		local Model = ReplicatedStorage.Models.Swords
-		local Sword = Model:FindFirstChild(item)
+		local Sword = Model:FindFirstChild(Equiped)
 		if not Sword then
 			return error("Sword not found.")
 		end
 
-		local PlayerManager = PlayerManagers:GetPlayerManager(player)
 		local Character = player.Character or player.CharacterAdded:Wait()
 		local Root = Character:WaitForChild("HumanoidRootPart")
 
@@ -128,19 +149,10 @@ function CombatSystem:Equip(player: Player, item: string)
 		Weld.Part0 = RightHand
 		Weld.Part1 = SwordClone.PrimaryPart
 
-		PlayerManager.Profile:SetMetaTag("Equiped", item)
+		PlayerManager.Profile:SetMetaTag("Equiped", Equiped)
 
 		Root.Anchored = false
 	end
 end
-
-Players.PlayerAdded:Connect(function(player)
-	repeat
-		task.wait(1)
-	until PlayerManagers:GetPlayerManager(player) ~= nil
-
-	local Manager = PlayerManagers:GetPlayerManager(player)
-	CombatSystem:Equip(player, Manager.Profile.Data.Equiped)
-end)
 
 return CombatSystem

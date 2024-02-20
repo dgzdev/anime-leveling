@@ -54,6 +54,15 @@ local ProfileTemplate: PlayerData = {
 	},
 }
 
+local function CreateHumanoidDescription(desc: HumanoidDescription): HumanoidDescription
+	local hd = Instance.new("HumanoidDescription")
+
+	for index, value in pairs(desc) do
+		hd[index] = value
+	end
+	return hd
+end
+
 return {
 	profileKey = "PLAYER_DATA",
 	profileTemplate = ProfileTemplate,
@@ -67,6 +76,81 @@ return {
 		["Wooden_Sword"] = {
 			Type = "Sword",
 			Damage = 10,
+		},
+	},
+	gameEnemies = {
+		["Teste"] = {
+			Health = 50,
+			Damage = 1,
+			Speed = 1,
+			Inteligence = 1,
+			Experience = 10,
+			AttackType = "Melee",
+			Gold = 10,
+		},
+		["Goblin"] = {
+			Health = 100,
+			Damage = 10,
+			Experience = 10,
+			Speed = 18,
+			AttackType = "Melee",
+			Inteligence = 5,
+			HumanoidDescription = CreateHumanoidDescription({
+				Shirt = 10251245552,
+				Pants = 240444745,
+				FaceAccessory = 13688367892,
+				Face = 0,
+
+				HeadColor = Color3.new(0.411764, 0.6, 0.290196),
+				TorsoColor = Color3.new(0.411764, 0.6, 0.290196),
+				LeftArmColor = Color3.new(0.411764, 0.6, 0.290196),
+				RightArmColor = Color3.new(0.411764, 0.6, 0.290196),
+				LeftLegColor = Color3.new(0.411764, 0.6, 0.290196),
+				RightLegColor = Color3.new(0.411764, 0.6, 0.290196),
+			}),
+			Gold = 10,
+		},
+		["Orc"] = {
+			Health = 200,
+			Damage = 20,
+			Experience = 20,
+			Speed = 12,
+			Inteligence = 4,
+			AttackType = "Melee",
+			HumanoidDescription = CreateHumanoidDescription({
+				Shirt = 6326000551,
+				Pants = 6326002102,
+				FaceAccessory = 11039855614,
+
+				HeadColor = Color3.fromRGB(69, 75, 36),
+				TorsoColor = Color3.fromRGB(69, 75, 36),
+				LeftArmColor = Color3.fromRGB(69, 75, 36),
+				RightArmColor = Color3.fromRGB(69, 75, 36),
+				LeftLegColor = Color3.fromRGB(69, 75, 36),
+				RightLegColor = Color3.fromRGB(69, 75, 36),
+			}),
+			Gold = 20,
+		},
+		["Troll"] = {
+			Health = 300,
+			Speed = 9,
+			Damage = 30,
+			Experience = 30,
+			Inteligence = 3,
+			AttackType = "Melee",
+			HumanoidDescription = CreateHumanoidDescription({
+				Pants = 564303086,
+				FaceAccessory = 12403324965,
+				HatAccessory = 12922312435,
+
+				HeadColor = Color3.fromRGB(61, 36, 75),
+				TorsoColor = Color3.fromRGB(61, 36, 75),
+				LeftArmColor = Color3.fromRGB(61, 36, 75),
+				RightArmColor = Color3.fromRGB(61, 36, 75),
+				LeftLegColor = Color3.fromRGB(61, 36, 75),
+				RightLegColor = Color3.fromRGB(61, 36, 75),
+			}),
+			Gold = 30,
 		},
 	},
 }

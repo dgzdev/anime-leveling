@@ -1,7 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
-local PlayerManager = {}
+local PlayerManager: PlayerManager = {}
 PlayerManager.__index = PlayerManager
 
 local ProfileService = require(ServerStorage:WaitForChild("ProfileService"))
@@ -40,6 +40,9 @@ export type PlayerManager = {
 		_release_listeners: any,
 	},
 	Options: Options,
+
+	GiveGold: (number) -> number,
+	GiveExperience: (number) -> number,
 }
 
 function PlayerManager.new(player: Player, options: Options): PlayerManager
@@ -65,6 +68,7 @@ function PlayerManager.new(player: Player, options: Options): PlayerManager
 
 			self.Profile = Profile
 			UpdateHud:FireClient(player, "Level", Profile.Data.Level)
+			UpdateHud:FireClient(player, "XP", Profile.Data.Experience)
 		else -- If the player leaves the game before the profile is loaded
 			Profile:Release()
 			return
@@ -87,6 +91,33 @@ function PlayerManager.new(player: Player, options: Options): PlayerManager
 			end
 			task.wait()
 		until character.HumanoidRootPart.CollisionGroup == "Players" or character == nil
+	end
+
+	function self:GiveGold(number: number)
+		if not Profile then
+			return
+		end
+		Profile.Data.Gold += number
+
+		return Profile.Data.Gold
+	end
+
+	function self:GiveExperience(number: number)
+		if not Profile then
+			return
+		end
+
+		Profile.Data.Experience = math.clamp(Profile.Data.Experience + number, 0, Profile.Data.Level * 243)
+		UpdateHud:FireClient(player, "XP", Profile.Data.Experience)
+
+		if Profile.Data.Experience == Profile.Data.Level * 243 then
+			Profile.Data.Level += 1
+			Profile.Data.Experience = 0
+
+			UpdateHud:FireClient(player, "LevelUP", Profile.Data.Level)
+		end
+
+		return Profile.Data.Experience
 	end
 
 	Set()

@@ -1,40 +1,55 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerStorage = game:GetService("ServerStorage")
 local Workspace = game:GetService("Workspace")
 
 local EnemyManager = {
 	Folder = Workspace:WaitForChild("Enemies"),
 }
+
+local GameData = require(ServerStorage.GameData)
+
 EnemyManager.Enemies = {}
 EnemyManager.AI = require(script.EnemyAI)
 
-local Assets = {
-	["Enemy"] = "16441552144",
-}
-
 function EnemyManager:Init()
 	local Enemies = self.Folder:GetChildren() :: EnemyFolder
-	for _, Enemy in pairs(Enemies) do
-		local Speed = Enemy:GetAttribute("Speed") or 16
-		local Health = Enemy:GetAttribute("Health") or 100
-		local Name = Enemy:GetAttribute("Name") or "Untitled Entity"
-		local Inteligence = Enemy:GetAttribute("Inteligence") or 5
-		local Damage = Enemy:GetAttribute("Damage") or 5
+
+	local function BindForEnemy(Enemy: Model)
+		table.insert(EnemyManager.Enemies, Enemy)
+
+		local Name = Enemy:GetAttribute("Name") or Enemy.Name
+		local EnemyInfo = GameData.gameEnemies[Name]
+
+		local Speed = EnemyInfo.Speed or 16
+		local Health = EnemyInfo.Health or 100
+
+		local Inteligence = EnemyInfo.Inteligence or 5
+		local Damage = EnemyInfo.Damage or 5
+		local Hd = EnemyInfo.HumanoidDescription
 
 		local AI = self.AI.new(Enemy, {
 			Speed = Speed,
 			Health = Health,
 			Damage = Damage,
 			Name = Name,
+			HumanoidDescription = Hd,
 			Inteligence = Inteligence,
+			AnimationPack = EnemyInfo.AttackType,
 		})
 
-		local NPC_HUD = ReplicatedStorage:WaitForChild("Models"):WaitForChild("NPC_Info"):Clone()
-		NPC_HUD.Parent = Enemy:WaitForChild("Head")
-		NPC_HUD:WaitForChild("NPC_Name").Text = Name
-		NPC_HUD:WaitForChild("NPC_Image").Image = "rbxassetid://" .. Assets.Enemy
+		AI.Died:Connect(function()
+			local newEnemy = Enemy:Clone()
+			newEnemy.Parent = ServerStorage
 
-		local HealthScript = ReplicatedStorage.Models.Health:Clone()
-		HealthScript.Parent = Enemy
+			task.wait(30)
+
+			newEnemy.Parent = self.Folder
+			local humanoid = newEnemy:WaitForChild("Humanoid") :: Humanoid
+			humanoid.Health = humanoid.MaxHealth
+
+			Enemy:Destroy()
+			table.remove(EnemyManager.Enemies, table.find(EnemyManager.Enemies, Enemy))
+		end)
 
 		for _, part: BasePart in ipairs(Enemy:GetDescendants()) do
 			if not (part:IsA("BasePart")) then
@@ -45,6 +60,19 @@ function EnemyManager:Init()
 
 		AI:Init()
 	end
+
+	for _, Enemy in pairs(Enemies) do
+		if table.find(EnemyManager.Enemies, Enemy) then
+			continue
+		end
+		BindForEnemy(Enemy)
+	end
+	self.Folder.ChildAdded:Connect(function(Enemy: Model)
+		if table.find(EnemyManager.Enemies, Enemy) then
+			return
+		end
+		BindForEnemy(Enemy)
+	end)
 end
 
 EnemyManager:Init() --> Initiate the module.

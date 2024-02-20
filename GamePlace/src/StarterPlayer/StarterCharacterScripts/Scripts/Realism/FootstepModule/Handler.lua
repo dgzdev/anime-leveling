@@ -59,7 +59,7 @@ local function FootstepLoop()
 	--print(Character.HumanoidRootPart.AssemblyLinearVelocity.Y)
 	for i, v in pairs(Character:WaitForChild("HumanoidRootPart"):GetChildren()) do
 		if v:IsA("Sound") and not v:GetAttribute("Ignore") then
-			v:Destroy()
+			--v:Destroy()
 		end
 	end
 	if Character.Humanoid:GetState() ~= Enum.HumanoidStateType.Running then

@@ -10,42 +10,6 @@ local Module = {}
 local NPC = {}
 NPC.__index = NPC
 
-NPC.Names = {
-	"Zaldir",
-	"Aricen",
-	"Tarek",
-	"Valdur",
-	"Darian",
-	"Rylan",
-	"Kaelen",
-	"Zethan",
-	"Eryndor",
-	"Garrick",
-
-	"Lirien",
-	"Aradia",
-	"Nalani",
-	"Elara",
-	"Sylara",
-	"Kaelara",
-	"Azura",
-	"Rhiannon",
-	"Lyanna",
-	"Vaylara",
-}
-
-NPC.Surnames = {
-	--// Short Surnames
-	"Adam",
-	"Alden",
-	"Aldo",
-	"Karl",
-	"Pete",
-	"Rolf",
-	"Fefe",
-	"Paul",
-}
-
 local Random = Random.new()
 local function Spawn(f)
 	if typeof(f) ~= "function" then
@@ -84,15 +48,6 @@ function NPC.new(Character: Model)
 	BillboardGui.Adornee = self.Character.Head
 	BillboardGui.NPC_Name.Text = Name
 
-	local IKControl = Instance.new("IKControl", self.Character)
-	IKControl.EndEffector = self.Character:WaitForChild("Head")
-	IKControl.ChainRoot = self.Character:WaitForChild("Head")
-	IKControl.Type = Enum.IKControlType.LookAt
-	IKControl.Enabled = false
-	IKControl.SmoothTime = 0.1
-	IKControl.Weight = 0.6
-	self.IKControl = IKControl
-
 	--// ProximityPrompt
 	local ProximityPrompt = Instance.new("ProximityPrompt")
 	ProximityPrompt.Parent = Character
@@ -129,22 +84,9 @@ function NPC.new(Character: Model)
 end
 
 function NPC:trigger(player: Player)
-	local Character = player.Character or player.CharacterAdded:Wait()
-	local Head = Character:WaitForChild("Head")
-	local IKControl = self.IKControl :: IKControl
-
-	IKControl.Weight = 0
 	self.Humanoid.WalkSpeed = 0
 
-	TweenService:Create(IKControl, TweenInfo.new(1.2), {
-		Weight = 0.7,
-	}):Play()
-
-	IKControl.Enabled = true
-	IKControl.Target = Head
-
 	task.wait(15)
-	IKControl.Enabled = false
 	self.Humanoid.WalkSpeed = self.Config.NPC_Speed
 end
 
@@ -204,8 +146,6 @@ function NPC:MoveInRadius()
 end
 
 function NPC:Prepare()
-	-- //
-
 	--// Health Display
 	self.Humanoid.HealthDisplayDistance = 0
 	self.Humanoid.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOff
@@ -214,22 +154,27 @@ function NPC:Prepare()
 	self.Humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
 	self.Humanoid.DisplayName = ""
 
+	local HumanoidDescription = self.Character:FindFirstChildWhichIsA("HumanoidDescription") :: HumanoidDescription
+	if HumanoidDescription then
+		self.Humanoid:ApplyDescription(HumanoidDescription)
+	end
+
 	--// Speed
 	self.Humanoid.WalkSpeed = self.Config.NPC_Speed
 
 	--// Sets the CollisionGroup to "NPC"
-	table.foreachi(self.Character:GetDescendants(), function(_, Object)
+	for _, Object in ipairs(self.Character:GetDescendants()) do
 		if Object:IsA("BasePart") then
 			Object.CollisionGroup = "NPC"
 		end
-	end)
+	end
 end
 
 function Module.Start()
 	local Folder = Workspace.NPC
-	table.foreachi(Folder:GetChildren(), function(_, Character)
-		local npc = NPC.new(Character)
-	end)
+	for _, value in ipairs(Folder:GetChildren()) do
+		NPC.new(value)
+	end
 end
 
 return Module

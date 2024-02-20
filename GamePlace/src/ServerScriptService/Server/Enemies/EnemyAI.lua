@@ -6,6 +6,10 @@ EnemyAI.__index = EnemyAI
 
 local View = require(script.Parent.View)
 
+local Assets = {
+	["Enemy"] = "16441552144",
+}
+
 function EnemyAI.new(Enemy: Model, Config: AIConfig)
 	local self = setmetatable({
 		Enemy = Enemy,
@@ -18,11 +22,51 @@ function EnemyAI.new(Enemy: Model, Config: AIConfig)
 		Health = Config.Health,
 		Damage = Config.Damage,
 		Name = Config.Name,
-
-		Chasing = Instance.new("BoolValue", Enemy),
-		Target = Instance.new("ObjectValue", Enemy),
-		Attacking = Instance.new("BoolValue", Enemy),
+		HumanoidDescription = Config.HumanoidDescription,
+		Died = Enemy:WaitForChild("Humanoid").Died,
 	}, EnemyAI)
+
+	local _Chasing = Enemy:FindFirstChild("Chasing", true)
+	if _Chasing then
+		_Chasing:Destroy()
+	end
+
+	local _Target = Enemy:FindFirstChild("Target", true)
+	if _Target then
+		_Target:Destroy()
+	end
+
+	local _Attacking = Enemy:FindFirstChild("Attacking", true)
+	if _Attacking then
+		_Attacking:Destroy()
+	end
+
+	self.Chasing = Instance.new("BoolValue", Enemy)
+	self.Target = Instance.new("ObjectValue", Enemy)
+	self.Attacking = Instance.new("BoolValue", Enemy)
+
+	local _HealthHud = Enemy:FindFirstChild("HealthHud", true)
+	if _HealthHud then
+		_HealthHud:Destroy()
+	end
+
+	local _NPC_HUD = Enemy:FindFirstChild("NPC_Info", true)
+	if _NPC_HUD then
+		_NPC_HUD:Destroy()
+	end
+
+	local NPC_HUD = ReplicatedStorage:WaitForChild("Models"):WaitForChild("NPC_Info"):Clone()
+	NPC_HUD.Parent = Enemy:WaitForChild("Head")
+	NPC_HUD:WaitForChild("NPC_Name").Text = Enemy.Name
+	NPC_HUD:WaitForChild("NPC_Image").Image = "rbxassetid://" .. Assets.Enemy
+
+	local _HealthScript = Enemy:FindFirstChild("Health", true)
+	if _HealthScript then
+		_HealthScript:Destroy()
+	end
+
+	local HealthScript = ReplicatedStorage.Models.Health:Clone()
+	HealthScript.Parent = Enemy
 
 	self.Target.Name = "Target"
 	self.Chasing.Name = "Chasing"
@@ -31,14 +75,24 @@ function EnemyAI.new(Enemy: Model, Config: AIConfig)
 	self.Humanoid.MaxHealth = self.Health
 	self.Humanoid.Health = self.Health
 
+	self.Attack = 1
+
 	local MaxHealth = self.Humanoid.MaxHealth
 	local HealthHud = ReplicatedStorage.Models.HealthHud:Clone()
 	HealthHud.Parent = Enemy:WaitForChild("Head")
+
+	self.AnimationPack = "Sword" or Config.AnimationPack
+
+	if Config.HumanoidDescription then
+		self.Humanoid:ApplyDescription(self.HumanoidDescription)
+	end
 
 	local bk = HealthHud:WaitForChild("Background")
 
 	local PH = bk:WaitForChild("PrimaryHP")
 	local SH = bk:WaitForChild("SecondaryHP")
+	PH.Size = UDim2.fromScale(1, 1)
+	SH.Size = UDim2.fromScale(1, 1)
 
 	HealthHud.Enabled = false
 
@@ -46,7 +100,6 @@ function EnemyAI.new(Enemy: Model, Config: AIConfig)
 		self.Target.Value = nil
 		self.Attacking.Value = false
 		self.Chasing.Value = false
-		Enemy:Destroy()
 	end)
 
 	self.Humanoid.HealthChanged:Connect(function(health)
@@ -99,15 +152,36 @@ function EnemyAI:BindChasing()
 	end)
 	task.spawn(function()
 		repeat
-			while self.Attacking.Value == true do
+			while self.Attacking.Value == true and self.Humanoid.Health > 0 do
 				local target = self.Target.Value
 				local Humanoid = target:FindFirstChildWhichIsA("Humanoid")
 
 				self.Root.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
 				self.Root.Anchored = true
 
-				if Humanoid then
+				if Humanoid and self.Humanoid.Health > 0 then
+					local AnimationPack = self.AnimationPack :: string
+					local Animations = ReplicatedStorage:WaitForChild("Animations")
+						:WaitForChild(AnimationPack)
+						:WaitForChild("Hit")
+						:GetChildren()
+					local Animation = Animations[self.Attack]
+
+					print(Animation)
+
+					local Animator = self.Humanoid:WaitForChild("Animator") :: Animator
+					local AttackAnim = Animator:LoadAnimation(Animation)
+					AttackAnim:Play()
+
+					print("Attacking at", self.Attack, "with", Animation.Name)
+
+					self.Attack = math.clamp(self.Attack + 1, 1, #Animations)
+
 					Humanoid:TakeDamage(self.Config.Damage)
+
+					if self.Attack == #Animations then
+						self.Attack = 1
+					end
 				end
 
 				task.wait(1)
