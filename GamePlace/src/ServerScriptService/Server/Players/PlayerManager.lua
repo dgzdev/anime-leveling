@@ -2,6 +2,7 @@ local BadgeService = game:GetService("BadgeService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
+local TweenService = game:GetService("TweenService")
 local PlayerManager: PlayerManager = {}
 PlayerManager.__index = PlayerManager
 
@@ -46,15 +47,18 @@ export type PlayerManager = {
 	GiveExperience: (number) -> number,
 }
 
-function PlayerManager.new(player: Player, options: Options): PlayerManager
-	local self = setmetatable(PlayerManager, {
+function PlayerManager.new(player: Player, options: Options)
+	local self = setmetatable({
 		Player = player,
+		PlayerGui = player:WaitForChild("PlayerGui"),
 		Character = player.Character or player.CharacterAdded:Wait(),
 		CharacterAdded = player.CharacterAdded,
 		Humanoid = player.Character:WaitForChild("Humanoid"),
 		Profile = {},
 		Options = options,
-	})
+	}, PlayerManager)
+
+	self.Humanoid.BreakJointsOnDeath = true
 
 	function self:Newbie()
 		BadgeService:AwardBadge(player.UserId, GameData.newbieBadge)
@@ -78,8 +82,6 @@ function PlayerManager.new(player: Player, options: Options): PlayerManager
 			end
 
 			self.Profile = Profile
-			UpdateHud:FireClient(player, "Level", Profile.Data.Level)
-			UpdateHud:FireClient(player, "XP", Profile.Data.Experience)
 		else -- If the player leaves the game before the profile is loaded
 			Profile:Release()
 			return
@@ -137,6 +139,55 @@ function PlayerManager.new(player: Player, options: Options): PlayerManager
 		self.Humanoid = character:WaitForChild("Humanoid")
 		self:Set()
 	end)
+
+	function self:LoadCharacter()
+		local humanoidDescription = Instance.new("HumanoidDescription")
+
+		humanoidDescription.Shirt = 12244089619
+		humanoidDescription.Pants = 12244095027
+
+		humanoidDescription:SetAccessories({
+			{
+				Order = 1,
+				AssetId = 12296044398,
+				Puffiness = 0.5,
+				AccessoryType = Enum.AccessoryType.Front,
+			},
+			{
+				Order = 2,
+				AssetId = 12296065618,
+				Puffiness = 0.5,
+				AccessoryType = Enum.AccessoryType.Hat,
+			},
+
+			{
+				Order = 3,
+				AssetId = 12296048589,
+				Puffiness = 0.5,
+				AccessoryType = Enum.AccessoryType.Waist,
+			},
+			{
+				Order = 4,
+				AssetId = 12296053142,
+				Puffiness = 0.5,
+				AccessoryType = Enum.AccessoryType.Shoulder,
+			},
+			{
+				Order = 5,
+				AssetId = 12296057334,
+				Puffiness = 0.5,
+				AccessoryType = Enum.AccessoryType.Back,
+			},
+			{
+				Order = 6,
+				AssetId = 12296061546,
+				Puffiness = 0.5,
+				AccessoryType = Enum.AccessoryType.Hat,
+			},
+		}, false)
+
+		self.Player:LoadCharacterWithHumanoidDescription(humanoidDescription)
+	end
 
 	return self
 end

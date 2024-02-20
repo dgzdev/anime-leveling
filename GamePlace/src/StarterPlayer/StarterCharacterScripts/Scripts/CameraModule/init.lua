@@ -7,6 +7,10 @@ CameraModule.OTS = require(ReplicatedStorage.Modules.OTS) --> OTS is a module fo
 
 local CameraEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("CAMERA")
 
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
 if not (Players:GetAttribute("Loaded")) then
 	Players:GetAttributeChangedSignal("Loaded"):Wait()
 end
@@ -25,6 +29,10 @@ function CameraModule:Init()
 	self:CheckCondition(self.OTS ~= nil, "[CameraModule] OTS is nil, this is a problem.")
 
 	self:EnableCamera()
+
+	humanoid.Died:Once(function()
+		self:DisableCamera()
+	end)
 end
 function CameraModule:CheckCondition(condition: true | false, message: string) --> Check if a condition is true, if not, throw an error.
 	if condition == false then

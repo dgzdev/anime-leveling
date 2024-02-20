@@ -8,20 +8,51 @@ local PlayerManagers = {}
 
 plrs.OnPlayerAdded = function(player: Player)
 	-- Create a HumanoidDescription
+
 	local humanoidDescription = Instance.new("HumanoidDescription")
-	humanoidDescription.HatAccessory = "12642904224"
 
-	humanoidDescription.BodyTypeScale = 0.1
-	humanoidDescription.Face = "20722130"
-	humanoidDescription.Shirt = "5249995464"
-	humanoidDescription.Pants = "13223845819"
+	humanoidDescription.Shirt = 12244089619
+	humanoidDescription.Pants = 12244095027
 
-	humanoidDescription.HeadColor = Color3.new(0.7, 0.7, 0.7)
-	humanoidDescription.TorsoColor = Color3.new(0.7, 0.7, 0.7)
-	humanoidDescription.LeftArmColor = Color3.new(0.7, 0.7, 0.7)
-	humanoidDescription.RightArmColor = Color3.new(0.7, 0.7, 0.7)
-	humanoidDescription.LeftLegColor = Color3.new(0.7, 0.7, 0.7)
-	humanoidDescription.RightLegColor = Color3.new(0.7, 0.7, 0.7)
+	humanoidDescription:SetAccessories({
+		{
+			Order = 1,
+			AssetId = 12296044398,
+			Puffiness = 0.5,
+			AccessoryType = Enum.AccessoryType.Front,
+		},
+		{
+			Order = 2,
+			AssetId = 12296065618,
+			Puffiness = 0.5,
+			AccessoryType = Enum.AccessoryType.Hat,
+		},
+
+		{
+			Order = 3,
+			AssetId = 12296048589,
+			Puffiness = 0.5,
+			AccessoryType = Enum.AccessoryType.Waist,
+		},
+		{
+			Order = 4,
+			AssetId = 12296053142,
+			Puffiness = 0.5,
+			AccessoryType = Enum.AccessoryType.Shoulder,
+		},
+		{
+			Order = 5,
+			AssetId = 12296057334,
+			Puffiness = 0.5,
+			AccessoryType = Enum.AccessoryType.Back,
+		},
+		{
+			Order = 6,
+			AssetId = 12296061546,
+			Puffiness = 0.5,
+			AccessoryType = Enum.AccessoryType.Hat,
+		},
+	}, false)
 
 	player:LoadCharacterWithHumanoidDescription(humanoidDescription)
 
@@ -29,6 +60,8 @@ plrs.OnPlayerAdded = function(player: Player)
 	if not playerManager then
 		return player:Kick("[Players] Error while loading player manager.")
 	end
+
+	playerManager.Character:WaitForChild("Head"):WaitForChild("face"):Destroy()
 
 	local Profile = playerManager.Profile
 	Profiles[player] = Profile

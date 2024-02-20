@@ -17,6 +17,9 @@ local combat = require(script:WaitForChild("CombatSystem"))
 
 local function OnPlayerAdded(plr: Player)
 	combat:Equip(plr)
+	plr.CharacterAdded:Connect(function(character)
+		combat:Equip(plr)
+	end)
 end
 local function OnPlayerRemoving(plr: Player) end
 

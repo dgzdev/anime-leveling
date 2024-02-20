@@ -10,12 +10,6 @@ repeat
 	task.wait(1)
 until game:IsLoaded()
 
-local Player = Players.LocalPlayer
-local PlayerGui = Player:WaitForChild("PlayerGui")
-local HotbarGui = PlayerGui:WaitForChild("UI"):WaitForChild("Hotbar")
-
-local fr = HotbarGui:WaitForChild("Frame")
-
 export type Profile = {
 	Level: number,
 	Experience: number,
@@ -44,7 +38,13 @@ export type Profile = {
 		Endurance: number,
 	},
 }
-local function OrganizeHotbar(Profile: Profile)
+function Hotbar:OrganizeHotbar(Profile: Profile)
+	local Player = Players.LocalPlayer
+	local PlayerGui = Player:WaitForChild("PlayerGui")
+	local HotbarGui = PlayerGui:WaitForChild("UI"):WaitForChild("Hotbar")
+
+	local fr = HotbarGui:WaitForChild("Frame")
+
 	local hotbar = Profile.Hotbar
 	local gameWeapons: { [string]: { Type: string, Damage: number } } = Requests:InvokeServer("Weapons")
 
@@ -82,8 +82,13 @@ local function OrganizeHotbar(Profile: Profile)
 			SlotImage.CurrentCamera = Camera
 
 			itemClone.Parent = WorldModel
+			local Size = itemClone:GetExtentsSize().Magnitude
 			itemClone:PivotTo(CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(-90), 0, 0))
-			Camera.CFrame = CFrame.new(0, 0, 4)
+			Camera.FieldOfView = 80
+			Camera.CameraSubject = itemClone
+			Camera.CameraType = Enum.CameraType.Scriptable
+			Camera.CFrame = CFrame.new(0, 0, (Size / 2) + 1)
+			Camera.Focus = CFrame.new(0, 0, (Size / 2) + 1)
 		end
 	end
 end
@@ -105,6 +110,12 @@ local function PlayEquipSound()
 end
 
 local function EquipSlotItem(action: string, state, input)
+	local Player = Players.LocalPlayer
+	local PlayerGui = Player:WaitForChild("PlayerGui")
+	local HotbarGui = PlayerGui:WaitForChild("UI"):WaitForChild("Hotbar")
+
+	local fr = HotbarGui:WaitForChild("Frame")
+
 	if not (state == Enum.UserInputState.Begin) then
 		return
 	end
@@ -148,6 +159,6 @@ ContextActionService:BindAction("EquipSlotItem_3", EquipSlotItem, false, Enum.Ke
 ContextActionService:BindAction("EquipSlotItem_4", EquipSlotItem, false, Enum.KeyCode.Four)
 
 local Profile = Requests:InvokeServer("Profile")
-OrganizeHotbar(Profile)
+Hotbar:OrganizeHotbar(Profile)
 
 return Hotbar

@@ -28,6 +28,13 @@ Requests.Events = {
 	["Weapons"] = function(player: Player, ItemID: number)
 		return GameData.gameWeapons
 	end,
+	["Respawn"] = function(player: Player)
+		local PlayerManager = PlayersManager:GetPlayerManager(player)
+		if not PlayerManager then
+			return
+		end
+		PlayerManager:LoadCharacter()
+	end,
 	["Equip_Hotbar"] = function(player: Player)
 		local PlayerManager = PlayersManager:GetPlayerManager(player)
 		if not PlayerManager then

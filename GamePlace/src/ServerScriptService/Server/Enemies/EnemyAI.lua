@@ -158,8 +158,9 @@ function EnemyAI:BindChasing()
 
 				self.Root.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
 				self.Root.Anchored = true
+				local Distance = (self.Root.Position - target:WaitForChild("HumanoidRootPart").Position).Magnitude
 
-				if Humanoid and self.Humanoid.Health > 0 and Humanoid.Health > 0 then
+				if Humanoid and self.Humanoid.Health > 0 and Humanoid.Health > 0 and (Distance < 6) then
 					local AnimationPack = self.AnimationPack :: string
 					local Animations = ReplicatedStorage:WaitForChild("Animations")
 						:WaitForChild(AnimationPack)
