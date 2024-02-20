@@ -6,6 +6,11 @@ local StarterGui = game:GetService("StarterGui")
 local TweenService = game:GetService("TweenService")
 local AssetProvider = game:GetService("AssetService")
 
+local IsLoaded = Players:GetAttribute("Loaded")
+if not IsLoaded then
+	Players:GetAttributeChangedSignal("Loaded"):Wait()
+end
+
 local menu = StarterGui:WaitForChild("MainMenu")
 menu:Clone()
 
@@ -34,7 +39,7 @@ local function MenuTransition()
 	local ThirdDelay = 0.6
 
 	local backgroundAnimation = TweenService:Create(Background, TweenInfo.new(0.6), {
-		Position = UDim2.fromScale(0, 0),
+		Position = UDim2.fromScale(0, -0.1),
 	})
 	local title1Animation = TweenService:Create(
 		Title1,
@@ -106,17 +111,21 @@ end
 local function OnMenuTransitionEnd()
 	local Buttons = Button:GetChildren()
 	for _, ButtonObject in ipairs(Buttons) do
-		if not ButtonObject:IsA("TextButton") then
+		if not ButtonObject:IsA("ImageButton") then
 			continue
 		end
 		ButtonObject.MouseEnter:Connect(function(x, y)
 			Hover:Play()
 			local s = ButtonObject:WaitForChild("UIScale")
 			TweenService:Create(s, TweenInfo.new(0.2), { Scale = 1.3 }):Play()
+			TweenService:Create(ButtonObject, TweenInfo.new(0.2), { ImageColor3 = Color3.fromRGB(255, 255, 255) })
+				:Play()
 		end)
 		ButtonObject.MouseLeave:Connect(function(x, y)
 			local s = ButtonObject:WaitForChild("UIScale")
 			TweenService:Create(s, TweenInfo.new(0.2), { Scale = 1 }):Play()
+			TweenService:Create(ButtonObject, TweenInfo.new(0.2), { ImageColor3 = Color3.fromRGB(141, 141, 141) })
+				:Play()
 		end)
 		ButtonObject.Activated:Connect(function(inputObject, clickCount)
 			if ButtonObject.Name == "Button1" then
