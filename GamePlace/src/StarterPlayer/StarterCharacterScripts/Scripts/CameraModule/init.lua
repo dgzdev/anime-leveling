@@ -67,11 +67,15 @@ CameraModule.EnableCamera = function(self)
 		end
 	end, false, Enum.KeyCode.C)
 
-	self.OTS:Enable()
+	if self.OTS.IsEnabled == false then
+		self.OTS:Enable()
+	end
 end
 
 CameraModule.DisableCamera = function(self)
-	self.OTS:Disable()
+	if self.OTS.IsEnabled == true then
+		self.OTS:Disable()
+	end
 end
 CameraModule.OnProfileReceive = function(self) end --> Ignore, not used for this module.
 CameraModule:Init()

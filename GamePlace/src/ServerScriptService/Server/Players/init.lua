@@ -54,7 +54,9 @@ plrs.OnPlayerAdded = function(player: Player)
 		},
 	}, false)
 
-	player:LoadCharacterWithHumanoidDescription(humanoidDescription)
+	player:LoadCharacter()
+	local character = player.Character or player.CharacterAdded:Wait()
+	character:WaitForChild("Humanoid"):ApplyDescription(humanoidDescription)
 
 	local playerManager: PlayerManager.PlayerManager = PlayerManager.new(player)
 	if not playerManager then

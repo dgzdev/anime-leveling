@@ -79,12 +79,14 @@ Combat.OnServerInvoke = function(player: Player)
 					return
 				end
 
-				local BodyVelocity = Instance.new("BodyVelocity")
-				BodyVelocity.Velocity = (Root.CFrame.LookVector.Unit * -1) * 25
-				BodyVelocity.MaxForce = Vector3.new(math.huge, 0, math.huge)
-				BodyVelocity.Parent = Root
+				local VectorForce = Instance.new("VectorForce", Root)
+				VectorForce.Attachment0 = Root:FindFirstChildWhichIsA("Attachment", true)
+				VectorForce.ApplyAtCenterOfMass = true
+				VectorForce.Visible = true
+				VectorForce.Force = Vector3.new(0, 0, 12000)
+				VectorForce.RelativeTo = Enum.ActuatorRelativeTo.Attachment0
 
-				Debris:AddItem(BodyVelocity, 0.3)
+				Debris:AddItem(VectorForce, 0.3)
 
 				Hitbox:HitStop()
 			end

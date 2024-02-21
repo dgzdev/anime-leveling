@@ -139,8 +139,8 @@ function EnemyAI:BindChasing()
 				continue
 			end
 
-			local Root = self.Target.Value:GetPivot().Position * 0.97
-			self.Humanoid:MoveTo(Root)
+			local Root = self.Target.Value:GetPivot().Position
+			self.Humanoid:MoveTo(Vector3.new(Root.X, self.Root.Position.Y, Root.Z))
 
 			if (self.Root.Position - self.Target.Value:GetPivot().Position).Magnitude < 5 then
 				self.Attacking.Value = true
@@ -157,7 +157,7 @@ function EnemyAI:BindChasing()
 				local Humanoid = target:FindFirstChildWhichIsA("Humanoid")
 
 				self.Root.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-				self.Root.Anchored = true
+				self.Humanoid.WalkSpeed = 0
 				local Distance = (self.Root.Position - target:WaitForChild("HumanoidRootPart").Position).Magnitude
 
 				if Humanoid and self.Humanoid.Health > 0 and Humanoid.Health > 0 and (Distance < 6) then
@@ -183,7 +183,7 @@ function EnemyAI:BindChasing()
 
 				task.wait(1)
 
-				self.Root.Anchored = false
+				self.Humanoid.WalkSpeed = self.Speed
 			end
 			if self.Attacking.Value == false then
 				self.Attacking.Changed:Wait()

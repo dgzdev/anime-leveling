@@ -5,6 +5,7 @@ local CLASS = {}
 local PLAYERS_SERVICE = game:GetService("Players")
 local RUN_SERVICE = game:GetService("RunService")
 local USER_INPUT_SERVICE = game:GetService("UserInputService")
+local Workspace = game:GetService("Workspace")
 
 --// CONSTANTS //--
 
@@ -68,13 +69,13 @@ function CLASS.new()
 
 			DefaultShoulder = {
 				FieldOfView = 60,
-				Offset = Vector3.new(2, 1.4, 8),
+				Offset = Vector3.new(2, 0.5, 8),
 				Sensitivity = 3,
 				LerpSpeed = 0.5,
 			},
 			ZoomedShoulder = {
 				FieldOfView = 40,
-				Offset = Vector3.new(1.5, 1.3, 4),
+				Offset = Vector3.new(3, 0.3, 4),
 				Sensitivity = 1.5,
 				LerpSpeed = 0.25,
 			},
@@ -222,7 +223,7 @@ function CLASS:Update()
 	----
 
 	local character = LOCAL_PLAYER.Character
-	local humanoidRootPart = (character ~= nil) and (character:FindFirstChild("HumanoidRootPart"))
+	local humanoidRootPart = (character ~= nil) and (character:FindFirstChild("HeadSubject"))
 	if humanoidRootPart ~= nil then
 		--// Lerp field of view //--
 		currentCamera.FieldOfView =
@@ -244,10 +245,15 @@ function CLASS:Update()
 
 		--// Raycast for obstructions //--
 		local raycastParams = RaycastParams.new()
-		raycastParams.FilterDescendantsInstances = { character }
+		raycastParams.FilterDescendantsInstances = { character, Workspace.Enemies, Workspace.NPC }
+		raycastParams.CollisionGroup = "Players"
 		raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
-		local raycastResult =
-			workspace:Raycast(humanoidRootPart.Position, newCameraCFrame.p - humanoidRootPart.Position, raycastParams)
+		raycastParams.RespectCanCollide = true
+		local raycastResult = workspace:Raycast(
+			humanoidRootPart.Position,
+			newCameraCFrame.Position - humanoidRootPart.Position,
+			raycastParams
+		)
 		----
 
 		--// Address obstructions if any //--
@@ -255,11 +261,11 @@ function CLASS:Update()
 			local obstructionDisplacement = (raycastResult.Position - humanoidRootPart.Position)
 			local obstructionPosition = humanoidRootPart.Position
 				+ (obstructionDisplacement.Unit * (obstructionDisplacement.Magnitude - 0.1))
-			local x, y, z, r00, r01, r02, r10, r11, r12, r20, r21, r22 = newCameraCFrame:components()
+			local x, y, z, r00, r01, r02, r10, r11, r12, r20, r21, r22 = newCameraCFrame:GetComponents()
 			newCameraCFrame = CFrame.new(
-				obstructionPosition.x,
-				obstructionPosition.y,
-				obstructionPosition.z,
+				obstructionPosition.X,
+				obstructionPosition.Y,
+				obstructionPosition.Z,
 				r00,
 				r01,
 				r02,

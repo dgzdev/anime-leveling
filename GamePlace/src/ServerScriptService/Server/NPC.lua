@@ -3,9 +3,12 @@
 
 local PathfindingService = game:GetService("PathfindingService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerStorage = game:GetService("ServerStorage")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 local Module = {}
+
+local GameData = require(ServerStorage.GameData)
 
 local NPC = {}
 NPC.__index = NPC
@@ -58,8 +61,15 @@ function NPC.new(Character: Model)
 	ProximityPrompt.Name = "Talk"
 	ProximityPrompt:SetAttribute("Theme", "NPC")
 	ProximityPrompt.Style = Enum.ProximityPromptStyle.Custom
+
+	self.Dialog = GameData.gameDialogs[Name] or { "No dialog" }
+
 	ProximityPrompt.Triggered:Connect(function(playerWhoTriggered)
-		self:trigger(playerWhoTriggered)
+		ReplicatedStorage.Events.NPC:FireClient(playerWhoTriggered, {
+			NPC = self.Character,
+			Dialogs = self.Dialog,
+			Title = Name,
+		})
 	end)
 
 	--[[

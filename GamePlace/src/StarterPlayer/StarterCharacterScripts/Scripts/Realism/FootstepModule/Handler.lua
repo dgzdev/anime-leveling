@@ -134,7 +134,7 @@ local function FootstepLoop()
 
 				Debris:AddItem(sound, sound.TimeLength + 0.1)
 			else
-				print(cast.Material)
+				--print(cast.Material)
 				--t("b")
 				--ast.Instance == Workspace.Terrain then
 				--if not TerrainMaterialConversion[cast.Material] then

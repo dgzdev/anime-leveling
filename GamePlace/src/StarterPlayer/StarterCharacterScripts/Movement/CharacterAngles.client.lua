@@ -51,4 +51,4 @@ local function Heartbeat()
 	end
 end
 
-RunService.Heartbeat:Connect(Heartbeat)
+-- RunService.Heartbeat:Connect(Heartbeat)

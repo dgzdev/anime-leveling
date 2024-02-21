@@ -29,9 +29,6 @@ local function UpdateHud(index: string, value: any)
 	local Level = Slider:WaitForChild("Level") :: TextLabel
 	local PlayerName = Slider:WaitForChild("PlayerName") :: TextLabel
 
-	local Moldura = Background:WaitForChild("Moldura") :: ImageLabel
-	local PlayerImage = Moldura:WaitForChild("PlayerImage") :: ImageLabel
-
 	local XP = Background:WaitForChild("XP") :: ImageLabel
 	local Progress = XP:WaitForChild("Progress") :: Frame
 
@@ -40,12 +37,6 @@ local function UpdateHud(index: string, value: any)
 		return
 	elseif index == "PlayerName" then
 		PlayerName.Text = value
-		return
-	end
-
-	if index == "Image" then
-		PlayerImage.Image =
-			Players:GetUserThumbnailAsync(Player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
 		return
 	end
 
@@ -74,8 +65,6 @@ local function UpdateHud(index: string, value: any)
 	if index == nil then
 		Level.Text = Profile.Level
 		PlayerName.Text = Player.Name
-		PlayerImage.Image =
-			Players:GetUserThumbnailAsync(Player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
 		Progress.Size = UDim2.fromScale(Profile.Experience / Profile.Level * 243, 1)
 	end
 end

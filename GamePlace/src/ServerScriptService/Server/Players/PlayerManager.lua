@@ -186,7 +186,9 @@ function PlayerManager.new(player: Player, options: Options)
 			},
 		}, false)
 
-		self.Player:LoadCharacterWithHumanoidDescription(humanoidDescription)
+		self.Player:LoadCharacter()
+
+		self.Character:WaitForChild("Humanoid"):ApplyDescription(humanoidDescription)
 	end
 
 	return self
