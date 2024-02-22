@@ -15,6 +15,7 @@ plrs.OnPlayerAdded = function(player: Player)
 	humanoidDescription.Shirt = 12244089619
 	humanoidDescription.Pants = 12244095027
 
+	--[[
 	humanoidDescription:SetAccessories({
 		{
 			Order = 1,
@@ -54,7 +55,7 @@ plrs.OnPlayerAdded = function(player: Player)
 			AccessoryType = Enum.AccessoryType.Hat,
 		},
 	}, false)
-
+	]]
 	player:LoadCharacter()
 	local character = player.Character or player.CharacterAdded:Wait()
 	character:WaitForChild("Humanoid"):ApplyDescription(humanoidDescription)

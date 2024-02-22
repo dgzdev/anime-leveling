@@ -242,7 +242,7 @@ function PlayerManager.new(player: Player, options: Options)
 
 		humanoidDescription.Shirt = 12244089619
 		humanoidDescription.Pants = 12244095027
-
+		--[[
 		humanoidDescription:SetAccessories({
 			{
 				Order = 1,
@@ -282,7 +282,7 @@ function PlayerManager.new(player: Player, options: Options)
 				AccessoryType = Enum.AccessoryType.Hat,
 			},
 		}, false)
-
+		]]
 		self.Player:LoadCharacter()
 
 		self.Character:WaitForChild("Humanoid"):ApplyDescription(humanoidDescription)
