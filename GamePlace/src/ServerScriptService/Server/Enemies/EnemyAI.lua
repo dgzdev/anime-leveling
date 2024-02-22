@@ -5,6 +5,8 @@ local EnemyAI: AI = {}
 EnemyAI.__index = EnemyAI
 
 local View = require(script.Parent.View)
+local CombatSystem = require(script.Parent.Parent.CombatSystem)
+local HitService = require(script.Parent.Parent.CombatSystem.HitService)
 
 local Assets = {
 	["Enemy"] = "16441552144",
@@ -100,6 +102,13 @@ function EnemyAI.new(Enemy: Model, Config: AIConfig)
 		self.Target.Value = nil
 		self.Attacking.Value = false
 		self.Chasing.Value = false
+
+		local d = self.Enemy:GetDescendants()
+		for _, v in ipairs(d) do
+			if v:IsA("BodyVelocity") then
+				v:Destroy()
+			end
+		end
 	end)
 
 	self.Humanoid.HealthChanged:Connect(function(health)
@@ -161,6 +170,33 @@ function EnemyAI:BindChasing()
 				local Distance = (self.Root.Position - target:WaitForChild("HumanoidRootPart").Position).Magnitude
 
 				if Humanoid and self.Humanoid.Health > 0 and Humanoid.Health > 0 and (Distance < 6) then
+					local char = self.Target.Value
+					if char:GetAttribute("Defending") then
+						local DefenseHits = char:GetAttribute("DefenseHits") or 0
+						if DefenseHits >= 3 then
+							DefenseHits = 0
+							CombatSystem.DefenseBreak(char)
+							HitService:Hit(
+								self.Humanoid,
+								Humanoid,
+								self.Config.Damage,
+								nil,
+								self.Root.CFrame.LookVector * 10
+							)
+						else
+							DefenseHits += 1
+							char:SetAttribute("DefenseHits", DefenseHits)
+						end
+					else
+						HitService:Hit(
+							self.Humanoid,
+							Humanoid,
+							self.Config.Damage,
+							nil,
+							self.Root.CFrame.LookVector * 10
+						)
+					end
+
 					local AnimationPack = self.AnimationPack :: string
 					local Animations = ReplicatedStorage:WaitForChild("Animations")
 						:WaitForChild(AnimationPack)
@@ -173,8 +209,6 @@ function EnemyAI:BindChasing()
 					AttackAnim:Play()
 
 					self.Attack = math.clamp(self.Attack + 1, 1, #Animations)
-
-					Humanoid:TakeDamage(self.Config.Damage)
 
 					if self.Attack == #Animations then
 						self.Attack = 1

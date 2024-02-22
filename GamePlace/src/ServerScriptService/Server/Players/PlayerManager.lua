@@ -1,7 +1,11 @@
 local BadgeService = game:GetService("BadgeService")
+local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local ServerStorage = game:GetService("ServerStorage")
+local SoundService = game:GetService("SoundService")
+local StarterPlayer = game:GetService("StarterPlayer")
 local TweenService = game:GetService("TweenService")
 local PlayerManager: PlayerManager = {}
 PlayerManager.__index = PlayerManager
@@ -12,7 +16,6 @@ local UpdateHud = ReplicatedStorage.Events.PlayerHud
 local GameData = require(ServerStorage.GameData)
 
 local ProfileStore = ProfileService.GetProfileStore(GameData.profileKey, GameData.profileTemplate)
-
 export type Options = {
 	[string]: any,
 }
@@ -64,30 +67,39 @@ function PlayerManager.new(player: Player, options: Options)
 		BadgeService:AwardBadge(player.UserId, GameData.newbieBadge)
 	end
 
-	local Profile = ProfileStore:LoadProfileAsync(`Player_{player.UserId}`, "ForceLoad")
-	if Profile then
-		if player:IsDescendantOf(Players) then
-			Profile:AddUserId(player.UserId)
-			Profile:Reconcile()
-			Profile:SetMetaTag("Version", game.PlaceVersion)
-			local Joins = Profile:GetMetaTag("Joins") or 0
-			Profile:SetMetaTag("Joins", Joins + 1)
+	local Profile
+	if RunService:IsStudio() then
+		local profile = { Data = GameData.profileTemplate }
+		profile.Data.Inventory = GameData.defaultInventory
 
-			if Joins < 10 then
-				self:Newbie()
-			end
-
-			if #Profile.Data.Inventory == 0 then
-				Profile.Data.Inventory = GameData.defaultInventory
-			end
-
-			self.Profile = Profile
-		else -- If the player leaves the game before the profile is loaded
-			Profile:Release()
-			return
-		end
+		self.Profile = profile
+		Profile = profile
 	else
-		return player:Kick("[PlayerManager] Error while loading profile.")
+		Profile = ProfileStore:LoadProfileAsync(`Player_{player.UserId}`, "ForceLoad")
+		if Profile then
+			if player:IsDescendantOf(Players) then
+				Profile:AddUserId(player.UserId)
+				Profile:Reconcile()
+				Profile:SetMetaTag("Version", game.PlaceVersion)
+				local Joins = Profile:GetMetaTag("Joins") or 0
+				Profile:SetMetaTag("Joins", Joins + 1)
+
+				if Joins < 10 then
+					self:Newbie()
+				end
+
+				if #Profile.Data.Inventory == 0 then
+					Profile.Data.Inventory = GameData.defaultInventory
+				end
+
+				self.Profile = Profile
+			else -- If the player leaves the game before the profile is loaded
+				Profile:Release()
+				return
+			end
+		else
+			return player:Kick("[PlayerManager] Error while loading profile.")
+		end
 	end
 
 	function self:Set()
@@ -134,11 +146,96 @@ function PlayerManager.new(player: Player, options: Options)
 	end
 
 	self:Set()
+
+	local function BindCharacter()
+		local character = self.Character
+		local holdingAnim = nil
+
+		player:GetAttributeChangedSignal("WeaponType"):Connect(function()
+			local WeaponType = player:GetAttribute("WeaponType")
+			local animator = character:WaitForChild("Humanoid"):WaitForChild("Animator") :: Animator
+			local HoldAnimation =
+				ReplicatedStorage.Animations:FindFirstChild(WeaponType):FindFirstChild("Holding") :: Animation
+
+			for _, Animation in ipairs(animator:GetPlayingAnimationTracks()) do
+				if Animation.Name == "Holding" then
+					Animation:Stop(0.15)
+				end
+			end
+
+			if HoldAnimation then
+				if HoldAnimation then
+					local Animation = animator:LoadAnimation(HoldAnimation)
+					Animation.Looped = true
+					Animation.Priority = Enum.AnimationPriority.Action
+					holdingAnim = Animation
+					Animation:Play(0.15)
+				end
+			else
+				holdingAnim = nil
+			end
+		end)
+
+		character:GetAttributeChangedSignal("Defending"):Connect(function()
+			if character:GetAttribute("Defending") then
+				self.Humanoid.WalkSpeed = 0
+				self.Humanoid.JumpPower = 0
+				if holdingAnim then
+					holdingAnim:Stop(0.15)
+				end
+			else
+				if holdingAnim then
+					holdingAnim:Play(0.15)
+				end
+				self.Humanoid.WalkSpeed = StarterPlayer.CharacterWalkSpeed
+				self.Humanoid.JumpPower = StarterPlayer.CharacterJumpPower
+				character:SetAttribute("DefenseHits", 0)
+			end
+		end)
+		character:GetAttributeChangedSignal("Stun"):Connect(function()
+			if character:GetAttribute("Stun") then
+				self.Humanoid.WalkSpeed = 0
+				self.Humanoid.JumpPower = 0
+				if holdingAnim then
+					holdingAnim:Stop(0.15)
+				end
+				task.wait(3)
+				character:SetAttribute("Stun", false)
+			else
+				if holdingAnim then
+					holdingAnim:Play(0.15)
+				end
+				self.Humanoid.WalkSpeed = StarterPlayer.CharacterWalkSpeed
+				self.Humanoid.JumpPower = StarterPlayer.CharacterJumpPower
+			end
+		end)
+		character:GetAttributeChangedSignal("DefenseHits"):Connect(function()
+			local hits = character:GetAttribute("DefenseHits")
+			if hits >= 3 then
+				local DefenseBreak = SoundService:WaitForChild("SFX"):WaitForChild("DefenseBreak"):Clone() :: Sound
+				DefenseBreak:SetAttribute("Ignore", true)
+				DefenseBreak.Parent = character.PrimaryPart
+				DefenseBreak.RollOffMinDistance = 0
+				DefenseBreak.RollOffMaxDistance = 40
+				DefenseBreak.RollOffMode = Enum.RollOffMode.Linear
+				DefenseBreak:Play()
+
+				Debris:AddItem(DefenseBreak, DefenseBreak.TimeLength + 0.1)
+
+				character:SetAttribute("Defending", false)
+				character:SetAttribute("DefenseHits", 0)
+				character:SetAttribute("Stun", true)
+			end
+		end)
+	end
+
 	player.CharacterAdded:Connect(function(character)
 		self.Character = character
 		self.Humanoid = character:WaitForChild("Humanoid")
 		self:Set()
+		BindCharacter()
 	end)
+	BindCharacter()
 
 	function self:LoadCharacter()
 		local humanoidDescription = Instance.new("HumanoidDescription")

@@ -35,7 +35,7 @@ Requests.Events = {
 		end
 		PlayerManager:LoadCharacter()
 	end,
-	["Equip_Hotbar"] = function(player: Player)
+	["Equip_Hotbar"] = function(player: Player, ItemID: number)
 		local PlayerManager = PlayersManager:GetPlayerManager(player)
 		if not PlayerManager then
 			return
@@ -54,7 +54,7 @@ Requests.Events = {
 		local InventoryItem = nil
 		local InventoryItemName = nil
 		for ItemName, itemProperties in pairs(Data.Inventory) do
-			if itemProperties.Id == Data.Equiped.Id then
+			if itemProperties.Id == ItemID then
 				InventoryItem = itemProperties
 				InventoryItemName = ItemName
 				break

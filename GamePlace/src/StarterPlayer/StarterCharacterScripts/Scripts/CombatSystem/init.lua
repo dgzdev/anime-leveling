@@ -36,33 +36,38 @@ function CombatSystem:Attack()
 		local weaponType = properties.Type
 
 		local anims = Animations:WaitForChild(weaponType):WaitForChild("Hit"):GetChildren()
-		local sounds = SoundService:WaitForChild("Attack"):WaitForChild("Sword"):GetChildren()
+		local sounds = SoundService:WaitForChild("Attack"):WaitForChild(weaponType):GetChildren()
 
-		attack = math.clamp(attack, 1, #anims)
+		if #anims > 0 then
+			attack = math.clamp(attack, 1, #anims)
+			local anim = anims[attack]
+			local Animator = Humanoid:WaitForChild("Animator") :: Animator
+			local AttackAnim = Animator:LoadAnimation(anim)
 
-		local anim = anims[attack]
-		local sound = sounds[attack]
+			AttackAnim.Priority = Enum.AnimationPriority.Action4
+			AttackAnim:Play(0.15)
+		end
+		if #sounds > 0 then
+			attack = math.clamp(attack, 1, #sounds)
+			local sound = sounds[attack]
+			local s = sound:Clone() :: Sound
+			s.Parent = Character:WaitForChild("Head")
+			s.RollOffMaxDistance = 0
+			s.RollOffMaxDistance = 30
+			s.RollOffMode = Enum.RollOffMode.Linear
 
-		local Animator = Humanoid:WaitForChild("Animator") :: Animator
-		local AttackAnim = Animator:LoadAnimation(anim)
+			if not s.IsLoaded then
+				s.Loaded:Wait()
+			end
 
-		local s = sound:Clone() :: Sound
-		s.Parent = Character:WaitForChild("Head")
-		s.RollOffMaxDistance = 0
-		s.RollOffMaxDistance = 30
-		s.RollOffMode = Enum.RollOffMode.Inverse
+			s:Play()
+			Debris:AddItem(s, 1.5)
+		end
+		if #anims == 0 and #sounds == 0 then
+			return warn("No animations or sounds found for weapon type: " .. weaponType)
+		end
 
-		repeat
-			task.wait()
-		until s.IsLoaded == true
-
-		s:Play()
-		Debris:AddItem(s, 1.5)
-
-		AttackAnim.Priority = Enum.AnimationPriority.Action
-		AttackAnim:Play()
-
-		if attack == #anims then
+		if (attack == #anims) or (attack == #sounds) then
 			attack = 1
 		else
 			attack = attack + 1
@@ -70,10 +75,38 @@ function CombatSystem:Attack()
 	end
 end
 
-function CombatSystem:Defend()
+function CombatSystem:ChangeDefenseStatus(state: true | false)
+	local WeaponType = Player:GetAttribute("WeaponType")
+	if state == true then
+		local anim = Animations:WaitForChild(WeaponType):WaitForChild("Block") :: Animation
+		local Animator = Humanoid:WaitForChild("Animator") :: Animator
+
+		local BlockAnim = Animator:LoadAnimation(anim)
+		BlockAnim.Priority = Enum.AnimationPriority.Action
+		BlockAnim.Looped = true
+		BlockAnim:Play(0.15)
+	end
+	if state == false then
+		local Animator = Humanoid:WaitForChild("Animator") :: Animator
+		for _, Value in ipairs(Animator:GetPlayingAnimationTracks()) do
+			if Value.Name == "Block" then
+				Value:Stop(0.3)
+			end
+		end
+	end
+end
+
+Character:GetAttributeChangedSignal("Defending"):Connect(function()
+	CombatSystem:ChangeDefenseStatus(Character:GetAttribute("Defending"))
+end)
+
+function CombatSystem:Defend(state: "Start" | "End")
 	if Humanoid.Health > 0 then
 		-- Defend logic
-		Combat:InvokeServer("Defend")
+		local properties = Combat:InvokeServer("Defend", state)
+		if not properties then
+			return
+		end
 	end
 end
 
@@ -94,7 +127,9 @@ end, true, table.unpack(AttackButtons))
 
 ContextActionService:BindAction("Defend", function(action, state, input)
 	if state == Enum.UserInputState.Begin then
-		CombatSystem:Defend()
+		CombatSystem:Defend("Start")
+	elseif state == Enum.UserInputState.End then
+		CombatSystem:Defend("End")
 	end
 end, true, table.unpack(DefendButtons))
 

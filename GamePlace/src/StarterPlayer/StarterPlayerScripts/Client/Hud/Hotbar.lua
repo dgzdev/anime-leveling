@@ -61,34 +61,60 @@ function Hotbar:OrganizeHotbar(Profile: Profile)
 			if isItemEquiped then
 				local Slot = fr:WaitForChild("Slot" .. HotbarNumber)
 				Slot:SetAttribute("Active", true)
+			else
+				local Slot = fr:WaitForChild("Slot" .. HotbarNumber)
+				Slot:SetAttribute("Active", false)
 			end
 
 			local ItemData = gameWeapons[itemName]
 			local itemType = ItemData.Type
-			local itemModel =
-				ReplicatedStorage:WaitForChild("Models"):WaitForChild(itemType .. "s"):FindFirstChild(itemName, true)
-			if not itemModel then
-				continue
+
+			if itemType == "Melee" then
+				local itemImage = ReplicatedStorage:WaitForChild("Models")
+					:WaitForChild(itemType .. "s")
+					:FindFirstChild(itemName, true) :: ImageLabel
+				if not itemImage then
+					continue
+				end
+
+				local itemClone = itemImage:Clone() :: ImageLabel
+
+				local Slot = fr:WaitForChild("Slot" .. HotbarNumber)
+				Slot:SetAttribute("ItemID", ItemID)
+
+				itemClone.Parent = Slot
 			end
 
-			local itemClone = itemModel:Clone() :: Model
+			if itemType == "Sword" then
+				local itemModel = ReplicatedStorage:WaitForChild("Models")
+					:WaitForChild(itemType .. "s")
+					:FindFirstChild(itemName, true)
+				if not itemModel then
+					continue
+				end
 
-			local Slot = fr:WaitForChild("Slot" .. HotbarNumber)
-			Slot:SetAttribute("ItemID", ItemID)
+				local itemClone = itemModel:Clone() :: Model
 
-			local SlotImage = Slot:WaitForChild("SlotImage") :: ViewportFrame
-			local WorldModel = SlotImage:WaitForChild("WorldModel") :: WorldModel
-			local Camera = Instance.new("Camera", SlotImage)
-			SlotImage.CurrentCamera = Camera
+				local Slot = fr:WaitForChild("Slot" .. HotbarNumber)
+				Slot:SetAttribute("ItemID", ItemID)
 
-			itemClone.Parent = WorldModel
-			local Size = itemClone:GetExtentsSize().Magnitude
-			itemClone:PivotTo(CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(-90), 0, 0))
-			Camera.FieldOfView = 80
-			Camera.CameraSubject = itemClone
-			Camera.CameraType = Enum.CameraType.Scriptable
-			Camera.CFrame = CFrame.new(0, 0, (Size / 2) + 1)
-			Camera.Focus = CFrame.new(0, 0, (Size / 2) + 1)
+				local SlotImage = Slot:WaitForChild("SlotImage") :: ViewportFrame
+				local WorldModel = SlotImage:WaitForChild("WorldModel") :: WorldModel
+
+				WorldModel:ClearAllChildren()
+
+				local Camera = Instance.new("Camera", SlotImage)
+				SlotImage.CurrentCamera = Camera
+
+				itemClone.Parent = WorldModel
+				local Size = itemClone:GetExtentsSize().Magnitude
+				itemClone:PivotTo(CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(-90), 0, 0))
+				Camera.FieldOfView = 80
+				Camera.CameraSubject = itemClone
+				Camera.CameraType = Enum.CameraType.Scriptable
+				Camera.CFrame = CFrame.new(0, 0, (Size / 2) + 1)
+				Camera.Focus = CFrame.new(0, 0, (Size / 2) + 1)
+			end
 		end
 	end
 end
@@ -130,6 +156,7 @@ local function EquipSlotItem(action: string, state, input)
 		return PlayErrorSound()
 	end
 
+	print("Equiping: " .. ItemID .. " in slot: " .. slot)
 	local OK = Requests:InvokeServer("Equip_Hotbar", ItemID)
 	if not OK then
 		return PlayErrorSound()
@@ -157,6 +184,12 @@ ContextActionService:BindAction("EquipSlotItem_1", EquipSlotItem, false, Enum.Ke
 ContextActionService:BindAction("EquipSlotItem_2", EquipSlotItem, false, Enum.KeyCode.Two)
 ContextActionService:BindAction("EquipSlotItem_3", EquipSlotItem, false, Enum.KeyCode.Three)
 ContextActionService:BindAction("EquipSlotItem_4", EquipSlotItem, false, Enum.KeyCode.Four)
+
+local Player = Players.LocalPlayer
+Player.CharacterAdded:Connect(function(character)
+	local Profile = Requests:InvokeServer("Profile")
+	Hotbar:OrganizeHotbar(Profile)
+end)
 
 local Profile = Requests:InvokeServer("Profile")
 Hotbar:OrganizeHotbar(Profile)

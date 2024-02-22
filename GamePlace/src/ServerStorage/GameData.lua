@@ -42,11 +42,11 @@ local ProfileTemplate: PlayerData = {
 	subRank = "I",
 
 	Equiped = {
-		Weapon = "Wooden_Sword",
+		Weapon = "Melee",
 		Id = 1,
 	},
 
-	Hotbar = { 1 },
+	Hotbar = { 1, 2 },
 
 	Level = 1,
 	Experience = 0,
@@ -78,13 +78,22 @@ return {
 	profileKey = "PLAYER_DATA_2",
 	profileTemplate = ProfileTemplate,
 	defaultInventory = {
-		["Wooden_Sword"] = {
+		["Melee"] = {
 			AchiveDate = os.time(),
 			Rank = "E",
 			Id = 1,
 		},
+		["Wooden_Sword"] = {
+			AchiveDate = os.time(),
+			Rank = "E",
+			Id = 2,
+		},
 	},
 	gameWeapons = {
+		["Melee"] = {
+			Type = "Melee",
+			Damage = 5,
+		},
 		["Wooden_Sword"] = {
 			Type = "Sword",
 			Damage = 10,

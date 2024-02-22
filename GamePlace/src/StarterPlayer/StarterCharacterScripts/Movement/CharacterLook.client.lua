@@ -14,14 +14,13 @@ local Mouse = Player:GetMouse()
 local OldCFrame = nil
 
 RunService:BindToRenderStep("CharacterLook", Enum.RenderPriority.First.Value, function()
-	local NewCFrame = CFrame.new(
-		HRP.Position,
-		HRP.Position + Vector3.new(Mouse.Hit.LookVector.X, HRP.CFrame.LookVector.Y, Mouse.Hit.LookVector.Z)
-	)
+	local Camera = Workspace.CurrentCamera
+
+	local NewCFrame =
+		CFrame.new(HRP.Position, HRP.Position + Vector3.new(Camera.CFrame.LookVector.X, 0, Camera.CFrame.LookVector.Z))
 
 	if OldCFrame ~= NewCFrame then
 		local currentCFrame = HRP.CFrame
-		local Camera = Workspace.CurrentCamera
 		local TargetCFrame = (
 			CFrame.lookAt(
 				HRP.Position,
