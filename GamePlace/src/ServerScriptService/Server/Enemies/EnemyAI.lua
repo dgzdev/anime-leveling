@@ -149,9 +149,9 @@ function EnemyAI:BindChasing()
 			end
 
 			local Root = self.Target.Value:GetPivot().Position
-			self.Humanoid:MoveTo(Vector3.new(Root.X, self.Root.Position.Y, Root.Z))
+			self.Humanoid:MoveTo(Root)
 
-			if (self.Root.Position - self.Target.Value:GetPivot().Position).Magnitude < 5 then
+			if (self.Root.Position - self.Target.Value:GetPivot().Position).Magnitude < 3 then
 				self.Attacking.Value = true
 			else
 				self.Attacking.Value = false
@@ -163,13 +163,23 @@ function EnemyAI:BindChasing()
 		repeat
 			while self.Attacking.Value == true and self.Humanoid.Health > 0 do
 				local target = self.Target.Value
-				local Humanoid = target:FindFirstChildWhichIsA("Humanoid")
+				local targetRP = target.PrimaryPart
 
-				self.Root.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+				if not targetRP then
+					continue
+				end
+
+				local Humanoid = target.Humanoid
+				if not Humanoid then
+					continue
+				end
+
 				self.Humanoid.WalkSpeed = 0
-				local Distance = (self.Root.Position - target:WaitForChild("HumanoidRootPart").Position).Magnitude
+				self.Root.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
 
-				if Humanoid and self.Humanoid.Health > 0 and Humanoid.Health > 0 and (Distance < 6) then
+				local Distance = (self.Root.Position - targetRP.Position).Magnitude
+
+				if Humanoid and self.Humanoid.Health > 0 and Humanoid.Health > 0 and (Distance < 3) then
 					local char = self.Target.Value
 					if char:GetAttribute("Defending") then
 						local DefenseHits = char:GetAttribute("DefenseHits") or 0
@@ -210,16 +220,19 @@ function EnemyAI:BindChasing()
 
 					self.Attack = math.clamp(self.Attack + 1, 1, #Animations)
 
+					task.wait(1.5)
+
 					if self.Attack == #Animations then
 						self.Attack = 1
 					end
+				else
+					task.wait(2)
 				end
 
-				task.wait(1)
-
-				self.Humanoid.WalkSpeed = self.Speed
+				task.wait()
 			end
 			if self.Attacking.Value == false then
+				self.Humanoid.WalkSpeed = self.Speed
 				self.Attacking.Changed:Wait()
 			end
 

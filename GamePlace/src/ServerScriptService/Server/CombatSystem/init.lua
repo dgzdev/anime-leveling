@@ -288,21 +288,20 @@ function CombatSystem:Equip(player: Player)
 
 		Root.Anchored = true
 
-		local Position = "Right Arm"
+		local Position = "RightHand"
 
 		local SwordClone = Sword:Clone() :: Model
 		SwordClone.Name = "Weapon"
 		SwordClone.Parent = Character
 
 		local RightHand = Character:WaitForChild(Position)
-		SwordClone:PivotTo(
-			RightHand:GetPivot() * CFrame.new(0, -1, -1.9) * CFrame.Angles(0, math.rad(180), math.rad(90))
-		)
+		SwordClone:PivotTo(RightHand:GetPivot())
 
-		local Weld = Instance.new("WeldConstraint")
-		Weld.Parent = SwordClone
-		Weld.Part0 = RightHand
-		Weld.Part1 = SwordClone.PrimaryPart
+		local Motor6D = Instance.new("Motor6D")
+		Motor6D.Part0 = RightHand
+		Motor6D.Part1 = SwordClone.PrimaryPart
+		Motor6D.C1 = (CFrame.new(0, 0, -1.9) * CFrame.Angles(math.rad(-90), math.rad(0), math.rad(-90)))
+		Motor6D.Parent = RightHand
 
 		if not RunService:IsStudio() then
 			PlayerManager.Profile:SetMetaTag("Equiped", Equiped)

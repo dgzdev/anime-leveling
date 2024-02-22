@@ -64,8 +64,6 @@ plrs.OnPlayerAdded = function(player: Player)
 		return player:Kick("[Players] Error while loading player manager.")
 	end
 
-	playerManager.Character:WaitForChild("Head"):WaitForChild("face"):Destroy()
-
 	local Profile = playerManager.Profile
 	Profiles[player] = Profile
 	if not (RunService:IsStudio()) then

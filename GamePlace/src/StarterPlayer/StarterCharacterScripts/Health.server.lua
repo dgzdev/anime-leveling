@@ -16,18 +16,12 @@ local LastHealth = Humanoid.MaxHealth
 
 local MIN_DISTANCE = 0
 local MAX_DISTANCE = 30
-local COOLDOWN = 0.05
 local HEALCOOLDOWN = 3
-local LAST_TAKEN_DAMAGE = tick()
 local LAST_HEAL = tick()
 
 local HealSound = SoundService:WaitForChild("SFX"):WaitForChild("Heal")
 
 Humanoid.HealthChanged:Connect(function(health)
-	if LAST_TAKEN_DAMAGE + COOLDOWN > tick() then
-		return
-	end
-
 	if health < LastHealth then
 		local SFX = SoundService:WaitForChild("Hit"):GetChildren()
 		local Sound = SFX[math.random(1, #SFX)]:Clone() :: Sound
@@ -40,7 +34,6 @@ Humanoid.HealthChanged:Connect(function(health)
 
 		Sound:Play()
 		Debris:AddItem(Sound, Sound.TimeLength + 0.1)
-		LAST_TAKEN_DAMAGE = tick()
 	elseif health > LastHealth then
 		if LAST_HEAL + HEALCOOLDOWN > tick() then
 			return
@@ -57,15 +50,4 @@ Humanoid.HealthChanged:Connect(function(health)
 		LAST_HEAL = tick()
 	end
 	LastHealth = health
-end)
-
-task.spawn(function()
-	while true do
-		while Humanoid.Health < Humanoid.MaxHealth do
-			local dt = task.wait(REGEN_STEP)
-			local dh = dt * REGEN_RATE * Humanoid.MaxHealth
-			Humanoid.Health = math.min(Humanoid.Health + dh, Humanoid.MaxHealth)
-		end
-		Humanoid.HealthChanged:Wait()
-	end
 end)

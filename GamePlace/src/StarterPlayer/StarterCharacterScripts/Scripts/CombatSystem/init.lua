@@ -44,8 +44,8 @@ function CombatSystem:Attack()
 			local Animator = Humanoid:WaitForChild("Animator") :: Animator
 			local AttackAnim = Animator:LoadAnimation(anim)
 
-			AttackAnim.Priority = Enum.AnimationPriority.Action4
-			AttackAnim:Play(0.15)
+			AttackAnim.Priority = Enum.AnimationPriority.Action
+			AttackAnim:Play()
 		end
 		if #sounds > 0 then
 			attack = math.clamp(attack, 1, #sounds)
@@ -61,7 +61,7 @@ function CombatSystem:Attack()
 			end
 
 			s:Play()
-			Debris:AddItem(s, 1.5)
+			Debris:AddItem(s, s.TimeLength)
 		end
 		if #anims == 0 and #sounds == 0 then
 			return warn("No animations or sounds found for weapon type: " .. weaponType)
@@ -90,19 +90,20 @@ function CombatSystem:ChangeDefenseStatus(state: true | false)
 		local Animator = Humanoid:WaitForChild("Animator") :: Animator
 		for _, Value in ipairs(Animator:GetPlayingAnimationTracks()) do
 			if Value.Name == "Block" then
-				Value:Stop(0.3)
+				Value:Stop(0.5)
 			end
 		end
 	end
 end
 
-Character:GetAttributeChangedSignal("Defending"):Connect(function()
-	CombatSystem:ChangeDefenseStatus(Character:GetAttribute("Defending"))
-end)
-
+local DefendLoadedAnimation = nil
 function CombatSystem:Defend(state: "Start" | "End")
 	if Humanoid.Health > 0 then
 		-- Defend logic
+		Character:GetAttributeChangedSignal("Defending"):Connect(function()
+			self:ChangeDefenseStatus(Character:GetAttribute("Defending"))
+		end)
+
 		local properties = Combat:InvokeServer("Defend", state)
 		if not properties then
 			return

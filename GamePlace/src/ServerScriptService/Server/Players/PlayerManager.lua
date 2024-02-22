@@ -148,7 +148,7 @@ function PlayerManager.new(player: Player, options: Options)
 	self:Set()
 
 	local function BindCharacter()
-		local character = self.Character
+		local character = self.Player.Character or self.Player.CharacterAdded:Wait()
 		local holdingAnim = nil
 
 		player:GetAttributeChangedSignal("WeaponType"):Connect(function()
