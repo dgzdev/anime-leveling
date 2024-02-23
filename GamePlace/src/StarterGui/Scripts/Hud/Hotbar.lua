@@ -69,6 +69,11 @@ function Hotbar:OrganizeHotbar(Profile: Profile)
 			local ItemData = gameWeapons[itemName]
 			local itemType = ItemData.Type
 
+			local Slot = fr:WaitForChild("Slot" .. HotbarNumber)
+			Slot:SetAttribute("ItemID", ItemID)
+
+			Slot.Visible = true
+
 			if itemType == "Melee" then
 				local itemImage = ReplicatedStorage:WaitForChild("Models")
 					:WaitForChild(itemType .. "s")
@@ -78,9 +83,6 @@ function Hotbar:OrganizeHotbar(Profile: Profile)
 				end
 
 				local itemClone = itemImage:Clone() :: ImageLabel
-
-				local Slot = fr:WaitForChild("Slot" .. HotbarNumber)
-				Slot:SetAttribute("ItemID", ItemID)
 
 				itemClone.Parent = Slot
 			end
@@ -94,9 +96,6 @@ function Hotbar:OrganizeHotbar(Profile: Profile)
 				end
 
 				local itemClone = itemModel:Clone() :: Model
-
-				local Slot = fr:WaitForChild("Slot" .. HotbarNumber)
-				Slot:SetAttribute("ItemID", ItemID)
 
 				local SlotImage = Slot:WaitForChild("SlotImage") :: ViewportFrame
 				local WorldModel = SlotImage:WaitForChild("WorldModel") :: WorldModel

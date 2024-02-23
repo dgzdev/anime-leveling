@@ -9,6 +9,7 @@ local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
 local screenGui = Instance.new("ScreenGui", playerGui)
+screenGui.Name = "loadingScreen"
 screenGui.IgnoreGuiInset = true
 screenGui.DisplayOrder = 999
 
@@ -79,7 +80,6 @@ skipButton.Activated:Connect(function(inputObject, clickCount)
 	screenGui:Destroy()
 	print("[Loading] Skipped loading screen. (Took " .. math.floor(tick() - start) .. " seconds.)")
 	Unlock()
-	Players:SetAttribute("Loaded", true)
 	script:Destroy()
 end)
 
@@ -88,7 +88,6 @@ ContentProvider:PreloadAsync(game:GetDescendants())
 local endTick = tick()
 
 screenGui:Destroy()
-Players:SetAttribute("Loaded", true)
 Unlock()
 print("[Loading] Loaded in " .. math.floor(endTick - start) .. " seconds.")
 

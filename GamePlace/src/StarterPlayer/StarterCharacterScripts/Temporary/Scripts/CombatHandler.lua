@@ -6,13 +6,12 @@ local Workspace = game:GetService("Workspace")
 local AttackButtons = { Enum.UserInputType.MouseButton1, Enum.UserInputType.Gamepad1 }
 local DefendButtons = { Enum.UserInputType.MouseButton2, Enum.UserInputType.Gamepad2 }
 
-local Combat = ReplicatedStorage:WaitForChild("Events"):WaitForChild("Combat") :: RemoteFunction
-
 local CombatHandler = {}
 local Modules: Modules
 local CombatModule: CombatModule
 
 function CombatHandler:Init(modules: Modules)
+	print("started")
 	Modules = modules
 
 	local combatModule = require(Modules.Combat)

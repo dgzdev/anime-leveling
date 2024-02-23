@@ -8,11 +8,16 @@ CameraModule.OTS = require(ReplicatedStorage.Modules.OTS) --> OTS is a module fo
 local CameraEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("CAMERA")
 
 local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 
-if not (Players:GetAttribute("Loaded")) then
-	Players:GetAttributeChangedSignal("Loaded"):Wait()
+if not (game:IsLoaded()) then
+	game.Loaded:Wait()
+end
+
+if playerGui:FindFirstChild("loadingScreen") then
+	playerGui:FindFirstChild("loadingScreen").Destroying:Wait()
 end
 
 local ScrollLimits = {

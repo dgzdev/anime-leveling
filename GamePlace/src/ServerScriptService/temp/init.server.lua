@@ -1,9 +1,3 @@
-local Players = game:GetService("Players")
-
-if not (game:IsLoaded()) then
-	game.Loaded:Wait()
-end
-
 local spawn = task.spawn
 local Modules = {}
 

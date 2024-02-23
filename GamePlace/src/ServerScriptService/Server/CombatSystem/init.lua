@@ -209,7 +209,11 @@ CombatSystem.Attack = function(player: Player, props: { Attack: number, Attacks:
 	}
 end
 
-CombatSystem.DefenseBreak = function(character: Model) end
+CombatSystem.DefenseBreak = function(character: Model)
+	character:GetAttribute("Defending", false)
+	character:SetAttribute("DefenseHits", 0)
+	character:SetAttribute("Stun", true)
+end
 CombatSystem.Defend = function(player: Player, mode: "Start" | "End")
 	local PlayerManager = PlayerManagers:GetPlayerManager(player)
 	if not PlayerManager then
