@@ -44,6 +44,14 @@ function Defense:ChangeDefenseState(state: string)
 	local Character = Player.Character or Player.CharacterAdded:Wait()
 	local Humanoid = Character:WaitForChild("Humanoid")
 
+	if Character:GetAttribute("Stun") then
+		return
+	end
+
+	if Character:GetAttribute("Attacking") then
+		return
+	end
+
 	if Humanoid.Health > 0 then
 		local properties = Combat:InvokeServer("Defend", state)
 		if not properties then

@@ -3,6 +3,17 @@ local SoundService = game:GetService("SoundService")
 local Workspace = game:GetService("Workspace")
 local HitService = {}
 
+function HitService:getMass(model)
+	assert(model and model:IsA("Model"), "Model argument of getMass must be a model.")
+	local mass = 0
+	for i, v in pairs(model:GetDescendants()) do
+		if v:IsA("BasePart") then
+			mass += v:GetMass()
+		end
+	end
+	return mass
+end
+
 function HitService:Hit(
 	exec: Humanoid,
 	hum: Humanoid,
@@ -25,8 +36,6 @@ function HitService:Hit(
 
 	local isStunned = tarChar:GetAttribute("Stun")
 
-	hum.RootPart.CFrame = CFrame.lookAt(hum.RootPart.Position, exec.RootPart.Position)
-
 	if dmg then
 		if isStunned then
 			dmg *= 2
@@ -35,12 +44,10 @@ function HitService:Hit(
 	end
 
 	if kb then
-		local bv = Instance.new("BodyVelocity")
-		bv.MaxForce = Vector3.new(1, 1, 1) * math.huge
-		bv.Velocity = kb
+		hum.RootPart.AssemblyAngularVelocity = Vector3.new()
+		hum.RootPart.AssemblyLinearVelocity = Vector3.new()
 
-		bv.Parent = hum.RootPart
-		Debris:AddItem(bv, 0.1)
+		hum.RootPart.AssemblyLinearVelocity = (kb * self:getMass(tarChar))
 	end
 
 	if effect then

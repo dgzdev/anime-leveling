@@ -56,6 +56,46 @@ function PlayerManager:OnCharacterReceive(character: Model)
 	self.Character = character
 	self.Humanoid = character:WaitForChild("Humanoid")
 
+	local lastHit = 0
+	character:GetAttributeChangedSignal("Defending"):Connect(function()
+		local atr = character:GetAttribute("Defending")
+		if atr then
+			if tick() - lastHit > 5 then
+				character:SetAttribute("DefenseHits", 0)
+			end
+		end
+	end)
+
+	local lastDefenseHits = 0
+	character:GetAttributeChangedSignal("DefenseHits"):Connect(function()
+		local hits = character:GetAttribute("DefenseHits")
+		if hits > lastDefenseHits then
+			lastHit = tick()
+		end
+		lastDefenseHits = hits
+	end)
+
+	character:GetAttributeChangedSignal("Stun"):Connect(function()
+		local isStunned = character:GetAttribute("Stun")
+		if isStunned then
+			self.Humanoid.WalkSpeed = 0
+			self.Humanoid.JumpPower = 0
+
+			task.wait(3)
+
+			self.Humanoid.WalkSpeed = StarterPlayer.CharacterWalkSpeed
+			self.Humanoid.JumpPower = StarterPlayer.CharacterJumpPower
+
+			character:SetAttribute("Stun", false)
+			character:SetAttribute("Defending", false)
+			character:SetAttribute("Attacking", false)
+			character:SetAttribute("DefenseHits", 0)
+		else
+			self.Humanoid.WalkSpeed = 16
+			self.Humanoid.JumpPower = 50
+		end
+	end)
+
 	self.Character:AddTag("PlayerCharacter")
 
 	for _, b: BasePart in ipairs(self.Character:GetDescendants()) do

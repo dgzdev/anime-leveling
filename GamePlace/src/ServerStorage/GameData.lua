@@ -111,8 +111,8 @@ return {
 			Gold = 100,
 		},
 		["Goblin"] = {
-			Health = 100,
-			Damage = 10,
+			Health = 50,
+			Damage = 5,
 			Experience = 10,
 			Speed = 18,
 			AttackType = "Melee",
@@ -133,8 +133,8 @@ return {
 			Gold = 10,
 		},
 		["Orc"] = {
-			Health = 200,
-			Damage = 20,
+			Health = 100,
+			Damage = 10,
 			Experience = 20,
 			Speed = 12,
 			Inteligence = 4,
@@ -154,9 +154,9 @@ return {
 			Gold = 20,
 		},
 		["Troll"] = {
-			Health = 300,
+			Health = 150,
 			Speed = 9,
-			Damage = 30,
+			Damage = 15,
 			Experience = 30,
 			Inteligence = 3,
 			AttackType = "Melee",

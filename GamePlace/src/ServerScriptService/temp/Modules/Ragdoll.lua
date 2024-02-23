@@ -1,7 +1,12 @@
 local Ragdoll = {}
 
 function Ragdoll:Create(target: Model)
-	target.PrimaryPart:ApplyImpulse(Vector3.new(math.random(-10, 10), math.random(10, 20), math.random(-10, 10)))
+	target.PrimaryPart.AssemblyLinearVelocity = Vector3.new()
+	target.PrimaryPart.AssemblyAngularVelocity = Vector3.new()
+	target.PrimaryPart.Anchored = true
+	task.wait(0.1)
+	target.PrimaryPart.Anchored = false
+
 	for _, joint: Motor6D | BasePart in ipairs(target:GetDescendants()) do
 		if joint:IsA("Motor6D") then
 			local socket = Instance.new("BallSocketConstraint", joint.Parent)

@@ -6,7 +6,6 @@ function RagdollHandler:BindToAllNPCS()
 		hum.BreakJointsOnDeath = false
 		hum.Died:Once(function()
 			local c = hum:FindFirstAncestorWhichIsA("Model")
-			print(c.Name .. " has died")
 			Ragdoll:Create(c)
 		end)
 	end

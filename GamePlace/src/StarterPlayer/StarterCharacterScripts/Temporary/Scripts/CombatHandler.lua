@@ -11,7 +11,6 @@ local Modules: Modules
 local CombatModule: CombatModule
 
 function CombatHandler:Init(modules: Modules)
-	print("started")
 	Modules = modules
 
 	local combatModule = require(Modules.Combat)

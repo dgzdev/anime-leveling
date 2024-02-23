@@ -15,11 +15,25 @@ _G.Attack = 1
 _G.Sound = 1
 
 function Attack:Run()
-	print("atk")
 	local Player = Players.LocalPlayer
 	local Character = Player.Character or Player.CharacterAdded:Wait()
 	local Humanoid = Character:WaitForChild("Humanoid") :: Humanoid
 	local Animator = Humanoid:WaitForChild("Animator") :: Animator
+
+	if Character:GetAttribute("Stun") then
+		task.wait(0.5)
+		return
+	end
+
+	if Character:GetAttribute("Defending") then
+		task.wait(0.5)
+		return
+	end
+
+	if Humanoid.Health <= 0 then
+		task.wait(0.5)
+		return
+	end
 
 	-- == Attack logic == --
 	if #CacheAnims > 0 then
@@ -32,8 +46,6 @@ function Attack:Run()
 
 		local anim = Animator:LoadAnimation(CacheAnims[_G.Attack])
 		anim.Priority = Enum.AnimationPriority.Action
-
-		print(_G.Attack, CacheAnims)
 
 		local speed = anim:GetAttribute("Speed") or 1
 		local weight = anim:GetAttribute("Weight") or 1
@@ -89,13 +101,10 @@ function Attack.Init()
 	Player:GetAttributeChangedSignal("WeaponType"):Connect(Attack.CreateCache)
 	Player.CharacterAdded:Connect(Attack.CreateCache)
 
-	print("iniciou")
-
 	task.spawn(function()
 		while true do
 			if Workspace:GetAttribute("Attacking") then
 				Attack:Run()
-				print("passo")
 			else
 				Workspace:GetAttributeChangedSignal("Attacking"):Wait()
 			end

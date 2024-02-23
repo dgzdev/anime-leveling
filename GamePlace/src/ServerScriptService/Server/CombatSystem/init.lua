@@ -17,6 +17,9 @@ local CombatSystem = {}
 
 local Combat = ReplicatedStorage.Events.Combat :: RemoteFunction
 
+local VFX = require(ReplicatedStorage.Modules.VFX)
+local SFX = require(ReplicatedStorage.Modules.SFX)
+
 local PlayerCombos = {}
 
 CombatSystem.Weapons = {
@@ -32,6 +35,7 @@ CombatSystem.Weapons = {
 		Root.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
 		Root.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
 
+		--[[
 		local bv = Instance.new("BodyVelocity")
 		bv.MaxForce = Vector3.new(1, 1, 1) * math.huge
 
@@ -46,6 +50,7 @@ CombatSystem.Weapons = {
 		bv.Parent = Root
 
 		Debris:AddItem(bv, 0.5)
+		]]
 
 		local Damage = props.Damage
 		local Character = props.Humanoid:FindFirstAncestorWhichIsA("Model")
@@ -65,12 +70,14 @@ CombatSystem.Weapons = {
 				Hitbox:HitStop()
 
 				if Attack == Attacks then
-					HitService:Hit(props.Humanoid, humanoid, Damage, nil, Root.CFrame.LookVector * 60)
-				else
 					HitService:Hit(props.Humanoid, humanoid, Damage, nil, Root.CFrame.LookVector * 10)
+				else
+					HitService:Hit(props.Humanoid, humanoid, Damage, nil, Root.CFrame.LookVector * 5)
 				end
 
 				local Char = humanoid:FindFirstAncestorWhichIsA("Model")
+				VFX:ApplyParticle(Char, "SwordHit")
+				SFX:Apply(Char, "SwordHit")
 
 				if humanoid.Health <= 0 then
 					CombatSystem:Kill(player, Char)
@@ -94,6 +101,7 @@ CombatSystem.Weapons = {
 		Root.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
 		Root.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
 
+		--[[
 		local bv = Instance.new("BodyVelocity")
 		bv.MaxForce = Vector3.new(1, 1, 1) * math.huge
 
@@ -108,6 +116,7 @@ CombatSystem.Weapons = {
 		bv.Parent = Root
 
 		Debris:AddItem(bv, 0.5)
+		]]
 
 		local Hitbox = Instance.new("Part")
 		Hitbox.Size = Vector3.new(5, 5, 5)
@@ -138,10 +147,13 @@ CombatSystem.Weapons = {
 			local Hum = Model:WaitForChild("Humanoid") :: Humanoid
 
 			if Attack == Attacks then
-				HitService:Hit(props.Humanoid, Hum, props.Damage, nil, Root.CFrame.LookVector * 60)
-			else
 				HitService:Hit(props.Humanoid, Hum, props.Damage, nil, Root.CFrame.LookVector * 10)
+			else
+				HitService:Hit(props.Humanoid, Hum, props.Damage, nil, Root.CFrame.LookVector * 5)
 			end
+
+			VFX:ApplyParticle(Model, "CombatHit")
+			SFX:Apply(Model, "Melee")
 		end
 
 		task.delay(1, function()
@@ -209,11 +221,6 @@ CombatSystem.Attack = function(player: Player, props: { Attack: number, Attacks:
 	}
 end
 
-CombatSystem.DefenseBreak = function(character: Model)
-	character:GetAttribute("Defending", false)
-	character:SetAttribute("DefenseHits", 0)
-	character:SetAttribute("Stun", true)
-end
 CombatSystem.Defend = function(player: Player, mode: "Start" | "End")
 	local PlayerManager = PlayerManagers:GetPlayerManager(player)
 	if not PlayerManager then
@@ -254,6 +261,7 @@ CombatSystem.Defend = function(player: Player, mode: "Start" | "End")
 
 	if mode == "Start" then
 		char:SetAttribute("Defending", true)
+		char:SetAttribute("DefenseTick", tick())
 	end
 
 	if mode == "End" then

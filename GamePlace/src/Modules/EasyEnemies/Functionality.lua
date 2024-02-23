@@ -93,8 +93,11 @@ local function CHECK_DUPLICATES(potential_enemies: any, object: Instance)
 end
 
 local function GET_DISTANCE(instance: Model, target: Model)
-	local ir = instance.PrimaryPart or instance:WaitForChild("HumanoidRootPart")
-	local tr = target.PrimaryPart or target:WaitForChild("HumanoidRootPart")
+	local ir = instance:FindFirstChild("HumanoidRootPart")
+	local tr = target:FindFirstChild("HumanoidRootPart")
+	if not ir or not tr then
+		return 10000000000000
+	end
 	return (ir.Position - tr.Position).Magnitude
 end
 
@@ -199,7 +202,11 @@ function Functionality:Light_Attack()
 
 	self.Attacking = true
 
-	local Animator = self.Humanoid
+	if self.Instance:GetAttribute("Stun") then
+		return
+	end
+
+	local Animator = self.Humanoid:WaitForChild("Animator")
 	local default_animations = self.Settings.default_animations
 
 	local selection: Instance | number = math.random(1, #default_animations)
@@ -308,8 +315,6 @@ function Functionality:EnemySearch()
 	self:FindNearestTarget()
 
 	if self.Target then
-		print("test")
-
 		local Origin: any = self.Instance.PrimaryPart.Position
 		local Target: any = self.Target.PrimaryPart.Position
 		local Unit = Origin + (Target - Origin).Unit * ((Target - Origin).Magnitude - self.Size.Z / 2)
