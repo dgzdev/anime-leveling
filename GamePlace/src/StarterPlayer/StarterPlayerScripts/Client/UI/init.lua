@@ -52,6 +52,9 @@ function UI:Init()
 	PlayerGui.DescendantAdded:Connect(function(descendant)
 		Apply(descendant)
 	end)
+	PlayerGui.DescendantRemoving:Connect(function(descendant)
+		Stored[descendant] = nil
+	end)
 end
 
 UI.OnProfileReceive = function()

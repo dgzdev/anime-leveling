@@ -21,10 +21,6 @@ local ScrollLimits = {
 }
 
 function CameraModule:Init()
-	repeat
-		task.wait(1)
-	until game:IsLoaded() == true
-
 	-- ? Check if the OTS module is loaded.
 	self:CheckCondition(self.OTS ~= nil, "[CameraModule] OTS is nil, this is a problem.")
 

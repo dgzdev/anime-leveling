@@ -102,13 +102,13 @@ return {
 	newbieBadge = 2066631008828576,
 	gameEnemies = {
 		["Teste"] = {
-			Health = 50,
+			Health = 10000,
 			Damage = 1,
 			Speed = 1,
 			Inteligence = 1,
-			Experience = 10,
+			Experience = 100,
 			AttackType = "Melee",
-			Gold = 10,
+			Gold = 100,
 		},
 		["Goblin"] = {
 			Health = 100,

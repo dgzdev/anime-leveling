@@ -186,25 +186,13 @@ function EnemyAI:BindChasing()
 						if DefenseHits >= 3 then
 							DefenseHits = 0
 							CombatSystem.DefenseBreak(char)
-							HitService:Hit(
-								self.Humanoid,
-								Humanoid,
-								self.Config.Damage,
-								nil,
-								self.Root.CFrame.LookVector * 10
-							)
+							HitService:Hit(self.Humanoid, Humanoid, self.Config.Damage, nil, nil)
 						else
 							DefenseHits += 1
 							char:SetAttribute("DefenseHits", DefenseHits)
 						end
 					else
-						HitService:Hit(
-							self.Humanoid,
-							Humanoid,
-							self.Config.Damage,
-							nil,
-							self.Root.CFrame.LookVector * 10
-						)
+						HitService:Hit(self.Humanoid, Humanoid, self.Config.Damage, nil, nil)
 					end
 
 					local AnimationPack = self.AnimationPack :: string

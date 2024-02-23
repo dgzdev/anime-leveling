@@ -18,13 +18,7 @@ ModuleManager.EnableModule = function(self, Module: ModuleScript)
 		return
 	end
 	task.spawn(function()
-		local Success, Error = pcall(function()
-			require(Module)
-		end)
-		if not Success then
-			warn("Failed to load module: " .. Module.Name)
-			warn(Error)
-		end
+		require(Module)
 	end)
 end
 

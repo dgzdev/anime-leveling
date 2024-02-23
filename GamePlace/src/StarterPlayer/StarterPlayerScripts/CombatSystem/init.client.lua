@@ -1,15 +1,7 @@
-local ContentProvider = game:GetService("ContentProvider")
 local ContextActionService = game:GetService("ContextActionService")
-local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local SoundService = game:GetService("SoundService")
 local Workspace = game:GetService("Workspace")
-local CombatSystem = {}
-
-local Player = Players.LocalPlayer
-local Character = Player.Character or Player.CharacterAdded:Wait()
-local Humanoid = Character:WaitForChild("Humanoid")
 
 local AttackButtons = { Enum.UserInputType.MouseButton1, Enum.UserInputType.Gamepad1 }
 local DefendButtons = { Enum.UserInputType.MouseButton2, Enum.UserInputType.Gamepad2 }
@@ -23,7 +15,11 @@ end
 local Attack = require(script:WaitForChild("Attack"))
 local Defense = require(script:WaitForChild("Defense"))
 
-function CombatSystem:Defend(state: "Start" | "End")
+local function Defend(state: "Start" | "End")
+	local Player = Players.LocalPlayer
+	local Character = Player.Character or Player.CharacterAdded:Wait()
+	local Humanoid = Character:WaitForChild("Humanoid")
+
 	if Humanoid.Health > 0 then
 		local properties = Combat:InvokeServer("Defend", state)
 		if not properties then
@@ -33,6 +29,13 @@ function CombatSystem:Defend(state: "Start" | "End")
 end
 
 ContextActionService:BindAction("Attack", function(action, state, input)
+	local Player = Players.LocalPlayer
+	local Character = Player.Character or Player.CharacterAdded:Wait()
+
+	if Character:GetAttribute("Defending") then
+		return
+	end
+
 	if state == Enum.UserInputState.Begin then
 		Workspace:SetAttribute("Attacking", true)
 	elseif state == Enum.UserInputState.End then
@@ -41,10 +44,14 @@ ContextActionService:BindAction("Attack", function(action, state, input)
 end, true, table.unpack(AttackButtons))
 
 ContextActionService:BindAction("Defend", function(action, state, input)
+	if Workspace:GetAttribute("Attacking") then
+		return
+	end
+
 	if state == Enum.UserInputState.Begin then
-		CombatSystem:Defend("Start")
+		Defend("Start")
 	elseif state == Enum.UserInputState.End then
-		CombatSystem:Defend("End")
+		Defend("End")
 	end
 end, true, table.unpack(DefendButtons))
 
@@ -52,5 +59,3 @@ task.spawn(function()
 	Attack:Init()
 	Defense:Init()
 end)
-
-return CombatSystem

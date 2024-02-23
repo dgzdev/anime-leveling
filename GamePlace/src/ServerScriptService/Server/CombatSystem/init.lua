@@ -17,9 +17,17 @@ local CombatSystem = {}
 
 local Combat = ReplicatedStorage.Events.Combat :: RemoteFunction
 
+local PlayerCombos = {}
+
 CombatSystem.Weapons = {
-	["Sword"] = function(player: Player, props: { Damage: number, Humanoid: Humanoid, Equip_Data: {} })
+	["Sword"] = function(
+		player: Player,
+		props: { Damage: number, Humanoid: Humanoid, WeaponType: string, Attack: number, Attacks: number }
+	)
 		local Root = props.Humanoid.RootPart
+
+		local Attack = props.Attack
+		local Attacks = props.Attacks
 
 		Root.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
 		Root.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
@@ -55,7 +63,12 @@ CombatSystem.Weapons = {
 			if humanoid and (humanoid:IsDescendantOf(Workspace.Enemies)) then
 				player:SetAttribute("Attacking", false)
 				Hitbox:HitStop()
-				HitService:Hit(props.Humanoid, humanoid, Damage, nil, Root.CFrame.LookVector * 10)
+
+				if Attack == Attacks then
+					HitService:Hit(props.Humanoid, humanoid, Damage, nil, Root.CFrame.LookVector * 60)
+				else
+					HitService:Hit(props.Humanoid, humanoid, Damage, nil, Root.CFrame.LookVector * 10)
+				end
 
 				local Char = humanoid:FindFirstAncestorWhichIsA("Model")
 
@@ -69,7 +82,13 @@ CombatSystem.Weapons = {
 		end)
 		Hitbox:HitStart(1)
 	end,
-	["Melee"] = function(player: Player, props: { Damage: number, Humanoid: Humanoid, Equip_Data: {} })
+	["Melee"] = function(
+		player: Player,
+		props: { Damage: number, Humanoid: Humanoid, WeaponType: string, Attack: number, Attacks: number }
+	)
+		local Attack = props.Attack
+		local Attacks = props.Attacks
+
 		local Root = props.Humanoid.RootPart
 
 		Root.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
@@ -117,7 +136,12 @@ CombatSystem.Weapons = {
 		if Hit then
 			local Model = Hit:FindFirstAncestorWhichIsA("Model")
 			local Hum = Model:WaitForChild("Humanoid") :: Humanoid
-			HitService:Hit(props.Humanoid, Hum, props.Damage, nil, Root.CFrame.LookVector * 10)
+
+			if Attack == Attacks then
+				HitService:Hit(props.Humanoid, Hum, props.Damage, nil, Root.CFrame.LookVector * 60)
+			else
+				HitService:Hit(props.Humanoid, Hum, props.Damage, nil, Root.CFrame.LookVector * 10)
+			end
 		end
 
 		task.delay(1, function()
@@ -132,7 +156,7 @@ CombatSystem.Weapons = {
 	end,
 }
 
-CombatSystem.Attack = function(player: Player, combo: number, combos: { number })
+CombatSystem.Attack = function(player: Player, props: { Attack: number, Attacks: number })
 	local PlayerManager = PlayerManagers:GetPlayerManager(player)
 	if not PlayerManager then
 		return
@@ -172,6 +196,9 @@ CombatSystem.Attack = function(player: Player, combo: number, combos: { number }
 			Damage = Damage,
 			Humanoid = hum,
 			Equip_Data = EquipedData,
+			WeaponType = WeaponType,
+			Attack = props.Combo or 1,
+			Attacks = props.Combos or 3,
 		})
 	else
 		return error("Weapon type not found.")

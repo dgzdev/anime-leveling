@@ -21,64 +21,99 @@ export type Options = {
 }
 export type PlayerManager = {
 	Player: Player,
+	PlayerGui: PlayerGui,
 	Character: Model,
 	CharacterAdded: RBXScriptSignal,
 	Humanoid: Humanoid,
-	Profile: {
-		AddUserId: (number) -> nil,
-		Data: GameData.PlayerData,
-		GlobalUpdates: table,
-		KeyInfo: any,
-		KeyInfoUpdated: any,
-		MetaData: any,
-		MetaTagsUpdated: any,
-		Reconcile: any,
-		RobloxMetaData: table,
-		SetMetaTag: (string, any) -> nil,
-		UserIds: table,
-		_hop_ready: boolean | false,
-		_hop_ready_listeners: table,
-		_is_user_mock: boolean,
-		_load_timestamp: number,
-		_profile_key: any,
-		_profile_store: table,
-		_release_listeners: any,
-	},
+	Profile: {},
 	Options: Options,
-
-	GiveGold: (number) -> number,
-	GiveExperience: (number) -> number,
 }
 
 function PlayerManager.new(player: Player, options: Options)
 	local self = setmetatable({
 		Player = player,
 		PlayerGui = player:WaitForChild("PlayerGui"),
-		Character = player.Character or player.CharacterAdded:Wait(),
+		Character = nil,
 		CharacterAdded = player.CharacterAdded,
-		Humanoid = player.Character:WaitForChild("Humanoid"),
+		Humanoid = nil,
 		Profile = {},
 		Options = options,
 	}, PlayerManager)
 
-	self.Humanoid.BreakJointsOnDeath = true
+	self:LoadProfile()
 
-	function self:Newbie()
-		BadgeService:AwardBadge(player.UserId, GameData.newbieBadge)
+	self.Player:LoadCharacter()
+	self:OnCharacterReceive(player.Character or player.CharacterAdded:Wait())
+
+	player.CharacterAdded:Connect(function(character)
+		self:OnCharacterReceive(character)
+	end)
+
+	return self
+end
+
+function PlayerManager:OnCharacterReceive(character: Model)
+	self.Character = character
+	self.Humanoid = character:WaitForChild("Humanoid")
+
+	self.Character:AddTag("PlayerCharacter")
+
+	for _, b: BasePart in ipairs(self.Character:GetDescendants()) do
+		if not b:IsA("BasePart") then
+			continue
+		end
+
+		b.CollisionGroup = "Players"
+	end
+end
+
+function PlayerManager:LoadCharacter()
+	return self.Player:LoadCharacter()
+end
+
+function PlayerManager:Newbie()
+	return BadgeService:AwardBadge(self.Player.UserId, GameData.newbieBadge)
+end
+
+function PlayerManager:GiveGold(number: number)
+	if not self.Profile then
+		return
+	end
+	self.Profile.Data.Gold += number
+
+	return self.Profile.Data.Gold
+end
+
+function PlayerManager:GiveExperience(number: number)
+	if not self.Profile then
+		return
 	end
 
-	local Profile
+	self.Profile.Data.Experience = math.clamp(self.Profile.Data.Experience + number, 0, self.Profile.Data.Level * 243)
+	UpdateHud:FireClient(self.Player, "XP", self.Profile.Data.Experience)
+
+	if self.Profile.Data.Experience == self.Profile.Data.Level * 243 then
+		self.Profile.Data.Level += 1
+		self.Profile.Data.Experience = 0
+
+		UpdateHud:FireClient(self.Player, "LevelUP", self.Profile.Data.Level)
+	end
+
+	return self.Profile.Data.Experience
+end
+
+function PlayerManager:LoadProfile()
 	if RunService:IsStudio() then
 		local profile = { Data = GameData.profileTemplate }
 		profile.Data.Inventory = GameData.defaultInventory
 
 		self.Profile = profile
-		Profile = profile
+		return self.Profile
 	else
-		Profile = ProfileStore:LoadProfileAsync(`Player_{player.UserId}`, "ForceLoad")
+		local Profile = ProfileStore:LoadProfileAsync(`Player_{self.Player.UserId}`, "ForceLoad")
 		if Profile then
-			if player:IsDescendantOf(Players) then
-				Profile:AddUserId(player.UserId)
+			if self.Player:IsDescendantOf(Players) then
+				Profile:AddUserId(self.Player.UserId)
 				Profile:Reconcile()
 				Profile:SetMetaTag("Version", game.PlaceVersion)
 				local Joins = Profile:GetMetaTag("Joins") or 0
@@ -93,202 +128,15 @@ function PlayerManager.new(player: Player, options: Options)
 				end
 
 				self.Profile = Profile
+				return self.Profile
 			else -- If the player leaves the game before the profile is loaded
 				Profile:Release()
 				return
 			end
 		else
-			return player:Kick("[PlayerManager] Error while loading profile.")
+			return self.Player:Kick("[PlayerManager] Error while loading profile.")
 		end
 	end
-
-	function self:Set()
-		local character = player.Character or player.CharacterAdded:Wait()
-		repeat
-			local Parts = character:GetDescendants()
-
-			for _, part: BasePart in ipairs(Parts) do
-				if not (part:IsA("BasePart")) then
-					continue
-				end
-
-				part.CollisionGroup = "Players"
-			end
-			task.wait()
-		until character.HumanoidRootPart.CollisionGroup == "Players" or character == nil
-	end
-
-	function self:GiveGold(number: number)
-		if not Profile then
-			return
-		end
-		Profile.Data.Gold += number
-
-		return Profile.Data.Gold
-	end
-
-	function self:GiveExperience(number: number)
-		if not Profile then
-			return
-		end
-
-		Profile.Data.Experience = math.clamp(Profile.Data.Experience + number, 0, Profile.Data.Level * 243)
-		UpdateHud:FireClient(player, "XP", Profile.Data.Experience)
-
-		if Profile.Data.Experience == Profile.Data.Level * 243 then
-			Profile.Data.Level += 1
-			Profile.Data.Experience = 0
-
-			UpdateHud:FireClient(player, "LevelUP", Profile.Data.Level)
-		end
-
-		return Profile.Data.Experience
-	end
-
-	self:Set()
-
-	local function BindCharacter()
-		local character = self.Player.Character or self.Player.CharacterAdded:Wait()
-		local holdingAnim = nil
-
-		player:GetAttributeChangedSignal("WeaponType"):Connect(function()
-			local WeaponType = player:GetAttribute("WeaponType")
-			local animator = character:WaitForChild("Humanoid"):WaitForChild("Animator") :: Animator
-			local HoldAnimation =
-				ReplicatedStorage.Animations:FindFirstChild(WeaponType):FindFirstChild("Holding") :: Animation
-
-			for _, Animation in ipairs(animator:GetPlayingAnimationTracks()) do
-				if Animation.Name == "Holding" then
-					Animation:Stop(0.15)
-				end
-			end
-
-			if HoldAnimation then
-				if HoldAnimation then
-					local Animation = animator:LoadAnimation(HoldAnimation)
-					Animation.Looped = true
-					Animation.Priority = Enum.AnimationPriority.Action
-					holdingAnim = Animation
-					Animation:Play(0.15)
-				end
-			else
-				holdingAnim = nil
-			end
-		end)
-
-		character:GetAttributeChangedSignal("Defending"):Connect(function()
-			if character:GetAttribute("Defending") then
-				self.Humanoid.WalkSpeed = 0
-				self.Humanoid.JumpPower = 0
-				if holdingAnim then
-					holdingAnim:Stop(0.15)
-				end
-			else
-				if holdingAnim then
-					holdingAnim:Play(0.15)
-				end
-				self.Humanoid.WalkSpeed = StarterPlayer.CharacterWalkSpeed
-				self.Humanoid.JumpPower = StarterPlayer.CharacterJumpPower
-				character:SetAttribute("DefenseHits", 0)
-			end
-		end)
-		character:GetAttributeChangedSignal("Stun"):Connect(function()
-			if character:GetAttribute("Stun") then
-				self.Humanoid.WalkSpeed = 0
-				self.Humanoid.JumpPower = 0
-				if holdingAnim then
-					holdingAnim:Stop(0.15)
-				end
-				task.wait(3)
-				character:SetAttribute("Stun", false)
-			else
-				if holdingAnim then
-					holdingAnim:Play(0.15)
-				end
-				self.Humanoid.WalkSpeed = StarterPlayer.CharacterWalkSpeed
-				self.Humanoid.JumpPower = StarterPlayer.CharacterJumpPower
-			end
-		end)
-		character:GetAttributeChangedSignal("DefenseHits"):Connect(function()
-			local hits = character:GetAttribute("DefenseHits")
-			if hits >= 3 then
-				local DefenseBreak = SoundService:WaitForChild("SFX"):WaitForChild("DefenseBreak"):Clone() :: Sound
-				DefenseBreak:SetAttribute("Ignore", true)
-				DefenseBreak.Parent = character.PrimaryPart
-				DefenseBreak.RollOffMinDistance = 0
-				DefenseBreak.RollOffMaxDistance = 40
-				DefenseBreak.RollOffMode = Enum.RollOffMode.Linear
-				DefenseBreak:Play()
-
-				Debris:AddItem(DefenseBreak, DefenseBreak.TimeLength + 0.1)
-
-				character:SetAttribute("Defending", false)
-				character:SetAttribute("DefenseHits", 0)
-				character:SetAttribute("Stun", true)
-			end
-		end)
-	end
-
-	player.CharacterAdded:Connect(function(character)
-		self.Character = character
-		self.Humanoid = character:WaitForChild("Humanoid")
-		self:Set()
-		BindCharacter()
-	end)
-	BindCharacter()
-
-	function self:LoadCharacter()
-		local humanoidDescription = Instance.new("HumanoidDescription")
-
-		humanoidDescription.Shirt = 12244089619
-		humanoidDescription.Pants = 12244095027
-		--[[
-		humanoidDescription:SetAccessories({
-			{
-				Order = 1,
-				AssetId = 12296044398,
-				Puffiness = 0.5,
-				AccessoryType = Enum.AccessoryType.Front,
-			},
-			{
-				Order = 2,
-				AssetId = 12296065618,
-				Puffiness = 0.5,
-				AccessoryType = Enum.AccessoryType.Hat,
-			},
-
-			{
-				Order = 3,
-				AssetId = 12296048589,
-				Puffiness = 0.5,
-				AccessoryType = Enum.AccessoryType.Waist,
-			},
-			{
-				Order = 4,
-				AssetId = 12296053142,
-				Puffiness = 0.5,
-				AccessoryType = Enum.AccessoryType.Shoulder,
-			},
-			{
-				Order = 5,
-				AssetId = 12296057334,
-				Puffiness = 0.5,
-				AccessoryType = Enum.AccessoryType.Back,
-			},
-			{
-				Order = 6,
-				AssetId = 12296061546,
-				Puffiness = 0.5,
-				AccessoryType = Enum.AccessoryType.Hat,
-			},
-		}, false)
-		]]
-		self.Player:LoadCharacter()
-
-		self.Character:WaitForChild("Humanoid"):ApplyDescription(humanoidDescription)
-	end
-
-	return self
 end
 
 return PlayerManager
