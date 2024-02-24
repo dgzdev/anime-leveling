@@ -24,17 +24,33 @@ function Enemy.new(enemy: Model)
 		root = enemy:WaitForChild("HumanoidRootPart") :: BasePart,
 	}, Enemy)
 
+	local hud: BillboardGui = ReplicatedStorage.Models.UI.HealthHud:Clone()
+	local enemyTextLabel: TextLabel = hud:WaitForChild("Enemy")
+	local backgroundFrame: Frame = hud:WaitForChild("Health")
+	local primaryFrame: Frame = backgroundFrame:WaitForChild("PrimaryHP")
+	local healthInfo: TextLabel = backgroundFrame:WaitForChild("HPInfo")
+
 	local enemyData = GameData.gameEnemies[enemy.Name]
 	if enemyData then
 		if enemyData.HumanoidDescription then
 			self.humanoid:ApplyDescription(enemyData.HumanoidDescription)
 		end
 
-		self.humanoid.Health = enemyData.Health
 		self.humanoid.MaxHealth = enemyData.Health
+		task.wait()
+		self.humanoid.Health = enemyData.Health
+
 		self.damage = enemyData.Damage
 		self.inteligence = enemyData.Inteligence
 	end
+
+	self:UpdateUI({
+		hud = hud,
+		enemyTextLabel = enemyTextLabel,
+		backgroundFrame = backgroundFrame,
+		primaryFrame = primaryFrame,
+		healthInfo = healthInfo,
+	})
 
 	local function createLightAttack(target: Model)
 		return self.LightAttack(self, target)
@@ -75,6 +91,58 @@ function Enemy.new(enemy: Model)
 	})
 
 	return self
+end
+
+type enemyType = typeof(Enemy)
+function Enemy.UpdateUI(
+	self: enemyType,
+	gui: {
+		hud: BillboardGui,
+		enemyTextLabel: TextLabel,
+		backgroundFrame: Frame,
+		primaryFrame: Frame,
+		healthInfo: TextLabel,
+	}
+)
+	task.wait()
+
+	self.hud = gui.hud
+	self.enemyTextLabel = gui.enemyTextLabel
+	self.backgroundFrame = gui.backgroundFrame
+	self.primaryFrame = gui.primaryFrame
+	self.healthInfo = gui.healthInfo
+
+	local me: Model = self.me
+	local head: BasePart = me:FindFirstChild("Head")
+	if not head then
+		head = me:WaitForChild("HumanoidRootPart")
+	end
+	local ySize = head.Size.Y
+
+	self.hud.StudsOffset = Vector3.new(0, ySize + 1, 0)
+
+	self.hud.Parent = self.me
+	self.hud.Enabled = true
+	self.hud.Adornee = head
+
+	self.enemyTextLabel.Text = self.me.Name
+	self.healthInfo.Text = self.humanoid.Health .. " / " .. self.humanoid.MaxHealth
+	self.primaryFrame.Size = UDim2.fromScale(1, 1)
+
+	self.humanoid.HealthChanged:Connect(function(h: number)
+		if h > 0 then
+			self.hud.Enabled = true
+		else
+			self.hud.Enabled = false
+		end
+
+		self.healthInfo.Text = self.humanoid.Health .. " / " .. self.humanoid.MaxHealth
+		self.primaryFrame:TweenSize(UDim2.fromScale(self.humanoid.Health / self.humanoid.MaxHealth, 1))
+	end)
+
+	self.humanoid.Died:Connect(function()
+		self.hud.Enabled = false
+	end)
 end
 
 function Enemy.LightAttack(self, target: Model)

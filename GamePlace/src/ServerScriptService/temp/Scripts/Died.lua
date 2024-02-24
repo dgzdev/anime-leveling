@@ -5,13 +5,13 @@ local VFX = require(ReplicatedStorage.Modules.VFX)
 
 local bound = {}
 
-function Died:BindToAllNPCs()
+function Died:BindRagdoll()
 	local function bind(hum: Humanoid)
 		if bound[hum] then
 			return
 		end
 		local c = hum.Died:Connect(function()
-			VFX:ApplyParticle(hum.Parent, "Death Effect")
+			VFX:ApplyParticle(hum.Parent, "Death Effect", 5)
 		end)
 		bound[hum] = c
 	end
@@ -37,7 +37,7 @@ function Died:BindToAllNPCs()
 end
 
 function Died:Init()
-	self:BindToAllNPCs()
+	self:BindRagdoll()
 end
 
 return Died

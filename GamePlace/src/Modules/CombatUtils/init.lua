@@ -17,7 +17,7 @@ function CombatUtils:Stun(target: Model, time: number)
 
 	task.wait(time)
 
-	target:SetAttribute("Stun", false)
+	target:SetAttribute("Stun", nil)
 
 	hum.WalkSpeed = bfWalk
 	hum.JumpPower = bfJump

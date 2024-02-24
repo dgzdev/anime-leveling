@@ -68,13 +68,13 @@ function CLASS.new()
 		CameraSettings = {
 			DefaultShoulder = {
 				FieldOfView = 60,
-				Offset = Vector3.new(0, 0.5, 8),
+				Offset = Vector3.new(0, 0, 8),
 				Sensitivity = 10,
 				LerpSpeed = 0.5,
 			},
 			ZoomedShoulder = {
 				FieldOfView = 40,
-				Offset = Vector3.new(3, 0.3, 4),
+				Offset = Vector3.new(3, 0.5, 4),
 				Sensitivity = 6,
 				LerpSpeed = 0.25,
 			},
@@ -354,18 +354,8 @@ CLASS.__index = CLASS
 
 local singleton = CLASS.new()
 
---[[
 USER_INPUT_SERVICE.InputBegan:Connect(function(inputObject, gameProcessedEvent)
 	if (gameProcessedEvent == false) and (singleton.IsEnabled == true) then
-		if inputObject.KeyCode == Enum.KeyCode.Q then
-			singleton:SetShoulderDirection(-1)
-		elseif inputObject.KeyCode == Enum.KeyCode.E then
-			singleton:SetShoulderDirection(1)
-		end
-		if inputObject.UserInputType == Enum.UserInputType.MouseButton2 then
-			singleton:SetActiveCameraSettings("ZoomedShoulder")
-		end
-
 		if inputObject.KeyCode == Enum.KeyCode.LeftControl then
 			if singleton.IsEnabled == true then
 				singleton:SetMouseStep(not singleton.IsMouseSteppedIn)
@@ -374,12 +364,4 @@ USER_INPUT_SERVICE.InputBegan:Connect(function(inputObject, gameProcessedEvent)
 	end
 end)
 
-USER_INPUT_SERVICE.InputEnded:Connect(function(inputObject, gameProcessedEvent)
-	if (gameProcessedEvent == false) and (singleton.IsEnabled == true) then
-		if inputObject.UserInputType == Enum.UserInputType.MouseButton2 then
-			singleton:SetActiveCameraSettings("DefaultShoulder")
-		end
-	end
-end)
---]]
 return singleton

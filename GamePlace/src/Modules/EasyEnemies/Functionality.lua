@@ -93,6 +93,9 @@ local function CHECK_DUPLICATES(potential_enemies: any, object: Instance)
 end
 
 local function GET_DISTANCE(instance: Model, target: Model)
+	if not target or not instance then
+		return 10000000000000
+	end
 	local ir = instance:FindFirstChild("HumanoidRootPart")
 	local tr = target:FindFirstChild("HumanoidRootPart")
 	if not ir or not tr then
@@ -202,31 +205,29 @@ function Functionality:Light_Attack()
 
 	self.Attacking = true
 
-	if self.Instance:GetAttribute("Stun") then
-		return
-	end
+	if not (self.Instance:GetAttribute("Stun")) then
+		local Animator = self.Humanoid:WaitForChild("Animator")
+		local default_animations = self.Settings.default_animations
 
-	local Animator = self.Humanoid:WaitForChild("Animator")
-	local default_animations = self.Settings.default_animations
+		local selection: Instance | number = math.random(1, #default_animations)
+		local animation = MAKE_ANIMATION(selection, default_animations)
 
-	local selection: Instance | number = math.random(1, #default_animations)
-	local animation = MAKE_ANIMATION(selection, default_animations)
+		local _animation = Animator:LoadAnimation(animation)
+		_animation.Priority = 4
+		_animation:Play()
 
-	local _animation = Animator:LoadAnimation(animation)
-	_animation.Priority = 4
-	_animation:Play()
-
-	_animation.Stopped:Connect(function()
-		task.delay(0.5, function()
-			self.Attacking = false
+		_animation.Stopped:Connect(function()
+			task.delay(0.5, function()
+				self.Attacking = false
+			end)
 		end)
-	end)
 
-	if self.Settings.default_functions[selection] ~= nil then
-		self.Settings.default_functions[selection](self.Target)
+		if self.Settings.default_functions[selection] ~= nil then
+			self.Settings.default_functions[selection](self.Target)
+		end
+
+		_animation.Stopped:Wait()
 	end
-
-	_animation.Stopped:Wait()
 end
 
 function Functionality:FindNearestTarget()
@@ -315,16 +316,18 @@ function Functionality:EnemySearch()
 	self:FindNearestTarget()
 
 	if self.Target then
-		local Origin: any = self.Instance.PrimaryPart.Position
-		local Target: any = self.Target.PrimaryPart.Position
-		local Unit = Origin + (Target - Origin).Unit * ((Target - Origin).Magnitude - self.Size.Z / 2)
+		if not self.Instance:GetAttribute("Stun") then
+			local Origin: any = self.Instance.PrimaryPart.Position
+			local Target: any = self.Target.PrimaryPart.Position
+			local Unit = Origin + (Target - Origin).Unit * ((Target - Origin).Magnitude - self.Size.Z / 2)
 
-		Visuals.ChaseVisual(Unit, Origin)
+			Visuals.ChaseVisual(Unit, Origin)
 
-		self.pathUnit = Unit
+			self.pathUnit = Unit
 
-		self.path:Run(Unit)
-		local s, e = pcall(function() end)
+			self.path:Run(Unit)
+			local s, e = pcall(function() end)
+		end
 	end
 
 	return true

@@ -75,7 +75,7 @@ local function CreateHumanoidDescription(desc: HumanoidDescription): HumanoidDes
 end
 
 return {
-	profileKey = "PLAYER_DATA_2",
+	profileKey = "PLAYER_DATA_3",
 	profileTemplate = ProfileTemplate,
 	defaultInventory = {
 		["Melee"] = {

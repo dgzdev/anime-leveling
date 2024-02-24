@@ -107,12 +107,14 @@ function Hotbar:OrganizeHotbar(Profile: Profile)
 
 				itemClone.Parent = WorldModel
 				local Size = itemClone:GetExtentsSize().Magnitude
-				itemClone:PivotTo(CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(-90), 0, 0))
+				local size = itemClone:GetExtentsSize()
+				itemClone:PivotTo(CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(90), math.rad(90), 0))
+
 				Camera.FieldOfView = 80
 				Camera.CameraSubject = itemClone
 				Camera.CameraType = Enum.CameraType.Scriptable
-				Camera.CFrame = CFrame.new(0, 0, (Size / 2) + 1)
-				Camera.Focus = CFrame.new(0, 0, (Size / 2) + 1)
+				Camera.CFrame = CFrame.new(0, 1.4, (Size / 2) + 1)
+				Camera.Focus = Camera.CFrame
 			end
 		end
 	end

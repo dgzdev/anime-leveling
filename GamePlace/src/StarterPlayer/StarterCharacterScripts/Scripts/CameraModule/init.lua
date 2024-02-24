@@ -21,8 +21,8 @@ if playerGui:FindFirstChild("loadingScreen") then
 end
 
 local ScrollLimits = {
-	["Min"] = 4,
-	["Max"] = 13,
+	["Min"] = 2,
+	["Max"] = 25,
 }
 
 function CameraModule:Init()

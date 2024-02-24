@@ -11,13 +11,10 @@ local HeadSubject = Instance.new("Part")
 HeadSubject.Size = Vector3.new(0.1, 0.1, 0.1)
 HeadSubject.Anchored = true
 HeadSubject.CanCollide = false
-HeadSubject.Transparency = 0.5
-HeadSubject.Color = Color3.new(1, 0, 0)
+HeadSubject.Transparency = 1
 HeadSubject.Massless = true
 HeadSubject.Name = "HeadSubject"
 HeadSubject.Parent = character
-
-Instance.new("Highlight", HeadSubject)
 
 local Head = character:WaitForChild("Head") :: BasePart
 HeadSubject.CFrame = Head.CFrame * CFrame.new(0, -0.2, 0)

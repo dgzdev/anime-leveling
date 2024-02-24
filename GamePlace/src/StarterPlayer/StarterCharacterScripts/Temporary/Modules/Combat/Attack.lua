@@ -45,11 +45,8 @@ function Attack:Run()
 		end
 
 		local anim = Animator:LoadAnimation(CacheAnims[_G.Attack])
-		anim.Priority = Enum.AnimationPriority.Action
 
-		local speed = anim:GetAttribute("Speed") or 1
-		local weight = anim:GetAttribute("Weight") or 1
-		local fadeTime = anim:GetAttribute("FadeTime") or 0
+		anim.Priority = Enum.AnimationPriority.Action
 
 		local sound = CacheSounds[_G.Sound]:Clone()
 		sound.Parent = Character:WaitForChild("HumanoidRootPart")
@@ -61,7 +58,7 @@ function Attack:Run()
 			Combos = #CacheAnims,
 		})
 
-		anim:Play(fadeTime, weight, speed)
+		anim:Play(0.1, 1, 1)
 		anim.Ended:Wait()
 
 		_G.Sound += 1
@@ -78,6 +75,10 @@ function Attack:CreateCache()
 	local weaponType = Player:GetAttribute("WeaponType")
 	local anims = ReplicatedStorage.Animations:WaitForChild(weaponType):WaitForChild("Hit"):GetChildren()
 	local sounds = SoundService:WaitForChild("Attack"):WaitForChild(weaponType):GetChildren()
+
+	table.sort(anims, function(a, b)
+		return tonumber(a.Name) < tonumber(b.Name)
+	end)
 
 	for _, anim: Animation in ipairs(anims) do
 		table.insert(CacheAnims, anim)
@@ -108,7 +109,6 @@ function Attack.Init()
 			else
 				Workspace:GetAttributeChangedSignal("Attacking"):Wait()
 			end
-			task.wait()
 		end
 	end)
 end

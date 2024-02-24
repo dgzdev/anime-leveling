@@ -339,7 +339,7 @@ function CombatSystem:Equip(player: Player)
 		local Motor6D = Instance.new("Motor6D")
 		Motor6D.Part0 = RightHand
 		Motor6D.Part1 = SwordClone.PrimaryPart
-		Motor6D.C1 = (CFrame.new(0, 0, -1.9) * CFrame.Angles(math.rad(-90), math.rad(0), math.rad(-90)))
+		Motor6D.C1 = (CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(90), 0, 0))
 		Motor6D.Parent = RightHand
 
 		if not RunService:IsStudio() then

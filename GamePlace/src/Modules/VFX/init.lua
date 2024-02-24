@@ -5,7 +5,7 @@ local VFX = {}
 
 local VFXFolder = ReplicatedStorage.VFX
 
-function VFX:ApplyParticle(target: Model, action: string)
+function VFX:ApplyParticle(target: Model, action: string, time: number?)
 	local block = VFXFolder:FindFirstChild(action)
 	if not block then
 		return error("VFX not found")
@@ -31,9 +31,10 @@ function VFX:ApplyParticle(target: Model, action: string)
 			task.wait(emitDelay)
 			pe:Emit(tonumber(c))
 		end
+		task.wait()
 	end
 
-	Debris:AddItem(particle, 2)
+	Debris:AddItem(particle, time or 2)
 	return particle
 end
 

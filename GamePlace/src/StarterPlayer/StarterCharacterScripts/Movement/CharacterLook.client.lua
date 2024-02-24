@@ -1,3 +1,4 @@
+local ContextActionService = game:GetService("ContextActionService")
 local RunService = game:GetService("RunService")
 
 local Players = game:GetService("Players")
@@ -13,21 +14,24 @@ local Mouse = Player:GetMouse()
 
 local OldCFrame = nil
 
-RunService:BindToRenderStep("CharacterLook", Enum.RenderPriority.First.Value, function()
-	local Camera = Workspace.CurrentCamera
+local Camera = Workspace.CurrentCamera
 
+local isShiftlockEnabled = true
+ContextActionService:BindAction("ToggleShiftlock", function(action, state, input)
+	if state == Enum.UserInputState.Begin then
+		isShiftlockEnabled = not isShiftlockEnabled
+	end
+end, false, Enum.KeyCode.LeftControl)
+
+RunService.Heartbeat:Connect(function()
+	if not isShiftlockEnabled then
+		return
+	end
 	local NewCFrame =
 		CFrame.new(HRP.Position, HRP.Position + Vector3.new(Camera.CFrame.LookVector.X, 0, Camera.CFrame.LookVector.Z))
 
 	if OldCFrame ~= NewCFrame then
-		local currentCFrame = HRP.CFrame
-		local TargetCFrame = (
-			CFrame.lookAt(
-				HRP.Position,
-				HRP.Position + Vector3.new(Camera.CFrame.LookVector.X, 0, Camera.CFrame.LookVector.Z)
-			)
-		)
-		HRP.CFrame = currentCFrame:Lerp(TargetCFrame, 0.25)
+		HRP.CFrame = NewCFrame
 
 		OldCFrame = HRP.CFrame
 	end
