@@ -85,6 +85,8 @@ local ProfileTemplate: PlayerData = {
 				["Pants"] = 7730552127,
 				["Colors"] = { 255, 204, 153 },
 			},
+			["Location"] = "Character Creation",
+			["LastJoin"] = os.date("%x"),
 		},
 		["2"] = "false",
 		["3"] = "false",

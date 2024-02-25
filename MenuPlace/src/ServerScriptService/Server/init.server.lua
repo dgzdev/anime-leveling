@@ -34,6 +34,10 @@ ReplicatedStorage.Request.OnServerInvoke = function(player: Player, request: str
 		return d
 	end
 
+	if request == "Slots" then
+		return Profile.Data
+	end
+
 	local Humanoid: Humanoid = Workspace.Characters.Rig:WaitForChild("Humanoid")
 
 	if request == "UpdateHumanoidDescription" then
@@ -41,6 +45,9 @@ ReplicatedStorage.Request.OnServerInvoke = function(player: Player, request: str
 
 		for name, value in pairs(description) do
 			if name == "Colors" then
+				if typeof(value) == "table" then
+					value = Color3.fromRGB(unpack(value))
+				end
 				currentDesc.HeadColor = value
 				currentDesc.LeftArmColor = value
 				currentDesc.LeftLegColor = value

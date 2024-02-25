@@ -1,4 +1,5 @@
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local SoundService = game:GetService("SoundService")
 local StarterGui = game:GetService("StarterGui")
 local TweenService = game:GetService("TweenService")
@@ -25,6 +26,45 @@ local hasPressedButton = false
 local ViewPart: BasePart = Workspace:WaitForChild("CameraParts"):WaitForChild("View")
 
 local CharacterPart: BasePart = Workspace:WaitForChild("CameraParts"):WaitForChild("Character")
+
+local Requests = ReplicatedStorage:WaitForChild("Request")
+
+local function UpdateSlots()
+	local Data = Requests:InvokeServer("Slots")
+	local Slots = SlotSelection:WaitForChild("LeftSide"):WaitForChild("Slots")
+
+	for slotNumber, slotData in pairs(Data.Slots) do
+		local Slot: Frame = Slots:WaitForChild("Slot" .. slotNumber)
+
+		if slotData == "false" then
+			Slot.Visible = false
+			Slots:WaitForChild("SlotCreation").Visible = true
+			continue
+		end
+
+		local Number: TextLabel = Slot:WaitForChild("Number")
+		local SlotN: TextLabel = Slot:WaitForChild("SlotN")
+		local Desc: TextLabel = Slot:WaitForChild("Desc")
+
+		if slotNumber == Data.Selected_Slot then
+			Slot.BackgroundColor3 = Color3.fromRGB(55, 57, 90)
+			Desc.TextColor3 = Color3.fromRGB(241, 239, 255)
+			SlotN.TextColor3 = Color3.fromRGB(241, 239, 255)
+			Number.TextColor3 = Color3.fromRGB(241, 239, 255)
+		else
+			Slot.BackgroundColor3 = Color3.fromRGB(241, 239, 255)
+			Desc.TextColor3 = Color3.fromRGB(55, 57, 90)
+			SlotN.TextColor3 = Color3.fromRGB(55, 57, 90)
+			Number.TextColor3 = Color3.fromRGB(55, 57, 90)
+		end
+
+		Number.Text = slotData.LastJoin or os.date("%x")
+		SlotN.Text = "Slot " .. (slotNumber or 1)
+		Desc.Text = slotData.Location or "Character Creation"
+	end
+end
+
+UpdateSlots()
 
 local function SlideIn()
 	local RightSide = SlotSelection:WaitForChild("RightSide")

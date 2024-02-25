@@ -173,6 +173,10 @@ Events.Buttons = {
 		Start:FireServer()
 	end,
 
+	["CreateSlot"] = function()
+		print("createslot")
+	end,
+
 	["Rotate"] = function()
 		Requests:InvokeServer("RotateCharacter")
 	end,
