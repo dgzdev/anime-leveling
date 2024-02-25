@@ -28,62 +28,63 @@ ReplicatedStorage.Request.OnServerInvoke = function(player: Player, request: str
 	local slot = Profile.Data.Slots[Profile.Data.Selected_Slot]
 
 	if request == "Customization" then
-		return {
-			["Hair"] = { 15633971750, 10396796837, 15852318340, 6823411442 },
-			["Colors"] = {},
-			["Face"] = { 14579692783, 15885231323, 13533964075, 12600150456 },
-
-			["Shirt"] = { 7730552127 },
-			["Pants"] = { 11321632482 },
-
-			["Hat"] = {},
-			["Acessory"] = {},
-
-			["BodyColors"] = {
-				{ 255, 204, 153 },
-			},
-
-			["Selected"] = {
-				Hair = slot.Character.Acessories[2].AssetId,
-				Face = slot.Character.Acessories[1].AssetId,
-				Shirt = slot.Character.Clothes.Shirt,
-				Pants = slot.Character.Clothes.Pants,
-				BodyColor = slot.Character.BodyColor,
-			},
-		}
+		local d = {}
+		d["List"] = GameData.CharacterCustomization
+		d["Selected"] = slot.Character
+		return d
 	end
 
-	local Humanoid = Workspace.Characters.Rig:WaitForChild("Humanoid")
+	local Humanoid: Humanoid = Workspace.Characters.Rig:WaitForChild("Humanoid")
 
 	if request == "UpdateHumanoidDescription" then
 		local currentDesc = Humanoid:GetAppliedDescription()
-		for stringName, value in pairs(description) do
-			if stringName == "Face" then
-				currentDesc.FaceAccessory = value
-			elseif stringName == "Hat" then
-				currentDesc.HatAccessory = value
-			elseif stringName == "Hair" then
-				currentDesc.HairAccessory = value
-			elseif stringName == "Neck" then
-				currentDesc.NeckAccessory = value
-			elseif stringName == "Shoulder" then
-				currentDesc.ShoulderAccessory = value
-			elseif stringName == "Waist" then
-				currentDesc.WaistAccessory = value
-			elseif stringName == "Colors" then
-				currentDesc.HeadColor = Color3.fromRGB(value[1], value[2], value[3])
-				currentDesc.LeftArmColor = Color3.fromRGB(value[1], value[2], value[3])
-				currentDesc.LeftLegColor = Color3.fromRGB(value[1], value[2], value[3])
-				currentDesc.RightArmColor = Color3.fromRGB(value[1], value[2], value[3])
-				currentDesc.RightLegColor = Color3.fromRGB(value[1], value[2], value[3])
-				currentDesc.TorsoColor = Color3.fromRGB(value[1], value[2], value[3])
-			elseif stringName == "Shirt" then
-				currentDesc.Shirt = value
-			elseif stringName == "Pants" then
-				currentDesc.Pants = value
+
+		for name, value in pairs(description) do
+			if name == "Colors" then
+				currentDesc.HeadColor = value
+				currentDesc.LeftArmColor = value
+				currentDesc.LeftLegColor = value
+				currentDesc.RightArmColor = value
+				currentDesc.RightLegColor = value
+				currentDesc.TorsoColor = value
+
+				continue
 			end
+			currentDesc[name] = value
 		end
+
 		Humanoid:ApplyDescription(currentDesc, Enum.AssetTypeVerification.Default)
+		return
+	end
+
+	if request == "RotateCharacter" then
+		local c: Model = Workspace:WaitForChild("Characters"):WaitForChild("Rig")
+		c:PivotTo(c:GetPivot() * CFrame.Angles(0, math.rad(-45), 0))
+		return
+	end
+
+	if request == "SaveCharacter" then
+		local HumanoidDescription = Humanoid:GetAppliedDescription()
+
+		local d = {}
+
+		d.Colors = {
+			HumanoidDescription.HeadColor.R * 255,
+			HumanoidDescription.HeadColor.G * 255,
+			HumanoidDescription.HeadColor.B * 255,
+		}
+		d.HatAccessory = HumanoidDescription.HatAccessory
+		d.FaceAccessory = HumanoidDescription.FaceAccessory
+		d.HairAccessory = HumanoidDescription.HairAccessory
+		d.NeckAccessory = HumanoidDescription.NeckAccessory
+		d.ShouldersAccessory = HumanoidDescription.ShouldersAccessory
+		d.WaistAccessory = HumanoidDescription.WaistAccessory
+		d.BackAccessory = HumanoidDescription.BackAccessory
+		d.Shirt = HumanoidDescription.Shirt
+		d.Pants = HumanoidDescription.Pants
+
+		slot.Character = d
+		Profile:Save()
 	end
 end
 
@@ -104,7 +105,7 @@ local function OnPlayerAdded(plr: Player)
 	Profile:Reconcile()
 
 	if RunService:IsStudio() then
-		Profile.Data = GameData.profileTemplate
+		-- Profile.Data = GameData.profileTemplate
 	end
 
 	print(Profile.Data)
@@ -115,46 +116,19 @@ local function OnPlayerAdded(plr: Player)
 	local CharacterData = Slot.Character
 
 	local Description = Instance.new("HumanoidDescription")
-
-	local Acessories = {}
-	for _, AcessoryData in pairs(CharacterData.Acessories) do
-		local v = {
-			AssetId = AcessoryData.AssetId,
-			Order = AcessoryData.Order,
-			Puffiness = AcessoryData.Puffiness,
-		}
-		if AcessoryData.AccessoryType == "Hair" then
-			v.AccessoryType = Enum.AccessoryType.Hair
-		elseif AcessoryData.AccessoryType == "Front" then
-			v.AccessoryType = Enum.AccessoryType.Front
-		elseif AcessoryData.AccessoryType == "Back" then
-			v.AccessoryType = Enum.AccessoryType.Back
-		elseif AcessoryData.AccessoryType == "Neck" then
-			v.AccessoryType = Enum.AccessoryType.Neck
-		elseif AcessoryData.AccessoryType == "Shoulder" then
-			v.AccessoryType = Enum.AccessoryType.Shoulder
-		elseif AcessoryData.AccessoryType == "Waist" then
-			v.AccessoryType = Enum.AccessoryType.Waist
-		elseif AcessoryData.AccessoryType == "Face" then
-			v.AccessoryType = Enum.AccessoryType.Face
-		elseif AcessoryData.AccessoryType == "Hat" then
-			v.AccessoryType = Enum.AccessoryType.Hat
+	for name, value in pairs(CharacterData) do
+		if name == "Colors" then
+			local BodyColor = Color3.fromRGB(unpack(value))
+			Description.HeadColor = BodyColor
+			Description.LeftArmColor = BodyColor
+			Description.LeftLegColor = BodyColor
+			Description.RightArmColor = BodyColor
+			Description.RightLegColor = BodyColor
+			Description.TorsoColor = BodyColor
+			continue
 		end
-		table.insert(Acessories, v)
+		Description[name] = value
 	end
-
-	Description:SetAccessories(Acessories, true)
-
-	local BodyColor = Color3.fromRGB(unpack(CharacterData.BodyColor))
-	Description.HeadColor = BodyColor
-	Description.LeftArmColor = BodyColor
-	Description.LeftLegColor = BodyColor
-	Description.RightArmColor = BodyColor
-	Description.RightLegColor = BodyColor
-	Description.TorsoColor = BodyColor
-
-	Description.Shirt = CharacterData.Clothes.Shirt
-	Description.Pants = CharacterData.Clothes.Pants
 
 	for _, Character in ipairs(Characters:GetChildren()) do
 		local Humanoid = Character:WaitForChild("Humanoid") :: Humanoid
@@ -172,7 +146,15 @@ Start.OnServerEvent:Connect(function(player)
 	local Character = Workspace.Characters:GetChildren()[1]
 	local Humanoid: Humanoid = Character:WaitForChild("Humanoid")
 	local Animator: Animator = Humanoid:WaitForChild("Animator")
-	local Root: BasePart = Character:WaitForChild("HumanoidRootPart")
+	local Root: BasePart = Character.PrimaryPart
+
+	for _, anim in ipairs(Animator:GetPlayingAnimationTracks()) do
+		anim:Stop(0)
+	end
+
+	Character:PivotTo(Workspace:WaitForChild("Spawn").CFrame)
+
+	Root.Anchored = false
 
 	Humanoid:MoveTo(Workspace.CharacterStopPosition.CFrame.Position)
 

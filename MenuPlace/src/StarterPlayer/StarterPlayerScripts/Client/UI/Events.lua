@@ -62,19 +62,19 @@ local Mid: Frame = CharacterCustomization:WaitForChild("Mid")
 local LeftSlots: Frame = LeftSide:WaitForChild("Slots")
 local RightSlots: Frame = RightSide:WaitForChild("Slots")
 
-local customization: { [string]: { [string]: any } } = Requests:InvokeServer("Customization")
+local customization: { List: {}, Selected: {}, [string]: number } = Requests:InvokeServer("Customization")
 
 local function UpdateSlots()
 	task.spawn(function()
 		for _, object in ipairs(LeftSlots:GetChildren()) do
-			if customization[object.Name] then
-				local p = customization[object.Name]
+			if customization.List[object.Name] then
+				local p = customization.List[object.Name]
 				local min: NumberValue, max: NumberValue = object:WaitForChild("Min"), object:WaitForChild("Max")
 
-				min.Value = 1
+				min.Value = 0
 				max.Value = #p
 
-				for i, v in pairs(customization[object.Name]) do
+				for i, v in pairs(customization.List[object.Name]) do
 					if v == customization["Selected"][object.Name] then
 						object:WaitForChild("Number").Text = tostring(i)
 					else
@@ -84,16 +84,18 @@ local function UpdateSlots()
 			end
 		end
 		for _, object in ipairs(RightSlots:GetChildren()) do
-			if customization[object.Name] then
-				local p = customization[object.Name]
+			if customization.List[object.Name] then
+				local p = customization.List[object.Name]
 				local min: NumberValue, max: NumberValue = object:WaitForChild("Min"), object:WaitForChild("Max")
 
-				min.Value = 1
+				min.Value = 0
 				max.Value = #p
 
-				for i, v in pairs(customization[object.Name]) do
+				for i, v in pairs(customization.List[object.Name]) do
 					if v == customization["Selected"][object.Name] then
 						object:WaitForChild("Number").Text = tostring(i)
+					else
+						object:WaitForChild("Number").Text = "1"
 					end
 				end
 			end
@@ -110,6 +112,34 @@ local function ApplyHumanoidDescription()
 	--> isso aq vai atualizar o humanoid pro novo acessorio q o player escolheu
 	Requests:InvokeServer("UpdateHumanoidDescription", customization["Selected"])
 end
+
+local lastSelected = table.clone(customization["Selected"])
+function CheckTableEquality(t1, t2)
+	for i, v in pairs(t1) do
+		if t2[i] ~= v then
+			return false
+		end
+	end
+	for i, v in pairs(t2) do
+		if t1[i] ~= v then
+			return false
+		end
+	end
+	return true
+end
+
+task.spawn(function()
+	while true do
+		local newSelected = customization["Selected"]
+
+		if not CheckTableEquality(lastSelected, newSelected) then
+			ApplyHumanoidDescription()
+			lastSelected = table.clone(newSelected)
+		end
+
+		task.wait(0.25)
+	end
+end)
 
 Events.Buttons = {
 	["Play"] = function()
@@ -143,6 +173,10 @@ Events.Buttons = {
 		Start:FireServer()
 	end,
 
+	["Rotate"] = function()
+		Requests:InvokeServer("RotateCharacter")
+	end,
+
 	["Left"] = function(Gui: GuiButton)
 		local number: TextLabel = Gui.Parent:WaitForChild("Number")
 
@@ -152,8 +186,11 @@ Events.Buttons = {
 
 		number.Text = tostring(current)
 
-		customization["Selected"][Gui.Parent.Name] = customization[Gui.Parent.Name][current]
-		ApplyHumanoidDescription()
+		if current == 0 then
+			customization["Selected"][Gui.Parent.Name] = 0
+		else
+			customization["Selected"][Gui.Parent.Name] = customization.List[Gui.Parent.Name][current]
+		end
 	end,
 
 	["Right"] = function(Gui: GuiButton)
@@ -165,11 +202,72 @@ Events.Buttons = {
 
 		number.Text = tostring(current)
 
-		customization["Selected"][Gui.Parent.Name] = customization[Gui.Parent.Name][current]
-		ApplyHumanoidDescription()
+		if current == 0 then
+			customization["Selected"][Gui.Parent.Name] = 0
+		else
+			customization["Selected"][Gui.Parent.Name] = customization.List[Gui.Parent.Name][current]
+		end
 	end,
 
-	["Save"] = function(Gui: GuiButton) end,
+	["Save"] = function(Gui: GuiButton)
+		Requests:InvokeServer("SaveCharacter")
+
+		local function slideOut()
+			CharacterCustomization.Enabled = true
+
+			local tweenInfo = TweenInfo.new(0.75, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut, 0, false, 0.25)
+
+			local tween = TweenService:Create(
+				RightSide,
+				tweenInfo,
+				{ Position = UDim2.fromScale(1 + RightSide.Size.X.Scale, 0.5) }
+			)
+			tween:Play()
+			tween =
+				TweenService:Create(LeftSide, tweenInfo, { Position = UDim2.fromScale(-LeftSide.Size.X.Scale, 0.5) })
+			tween:Play()
+			tween = TweenService:Create(Mid, tweenInfo, { Position = UDim2.fromScale(0.5, 1 + Mid.Size.Y.Scale) })
+			tween:Play()
+			tween.Completed:Wait()
+
+			CharacterCustomization.Enabled = false
+		end
+
+		slideOut()
+
+		local c: Model = Workspace:WaitForChild("Characters"):WaitForChild("Rig")
+		local head: BasePart = c:WaitForChild("Head")
+
+		TweenService:Create(
+			Workspace.CurrentCamera,
+			TweenInfo.new(0.25),
+			{ CFrame = Workspace.CurrentCamera.CFrame * CFrame.new(0, 0, 1.5) }
+		):Play()
+
+		RunService:BindToRenderStep("Camera", Enum.RenderPriority.Camera.Value, function()
+			camera.CFrame = camera.CFrame:Lerp(CFrame.new(head.Position + Vector3.new(5, 0, 0), head.Position), 0.1)
+		end)
+
+		local portalPosition = Workspace:WaitForChild("CharacterPortalPosition")
+
+		task.spawn(function()
+			while true do
+				local distance = (head.Position - portalPosition.Position).Magnitude
+				if distance < 30 then
+					local Loading = StarterGui:WaitForChild("Loading"):Clone()
+					Loading.Parent = PlayerGui
+
+					fadeInLoading(Loading)
+					RunService:UnbindFromRenderStep("Camera")
+
+					break
+				end
+				task.wait()
+			end
+		end)
+
+		Start:FireServer()
+	end,
 
 	["Edit"] = function(Gui: GuiButton)
 		--> isso aqui e quando vc clica no botão pra editar, da uma lida q vc vai chegar onde eu to codando ali
@@ -189,7 +287,7 @@ Events.Buttons = {
 
 			RightSide.Position = UDim2.fromScale(1 + RightSide.Size.X.Scale, 0.5)
 			LeftSide.Position = UDim2.fromScale(-LeftSide.Size.X.Scale, 0.5)
-			Mid.Position = UDim2.fromScale(0.5, 1 + Mid.Size.Y.Scale)
+			Mid.Position = UDim2.fromScale(0.5, -Mid.Size.Y.Scale)
 
 			CharacterCustomization.Enabled = true
 
