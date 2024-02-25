@@ -1,140 +1,157 @@
-local ContentProvider = game:GetService("ContentProvider")
-local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 local StarterGui = game:GetService("StarterGui")
 local TweenService = game:GetService("TweenService")
-local AssetProvider = game:GetService("AssetService")
+local UserInputService = game:GetService("UserInputService")
+local Workspace = game:GetService("Workspace")
 
-local IsLoaded = Players:GetAttribute("Loaded")
-if not IsLoaded then
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+local CustomizationGui: ScreenGui = StarterGui:WaitForChild("CharacterCustomization"):Clone()
+local PressAnyKey: ScreenGui = StarterGui:WaitForChild("PressAnyKey"):Clone()
+local SlotSelection = StarterGui:WaitForChild("SlotSelection"):Clone()
+
+CustomizationGui.Parent = PlayerGui
+
+local title1: TextLabel = PressAnyKey:WaitForChild("title1")
+local title2: TextLabel = PressAnyKey:WaitForChild("title2")
+local pressanykey: TextLabel = PressAnyKey:WaitForChild("pressanykey")
+
+require(script.Parent:WaitForChild("UI")):Init()
+
+local hasPressedButton = false
+
+local ViewPart: BasePart = Workspace:WaitForChild("CameraParts"):WaitForChild("View")
+
+local CharacterPart: BasePart = Workspace:WaitForChild("CameraParts"):WaitForChild("Character")
+
+local function SlideIn()
+	local RightSide = SlotSelection:WaitForChild("RightSide")
+	local LeftSide = SlotSelection:WaitForChild("LeftSide")
+	local Mid = SlotSelection:WaitForChild("Mid")
+
+	local OriginalPositions = {
+		["R"] = UDim2.fromScale(RightSide.Position.X.Scale, RightSide.Position.Y.Scale),
+		["L"] = UDim2.fromScale(LeftSide.Position.X.Scale, LeftSide.Position.Y.Scale),
+		["M"] = UDim2.fromScale(Mid.Position.X.Scale, Mid.Position.Y.Scale),
+	}
+
+	RightSide.Position = UDim2.fromScale(1 + RightSide.Size.X.Scale, 0.5)
+	LeftSide.Position = UDim2.fromScale(-LeftSide.Size.X.Scale, 0.5)
+	Mid.Position = UDim2.fromScale(0.5, 1 + Mid.Size.Y.Scale)
+
+	SlotSelection.Enabled = true
+
+	local tweenInfo = TweenInfo.new(0.75, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut, 0, false, 0.25)
+
+	local tween = TweenService:Create(RightSide, tweenInfo, { Position = OriginalPositions.R })
+	tween:Play()
+	tween = TweenService:Create(LeftSide, tweenInfo, { Position = OriginalPositions.L })
+	tween:Play()
+	tween = TweenService:Create(Mid, tweenInfo, { Position = OriginalPositions.M })
+	tween:Play()
+end
+
+local function fadeIn()
+	local clouds = Workspace:WaitForChild("Map"):WaitForChild("clouds")
+	task.spawn(function()
+		for _, v: ParticleEmitter in ipairs(clouds:GetDescendants()) do
+			if v:IsA("ParticleEmitter") then
+				v:Emit(2500)
+			end
+		end
+	end)
+
+	local sound1 = SoundService:WaitForChild("Music"):WaitForChild("desolateSting")
+	sound1.Ended:Once(function(soundId)
+		SoundService:WaitForChild("Music"):WaitForChild("desolate"):Play()
+	end)
+	sound1:Play()
+
+	local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.In, 0, false, 1)
+	local tween = TweenService:Create(title1, tweenInfo, { TextTransparency = 0 })
+	tween:Play()
+	tween = TweenService:Create(title2, tweenInfo, { TextTransparency = 0 })
+	tween:Play()
+	tween = TweenService:Create(pressanykey, tweenInfo, { TextTransparency = 0 })
+	tween:Play()
+	tween.Completed:Wait()
+
+	local infiniteTween = TweenInfo.new(1.2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true, 0)
+	tween = TweenService:Create(pressanykey, infiniteTween, { TextTransparency = 0.9 })
+	tween:Play()
+end
+
+local function fadeOut()
+	hasPressedButton = true
+
+	SoundService:WaitForChild("SFX"):WaitForChild("button.wav"):Play()
+
+	local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0.25)
+	local tween = TweenService:Create(title1, tweenInfo, { TextTransparency = 1 })
+	tween:Play()
+
+	local tween2 = TweenService:Create(title2, tweenInfo, { TextTransparency = 1 })
+	tween2:Play()
+
+	tween = TweenService:Create(pressanykey, tweenInfo, { TextTransparency = 1 })
+	tween:Play()
+
+	tween2.Completed:Wait()
+
+	PressAnyKey.Enabled = false
+
+	local TweenStyle = TweenInfo.new(3, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut, 0, false, 0.8)
+	local tw = TweenService:Create(Workspace.CurrentCamera, TweenStyle, {
+		CFrame = CharacterPart.CFrame,
+		FieldOfView = 90,
+	})
+	tw:Play()
+	tw.Completed:Wait()
+
+	SlideIn()
+end
+
+local function onInputBegan(input)
+	if hasPressedButton then
+		return
+	end
+
+	if input.UserInputType == Enum.UserInputType.Keyboard then
+		fadeOut()
+	elseif input.UserInputType == Enum.UserInputType.Touch then
+		fadeOut()
+	elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
+		fadeOut()
+	elseif input.UserInputType == Enum.UserInputType.Gamepad1 then
+		fadeOut()
+	end
+end
+
+SlotSelection.Parent = PlayerGui
+SlotSelection.Enabled = false
+
+if not Players:GetAttribute("Loaded") then
 	Players:GetAttributeChangedSignal("Loaded"):Wait()
 end
 
-local menu = StarterGui:WaitForChild("MainMenu")
-menu:Clone()
+CharacterPart.Anchored = true
 
-local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
-menu.Parent = PlayerGui
-menu.Enabled = false
+task.wait()
 
-local Background = menu:WaitForChild("Background")
-local Button = Background:WaitForChild("Buttons")
-local Whoosh = Background:WaitForChild("whoosh")
-local Hover = Background:WaitForChild("hover")
-local Click = Background:WaitForChild("click")
+local Camera = Workspace.CurrentCamera
+Camera.CameraType = Enum.CameraType.Scriptable
+Camera.CFrame = ViewPart.CFrame
 
-repeat
-	task.wait(0.35)
-until game:IsLoaded() and Whoosh.TimeLength > 0
+PressAnyKey.Parent = PlayerGui
 
-ContentProvider:PreloadAsync(Background:GetChildren())
+PressAnyKey.Enabled = true
 
-local function MenuTransition()
-	local Title1 = Background:WaitForChild("Title1")
-	local Title2 = Background:WaitForChild("Title2")
+UserInputService.InputBegan:Connect(onInputBegan)
 
-	local FirstDelay = 0.2
-	local SecondDelay = 0.2
-	local ThirdDelay = 0.6
+title1.TextTransparency = 1
+title2.TextTransparency = 1
+pressanykey.TextTransparency = 1
 
-	local backgroundAnimation = TweenService:Create(Background, TweenInfo.new(0.6), {
-		Position = UDim2.fromScale(0, -0.1),
-	})
-	local title1Animation = TweenService:Create(
-		Title1,
-		TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.In, 0, false),
-		{
-			Position = UDim2.fromScale(0.5, 0.23),
-		}
-	)
-	local title2Animation = TweenService:Create(
-		Title2,
-		TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.In, 0, false),
-		{
-			Position = UDim2.fromScale(0.5, 0.3),
-		}
-	)
-	local buttonAnimation = TweenService:Create(
-		Button,
-		TweenInfo.new(0.7, Enum.EasingStyle.Exponential, Enum.EasingDirection.In, 0, false),
-		{
-			Position = UDim2.fromScale(0.5, 0.5),
-		}
-	)
-
-	local function Position()
-		Background.Position = UDim2.fromScale(-1, 0)
-		Title1.Position = UDim2.fromScale(-1, 0.23)
-		Title2.Position = UDim2.fromScale(-1, 0.3)
-		Button.Position = UDim2.fromScale(-1, 0.5)
-
-		menu.Enabled = true
-	end
-	local function PlaySwoosh(delay: number)
-		task.wait(delay)
-		Whoosh:Play()
-	end
-
-	Position()
-
-	task.wait(0.5)
-
-	backgroundAnimation:Play()
-	backgroundAnimation.Completed:Wait()
-	PlaySwoosh(FirstDelay)
-	title1Animation:Play()
-	title1Animation.Completed:Wait()
-	PlaySwoosh(SecondDelay)
-	title2Animation:Play()
-	title2Animation.Completed:Wait()
-	task.wait(0.6)
-	PlaySwoosh(ThirdDelay)
-	buttonAnimation:Play()
-	buttonAnimation.Completed:Wait()
-end
-
-local function HideMenu()
-	local Start = ReplicatedStorage:WaitForChild("Start")
-	Start:FireServer()
-
-	TweenService:Create(
-		Background,
-		TweenInfo.new(0.4, Enum.EasingStyle.Exponential, Enum.EasingDirection.In, 0, false, 0.3),
-		{ Position = UDim2.fromScale(-1, 0) }
-	):Play()
-	task.wait(0.2)
-	Whoosh:Play()
-	Debris:AddItem(menu, 0.5)
-end
-
-local function OnMenuTransitionEnd()
-	local Buttons = Button:GetChildren()
-	for _, ButtonObject in ipairs(Buttons) do
-		if not ButtonObject:IsA("ImageButton") then
-			continue
-		end
-		ButtonObject.MouseEnter:Connect(function(x, y)
-			Hover:Play()
-			local s = ButtonObject:WaitForChild("UIScale")
-			TweenService:Create(s, TweenInfo.new(0.2), { Scale = 1.3 }):Play()
-			TweenService:Create(ButtonObject, TweenInfo.new(0.2), { ImageColor3 = Color3.fromRGB(255, 255, 255) })
-				:Play()
-		end)
-		ButtonObject.MouseLeave:Connect(function(x, y)
-			local s = ButtonObject:WaitForChild("UIScale")
-			TweenService:Create(s, TweenInfo.new(0.2), { Scale = 1 }):Play()
-			TweenService:Create(ButtonObject, TweenInfo.new(0.2), { ImageColor3 = Color3.fromRGB(141, 141, 141) })
-				:Play()
-		end)
-		ButtonObject.Activated:Connect(function(inputObject, clickCount)
-			if ButtonObject.Name == "Button1" then
-				Click:Play()
-				HideMenu()
-			end
-		end)
-	end
-end
-
-MenuTransition()
-OnMenuTransitionEnd()
+fadeIn()
