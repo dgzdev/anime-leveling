@@ -3,66 +3,124 @@ export type SubRank = "I" | "II" | "III" | "IV" | "V"
 export type World = "World 1" | "World 2"
 export type WeaponType = "Sword" | "Bow" | "Staff"
 export type PlayerData = {
-	rank: Rank,
-	subRank: SubRank,
+	["Slots"]: {
+		["string"]: {
+			["Character"]: {
+				["FaceAccessory"]: number,
+				["HairAccessory"]: number,
+				["BackAccessory"]: number,
+				["WaistAccessory"]: number,
+				["ShouldersAccessory"]: number,
+				["NeckAccessory"]: number,
+				["HatAccessory"]: number,
+				["Shirt"]: number,
+				["Pants"]: number,
+				["Colors"]: { number },
+			},
+			["Location"]: string | "Character Creation",
+			["LastJoin"]: string,
 
-	Level: number,
-	Experience: number,
-	Gold: number,
-	Equiped: {
-		Weapon: string,
-		Id: number,
+			["Data"]: {
+				["Level"]: number,
+				["Experience"]: number,
+				["Gold"]: number,
+				["Equiped"]: {
+					["Weapon"]: string,
+					["Id"]: number,
+				},
+				["Hotbar"]: { number },
+				["Inventory"]: {
+					[string]: {
+						["AchiveDate"]: number,
+						["Rank"]: Rank,
+						["SubRank"]: SubRank,
+						["Id"]: number,
+					},
+				},
+				["Skills"]: { [string]: {
+					["AchiveDate"]: number | nil,
+					["Level"]: number,
+				} },
+				["Points"]: {
+					["Inteligence"]: number,
+					["Strength"]: number,
+					["Agility"]: number,
+					["Endurance"]: number,
+				},
+			},
+		} | "false",
 	},
-
-	Hotbar: { number },
-
-	Inventory: {
-		[string]: {
-			AchiveDate: number,
-			Rank: Rank,
-			Id: number,
-		},
-	},
-	Skills: { [string]: {
-		AchiveDate: number | nil,
-		Level: number,
-	} },
-
-	World: World,
-	Points: {
-		Inteligence: number,
-		Strength: number,
-		Agility: number,
-		Endurance: number,
-	},
+	["Selected_Slot"]: "1",
 }
-
 local ProfileTemplate: PlayerData = {
-	rank = "E",
-	subRank = "I",
-
-	Equiped = {
-		Weapon = "Melee",
-		Id = 1,
+	["Slots"] = {
+		["1"] = {
+			["Character"] = {
+				["FaceAccessory"] = 14579692783,
+				["HairAccessory"] = 15633971750,
+				["BackAccessory"] = 0,
+				["WaistAccessory"] = 0,
+				["ShouldersAccessory"] = 0,
+				["NeckAccessory"] = 0,
+				["HatAccessory"] = 0,
+				["Shirt"] = 11321632482,
+				["Pants"] = 7730552127,
+				["Colors"] = { 255, 204, 153 },
+			},
+			["Location"] = "Character Creation",
+			["LastJoin"] = os.date("%x"),
+			["Data"] = {
+				["Level"] = 1,
+				["Experience"] = 0,
+				["Gold"] = 0,
+				["Equiped"] = {
+					["Weapon"] = "Melee",
+					["Id"] = 1,
+				},
+				["Hotbar"] = { 1, 2 },
+				["Inventory"] = {
+					["Melee"] = {
+						["AchiveDate"] = os.time(),
+						["Rank"] = "E",
+						["Id"] = 1,
+					},
+					["Iron Starter Sword"] = {
+						["AchiveDate"] = os.time(),
+						["Rank"] = "E",
+						["Id"] = 2,
+					},
+				},
+				["Skills"] = {
+					["Inteligence"] = {
+						["AchiveDate"] = os.time(),
+						["Level"] = 1,
+					},
+					["Strength"] = {
+						["AchiveDate"] = os.time(),
+						["Level"] = 1,
+					},
+					["Agility"] = {
+						["AchiveDate"] = os.time(),
+						["Level"] = 1,
+					},
+					["Endurance"] = {
+						["AchiveDate"] = os.time(),
+						["Level"] = 1,
+					},
+				},
+				["Points"] = {
+					["Inteligence"] = 0,
+					["Strength"] = 0,
+					["Agility"] = 0,
+					["Endurance"] = 0,
+				},
+			},
+		},
+		["2"] = "false",
+		["3"] = "false",
+		["4"] = "false",
 	},
-
-	Hotbar = { 1, 2 },
-
-	Level = 1,
-	Experience = 0,
-	Gold = 0,
-
-	Inventory = {},
-	Skills = {},
-
-	World = "World 1",
-
-	Points = {
-		Inteligence = 1,
-		Strength = 1,
-		Agility = 1,
-		Endurance = 1,
-	},
+	["Selected_Slot"] = "1",
 }
 
 local function CreateHumanoidDescription(desc: HumanoidDescription): HumanoidDescription
@@ -75,7 +133,7 @@ local function CreateHumanoidDescription(desc: HumanoidDescription): HumanoidDes
 end
 
 return {
-	profileKey = "PLAYER_DATA_3",
+	profileKey = "DEVELOPMENT_1",
 	profileTemplate = ProfileTemplate,
 	defaultInventory = {
 		["Melee"] = {
@@ -83,7 +141,7 @@ return {
 			Rank = "E",
 			Id = 1,
 		},
-		["Wooden_Sword"] = {
+		["Iron Starter Sword"] = {
 			AchiveDate = os.time(),
 			Rank = "E",
 			Id = 2,
@@ -97,6 +155,14 @@ return {
 		["Wooden_Sword"] = {
 			Type = "Sword",
 			Damage = 10,
+			Rarity = "E", --| "D" | "C" | "B" | "A" | "S"
+			SubRarity = "I", --| "II" | "III" | "IV" | "V"
+		},
+		["Iron Starter Sword"] = {
+			Type = "Sword",
+			Damage = 20,
+			Rarity = "E",
+			SubRarity = "II", -- "II" | "III" | "IV" | "V"
 		},
 	},
 	newbieBadge = 2066631008828576,
@@ -109,6 +175,9 @@ return {
 			Experience = 100,
 			AttackType = "Melee",
 			Gold = 100,
+			Drops = {
+				["Iron Starter Sword"] = 15,
+			},
 		},
 		["Goblin"] = {
 			Health = 50,

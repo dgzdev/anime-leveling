@@ -99,7 +99,7 @@ local function OnPlayerAdded(plr: Player)
 	local Rig = ReplicatedStorage.Rig:Clone()
 	Rig.Parent = Workspace:WaitForChild("Characters")
 
-	Profile = ProfileStore:LoadProfileAsync("TESTING_DATA_1", "ForceLoad")
+	Profile = ProfileStore:LoadProfileAsync(tostring(plr.UserId), "ForceLoad")
 	if not Profile then
 		plr:Kick("Failed to load profile.")
 		return
@@ -167,7 +167,7 @@ Start.OnServerEvent:Connect(function(player)
 
 	Humanoid.MoveToFinished:Wait()
 
-	task.wait(0.35)
+	task.wait(0.06)
 
 	Root.Anchored = true
 
@@ -177,7 +177,7 @@ Start.OnServerEvent:Connect(function(player)
 		})
 	anim:Play()
 
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.RunningNoPhysics, true)
+	Humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics, true)
 
 	anim.Completed:Wait()
 

@@ -1,3 +1,4 @@
+local Knit = require(game.ReplicatedStorage.Modules.Knit.Knit)
 local Players = game:GetService("Players")
 --!strict
 -- Author: @SinceVoid
@@ -13,6 +14,20 @@ task.spawn(function()
 	require(script:WaitForChild("NPC")):Start()
 end)
 local combat = require(script:WaitForChild("CombatSystem"))
+
+for _, service in ipairs(game.ServerScriptService:GetDescendants()) do
+	if not service:IsA("ModuleScript") then
+		continue
+	end
+	if not service.Name:match("Service$") then
+		continue
+	end
+	require(service)
+end
+
+Knit.Start():andThen(function()
+	print("Knit started")
+end)
 
 local function OnPlayerAdded(plr: Player)
 	combat:Equip(plr)

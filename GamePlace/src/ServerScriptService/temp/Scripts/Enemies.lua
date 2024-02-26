@@ -68,17 +68,16 @@ function Enemy.new(enemy: Model)
 		attack_npcs = false, -- Enemy Attacking Random NPC's
 		attack_players = true, -- Enemy Attacking Players
 
-		default_animations = { 11555709524, 11555713135, 11555867639 }, -- Enemy Animations should be used for 'Light' Attacks // Example default_animations = {8972576500}
+		default_animations = { 16529107075, 16529111104, 16529114070 }, -- Enemy Animations should be used for 'Light' Attacks // Example default_animations = {8972576500}
 		default_functions = { -- Functions for said 'Light' Attacks ^
 			createLightAttack,
 			createLightAttack,
 			createLightAttack,
 		},
 
-		special_animations = { 11556032081 }, -- Enemy Animations should be used for 'Heavy' Attacks // Example special_animations = {8972576500}
+		special_animations = { 16529117516 }, -- Enemy Animations should be used for 'Heavy' Attacks // Example special_animations = {8972576500}
 		special_functions = { -- Functions for said 'Heavy' Attacks ^
 			function(target) -- functions pass the target as the first argument automatically
-				print("attack")
 				local hum = target:FindFirstChildWhichIsA("Humanoid")
 				if not hum then
 					return

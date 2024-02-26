@@ -1,4 +1,9 @@
-local PartyService = {}
+local Knit = require(game.ReplicatedStorage.Modules.Knit.Knit)
+
+local PartyService = Knit.CreateService({
+	Name = "PartyService",
+	Client = {},
+})
 
 local Players = game:GetService("Players")
 

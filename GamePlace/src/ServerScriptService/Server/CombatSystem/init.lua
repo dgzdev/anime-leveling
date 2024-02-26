@@ -174,6 +174,9 @@ CombatSystem.Attack = function(player: Player, props: { Attack: number, Attacks:
 		return
 	end
 
+	local Slot = PlayerManager:GetCurrentSlot()
+	local Data = Slot.Data
+
 	local char = PlayerManager.Character
 
 	if char:GetAttribute("Defending") then
@@ -183,7 +186,7 @@ CombatSystem.Attack = function(player: Player, props: { Attack: number, Attacks:
 		return
 	end
 
-	local EquipedData = PlayerManager.Profile.Data.Equiped
+	local EquipedData = Data.Equiped
 	local Equiped = EquipedData.Weapon
 
 	local InventoryData = GameData.gameWeapons[Equiped]
@@ -227,6 +230,9 @@ CombatSystem.Defend = function(player: Player, mode: "Start" | "End")
 		return
 	end
 
+	local Slot = PlayerManager:GetCurrentSlot()
+	local Data = Slot.Data
+
 	local char = PlayerManager.Character
 
 	if char:GetAttribute("Attacking") then
@@ -242,7 +248,7 @@ CombatSystem.Defend = function(player: Player, mode: "Start" | "End")
 		return
 	end
 
-	local EquipedData = PlayerManager.Profile.Data.Equiped
+	local EquipedData = Data.Equiped
 	local Equiped = EquipedData.Weapon
 
 	local InventoryData = GameData.gameWeapons[Equiped]
@@ -301,7 +307,9 @@ end
 
 function CombatSystem:Equip(player: Player)
 	local PlayerManager = PlayerManagers:GetPlayerManager(player)
-	local EquipedData = PlayerManager.Profile.Data.Equiped
+	local Slot = PlayerManager:GetCurrentSlot()
+
+	local EquipedData = Slot.Data.Equiped
 	local Equiped = EquipedData.Weapon
 
 	local InventoryData = GameData.gameWeapons[Equiped]

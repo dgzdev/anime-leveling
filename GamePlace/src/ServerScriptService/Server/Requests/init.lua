@@ -13,17 +13,8 @@ Requests.Events = {
 			return
 		end
 
-		local Profile = PlayerManager.Profile
-		if not Profile then
-			return
-		end
-
-		local Data = Profile.Data
-		if not Data then
-			return
-		end
-
-		return Data
+		local Selected_Slot = PlayerManager:GetCurrentSlot()
+		return Selected_Slot.Data
 	end,
 	["Weapons"] = function(player: Player, ItemID: number)
 		return GameData.gameWeapons
@@ -41,15 +32,8 @@ Requests.Events = {
 			return
 		end
 
-		local Profile = PlayerManager.Profile
-		if not Profile then
-			return
-		end
-
-		local Data = Profile.Data
-		if not Data then
-			return
-		end
+		local Slot = PlayerManager:GetCurrentSlot()
+		local Data = Slot.Data
 
 		local InventoryItem = nil
 		local InventoryItemName = nil

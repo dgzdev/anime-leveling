@@ -45,17 +45,23 @@ local function UpdateSlots()
 		local Number: TextLabel = Slot:WaitForChild("Number")
 		local SlotN: TextLabel = Slot:WaitForChild("SlotN")
 		local Desc: TextLabel = Slot:WaitForChild("Desc")
+		local Stroke: Frame = Slot:WaitForChild("Stroke")
+		local UIStroke: UIStroke = Stroke:WaitForChild("UIStroke")
 
 		if slotNumber == Data.Selected_Slot then
+			Slot.BackgroundColor3 = Color3.fromRGB(229, 193, 102)
+			Desc.TextColor3 = Color3.fromRGB(55, 57, 90)
+			SlotN.TextColor3 = Color3.fromRGB(55, 57, 90)
+			Number.TextColor3 = Color3.fromRGB(55, 57, 90)
+
+			UIStroke.Color = Color3.fromRGB(38, 44, 77)
+		else
 			Slot.BackgroundColor3 = Color3.fromRGB(55, 57, 90)
 			Desc.TextColor3 = Color3.fromRGB(241, 239, 255)
 			SlotN.TextColor3 = Color3.fromRGB(241, 239, 255)
 			Number.TextColor3 = Color3.fromRGB(241, 239, 255)
-		else
-			Slot.BackgroundColor3 = Color3.fromRGB(241, 239, 255)
-			Desc.TextColor3 = Color3.fromRGB(55, 57, 90)
-			SlotN.TextColor3 = Color3.fromRGB(55, 57, 90)
-			Number.TextColor3 = Color3.fromRGB(55, 57, 90)
+
+			UIStroke.Color = Color3.fromRGB(55, 57, 90)
 		end
 
 		Number.Text = slotData.LastJoin or os.date("%x")

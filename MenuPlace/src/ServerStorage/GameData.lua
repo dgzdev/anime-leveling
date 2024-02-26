@@ -96,7 +96,7 @@ local ProfileTemplate: PlayerData = {
 }
 
 return {
-	profileKey = "TESTING_DATA_1",
+	profileKey = "DEVELOPMENT_1",
 	profileTemplate = ProfileTemplate,
 	CharacterCustomization = {
 		["HairAccessory"] = {
