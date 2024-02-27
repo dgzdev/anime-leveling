@@ -5,7 +5,9 @@ local Sword = {}
 local Knit = require(game.ReplicatedStorage.Modules.Knit.Knit)
 
 local Default
+
 local RenderService
+local RagdollService
 
 local VFX = require(ReplicatedStorage.Modules.VFX)
 local SFX = require(ReplicatedStorage.Modules.SFX)
@@ -61,6 +63,8 @@ Sword.IronStarterSword = {
 			Size = Distance
 		end
 
+		VFX:ApplyParticle(Character, "Slash", nil, CFrame.new(0, 0, -2) * CFrame.Angles(0, math.rad(180), 0))
+
 		local RenderData = RenderService:CreateRenderData(Character.Humanoid, "FlashStrike", "Test", { "Bunda" })
 		RenderService:RenderForPlayers(RenderData)
 		-- blz
@@ -104,12 +108,15 @@ Sword.IronStarterSword = {
 			end
 
 			Damaged[Humanoid] = true
-			Humanoid:TakeDamage(100)
+
+			Humanoid:TakeDamage(10)
+			RagdollService:Ragdoll(Model, 1.5)
 
 			local V = (Data.Position.LookVector * 15) * GetModelMass(Model)
-			Humanoid.RootPart.AssemblyLinearVelocity = V
+			Humanoid.RootPart.AssemblyLinearVelocity = V + Vector3.new(0, 15, 0)
 
 			VFX:ApplyParticle(Model, "SwordHit")
+			VFX:ApplyParticle(Model, "SlashHit")
 			SFX:Apply(Model, "SwordHit")
 			return
 		end
@@ -118,7 +125,9 @@ Sword.IronStarterSword = {
 
 function Sword.Start(default)
 	default = default
+
 	RenderService = Knit.GetService("RenderService")
+	RagdollService = Knit.GetService("RagdollService")
 end
 
 return Sword

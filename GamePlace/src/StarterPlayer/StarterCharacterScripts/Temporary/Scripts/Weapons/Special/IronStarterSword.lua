@@ -27,6 +27,9 @@ local Cooldowns = {
 	["FlashStrike"] = 0,
 }
 
+local VFX = require(ReplicatedStorage.Modules.VFX)
+local SFX = require(ReplicatedStorage.Modules.SFX)
+
 local function GetModelMass(model: Model)
 	local mass = 0
 	for _, part: BasePart in ipairs(model:GetDescendants()) do
@@ -141,6 +144,9 @@ local IronStarterSword: {
 
 					local V = (Camera.CFrame.LookVector * 60) * GetModelMass(Character)
 					RootPart.AssemblyLinearVelocity = V
+
+					VFX:ApplyParticle(Character, "Smoke")
+					VFX:ApplyParticle(Character, "Stripes")
 
 					task.delay(0.5, function()
 						AnimationTrack:Stop(0.15)

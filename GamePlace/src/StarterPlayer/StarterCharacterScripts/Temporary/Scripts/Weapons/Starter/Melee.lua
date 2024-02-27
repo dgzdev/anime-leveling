@@ -16,7 +16,11 @@ local Animator = Humanoid:WaitForChild("Animator")
 
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local CombatGui = PlayerGui:WaitForChild("CombatGui")
+
 local Background: Frame = CombatGui:WaitForChild("Background")
+
+local VFX = require(ReplicatedStorage.Modules.VFX)
+local SFX = require(ReplicatedStorage.Modules.SFX)
 
 local Animations = ReplicatedStorage:WaitForChild("Animations")
 
