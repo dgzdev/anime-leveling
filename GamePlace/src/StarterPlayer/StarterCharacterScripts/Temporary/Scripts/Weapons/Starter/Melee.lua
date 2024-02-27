@@ -31,26 +31,6 @@ local Cooldowns = {
 	["FlashStrike"] = 0,
 }
 
-local function GetModelMass(model: Model)
-	local mass = 0
-	for _, part: BasePart in ipairs(model:GetDescendants()) do
-		if part:IsA("BasePart") then
-			mass += part:GetMass()
-		end
-	end
-	return mass
-end
-
-local Camera = Workspace.CurrentCamera
-
-local function Lockmouse()
-	Character:PivotTo(
-		CFrame.lookAt(
-			RootPart.Position,
-			RootPart.Position + Vector3.new(Camera.CFrame.LookVector.X, 0, Camera.CFrame.LookVector.Z)
-		)
-	)
-end
 local function SetCooldown(name: string, cooldown: number)
 	Cooldowns[name] = tick() + cooldown
 	local Frame: Frame = Background:FindFirstChild(name)
@@ -123,6 +103,7 @@ local Melee = {
 			PlayingAnimation:Play(DelayTime)
 
 			_G.Combo += 1
+
 			if _G.Combo > #Combos then
 				_G.Combo = 1
 			end
