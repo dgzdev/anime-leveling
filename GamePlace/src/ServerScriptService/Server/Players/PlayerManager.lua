@@ -10,7 +10,7 @@ local TweenService = game:GetService("TweenService")
 local PlayerManager: PlayerManager = {}
 PlayerManager.__index = PlayerManager
 
-local ProfileService = require(ServerStorage:WaitForChild("ProfileService"))
+local ProfileService = require(ReplicatedStorage.Packages.profileservice)
 
 local UpdateHud = ReplicatedStorage.Events.PlayerHud
 local GameData = require(ServerStorage.GameData)
@@ -27,25 +27,27 @@ export type PlayerManager = {
 	CharacterAdded: RBXScriptSignal,
 	Humanoid: Humanoid,
 	Profile: {
-		["Slots"]: {
-			["string"]: {
-				["Character"]: {
-					["FaceAccessory"]: number,
-					["HairAccessory"]: number,
-					["BackAccessory"]: number,
-					["WaistAccessory"]: number,
-					["ShouldersAccessory"]: number,
-					["NeckAccessory"]: number,
-					["HatAccessory"]: number,
-					["Shirt"]: number,
-					["Pants"]: number,
-					["Colors"]: { number },
-				},
-				["Location"]: string | "Character Creation",
-				["LastJoin"]: string,
-			} | "false",
+		Data: {
+			["Slots"]: {
+				["string"]: {
+					["Character"]: {
+						["FaceAccessory"]: number,
+						["HairAccessory"]: number,
+						["BackAccessory"]: number,
+						["WaistAccessory"]: number,
+						["ShouldersAccessory"]: number,
+						["NeckAccessory"]: number,
+						["HatAccessory"]: number,
+						["Shirt"]: number,
+						["Pants"]: number,
+						["Colors"]: { number },
+					},
+					["Location"]: string | "Character Creation",
+					["LastJoin"]: string,
+				} | "false",
+			},
+			["Selected_Slot"]: "1",
 		},
-		["Selected_Slot"]: "1",
 	},
 	Options: Options,
 	GetCurrentSlot: (

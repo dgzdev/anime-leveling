@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 local Join = {}
@@ -38,6 +39,7 @@ local function AnimateCamera(animation: string)
 			Camera.CFrame = CFrame
 			task.wait()
 		end
+
 		Root.CFrame = Torso.CFrame
 		AnimationTrack:Stop()
 		task.wait()
@@ -51,8 +53,6 @@ end
 function Join:Init()
 	repeat
 		Root.Anchored = true
-		Character:PivotTo(Workspace:WaitForChild("Portal"):GetPivot())
-
 		task.wait()
 	until Root.Anchored == true
 
@@ -63,23 +63,23 @@ function Join:Init()
 		loadingGui.Destroying:Wait()
 	end
 
-	local cameraAnim = Animations:WaitForChild("Portal Leave")
-	local Frames = cameraAnim:WaitForChild("Frames")
-	Camera.CFrame = Frames:WaitForChild("52").Value
-
 	local Animation = ReplicatedStorage:WaitForChild("Animations"):WaitForChild("Portal")
 	AnimationTrack = Animator:LoadAnimation(Animation)
 
-	AnimationTrack:Play(0)
-	task.wait()
-	AnimationTrack:AdjustSpeed(0)
-	task.wait(1)
-	AnimateCamera("Portal Leave")
-	AnimationTrack:AdjustSpeed(0.8)
+	AnimationTrack.Looped = false
 
 	AnimationTrack.KeyframeReached:Connect(function(keyframeName)
-		AnimationTrack:AdjustSpeed(0)
+		if keyframeName == "hit" then
+			SoundService:WaitForChild("Join"):WaitForChild("hit1"):Play()
+		end
+		if keyframeName == "look" then
+			AnimationTrack:AdjustSpeed(0)
+		end
 	end)
+
+	AnimationTrack:Play(0)
+	task.wait()
+	AnimateCamera("Portal Leave")
 
 	ReplicatedStorage:SetAttribute("FirstTimeAnimationEnd", true)
 end

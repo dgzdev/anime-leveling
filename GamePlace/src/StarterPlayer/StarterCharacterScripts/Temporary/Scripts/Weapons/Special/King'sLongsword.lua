@@ -151,7 +151,7 @@ local KingsLongsword: {
 					end)
 
 					local V = (Camera.CFrame.LookVector * 60) * GetModelMass(Character)
-					RootPart.AssemblyLinearVelocity = V
+					RootPart.AssemblyLinearVelocity = V * Vector3.new(1, 0.5, 1)
 
 					VFX:ApplyParticle(Character, "Smoke")
 					VFX:ApplyParticle(Character, "Stripes")
@@ -213,6 +213,10 @@ local KingsLongsword: {
 			end
 
 			if Humanoid.Health <= 0 then
+				return
+			end
+
+			if CheckCooldown("Lightning") then
 				return
 			end
 

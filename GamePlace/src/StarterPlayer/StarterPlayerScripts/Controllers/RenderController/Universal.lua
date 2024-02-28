@@ -5,7 +5,7 @@ local Universal = {}
 local VFX = require(ReplicatedStorage.Modules.VFX)
 local SFX = require(ReplicatedStorage.Modules.SFX)
 
-local RocksModule = require(ReplicatedStorage.Packages.RocksModule)
+local RocksModule = require(ReplicatedStorage.Modules.RocksModule)
 
 function Universal.FlashStrike(RenderData: { root: BasePart })
 	local Root = RenderData.root

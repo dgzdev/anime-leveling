@@ -52,9 +52,6 @@ plrs.OnPlayerAdded = function(player: Player)
 
 	local character = player.Character or player.CharacterAdded:Wait()
 
-	character.PrimaryPart.Anchored = true
-	character:PivotTo(Workspace.Portal:GetPivot())
-
 	plrs.OnCharacterAdded(playerManager, character)
 
 	player.CharacterAdded:Connect(function(c: Model)

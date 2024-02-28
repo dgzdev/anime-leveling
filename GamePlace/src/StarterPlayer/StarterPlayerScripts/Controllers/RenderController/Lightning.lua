@@ -5,7 +5,7 @@ local Universal = {}
 local VFX = require(ReplicatedStorage.Modules.VFX)
 local SFX = require(ReplicatedStorage.Modules.SFX)
 
-local RocksModule = require(ReplicatedStorage.Packages.RocksModule)
+local RocksModule = require(ReplicatedStorage.Modules.RocksModule)
 
 local LightningBolt = require(ReplicatedStorage.Modules.LightningBolt)
 local LightningSparks = require(ReplicatedStorage.Modules.LightningSparks)
@@ -121,7 +121,7 @@ function Universal.Lightning(RenderData: { root: BasePart })
 		A2.WorldPosition + Vector3.new(0, -5, 0),
 		15,
 		Vector3.new(2.5, 2.5, 2.5),
-		{ Workspace.CurrentCamera },
+		{ Workspace.CurrentCamera, Workspace.Enemies, Workspace.NPC },
 		15,
 		false,
 		3

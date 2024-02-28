@@ -6,3 +6,6 @@ realm = "shared"
 
 [dependencies]
 Knit = "sleitnick/knit@^1.7"
+cmdr = "evaera/cmdr@1.12.0"
+janitor = "howmanysmall/janitor@1.15.7"
+profileservice = "nidoxs/profileservice@1.0.0"
