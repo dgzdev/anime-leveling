@@ -32,6 +32,16 @@ local Replace = {
 	[Enum.UserInputType.MouseButton1] = "MB1",
 	[Enum.UserInputType.MouseButton2] = "MB2",
 }
+
+local Extra = {
+	[Enum.UserInputType.MouseButton1] = {
+		Enum.KeyCode.ButtonR2,
+	},
+	[Enum.UserInputType.MouseButton2] = {
+		Enum.KeyCode.ButtonL2,
+	},
+}
+
 function CombatHandler:CreateNewSlot(button: Enum.UserInputType, attack: string)
 	local CombatGui = PlayerGui:WaitForChild("CombatGui")
 	local Background: Frame = CombatGui:WaitForChild("Background")
@@ -58,7 +68,9 @@ function CombatHandler:Bind(weaponType: string, weaponName: string)
 	if binds1 then
 		for input: Enum.UserInputType, weapon in pairs(binds1) do
 			if input.Name then
-				ContextActionService:BindAction("skill_" .. input.Name, weapon.callback, true, input)
+				local extra = Extra[input] or {}
+				table.insert(extra, input)
+				ContextActionService:BindAction("skill_" .. input.Name, weapon.callback, true, table.unpack(extra))
 				self:CreateNewSlot(input, weapon.name)
 			end
 		end
@@ -66,7 +78,9 @@ function CombatHandler:Bind(weaponType: string, weaponName: string)
 	if binds2 then
 		for input: Enum.KeyCode, weapon in pairs(binds2) do
 			if input.Name then
-				ContextActionService:BindAction("skill_" .. input.Name, weapon.callback, true, input)
+				local extra = Extra[input] or {}
+				table.insert(extra, input)
+				ContextActionService:BindAction("skill_" .. input.Name, weapon.callback, true, table.unpack(extra))
 				self:CreateNewSlot(input, weapon.name)
 			end
 		end

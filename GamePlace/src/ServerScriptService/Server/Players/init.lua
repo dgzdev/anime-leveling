@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local ServerStorage = game:GetService("ServerStorage")
+local Workspace = game:GetService("Workspace")
 
 local PlayerManager = require(script:WaitForChild("PlayerManager"))
 
@@ -24,6 +25,7 @@ plrs.OnCharacterAdded = function(playerManager: PlayerManager.PlayerManager, cha
 		return
 	end
 end
+
 plrs.OnPlayerAdded = function(player: Player)
 	local playerManager: PlayerManager.PlayerManager = PlayerManager.new(player)
 	if not playerManager then
@@ -49,6 +51,10 @@ plrs.OnPlayerAdded = function(player: Player)
 	PlayerManagers[player] = playerManager
 
 	local character = player.Character or player.CharacterAdded:Wait()
+
+	character.PrimaryPart.Anchored = true
+	character:PivotTo(Workspace.Portal:GetPivot())
+
 	plrs.OnCharacterAdded(playerManager, character)
 
 	player.CharacterAdded:Connect(function(c: Model)

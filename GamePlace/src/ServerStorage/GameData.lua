@@ -52,12 +52,41 @@ export type PlayerData = {
 	},
 	["Selected_Slot"]: "1",
 }
+export type PlayerData2 = {
+
+	["Level"]: number,
+	["Experience"]: number,
+	["Gold"]: number,
+	["Equiped"]: {
+		["Weapon"]: string,
+		["Id"]: number,
+	},
+	["Hotbar"]: { number },
+	["Inventory"]: {
+		[string]: {
+			["AchiveDate"]: number,
+			["Rank"]: Rank,
+			["SubRank"]: SubRank,
+			["Id"]: number,
+		},
+	},
+	["Skills"]: { [string]: {
+		["AchiveDate"]: number | nil,
+		["Level"]: number,
+	} },
+	["Points"]: {
+		["Inteligence"]: number,
+		["Strength"]: number,
+		["Agility"]: number,
+		["Endurance"]: number,
+	},
+}
 local ProfileTemplate: PlayerData = {
 	["Slots"] = {
 		["1"] = {
 			["Character"] = {
 				["FaceAccessory"] = 14579692783,
-				["HairAccessory"] = 15633971750,
+				["HairAccessory"] = 16007640385,
 				["BackAccessory"] = 0,
 				["WaistAccessory"] = 0,
 				["ShouldersAccessory"] = 0,
@@ -77,17 +106,27 @@ local ProfileTemplate: PlayerData = {
 					["Weapon"] = "Melee",
 					["Id"] = 1,
 				},
-				["Hotbar"] = { 1, 2 },
+				["Hotbar"] = { 1, 2, 3, 4 },
 				["Inventory"] = {
 					["Melee"] = {
-						["AchiveDate"] = os.time(),
-						["Rank"] = "E",
-						["Id"] = 1,
+						AchiveDate = os.time(),
+						Rank = "E",
+						Id = 1,
+					},
+					["Starter Sword"] = {
+						AchiveDate = os.time(),
+						Rank = "E",
+						Id = 2,
 					},
 					["Iron Starter Sword"] = {
-						["AchiveDate"] = os.time(),
-						["Rank"] = "E",
-						["Id"] = 2,
+						AchiveDate = os.time(),
+						Rank = "E",
+						Id = 3,
+					},
+					["King's Longsword"] = {
+						AchiveDate = os.time(),
+						Rank = "S",
+						Id = 4,
 					},
 				},
 				["Skills"] = {
@@ -141,10 +180,20 @@ return {
 			Rank = "E",
 			Id = 1,
 		},
-		["Iron Starter Sword"] = {
+		["Starter Sword"] = {
 			AchiveDate = os.time(),
 			Rank = "E",
 			Id = 2,
+		},
+		["Iron Starter Sword"] = {
+			AchiveDate = os.time(),
+			Rank = "E",
+			Id = 3,
+		},
+		["King's Longsword"] = {
+			AchiveDate = os.time(),
+			Rank = "S",
+			Id = 4,
 		},
 	},
 	gameWeapons = {
@@ -152,7 +201,7 @@ return {
 			Type = "Melee",
 			Damage = 5,
 		},
-		["Wooden_Sword"] = {
+		["Starter Sword"] = {
 			Type = "Sword",
 			Damage = 10,
 			Rarity = "E", --| "D" | "C" | "B" | "A" | "S"
@@ -163,6 +212,12 @@ return {
 			Damage = 20,
 			Rarity = "E",
 			SubRarity = "II", -- "II" | "III" | "IV" | "V"
+		},
+		["King's Longsword"] = {
+			Type = "Sword",
+			Damage = 50,
+			Rarity = "S",
+			SubRarity = "I", -- "II" | "III" | "IV" | "V"
 		},
 	},
 	newbieBadge = 2066631008828576,

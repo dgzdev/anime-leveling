@@ -53,9 +53,9 @@ end
 local function SetCooldown(name: string, cooldown: number)
 	Cooldowns[name] = tick() + cooldown
 	local Frame: Frame = Background:FindFirstChild(name)
-	Frame.BackgroundTransparency = 0.65
 
 	if Frame then
+		Frame.BackgroundTransparency = 0.65
 		task.spawn(function()
 			local Ready: ImageLabel = Frame:WaitForChild("Ready")
 			Ready.Visible = false
@@ -78,7 +78,7 @@ local function CheckCooldown(name: string)
 	return false
 end
 
-local IronStarterSword: {
+local KingsLongsword: {
 	[Enum.KeyCode]: (action: string, inputstate: string, inputobject: string) -> nil,
 } = {
 	[Enum.KeyCode.Z] = {
@@ -167,10 +167,82 @@ local IronStarterSword: {
 		end,
 		name = "FlashStrike",
 	},
+	[Enum.KeyCode.X] = {
+		callback = function(action, inputstate, inputobject)
+			if inputstate ~= Enum.UserInputState.Begin then
+				return
+			end
+
+			if CheckCooldown("LightningWave") then
+				return
+			end
+
+			if Humanoid.Health <= 0 then
+				return
+			end
+
+			SetCooldown("LightningWave", 1)
+			RootPart.Anchored = true
+
+			local Animation =
+				ReplicatedStorage:WaitForChild("Animations"):WaitForChild("Sword"):WaitForChild("Hit"):WaitForChild("4")
+
+			if PlayingAnimation then
+				PlayingAnimation:Stop()
+			end
+
+			PlayingAnimation = Animator:LoadAnimation(Animation)
+			PlayingAnimation:AdjustSpeed(0.25)
+			PlayingAnimation:Play()
+
+			task.spawn(function()
+				WeaponService:WeaponInput("LightningWave", Enum.UserInputState.End, {
+					Position = RootPart.CFrame,
+				})
+			end)
+
+			task.wait(1.5)
+			RootPart.Anchored = false
+		end,
+		name = "LightningWave",
+	},
+	[Enum.KeyCode.V] = {
+		callback = function(action, inputstate, inputobject)
+			if inputstate ~= Enum.UserInputState.Begin then
+				return
+			end
+
+			if Humanoid.Health <= 0 then
+				return
+			end
+
+			SetCooldown("Lightning", 1)
+			WeaponService:WeaponInput("Lightning", Enum.UserInputState.End, {
+				Position = RootPart.CFrame,
+			})
+
+			local Animation =
+				ReplicatedStorage:WaitForChild("Animations"):WaitForChild("Sword"):WaitForChild("Hit"):WaitForChild("4")
+
+			if PlayingAnimation then
+				PlayingAnimation:Stop()
+			end
+
+			PlayingAnimation = Animator:LoadAnimation(Animation)
+			PlayingAnimation:AdjustSpeed(0.25)
+			PlayingAnimation:Play(0.15)
+
+			RootPart.Anchored = true
+			task.wait(0.9)
+			RootPart.Anchored = false
+		end,
+
+		name = "Lightning",
+	},
 }
 
-function IronStarterSword.Start()
+function KingsLongsword.Start()
 	WeaponService = Knit.GetService("WeaponService")
 end
 
-return IronStarterSword
+return KingsLongsword

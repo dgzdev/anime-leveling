@@ -20,6 +20,6 @@ function Realism:SetMouseIcon(icon: number)
 end
 
 Realism:FootstepStart()
-Realism:SetMouseIcon(15941568825)
+Realism:SetMouseIcon(16552514299)
 
 return Realism

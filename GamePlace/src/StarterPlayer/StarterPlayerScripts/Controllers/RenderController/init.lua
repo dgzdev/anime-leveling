@@ -151,7 +151,9 @@ function RenderController.Render(RenderData)
 	local ModuleToRender = RenderData.module
 
 	if RenderingModules[ModuleToRender] then
-		RenderingModules[ModuleToRender].Caller(RenderData)
+		task.spawn(function()
+			RenderingModules[ModuleToRender].Caller(RenderData)
+		end)
 	else
 		print("Module not found!")
 	end

@@ -1,3 +1,4 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
@@ -6,6 +7,11 @@ local RootPart
 local Neck
 local Humanoid
 local Torso
+
+if not ReplicatedStorage:GetAttribute("FirstTimeAnimationEnd") then
+	local CameraEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("CAMERA") :: BindableEvent
+	CameraEvent.Event:Wait()
+end
 
 function Bind()
 	RunService:UnbindFromRenderStep("HeadRotation")

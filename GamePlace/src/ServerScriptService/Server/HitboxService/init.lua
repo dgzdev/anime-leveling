@@ -25,7 +25,15 @@ local HitboxService = Knit.CreateService({
 	Client = {},
 })
 
-function HitboxService:CreateBlockHitbox(p: CFrame, s: Vector3, dmg: number, kb: number?, ovp: OverlapParams?)
+function HitboxService:CreateBlockHitbox(
+	p: CFrame,
+	s: Vector3,
+	dmg: number,
+	kb: number?,
+	ovp: OverlapParams?,
+	vfx: string?,
+	sfx: string?
+)
 	--[[
 	local Part = Instance.new("Part")
 	Part.Anchored = true
@@ -55,14 +63,18 @@ function HitboxService:CreateBlockHitbox(p: CFrame, s: Vector3, dmg: number, kb:
 			if not Damaged[part.Parent] then
 				Damaged[part.Parent] = true
 				local Humanoid = part.Parent:FindFirstChild("Humanoid")
+				if Humanoid.Health <= 0 then
+					return
+				end
+
 				Humanoid:TakeDamage(dmg)
 
 				if kb then
 					Humanoid.RootPart.AssemblyLinearVelocity = (kb * p.LookVector) * GetModelMass(part.Parent)
 				end
 
-				VFX:ApplyParticle(part.Parent, "CombatHit")
-				SFX:Apply(part.Parent, "Melee")
+				VFX:ApplyParticle(part.Parent, vfx or "CombatHit")
+				SFX:Apply(part.Parent, sfx or "Melee")
 			end
 		end
 	end

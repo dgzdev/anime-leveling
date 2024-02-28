@@ -1,4 +1,5 @@
 local ContextActionService = game:GetService("ContextActionService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local Players = game:GetService("Players")
@@ -15,6 +16,11 @@ local Mouse = Player:GetMouse()
 local OldCFrame = nil
 
 local Camera = Workspace.CurrentCamera
+
+if not ReplicatedStorage:GetAttribute("FirstTimeAnimationEnd") then
+	local CameraEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("CAMERA") :: BindableEvent
+	CameraEvent.Event:Wait()
+end
 
 local isShiftlockEnabled = true
 ContextActionService:BindAction("ToggleShiftlock", function(action, state, input)

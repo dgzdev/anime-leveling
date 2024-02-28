@@ -1,3 +1,4 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunS = game:GetService("RunService")
 local InputS = game:GetService("UserInputService")
 
@@ -19,6 +20,11 @@ local walkKeyBinds = {
 	Left = { Key = Enum.KeyCode.A, Direction = Enum.NormalId.Left },
 	Right = { Key = Enum.KeyCode.D, Direction = Enum.NormalId.Right },
 }
+
+if not ReplicatedStorage:GetAttribute("FirstTimeAnimationEnd") then
+	local CameraEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("CAMERA") :: BindableEvent
+	CameraEvent.Event:Wait()
+end
 
 local function getWalkDirectionCameraSpace()
 	local walkDir = Vector3.new()

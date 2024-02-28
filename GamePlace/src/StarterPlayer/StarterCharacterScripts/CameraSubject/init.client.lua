@@ -1,7 +1,13 @@
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
+
+if not ReplicatedStorage:GetAttribute("FirstTimeAnimationEnd") then
+	local CameraEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("CAMERA") :: BindableEvent
+	CameraEvent.Event:Wait()
+end
 
 if character:FindFirstChild("HeadSubject") then
 	character:FindFirstChild("HeadSubject"):Destroy()

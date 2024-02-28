@@ -29,7 +29,9 @@ function CameraModule:Init()
 	-- ? Check if the OTS module is loaded.
 	self:CheckCondition(self.OTS ~= nil, "[CameraModule] OTS is nil, this is a problem.")
 
-	self:EnableCamera()
+	if ReplicatedStorage:GetAttribute("FirstTimeAnimationEnd") then
+		self:EnableCamera()
+	end
 
 	humanoid.Died:Once(function()
 		self:DisableCamera()

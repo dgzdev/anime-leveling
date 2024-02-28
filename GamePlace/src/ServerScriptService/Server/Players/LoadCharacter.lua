@@ -13,10 +13,20 @@ export type CharacterData = {
 	["Colors"]: { number },
 }
 function LoadCharacter:FromData(player: Player, data: CharacterData)
-	print("loading appearance")
-
+	task.wait()
 	local character = player.Character or player.CharacterAdded:Wait()
-	local humanoid = character:WaitForChild("Humanoid")
+
+	local Head = character:FindFirstChild("Head")
+	local Torso = character:FindFirstChild("Torso")
+	local HumanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+	local RightArm = character:FindFirstChild("Right Arm")
+	local LeftArm = character:FindFirstChild("Left Arm")
+	local RightLeg = character:FindFirstChild("Right Leg")
+	local LeftLeg = character:FindFirstChild("Left Leg")
+
+	HumanoidRootPart.Anchored = true
+
+	local humanoid: Humanoid = character:WaitForChild("Humanoid")
 
 	local HumanoidDescription = Instance.new("HumanoidDescription")
 
@@ -33,8 +43,10 @@ function LoadCharacter:FromData(player: Player, data: CharacterData)
 			HumanoidDescription[name] = value
 		end
 	end
+	task.wait()
+	humanoid:ApplyDescription(HumanoidDescription, Enum.AssetTypeVerification.Default)
 
-	humanoid:ApplyDescription(HumanoidDescription)
+	HumanoidRootPart.Anchored = false
 end
 
 return LoadCharacter

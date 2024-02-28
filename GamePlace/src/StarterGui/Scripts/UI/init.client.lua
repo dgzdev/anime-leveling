@@ -22,10 +22,10 @@ function GuiObject.new(object: GuiButton)
 	self.Object = object
 	self.Object.Activated:Connect(function(inputObject, clickCount)
 		local Event = self.Object:GetAttribute("Event")
+		Events.Buttons.Default(self.Object, self)
 		if Events.Buttons[Event] then
 			Events.Buttons[Event](self.Object, self)
 		end
-		Events.Buttons.Default(self.Object, self)
 	end)
 	self.Object.MouseEnter:Connect(function(x, y)
 		local Event = self.Object:GetAttribute("Event")
@@ -33,6 +33,12 @@ function GuiObject.new(object: GuiButton)
 			Events.Hover[Event](self.Object, self)
 		else
 			Events.Hover.Default(self.Object, self)
+		end
+	end)
+	self.Object.MouseLeave:Connect(function(x, y)
+		local Event = self.Object:GetAttribute("Event")
+		if Events.HoverEnd[Event] then
+			Events.HoverEnd[Event](self.Object, self)
 		end
 	end)
 
@@ -57,9 +63,4 @@ function UI:Init()
 	end)
 end
 
-UI.OnProfileReceive = function()
-	return
-end
-
 UI:Init()
-return UI

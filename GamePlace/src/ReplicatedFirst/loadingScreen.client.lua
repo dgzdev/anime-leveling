@@ -13,14 +13,6 @@ screenGui.Name = "loadingScreen"
 screenGui.IgnoreGuiInset = true
 screenGui.DisplayOrder = 999
 
-local function Unlock()
-	local Character = player.Character or player.CharacterAdded:Wait()
-	local RootPart = Character:WaitForChild("HumanoidRootPart")
-	repeat
-		RootPart.Anchored = false
-	until RootPart.Anchored == false
-end
-
 task.spawn(function()
 	local Character = player.Character or player.CharacterAdded:Wait()
 	local RootPart = Character:WaitForChild("HumanoidRootPart")
@@ -79,7 +71,6 @@ skipButton.Visible = true
 skipButton.Activated:Connect(function(inputObject, clickCount)
 	screenGui:Destroy()
 	print("[Loading] Skipped loading screen. (Took " .. math.floor(tick() - start) .. " seconds.)")
-	Unlock()
 	script:Destroy()
 end)
 
@@ -88,7 +79,6 @@ ContentProvider:PreloadAsync(game:GetDescendants())
 local endTick = tick()
 
 screenGui:Destroy()
-Unlock()
 print("[Loading] Loaded in " .. math.floor(endTick - start) .. " seconds.")
 
 script:Destroy()

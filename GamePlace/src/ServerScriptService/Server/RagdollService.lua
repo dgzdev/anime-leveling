@@ -12,16 +12,23 @@ local Ragdoll = require(ReplicatedStorage.Ragdoll)
 function RagdollService:Ragdoll(Character: Model, time: number?)
 	Ragdoll.RagdollCharacter(Character)
 
+	local Player = Players:GetPlayerFromCharacter(Character)
+
 	local Humanoid: Humanoid = Character:WaitForChild("Humanoid")
-	Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, false)
-	Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+
+	if not Player then
+		Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, false)
+		Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+	end
 
 	if time then
 		task.delay(time, function()
 			Ragdoll.UnRagdollCharacter(Character)
 
-			Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, true)
-			Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+			if not Player then
+				Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, true)
+				Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+			end
 		end)
 	end
 end
@@ -34,7 +41,7 @@ Players.PlayerAdded:Connect(function(Player)
 			if not Character:FindFirstChild("HumanoidRootPart") then
 				task.wait(Players.RespawnTime)
 				if Player:IsDescendantOf(Players) then
-					Player:LoadCharacter()
+					--Player:LoadCharacter()
 				end
 			end
 		end)

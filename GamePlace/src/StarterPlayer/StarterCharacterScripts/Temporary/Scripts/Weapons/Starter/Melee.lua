@@ -72,6 +72,22 @@ local Melee = {
 				return
 			end
 
+			if Humanoid.WalkSpeed == 0 then
+				return
+			end
+
+			if RootPart.Anchored then
+				return
+			end
+
+			if Humanoid:GetState() ~= Enum.HumanoidStateType.Running then
+				return
+			end
+
+			if Humanoid.Health <= 0 then
+				return
+			end
+
 			local Combos = Animations:WaitForChild("Melee"):WaitForChild("Hit"):GetChildren()
 			table.sort(Combos, function(a, b)
 				return a.Name < b.Name
