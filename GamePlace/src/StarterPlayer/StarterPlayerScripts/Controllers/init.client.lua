@@ -1,19 +1,33 @@
-local Controllers = script:GetDescendants()
-
 local Knit = require(game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("Knit"))
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
 end
 
-for i, v in ipairs(Controllers) do
-	if not v:IsA("ModuleScript") then
+local Player = game.Players.LocalPlayer
+local Character = Player.Character or Player.CharacterAdded:Wait()
+
+local Controllers = {}
+for _, script in ipairs(script:GetDescendants()) do
+	if not script:IsA("ModuleScript") then
 		continue
 	end
-
-	if v.Name:match("Controller") then
-		require(v)
+	if script.Name:match("Controller$") then
+		table.insert(Controllers, script)
 	end
+end
+
+for _, script in ipairs(Character) do
+	if not script:IsA("ModuleScript") then
+		continue
+	end
+	if script.Name:match("Controller$") then
+		table.insert(Controllers, script)
+	end
+end
+
+for i, v in ipairs(Controllers) do
+	require(v)
 end
 
 Knit.Start({ ServicePromises = false }):catch(warn)

@@ -23,10 +23,14 @@ function OnRagdoll(Ragdolled)
 	end
 end
 
-PlayerEvents.Ragdoll.OnClientEvent:Connect(OnRagdoll)
-
 function Ragdoll:KnitStart()
-	OnRagdoll(false)
+	Player.CharacterAdded:Connect(function(character)
+		Character = character
+		Humanoid = character:WaitForChild("Humanoid")
+		OnRagdoll(false)
+	end)
+
+	PlayerEvents.Ragdoll.OnClientEvent:Connect(OnRagdoll)
 end
 
 return Ragdoll

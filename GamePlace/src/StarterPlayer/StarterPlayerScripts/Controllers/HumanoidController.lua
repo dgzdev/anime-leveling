@@ -26,7 +26,7 @@ function HumanoidHandler:OnFallingDown()
 	VFX:ApplyParticle(Character, "Falling", nil, nil, true)
 end
 
-function HumanoidHandler:KnitStart()
+function HumanoidHandler:BindHumanoid(Humanoid: Humanoid)
 	Humanoid.StateChanged:Connect(function(old, new)
 		if new == Enum.HumanoidStateType.Landed then
 			self:OnLand()
@@ -35,6 +35,17 @@ function HumanoidHandler:KnitStart()
 			self:OnFallingDown()
 		end
 	end)
+end
+
+function HumanoidHandler:KnitStart()
+	Player.CharacterAdded:Connect(function(character)
+		Character = character
+		Humanoid = character:WaitForChild("Humanoid")
+		Animator = Humanoid:WaitForChild("Animator")
+		self:BindHumanoid(Humanoid)
+	end)
+
+	self:BindHumanoid(Humanoid)
 end
 
 return HumanoidHandler
