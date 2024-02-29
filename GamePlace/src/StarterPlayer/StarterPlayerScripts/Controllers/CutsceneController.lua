@@ -1,14 +1,13 @@
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
+
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
-local Join = {}
 
 local Camera = Workspace.CurrentCamera
-
-local Knit = require(ReplicatedStorage.Packages.Knit)
 
 local PlayerEnterService
 
@@ -57,21 +56,16 @@ local function AnimateCamera(animation: string)
 	end)
 end
 
-local ContextActionService = game:GetService("ContextActionService")
-function Join:Init()
-	if not game:IsLoaded() then
-		game.Loaded:Wait()
-	end
+local CutsceneController = Knit.CreateController({
+	Name = "CutsceneController",
+})
 
-	Knit.OnStart():await()
-
-	PlayerEnterService = Knit.GetService("PlayerEnterService")
-
+function CutsceneController.Init()
 	Root.Anchored = true
 
 	PlayerEnterService:CutsceneStart(Player)
 
-	local loadingGui = Player:FindFirstChild("loadingScreen", true)
+	local loadingGui = PlayerGui:FindFirstChild("loadingScreen", true)
 	if loadingGui then
 		loadingGui.Destroying:Wait()
 	end
@@ -95,4 +89,12 @@ function Join:Init()
 	AnimateCamera("Portal Leave")
 end
 
-return Join
+function CutsceneController:KnitStart()
+	PlayerEnterService = Knit.GetService("PlayerEnterService")
+
+	task.spawn(function()
+		self:Init()
+	end)
+end
+
+return CutsceneController

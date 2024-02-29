@@ -1,11 +1,17 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Died = {}
+
+local Knit = require(ReplicatedStorage.Packages.Knit)
+
+local DieService = Knit.CreateService({
+	Name = "DieService",
+	Client = {},
+})
 
 local VFX = require(ReplicatedStorage.Modules.VFX)
 
 local bound = {}
 
-function Died:BindRagdoll()
+function DieService:BindEffects()
 	local function bind(hum: Humanoid)
 		if bound[hum] then
 			return
@@ -36,8 +42,8 @@ function Died:BindRagdoll()
 	end)
 end
 
-function Died:Init()
-	self:BindRagdoll()
+function DieService.KnitStart()
+	DieService:BindEffects()
 end
 
-return Died
+return DieService

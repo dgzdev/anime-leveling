@@ -1,6 +1,11 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local HumanoidHandler = {}
+
+local Knit = require(ReplicatedStorage.Packages.Knit)
+
+local HumanoidHandler = Knit.CreateController({
+	Name = "HumanoidHandler",
+})
 
 local Player = Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
@@ -21,7 +26,7 @@ function HumanoidHandler:OnFallingDown()
 	VFX:ApplyParticle(Character, "Falling", nil, nil, true)
 end
 
-function HumanoidHandler:Init()
+function HumanoidHandler:KnitStart()
 	Humanoid.StateChanged:Connect(function(old, new)
 		if new == Enum.HumanoidStateType.Landed then
 			self:OnLand()

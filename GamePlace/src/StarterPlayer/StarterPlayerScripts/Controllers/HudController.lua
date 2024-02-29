@@ -6,7 +6,9 @@ local SoundService = game:GetService("SoundService")
 
 local PlayerService
 
-local Hud = {}
+local Hud = Knit.CreateController({
+	Name = "HudController",
+})
 
 function Hud:OrganizeHotbar(Profile)
 	local Player = Players.LocalPlayer
@@ -128,7 +130,6 @@ local function EquipSlotItem(action: string, state, input)
 	end
 
 	local OK = PlayerService:EquipWeapon(ItemID)
-	print(OK)
 	if not OK then
 		return PlayErrorSound()
 	end
@@ -151,18 +152,21 @@ local function EquipSlotItem(action: string, state, input)
 	PlayEquipSound()
 end
 
-function Hud.KnitInit()
-	print("Hud KnitStart")
-
-	PlayerService = Knit.GetService("PlayerService")
-
-	Hud.Data = PlayerService:GetData(game.Players.LocalPlayer)
-	Hud:OrganizeHotbar(Hud.Data)
-
+function Hud:BindContexts()
 	ContextActionService:BindAction("EquipSlotItem_1", EquipSlotItem, false, Enum.KeyCode.One)
 	ContextActionService:BindAction("EquipSlotItem_2", EquipSlotItem, false, Enum.KeyCode.Two)
 	ContextActionService:BindAction("EquipSlotItem_3", EquipSlotItem, false, Enum.KeyCode.Three)
 	ContextActionService:BindAction("EquipSlotItem_4", EquipSlotItem, false, Enum.KeyCode.Four)
+end
+
+function Hud:KnitStart()
+	PlayerService = Knit.GetService("PlayerService")
+
+	local Data = PlayerService:GetData(Players.LocalPlayer)
+	Hud.Data = Data
+
+	self:OrganizeHotbar(Hud.Data)
+	self:BindContexts()
 end
 
 return Hud

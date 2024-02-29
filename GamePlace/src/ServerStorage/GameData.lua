@@ -54,6 +54,7 @@ export type SlotData = {
 		Weapon: string,
 		Id: number,
 	},
+	Quest: {},
 	Hotbar: { number },
 	Inventory: Inventory,
 	Skills: { [string]: {
@@ -100,6 +101,7 @@ local ProfileTemplate: ProfileData = {
 					["Weapon"] = "Melee",
 					["Id"] = 1,
 				},
+				["Quests"] = {},
 				["Hotbar"] = { 1, 2, 3, 4 },
 				["Inventory"] = {
 					["Melee"] = {

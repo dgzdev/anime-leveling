@@ -22,11 +22,10 @@ function WeaponService:WeaponInput(
 	InputState: Enum.UserInputState,
 	Data: { [any]: any }
 )
-	local Player = Players:GetPlayerFromCharacter(Character)
-	if not Player then
+	local PlayerData = PlayerService:GetData(Character)
+	if not PlayerData then
 		return
 	end
-	local PlayerData = PlayerService:GetData(Player)
 
 	local EquippedItemName = PlayerData.Equiped.Weapon
 	local itemData = GameData.gameWeapons[EquippedItemName]

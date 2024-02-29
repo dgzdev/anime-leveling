@@ -1,3 +1,5 @@
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
 local Melee = {}
 
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
@@ -16,7 +18,22 @@ Melee.Default = {
 			Combos: number,
 		}
 	)
-		HitboxService:CreateBlockHitbox(p.Position * CFrame.new(0, 0, -2), Vector3.new(5, 5, 5), 10, 5, nil)
+		local op = OverlapParams.new()
+
+		if Character:GetAttribute("Enemy") then
+			local Characters = {}
+			for _, plrs in ipairs(Players:GetPlayers()) do
+				table.insert(Characters, plrs.Character)
+			end
+
+			op.FilterType = Enum.RaycastFilterType.Include
+			op.FilterDescendantsInstances = Characters
+		else
+			op.FilterType = Enum.RaycastFilterType.Include
+			op.FilterDescendantsInstances = { Workspace:WaitForChild("Enemies") }
+		end
+
+		HitboxService:CreateBlockHitbox(p.Position * CFrame.new(0, 0, -2), Vector3.new(5, 5, 5), 10, 5, op)
 	end,
 
 	Defense = function(...)

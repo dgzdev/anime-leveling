@@ -1,4 +1,8 @@
-local Ragdoll = {}
+local Knit = require(game:GetService("ReplicatedStorage").Packages.Knit)
+
+local Ragdoll = Knit.CreateController({
+	Name = "Ragdoll",
+})
 
 local Players = game:GetService("Players")
 local StarterGui = game:GetService("StarterGui")
@@ -21,7 +25,7 @@ end
 
 PlayerEvents.Ragdoll.OnClientEvent:Connect(OnRagdoll)
 
-function Ragdoll:Init()
+function Ragdoll:KnitStart()
 	OnRagdoll(false)
 end
 

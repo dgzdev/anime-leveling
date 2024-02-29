@@ -19,7 +19,6 @@ local Managers: { [number]: typeof(PlayerManager) | nil } = {}
 -- ========================================
 
 function PlayerService.OnPlayerJoin(player: Player)
-	print("PlayerService.OnPlayerJoin")
 	local Manager = PlayerManager.new(player)
 	Manager:LoadProfile()
 
@@ -51,12 +50,24 @@ end
 -- Client
 -- ========================================
 
-function PlayerService:GetData(player: Player)
-	local Manager = Managers[player.UserId]
+function PlayerService:GetData(player: Player | Model): GameData.SlotData
+	local Player: Player = player
+	if player:IsA("Model") then
+		if Players:GetPlayerFromCharacter(player) then
+			Player = Players:GetPlayerFromCharacter(player)
+		else
+			local Data = Player:FindFirstChild("Data")
+			if Data then
+				return require(Data)
+			end
+		end
+	end
+
+	local Manager = Managers[Player.UserId]
 
 	if not Manager then
 		repeat
-			Manager = Managers[player.UserId]
+			Manager = Managers[Player.UserId]
 			task.wait(1)
 		until Manager
 	end
@@ -64,7 +75,8 @@ function PlayerService:GetData(player: Player)
 	return Manager:GetData()
 end
 function PlayerService.Client:GetData(player: Player)
-	return self.Server:GetData(player)
+	local data = self.Server:GetData(player)
+	return data
 end
 
 function PlayerService:EquipWeapon(player: Player, weaponId: number)
@@ -118,6 +130,12 @@ end
 function PlayerService:KnitStart()
 	InventoryService = Knit.GetService("InventoryService")
 end
+
+game:BindToClose(function()
+	for playerId: number, manager in pairs(Managers) do
+		manager:Release()
+	end
+end)
 
 Players.PlayerAdded:Connect(PlayerService.OnPlayerJoin)
 Players.PlayerRemoving:Connect(PlayerService.OnPlayerLeave)

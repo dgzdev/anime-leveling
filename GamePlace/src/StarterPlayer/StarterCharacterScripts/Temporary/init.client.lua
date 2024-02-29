@@ -15,14 +15,6 @@ StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.EmotesMenu, false)
 StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Health, false)
 StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Captures, false)
 
-for _, Module: ModuleScript in ipairs(script:WaitForChild("Modules"):GetChildren()) do
-	if not (Module:IsA("ModuleScript")) then
-		continue
-	end
-
-	Modules[Module.Name] = Module
-end
-
 for _, Module: ModuleScript in ipairs(script:WaitForChild("Scripts"):GetChildren()) do
 	if not (Module:IsA("ModuleScript")) then
 		continue
