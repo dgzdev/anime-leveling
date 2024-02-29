@@ -64,6 +64,8 @@ local RightSlots: Frame = RightSide:WaitForChild("Slots")
 
 local customization: { List: {}, Selected: {}, [string]: number } = Requests:InvokeServer("Customization")
 
+local MenuCamera = require(ReplicatedStorage:WaitForChild("MenuCamera"))
+
 local function UpdateSlots()
 	task.spawn(function()
 		for _, object in ipairs(LeftSlots:GetChildren()) do
@@ -145,6 +147,8 @@ Events.Buttons = {
 	["Play"] = function()
 		local c: Model = Workspace:WaitForChild("Characters"):WaitForChild("Rig")
 		local head: BasePart = c:WaitForChild("Head")
+
+		MenuCamera:Disable()
 
 		SlideOut()
 
@@ -233,6 +237,8 @@ Events.Buttons = {
 			tween = TweenService:Create(Mid, tweenInfo, { Position = UDim2.fromScale(0.5, 1 + Mid.Size.Y.Scale) })
 			tween:Play()
 			tween.Completed:Wait()
+
+			MenuCamera:Disable()
 
 			CharacterCustomization.Enabled = false
 		end

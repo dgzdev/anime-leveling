@@ -21,6 +21,8 @@ local pressanykey: TextLabel = PressAnyKey:WaitForChild("pressanykey")
 
 require(script.Parent:WaitForChild("UI")):Init()
 
+local MenuCamera = require(ReplicatedStorage:WaitForChild("MenuCamera"))
+
 local hasPressedButton = false
 
 local ViewPart: BasePart = Workspace:WaitForChild("CameraParts"):WaitForChild("View")
@@ -156,10 +158,14 @@ local function fadeOut()
 	tw:Play()
 	tw.Completed:Wait()
 
+	MenuCamera:Enable()
+
 	SlideIn()
 end
 
 local function onInputBegan(input)
+	MenuCamera:Disable()
+	MenuCamera.CF0 = CharacterPart.CFrame
 	if hasPressedButton then
 		return
 	end
@@ -189,6 +195,9 @@ task.wait()
 local Camera = Workspace.CurrentCamera
 Camera.CameraType = Enum.CameraType.Scriptable
 Camera.CFrame = ViewPart.CFrame
+
+MenuCamera.CF0 = ViewPart.CFrame
+MenuCamera:Enable()
 
 PressAnyKey.Parent = PlayerGui
 
