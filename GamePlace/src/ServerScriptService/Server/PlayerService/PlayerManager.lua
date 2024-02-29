@@ -10,24 +10,13 @@ local ProfileService = require(ReplicatedStorage.Packages.profileservice)
 local ProfileStore = ProfileService.GetProfileStore(GameData.profileKey, GameData.profileTemplate)
 
 function PlayerManager.new(player: Player)
-	if not player then
-		return error("No player")
-	end
-
 	local self = setmetatable({}, PlayerManager)
 
-	local Profile = self:LoadProfile()
-	self.Profile = Profile
-
-	Profile:SetMetaTag("Version", game.PlaceVersion)
-	local plays = Profile:GetMetaTag("Plays") or 0
-	Profile:SetMetaTag("Plays", plays + 1)
-
-	if plays <= 10 then
-		self:Newbie()
-	end
+	player:LoadCharacter()
+	self.Profile = {}
 
 	self.Player = player
+
 	self.Character = player.Character or player.CharacterAdded:Wait()
 	self.Humanoid = self.Character:WaitForChild("Humanoid")
 	self.PlayerGui = player:WaitForChild("PlayerGui")
@@ -101,22 +90,32 @@ function PlayerManager:Newbie()
 end
 
 function PlayerManager:GetData()
-	local slot = self.Profile.Data["Current_Slot"]
+	local slot = self.Profile.Data["Selected_Slot"]
 	local data: GameData.SlotData = self.Profile.Data["Slots"][slot].Data
 	return data
 end
 
 function PlayerManager:GetPlayerSlot()
-	local CurrentSlot = self.Profile.Data["Current_Slot"]
+	local CurrentSlot = self.Profile.Data["Selected_Slot"]
 	local Slot: GameData.PlayerSlot = self.Profile.Data["Slots"][CurrentSlot]
 	return Slot
 end
 
 function PlayerManager:LoadProfile()
+	print(self)
 	local Profile = ProfileStore:LoadProfileAsync(`player_{self.Player.UserId}`, "ForceLoad")
 	if Profile then
 		Profile:Reconcile()
 		self.Profile = Profile
+
+		Profile:SetMetaTag("Version", game.PlaceVersion)
+		local plays = Profile:GetMetaTag("Plays") or 0
+		Profile:SetMetaTag("Plays", plays + 1)
+
+		if plays <= 10 then
+			self:Newbie()
+		end
+
 		return Profile
 	else
 		return error("Error while loading profile.")

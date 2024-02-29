@@ -12,29 +12,36 @@ local PlayerService = Knit.CreateService({
 })
 
 local PlayerManager = require(script.PlayerManager)
-local Managers: { [Player]: typeof(PlayerManager) | nil } = {}
+local Managers: { [number]: typeof(PlayerManager) | nil } = {}
 
 -- ========================================
 -- Connections
 -- ========================================
 
 function PlayerService.OnPlayerJoin(player: Player)
+	print("PlayerService.OnPlayerJoin")
 	local Manager = PlayerManager.new(player)
-	local Profile = Manager:LoadProfile()
-	if not Profile then
-		return
+	Manager:LoadProfile()
+
+	if player:IsDescendantOf(Players) then
+		if Manager.Profile then
+			Manager.Profile:ListenToRelease(function()
+				Manager:Release()
+				Managers[player.UserId] = nil
+			end)
+
+			Managers[player.UserId] = Manager
+		end
 	end
 
-	Profile:ListenToRelease(function()
-		Manager:Release()
-		Managers[player] = nil
-	end)
+	local Data = Manager:GetData()
 
-	Managers[player] = Manager
+	Manager:LoadCharacterAppearance(player, Manager:GetPlayerSlot().Character)
+	PlayerService:EquipWeapon(player, Data.Equiped.Id)
 end
 
 function PlayerService.OnPlayerLeave(player: Player)
-	local Manager = Managers[player]
+	local Manager = Managers[player.UserId]
 	if Manager then
 		Manager:Release()
 	end
@@ -45,13 +52,19 @@ end
 -- ========================================
 
 function PlayerService:GetData(player: Player)
-	local Manager = Managers[player]
-	if Manager then
-		return Manager:GetData()
+	local Manager = Managers[player.UserId]
+
+	if not Manager then
+		repeat
+			Manager = Managers[player.UserId]
+			task.wait(1)
+		until Manager
 	end
+
+	return Manager:GetData()
 end
-function PlayerService.Client:GetData(...)
-	return self.Server:GetData(...)
+function PlayerService.Client:GetData(player: Player)
+	return self.Server:GetData(player)
 end
 
 function PlayerService:EquipWeapon(player: Player, weaponId: number)
@@ -59,7 +72,7 @@ function PlayerService:EquipWeapon(player: Player, weaponId: number)
 		return error("No weaponId")
 	end
 
-	local Manager = Managers[player]
+	local Manager = Managers[player.UserId]
 	if not Manager then
 		return error("No manager")
 	end
@@ -83,11 +96,19 @@ function PlayerService:EquipWeapon(player: Player, weaponId: number)
 	Slot.Data.Equiped.Weapon = weaponData.Name
 	Slot.Data.Equiped.Id = weaponData.Id
 
-	InventoryService:EquipFromData(Slot.Data)
+	return InventoryService:EquipFromData(player, Slot.Data)
 end
 
-function PlayerService.Client:EquipWeapon(...)
-	return self.Server:EquipWeapon(...)
+function PlayerService.Client:EquipWeapon(Player: Player, weaponId: NumberSequence)
+	return self.Server:EquipWeapon(Player, weaponId)
+end
+
+function PlayerService:GetWeapons()
+	return GameData.gameWeapons
+end
+
+function PlayerService.Client:GetWeapons()
+	return self.Server:GetWeapons()
 end
 
 -- ========================================

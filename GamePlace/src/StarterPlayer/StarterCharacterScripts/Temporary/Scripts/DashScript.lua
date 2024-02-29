@@ -110,6 +110,10 @@ function DashScript:Dash()
 		DashDiretionString = "F"
 	end
 
+	if not DashDiretionString then
+		return
+	end
+
 	Animation.AnimationId = "rbxassetid://" .. DashAnimations[DashDiretionString]
 	local AnimationTrack = Animator:LoadAnimation(Animation)
 

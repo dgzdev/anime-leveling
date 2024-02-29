@@ -1,17 +1,20 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
 
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
+
+local PlayerService
+
 local WeaponService = Knit.CreateService({
 	Name = "WeaponService",
 	Client = {},
 })
 
-local PlayersManager = require(ServerScriptService.Server.Players)
-local GameData = require(ServerStorage.GameData)
-
 local Weapons = {}
+
+local GameData = require(ServerStorage.GameData)
 
 function WeaponService:WeaponInput(
 	Character: Model,
@@ -19,7 +22,11 @@ function WeaponService:WeaponInput(
 	InputState: Enum.UserInputState,
 	Data: { [any]: any }
 )
-	local PlayerData = PlayersManager:GetPlayerData(Character)
+	local Player = Players:GetPlayerFromCharacter(Character)
+	if not Player then
+		return
+	end
+	local PlayerData = PlayerService:GetData(Player)
 
 	local EquippedItemName = PlayerData.Equiped.Weapon
 	local itemData = GameData.gameWeapons[EquippedItemName]
@@ -60,6 +67,8 @@ function WeaponService.KnitInit()
 	end
 end
 function WeaponService.KnitStart()
+	PlayerService = Knit.GetService("PlayerService")
+
 	for _, weapon in pairs(Weapons) do
 		if weapon.Start then
 			weapon.Start()
