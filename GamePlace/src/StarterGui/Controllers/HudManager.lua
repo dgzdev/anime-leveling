@@ -128,6 +128,7 @@ local function EquipSlotItem(action: string, state, input)
 	end
 
 	local OK = PlayerService:EquipWeapon(ItemID)
+	print(OK)
 	if not OK then
 		return PlayErrorSound()
 	end

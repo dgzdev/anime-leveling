@@ -5,6 +5,8 @@ local Knit = require(ReplicatedStorage.Packages.Knit)
 local RunService = game:GetService("RunService")
 local ServerStorage = game:GetService("ServerStorage")
 
+local PlayerService
+
 local InventoryService = Knit.CreateService({
 	Name = "InventoryService",
 	Client = {
@@ -16,7 +18,7 @@ local InventoryService = Knit.CreateService({
 local GameData = require(ServerStorage.GameData)
 
 function InventoryService:AddItem(player: Player, item: string)
-	local Data = PlayerManager:GetPlayerData(player)
+	local Data = PlayerService:GetPlayerData(player)
 
 	local lastId = 0
 	for id, info in pairs(Data.Inventory) do
@@ -33,7 +35,7 @@ function InventoryService:AddItem(player: Player, item: string)
 end
 
 function InventoryService:RemoveItem(player: Player, item: string)
-	local Data = PlayerManager:GetPlayerData(player)
+	local Data = PlayerService:GetPlayerData(player)
 
 	local id
 	for _id, info in pairs(Data.Inventory) do
@@ -101,10 +103,6 @@ function InventoryService:EquipFromData(player: Player, playerData)
 		Motor6D.C1 = (CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(90), 0, 0))
 		Motor6D.Parent = RightHand
 
-		if not RunService:IsStudio() then
-			PlayerManager.Profile:SetMetaTag("Equiped", Equiped)
-		end
-
 		Root.Anchored = false
 	end
 
@@ -121,7 +119,7 @@ function InventoryService:EquipFromData(player: Player, playerData)
 			return
 		end
 		if not Melee:IsA("Model") then
-			return
+			return "OK"
 		end
 
 		local RightHand = Character:WaitForChild("Right Arm")
@@ -137,15 +135,13 @@ function InventoryService:EquipFromData(player: Player, playerData)
 		Weld.Parent = MeleeClone
 		Weld.Part0 = RightHand
 		Weld.Part1 = MeleeClone.PrimaryPart
-
-		if not RunService:IsStudio() then
-			PlayerManager.Profile:SetMetaTag("Equiped", Equiped)
-		end
 	end
 
 	return "OK"
 end
 
-function InventoryService.KnitStart() end
+function InventoryService.KnitStart()
+	PlayerService = Knit.GetService("PlayerService")
+end
 
 return InventoryService

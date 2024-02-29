@@ -9,7 +9,7 @@ for _, service in ipairs(Controlers) do
 	if not service:IsA("ModuleScript") then
 		continue
 	end
-	if not service.Name:match("Controller$") then
+	if not service.Name:match("Manager$") then
 		continue
 	end
 	Controllers[#Controllers + 1] = require(service)
