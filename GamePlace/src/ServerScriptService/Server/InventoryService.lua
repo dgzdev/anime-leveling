@@ -1,4 +1,7 @@
-local Knit = require(game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("Knit"))
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Knit = require(ReplicatedStorage.Packages.Knit)
+
 local ServerStorage = game:GetService("ServerStorage")
 
 local PlayerManager
@@ -6,7 +9,6 @@ local PlayerManager
 local InventoryService = Knit.CreateService({
 	Name = "InventoryService",
 	Client = {
-		UpdateInventory = Knit.CreateSignal(),
 		CreateItem = Knit.CreateSignal(),
 		RemoveItem = Knit.CreateSignal(),
 	},
@@ -15,7 +17,7 @@ local InventoryService = Knit.CreateService({
 local GameData = require(ServerStorage.GameData)
 
 function InventoryService:AddItem(player: Player, item: string)
-	local Data: GameData.PlayerData2 = PlayerManager:GetPlayerData(player)
+	local Data = PlayerManager:GetPlayerData(player)
 
 	local lastId = 0
 	for id, info in pairs(Data.Inventory) do
@@ -32,7 +34,7 @@ function InventoryService:AddItem(player: Player, item: string)
 end
 
 function InventoryService:RemoveItem(player: Player, item: string)
-	local Data: GameData.PlayerData2 = PlayerManager:GetPlayerData(player)
+	local Data = PlayerManager:GetPlayerData(player)
 
 	local id
 	for _id, info in pairs(Data.Inventory) do
@@ -46,6 +48,14 @@ function InventoryService:RemoveItem(player: Player, item: string)
 		Name = item,
 		Id = id,
 	})
+end
+
+InventoryService.Equip = {}
+function InventoryService.Equip:Melee() end
+
+function InventoryService:EquipFromData(playerData)
+	local equiped = playerData.Equiped
+	local weaponData = GameData.gameWeapons[equiped.Weapon]
 end
 
 function InventoryService.KnitStart()

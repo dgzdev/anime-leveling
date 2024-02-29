@@ -1,4 +1,4 @@
-local Knit = require(game.ReplicatedStorage.Modules.Knit.Knit)
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 local PartyService = Knit.CreateService({
 	Name = "PartyService",
@@ -92,7 +92,7 @@ function PartyService:InviteToParty(Leader: Player, PlayerToInviteId: number): s
 end
 
 --// Retorna a table de Parties
-function PartyService:GetParties(): { number: Party }
+function PartyService:GetParties()
 	return Parties
 end
 

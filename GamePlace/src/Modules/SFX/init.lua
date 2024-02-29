@@ -12,6 +12,13 @@ function Sounds:GetRandomFrom(folder: Folder): Sound
 end
 
 function Sounds:_Apply(target: Model, action: string)
+	local Root
+	if target:IsA("BasePart") then
+		Root = target
+	elseif target:IsA("Model") then
+		Root = target.PrimaryPart
+	end
+
 	local newFolder = SFXFolder:FindFirstChild(action)
 	if not newFolder then
 		return error("SFX not found")
@@ -24,7 +31,7 @@ function Sounds:_Apply(target: Model, action: string)
 	sound.RollOffMinDistance = 0
 	sound.RollOffMode = Enum.RollOffMode.Linear
 
-	sound.Parent = target.PrimaryPart
+	sound.Parent = Root
 
 	task.wait()
 
@@ -34,6 +41,13 @@ function Sounds:_Apply(target: Model, action: string)
 end
 
 function Sounds:_Create(target: Model, action: string, min: number?, max: number?, Loop: boolean?)
+	local Root
+	if target:IsA("BasePart") then
+		Root = target
+	elseif target:IsA("Model") then
+		Root = target.PrimaryPart
+	end
+
 	local SFX = SoundService:FindFirstChild(action, true)
 	if not SFX then
 		return error("SFX not found")
@@ -46,15 +60,7 @@ function Sounds:_Create(target: Model, action: string, min: number?, max: number
 	sound.RollOffMinDistance = min or 0
 	sound.RollOffMode = Enum.RollOffMode.Linear
 
-	local PrimaryPart
-	if target:IsA("Model") then
-		PrimaryPart = target.PrimaryPart
-	elseif target:IsA("BasePart") then
-		PrimaryPart = target
-	else
-		return error("Invalid target")
-	end
-	sound.Parent = PrimaryPart
+	sound.Parent = Root
 
 	task.wait()
 

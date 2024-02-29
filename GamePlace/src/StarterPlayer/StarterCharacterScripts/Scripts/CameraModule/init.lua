@@ -37,7 +37,7 @@ function CameraModule:Init()
 		self:DisableCamera()
 	end)
 end
-function CameraModule:CheckCondition(condition: true | false, message: string) --> Check if a condition is true, if not, throw an error.
+function CameraModule:CheckCondition(condition: boolean, message: string) --> Check if a condition is true, if not, throw an error.
 	if condition == false then
 		error(message)
 	end

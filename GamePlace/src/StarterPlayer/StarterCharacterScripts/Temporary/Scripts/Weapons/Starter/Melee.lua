@@ -1,4 +1,5 @@
-local Knit = require(game.ReplicatedStorage.Modules.Knit.Knit)
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
+
 local WeaponService
 
 local Players = game:GetService("Players")

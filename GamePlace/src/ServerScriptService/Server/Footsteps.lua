@@ -78,7 +78,7 @@ Players.PlayerAdded:Connect(function(player)
 
 		Footstep.RollOffMaxDistance = 35
 		Footstep.RollOffMinDistance = 15
-		Footstep.RollOffMode = Enum.RollOffMode.InverseTapered
+		Footstep.RollOffMode = Enum.RollOffMode.Linear
 
 		Footstep.Parent = HumanoidRootPart
 

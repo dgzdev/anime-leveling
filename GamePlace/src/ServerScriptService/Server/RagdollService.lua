@@ -1,4 +1,4 @@
-local Knit = require(game.ReplicatedStorage.Modules.Knit.Knit)
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 local RagdollService = Knit.CreateService({
 	Name = "RagdollService",

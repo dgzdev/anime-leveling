@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
 
-local Knit = require(ReplicatedStorage.Modules.Knit.Knit)
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
 local WeaponService = Knit.CreateService({
 	Name = "WeaponService",
 	Client = {},

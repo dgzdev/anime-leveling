@@ -1,5 +1,5 @@
 local Players = game:GetService("Players")
-local Knit = require(game.ReplicatedStorage.Modules.Knit.Knit)
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()

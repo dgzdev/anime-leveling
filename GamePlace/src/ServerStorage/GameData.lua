@@ -2,88 +2,82 @@ export type Rank = "E" | "D" | "C" | "B" | "A" | "S"
 export type SubRank = "I" | "II" | "III" | "IV" | "V"
 export type World = "World 1" | "World 2"
 export type WeaponType = "Sword" | "Bow" | "Staff"
-export type PlayerData = {
-	["Slots"]: {
-		["string"]: {
-			["Character"]: {
-				["FaceAccessory"]: number,
-				["HairAccessory"]: number,
-				["BackAccessory"]: number,
-				["WaistAccessory"]: number,
-				["ShouldersAccessory"]: number,
-				["NeckAccessory"]: number,
-				["HatAccessory"]: number,
-				["Shirt"]: number,
-				["Pants"]: number,
-				["Colors"]: { number },
-			},
-			["Location"]: string | "Character Creation",
-			["LastJoin"]: string,
-
-			["Data"]: {
-				["Level"]: number,
-				["Experience"]: number,
-				["Gold"]: number,
-				["Equiped"]: {
-					["Weapon"]: string,
-					["Id"]: number,
-				},
-				["Hotbar"]: { number },
-				["Inventory"]: {
-					[string]: {
-						["AchiveDate"]: number,
-						["Rank"]: Rank,
-						["SubRank"]: SubRank,
-						["Id"]: number,
-					},
-				},
-				["Skills"]: { [string]: {
-					["AchiveDate"]: number | nil,
-					["Level"]: number,
-				} },
-				["Points"]: {
-					["Inteligence"]: number,
-					["Strength"]: number,
-					["Agility"]: number,
-					["Endurance"]: number,
-				},
-			},
-		} | "false",
+export type ProfileData = {
+	Slots: {
+		[number]: PlayerSlot | string,
 	},
-	["Selected_Slot"]: "1",
+	Selected_Slot: number,
 }
-export type PlayerData2 = {
-
-	["Level"]: number,
-	["Experience"]: number,
-	["Gold"]: number,
-	["Equiped"]: {
-		["Weapon"]: string,
-		["Id"]: number,
+export type PlayerSlot = {
+	Character: {
+		FaceAccessory: number,
+		HairAccessory: number,
+		BackAccessory: number,
+		WaistAccessory: number,
+		ShouldersAccessory: number,
+		NeckAccessory: number,
+		HatAccessory: number,
+		Shirt: number,
+		Pants: number,
+		Colors: { number },
 	},
-	["Hotbar"]: { number },
-	["Inventory"]: {
-		[string]: {
-			["AchiveDate"]: number,
-			["Rank"]: Rank,
-			["SubRank"]: SubRank,
-			["Id"]: number,
+	Location: string | "Character Creation",
+	LastJoin: string,
+
+	Data: {
+		Level: number,
+		Experience: number,
+		Gold: number,
+		Equiped: {
+			Weapon: string,
+			Id: number,
+		},
+		Hotbar: { number },
+		Inventory: Inventory,
+		Skills: { [string]: {
+			AchiveDate: number | nil,
+			Level: number,
+		} },
+		Points: {
+			Inteligence: number,
+			Strength: number,
+			Agility: number,
+			Endurance: number,
 		},
 	},
-	["Skills"]: { [string]: {
-		["AchiveDate"]: number | nil,
-		["Level"]: number,
+}
+export type SlotData = {
+	Level: number,
+	Experience: number,
+	Gold: number,
+	Equiped: {
+		Weapon: string,
+		Id: number,
+	},
+	Hotbar: { number },
+	Inventory: Inventory,
+	Skills: { [string]: {
+		AchiveDate: number | nil,
+		Level: number,
 	} },
-	["Points"]: {
-		["Inteligence"]: number,
-		["Strength"]: number,
-		["Agility"]: number,
-		["Endurance"]: number,
+	Points: {
+		Inteligence: number,
+		Strength: number,
+		Agility: number,
+		Endurance: number,
 	},
 }
-local ProfileTemplate: PlayerData = {
-	["Slots"] = {
-		["1"] = {
+export type Inventory = {
+	[string]: {
+		AchiveDate: number,
+		Rank: Rank,
+		SubRank: SubRank,
+		Id: number,
+	},
+}
+local ProfileTemplate: ProfileData = {
+	Slots = {
+		[1] = {
 			["Character"] = {
 				["FaceAccessory"] = 14579692783,
 				["HairAccessory"] = 16007640385,
@@ -155,14 +149,14 @@ local ProfileTemplate: PlayerData = {
 				},
 			},
 		},
-		["2"] = "false",
-		["3"] = "false",
-		["4"] = "false",
+		[2] = "false",
+		[3] = "false",
+		[4] = "false",
 	},
-	["Selected_Slot"] = "1",
+	Selected_Slot = 1,
 }
 
-local function CreateHumanoidDescription(desc: HumanoidDescription): HumanoidDescription
+local function CreateHumanoidDescription(desc: { [string]: any }): HumanoidDescription
 	local hd = Instance.new("HumanoidDescription")
 
 	for index, value in pairs(desc) do

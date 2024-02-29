@@ -1,16 +1,12 @@
-local Knit = require(game.ReplicatedStorage.Modules.Knit.Knit)
-local Players = game:GetService("Players")
---!strict
--- Author: @SinceVoid
--- Esse é o arquivo principal do servidor, onde todos os módulos serão carregados.
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
--- ====================================================================================================
---// Modules
--- ====================================================================================================
+local Knit = require(ReplicatedStorage.Packages.Knit)
+
+local Players = game:GetService("Players")
+
 task.spawn(function()
 	require(script:WaitForChild("Requests"))
 	require(script:WaitForChild("Players"))
-	require(script:WaitForChild("Inventory"))
 	require(script:WaitForChild("NPC")):Start()
 end)
 local combat = require(script:WaitForChild("CombatSystem"))
@@ -25,9 +21,7 @@ for _, service in ipairs(game.ServerScriptService:GetDescendants()) do
 	require(service)
 end
 
-Knit.Start():andThen(function()
-	print("Knit started")
-end)
+Knit.Start()
 
 local function OnPlayerAdded(plr: Player)
 	combat:Equip(plr)

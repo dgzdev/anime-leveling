@@ -1,5 +1,5 @@
 local Players = game:GetService("Players")
-local Knit = require(game.ReplicatedStorage.Modules.Knit.Knit)
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 --[[
     Se comunica com o client para realizara renderização de efeitos
@@ -35,7 +35,7 @@ function RenderService:CreateRenderData(casterHumanoid: Humanoid, module: string
 		module = module,
 		effect = effect,
 		arguments = arguments,
-		casterRootCFrame = casterHumanoid.Parent.HumanoidRootPart.CFrame,
+		casterRootCFrame = casterHumanoid.RootPart.CFrame,
 	}
 
 	return RenderData

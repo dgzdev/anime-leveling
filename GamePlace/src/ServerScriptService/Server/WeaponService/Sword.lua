@@ -2,7 +2,8 @@ local Debris = game:GetService("Debris")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 local Sword = {}
-local Knit = require(game.ReplicatedStorage.Modules.Knit.Knit)
+
+local Knit = require(ReplicatedStorage.Packages.Knit)
 
 local Default
 
@@ -37,15 +38,29 @@ Sword.Default = {
 			Combos: number,
 		}
 	)
-		HitboxService:CreateBlockHitbox(
-			p.Position * CFrame.new(0, 0, -2),
-			Vector3.new(5, 5, 5),
-			10,
-			5,
-			nil,
-			"SwordHit",
-			"SwordHit"
-		)
+		local Model = Character:FindFirstChild("Weapon")
+		if not Model then
+			return
+		end
+
+		local Ray = RaycastParams.new()
+		Ray.FilterType = Enum.RaycastFilterType.Include
+		Ray.FilterDescendantsInstances = { Workspace.Enemies }
+
+		local Params = {
+			dmg = 10,
+			time = 2,
+			kb = 15,
+			max = 250,
+			replicate = {
+				["module"] = "Universal",
+				["effect"] = "Replicate",
+				["VFX"] = "SwordHit",
+				["SFX"] = "SwordHit",
+			},
+		}
+
+		HitboxService:CreateRaycastHitbox(Model, Params, Ray)
 	end,
 
 	Defense = function(...)
@@ -57,7 +72,7 @@ Sword.Default = {
 		local Size = 60
 
 		local Rayparams = RaycastParams.new()
-		Rayparams.FilterType = Enum.RaycastFilterType.Blacklist
+		Rayparams.FilterType = Enum.RaycastFilterType.Exclude
 		Rayparams.FilterDescendantsInstances = { Character }
 		local RaycastResult = Workspace:Raycast(Data.Position.Position, Data.Position.LookVector * 60, Rayparams)
 		if RaycastResult then
@@ -133,22 +148,54 @@ Sword.Default = {
 }
 
 Sword.StarterSword = {
-	Attack = function(...)
-		Sword.Default.Attack(...)
+	Attack = function(
+		Character: Model,
+		InputState: Enum.UserInputState,
+		p: {
+			Position: CFrame,
+			Combo: number,
+			Combos: number,
+		}
+	)
+		Sword.Default.Attack(Character, InputState, p)
 	end,
 
-	Defense = function(...)
-		Sword.Default.Defense(...)
+	Defense = function(
+		Character: Model,
+		InputState: Enum.UserInputState,
+		p: {
+			Position: CFrame,
+			Combo: number,
+			Combos: number,
+		}
+	)
+		Sword.Default.Defense(Character, InputState, p)
 	end,
 }
 
 Sword.IronStarterSword = {
-	Attack = function(...)
-		Sword.Default.Attack(...)
+	Attack = function(
+		Character: Model,
+		InputState: Enum.UserInputState,
+		p: {
+			Position: CFrame,
+			Combo: number,
+			Combos: number,
+		}
+	)
+		Sword.Default.Attack(Character, InputState, p)
 	end,
 
-	Defense = function(...)
-		Sword.Default.Defense(...)
+	Defense = function(
+		Character: Model,
+		InputState: Enum.UserInputState,
+		p: {
+			Position: CFrame,
+			Combo: number,
+			Combos: number,
+		}
+	)
+		Sword.Default.Defense(Character, InputState, p)
 	end,
 
 	FlashStrike = Sword.Default.FlashStrike,
@@ -160,15 +207,29 @@ Sword["King'sLongsword"] = {
 		InputState: Enum.UserInputState,
 		p: { Position: CFrame, Combo: number, Combos: number }
 	)
-		HitboxService:CreateBlockHitbox(
-			p.Position * CFrame.new(0, 0, -2),
-			Vector3.new(7, 5, 7),
-			10,
-			5,
-			nil,
-			"LightningSwordHit",
-			"SwordHit"
-		)
+		local Model = Character:FindFirstChild("Weapon")
+		if not Model then
+			return
+		end
+
+		local Ray = RaycastParams.new()
+		Ray.FilterType = Enum.RaycastFilterType.Include
+		Ray.FilterDescendantsInstances = { Workspace:FindFirstChild("Enemies") }
+
+		local Params = {
+			dmg = 10,
+			time = 2,
+			kb = 15,
+			max = 250,
+			replicate = {
+				["module"] = "Universal",
+				["effect"] = "Replicate",
+				["VFX"] = "SwordHit",
+				["SFX"] = "SwordHit",
+			},
+		}
+
+		HitboxService:CreateRaycastHitbox(Model, Params, Ray)
 	end,
 
 	Defense = function(...)
@@ -180,7 +241,7 @@ Sword["King'sLongsword"] = {
 		local Size = 60
 
 		local Rayparams = RaycastParams.new()
-		Rayparams.FilterType = Enum.RaycastFilterType.Blacklist
+		Rayparams.FilterType = Enum.RaycastFilterType.Exclude
 		Rayparams.FilterDescendantsInstances = { Character }
 		local RaycastResult = Workspace:Raycast(Data.Position.Position, Data.Position.LookVector * 60, Rayparams)
 		if RaycastResult then
@@ -397,6 +458,8 @@ Sword["King'sLongsword"] = {
 
 function Sword.Start(default)
 	default = default
+
+	Knit.OnStart()
 
 	RenderService = Knit.GetService("RenderService")
 	RagdollService = Knit.GetService("RagdollService")

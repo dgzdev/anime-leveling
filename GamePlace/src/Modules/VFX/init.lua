@@ -13,13 +13,20 @@ function VFX:_ApplyParticle(
 	doNotWeld: boolean?,
 	v: Vector3?
 )
+	local Root
+	if target:IsA("BasePart") then
+		Root = target
+	elseif target:IsA("Model") then
+		Root = target.PrimaryPart
+	end
+
 	local block = VFXFolder:FindFirstChild(action)
 	if not block then
 		return error("VFX not found")
 	end
 
 	local particle = block:Clone() :: BasePart
-	particle.Parent = target:WaitForChild("HumanoidRootPart")
+	particle.Parent = Root
 	particle.Transparency = 1
 	particle.Massless = true
 	particle.CanCollide = false
@@ -28,13 +35,13 @@ function VFX:_ApplyParticle(
 	if typeof(offset) == "Vector3" then
 		offset = CFrame.new(offset)
 	end
-	particle.CFrame = target.PrimaryPart.CFrame * (offset or CFrame.new(0, 0, 0))
+	particle.CFrame = Root.CFrame * (offset or CFrame.new(0, 0, 0))
 
 	if doNotWeld then
 		particle.Anchored = true
 	else
 		local w = Instance.new("WeldConstraint", particle)
-		w.Part0 = target.PrimaryPart
+		w.Part0 = Root
 		w.Part1 = particle
 	end
 

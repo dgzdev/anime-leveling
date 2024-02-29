@@ -21,7 +21,7 @@ local humanoid = Character:WaitForChild("Humanoid")
 local DamageIndicator = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("DamageIndication"))
 DamageIndicator.BindToAllNPCs()
 
-local function UpdateHud(index: string, value: any)
+function UpdateHud(index: string | nil, value: any)
 	local PlayerGui = Player:WaitForChild("PlayerGui")
 
 	local UI = PlayerGui:WaitForChild("UI")

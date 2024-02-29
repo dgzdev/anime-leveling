@@ -22,13 +22,26 @@ function Universal.FlashStrike(RenderData: { root: BasePart })
 	VFX:ApplyParticle(Root.Parent, "Fell")
 end
 
+function Universal.Replicate(RenderData: {
+	VFX: string?,
+	SFX: string?,
+	root: BasePart,
+})
+	if RenderData.VFX then
+		VFX:ApplyParticle(RenderData.root, RenderData.VFX)
+	end
+	if RenderData.SFX then
+		SFX:Apply(RenderData.root, RenderData.SFX)
+	end
+end
+
 function Universal.Start() end
 
 function Universal.Caller(RenderData)
 	if Universal[RenderData.effect] then
 		task.spawn(Universal[RenderData.effect], RenderData)
 	else
-		print("Render not found!")
+		error("Render not found!")
 	end
 end
 

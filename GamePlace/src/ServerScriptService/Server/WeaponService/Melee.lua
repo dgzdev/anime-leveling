@@ -1,6 +1,6 @@
 local Melee = {}
 
-local Knit = require(game.ReplicatedStorage.Modules.Knit.Knit)
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 local Default
 
@@ -26,17 +26,32 @@ Melee.Default = {
 
 -- item melee
 Melee.Melee = {
-	Attack = function(...)
-		Melee.Default.Attack(...)
+	Attack = function(
+		Character: Model,
+		InputState: Enum.UserInputState,
+		p: {
+			Position: CFrame,
+			Combo: number,
+			Combos: number,
+		}
+	)
+		Melee.Default.Attack(Character, InputState, p)
 	end,
 
-	Defense = function(...)
-		Melee.Default.Defense(...)
+	Defense = function(
+		Character: Model,
+		InputState: Enum.UserInputState,
+		p: {
+			Position: CFrame,
+			Combo: number,
+			Combos: number,
+		}
+	)
+		Melee.Default.Defense(Character, InputState, p)
 	end,
 }
 
 function Melee.Start(default)
-	print("Melee Start")
 	default = default
 	HitboxService = Knit.GetService("HitboxService")
 end

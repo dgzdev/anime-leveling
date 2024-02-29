@@ -1,4 +1,4 @@
-local Knit = require(game.ReplicatedStorage.Modules.Knit.Knit)
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
 local WeaponService
 
 local Players = game:GetService("Players")
@@ -78,9 +78,7 @@ local function CheckCooldown(name: string)
 	return false
 end
 
-local KingsLongsword: {
-	[Enum.KeyCode]: (action: string, inputstate: string, inputobject: string) -> nil,
-} = {
+local KingsLongsword = {
 	[Enum.KeyCode.Z] = {
 		callback = function(action, inputstate, inputobject)
 			if inputstate == Enum.UserInputState.Begin then

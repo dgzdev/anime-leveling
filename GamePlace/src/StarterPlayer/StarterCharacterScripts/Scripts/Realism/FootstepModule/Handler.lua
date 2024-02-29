@@ -111,7 +111,8 @@ local function FootstepLoop()
 			--end
 
 			if soundOveride and CAN_PLAY_SOUND then
-				local soundTable: table = FOOTSTEPS.Raw[soundOveride]:GetChildren()
+				local Raw = FOOTSTEPS:FindFirstChild("Raw")
+				local soundTable: table = Raw[soundOveride]:GetChildren()
 				local newNum = math.random(#soundTable)
 				if Handler.LastMaterial == soundOveride and #soundOveride ~= 1 then
 					while newNum == Handler.LastNum do

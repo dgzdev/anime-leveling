@@ -1,5 +1,5 @@
 local CollectionService = game:GetService("CollectionService")
-local Knit = require(game.ReplicatedStorage.Modules.Knit.Knit)
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 local RenderController = Knit.CreateController({
 	Name = "RenderController",
@@ -122,7 +122,8 @@ function RenderController:ClearCacheOfHumanoid(module: string, casterHumanoid: H
 end
 
 function RenderController:StopPlayingMatchAnimation(Humanoid: Humanoid, AnimationName: string)
-	for i, v: AnimationTrack in ipairs(Humanoid.Animator:GetPlayingAnimationTracks()) do
+	local Animator = Humanoid:FindFirstChildWhichIsA("Animator")
+	for i, v: AnimationTrack in ipairs(Animator:GetPlayingAnimationTracks()) do
 		if v.Name:match(AnimationName) then
 			v:Stop()
 		end
@@ -174,7 +175,7 @@ local function CreateRenderData(casterHumanoid: Humanoid, module: string, effect
 		module = module,
 		effect = effect,
 		arguments = arguments,
-		casterRootCFrame = casterHumanoid.Parent.HumanoidRootPart.CFrame,
+		casterRootCFrame = casterHumanoid.RootPart.CFrame,
 	}
 
 	return RenderData
