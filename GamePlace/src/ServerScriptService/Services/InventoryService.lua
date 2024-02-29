@@ -86,8 +86,6 @@ function InventoryService:EquipFromData(player: Player, playerData)
 		local Character = player.Character or player.CharacterAdded:Wait()
 		local Root = Character:WaitForChild("HumanoidRootPart")
 
-		Root.Anchored = true
-
 		local Position = "RightHand"
 
 		local SwordClone = Sword:Clone() :: Model
@@ -102,8 +100,6 @@ function InventoryService:EquipFromData(player: Player, playerData)
 		Motor6D.Part1 = SwordClone.PrimaryPart
 		Motor6D.C1 = (CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(90), 0, 0))
 		Motor6D.Parent = RightHand
-
-		Root.Anchored = false
 	end
 
 	if WeaponType == "Melee" then

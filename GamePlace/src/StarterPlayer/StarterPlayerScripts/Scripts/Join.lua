@@ -8,6 +8,10 @@ local Join = {}
 
 local Camera = Workspace.CurrentCamera
 
+local Knit = require(ReplicatedStorage.Packages.Knit)
+
+local PlayerEnterService
+
 local Player = Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
 local PlayerGui = Player:WaitForChild("PlayerGui")
@@ -45,18 +49,27 @@ local function AnimateCamera(animation: string)
 		task.wait()
 		CameraEvent:Fire("Enable")
 		task.wait()
-		Root.Anchored = false
 		Humanoid:ChangeState(Enum.HumanoidStateType.Running)
+
+		ReplicatedStorage:SetAttribute("FirstTimeAnimationEnd", true)
+		PlayerEnterService:CutsceneEnd(Player)
+		Root.Anchored = false
 	end)
 end
 
+local ContextActionService = game:GetService("ContextActionService")
 function Join:Init()
-	repeat
-		Root.Anchored = true
-		task.wait()
-	until Root.Anchored == true
+	if not game:IsLoaded() then
+		game.Loaded:Wait()
+	end
 
-	Humanoid.AutoRotate = false
+	Knit.OnStart():await()
+
+	PlayerEnterService = Knit.GetService("PlayerEnterService")
+
+	Root.Anchored = true
+
+	PlayerEnterService:CutsceneStart(Player)
 
 	local loadingGui = Player:FindFirstChild("loadingScreen", true)
 	if loadingGui then
@@ -72,7 +85,7 @@ function Join:Init()
 		if keyframeName == "hit" then
 			SoundService:WaitForChild("Join"):WaitForChild("hit1"):Play()
 		end
-		if keyframeName == "look" then
+		if keyframeName == "end" then
 			AnimationTrack:AdjustSpeed(0)
 		end
 	end)
@@ -80,8 +93,6 @@ function Join:Init()
 	AnimationTrack:Play(0)
 	task.wait()
 	AnimateCamera("Portal Leave")
-
-	ReplicatedStorage:SetAttribute("FirstTimeAnimationEnd", true)
 end
 
 return Join

@@ -71,7 +71,6 @@ skipButton.Visible = true
 skipButton.Activated:Connect(function(inputObject, clickCount)
 	screenGui:Destroy()
 	print("[Loading] Skipped loading screen. (Took " .. math.floor(tick() - start) .. " seconds.)")
-	script:Destroy()
 end)
 
 ContentProvider:PreloadAsync(game:GetDescendants())
@@ -80,5 +79,3 @@ local endTick = tick()
 
 screenGui:Destroy()
 print("[Loading] Loaded in " .. math.floor(endTick - start) .. " seconds.")
-
-script:Destroy()

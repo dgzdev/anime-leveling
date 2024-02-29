@@ -46,8 +46,6 @@ function PlayerManager:LoadCharacterAppearance(player: Player, data: CharacterDa
 	local RightLeg = character:FindFirstChild("Right Leg")
 	local LeftLeg = character:FindFirstChild("Left Leg")
 
-	HumanoidRootPart.Anchored = true
-
 	local humanoid: Humanoid = character:WaitForChild("Humanoid")
 
 	local HumanoidDescription = Instance.new("HumanoidDescription")
@@ -67,8 +65,6 @@ function PlayerManager:LoadCharacterAppearance(player: Player, data: CharacterDa
 	end
 	task.wait()
 	humanoid:ApplyDescription(HumanoidDescription, Enum.AssetTypeVerification.Default)
-
-	HumanoidRootPart.Anchored = false
 end
 
 export type CharacterData = {
