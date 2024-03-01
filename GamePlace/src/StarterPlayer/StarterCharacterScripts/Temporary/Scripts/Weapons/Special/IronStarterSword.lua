@@ -17,8 +17,9 @@ local Humanoid = Character:WaitForChild("Humanoid")
 local Animator = Humanoid:WaitForChild("Animator")
 
 local PlayerGui = Player:WaitForChild("PlayerGui")
-local CombatGui = PlayerGui:WaitForChild("CombatGui")
-local Background: Frame = CombatGui:WaitForChild("Background")
+
+local CombatGui = PlayerGui:WaitForChild("PlayerHud")
+local Background: Frame = CombatGui:WaitForChild("Background"):WaitForChild("CombatGui")
 
 local PlayingAnimation: AnimationTrack
 local HoldingTime = 0

@@ -24,7 +24,6 @@ function PlayerManager.new(player: Player)
 	self.Player.CharacterAdded:Connect(function(character)
 		self.Character = character
 		self.Humanoid = character:WaitForChild("Humanoid")
-		self:LoadCharacterAppearance(self.Player, self:GetPlayerSlot().Data)
 	end)
 
 	return self
@@ -49,6 +48,9 @@ function PlayerManager:LoadCharacterAppearance(player: Player, data: CharacterDa
 	local humanoid: Humanoid = character:WaitForChild("Humanoid")
 
 	local HumanoidDescription = Instance.new("HumanoidDescription")
+
+	HumanoidDescription.BodyTypeScale = 1
+	HumanoidDescription.HeadScale = 1
 
 	for name, value in pairs(data) do
 		if name == "Colors" then

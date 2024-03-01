@@ -1,8 +1,11 @@
+local ContentProvider = game:GetService("ContentProvider")
 local Knit = require(game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("Knit"))
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
 end
+
+ContentProvider:PreloadAsync(script:GetDescendants())
 
 local Player = game.Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
@@ -17,7 +20,7 @@ for _, script in ipairs(script:GetDescendants()) do
 	end
 end
 
-for _, script in ipairs(Character) do
+for _, script in ipairs(Character:GetDescendants()) do
 	if not script:IsA("ModuleScript") then
 		continue
 	end

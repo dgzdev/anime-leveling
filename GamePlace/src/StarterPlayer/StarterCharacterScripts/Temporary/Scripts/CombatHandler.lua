@@ -17,8 +17,8 @@ function CombatHandler:Init(modules)
 end
 
 function CombatHandler:RemoveAllSlots()
-	local CombatGui = PlayerGui:WaitForChild("CombatGui")
-	local Background: Frame = CombatGui:WaitForChild("Background")
+	local CombatGui = PlayerGui:WaitForChild("PlayerHud")
+	local Background: Frame = CombatGui:WaitForChild("Background"):WaitForChild("CombatGui")
 	for _, value in ipairs(Background:GetChildren()) do
 		if value:IsA("Frame") then
 			if value.Name ~= "Example" then
@@ -43,8 +43,8 @@ local Extra = {
 }
 
 function CombatHandler:CreateNewSlot(button: Enum.KeyCode | Enum.UserInputType, attack: string)
-	local CombatGui = PlayerGui:WaitForChild("CombatGui")
-	local Background: Frame = CombatGui:WaitForChild("Background")
+	local CombatGui = PlayerGui:WaitForChild("PlayerHud")
+	local Background: Frame = CombatGui:WaitForChild("Background"):WaitForChild("CombatGui")
 
 	local Slot: Frame = Background:WaitForChild("Example"):Clone()
 

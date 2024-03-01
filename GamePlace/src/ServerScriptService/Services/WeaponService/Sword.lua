@@ -319,7 +319,7 @@ Sword["King'sLongsword"] = {
 		end
 	end,
 
-	LightningWave = function(Character: Model, InputState: Enum.UserInputState, Data: { Position: CFrame })
+	["Eletric Wave"] = function(Character: Model, InputState: Enum.UserInputState, Data: { Position: CFrame })
 		local Mid = Data.Position * CFrame.new(0, 0, -60)
 		local InitialSize = Vector3.new(5, 5, 5)
 		local FinalSize = Vector3.new(60, 5, 5)

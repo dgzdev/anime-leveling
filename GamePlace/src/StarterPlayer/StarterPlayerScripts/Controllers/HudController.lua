@@ -13,9 +13,9 @@ local Hud = Knit.CreateController({
 function Hud:OrganizeHotbar(Profile)
 	local Player = Players.LocalPlayer
 	local PlayerGui = Player:WaitForChild("PlayerGui")
-	local HotbarGui = PlayerGui:WaitForChild("UI"):WaitForChild("Hotbar")
+	local HotbarGui = PlayerGui:WaitForChild("PlayerHud"):WaitForChild("Background")
 
-	local fr = HotbarGui:WaitForChild("Frame")
+	local fr = HotbarGui:WaitForChild("PlayerHotbar")
 
 	local hotbar = Profile.Hotbar
 	local gameWeapons = PlayerService:GetWeapons()
@@ -111,9 +111,9 @@ end
 local function EquipSlotItem(action: string, state, input)
 	local Player = Players.LocalPlayer
 	local PlayerGui = Player:WaitForChild("PlayerGui")
-	local HotbarGui = PlayerGui:WaitForChild("UI"):WaitForChild("Hotbar")
+	local HotbarGui = PlayerGui:WaitForChild("PlayerHud"):WaitForChild("Background")
 
-	local fr = HotbarGui:WaitForChild("Frame")
+	local fr = HotbarGui:WaitForChild("PlayerHotbar")
 
 	if not (state == Enum.UserInputState.Begin) then
 		return
@@ -161,6 +161,15 @@ end
 
 function Hud:KnitStart()
 	PlayerService = Knit.GetService("PlayerService")
+
+	local Player = Players.LocalPlayer
+	Player.CharacterAdded:Connect(function(character)
+		local Data = PlayerService:GetData(Players.LocalPlayer)
+		Hud.Data = Data
+
+		self:OrganizeHotbar(Hud.Data)
+		self:BindContexts()
+	end)
 
 	local Data = PlayerService:GetData(Players.LocalPlayer)
 	Hud.Data = Data
