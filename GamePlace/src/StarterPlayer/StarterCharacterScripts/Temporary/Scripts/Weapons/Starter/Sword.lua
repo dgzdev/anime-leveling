@@ -1,4 +1,4 @@
-local Knit = require(game.ReplicatedStorage.Modules.Knit.Knit)
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
 local WeaponService
 
 local Players = game:GetService("Players")
@@ -14,8 +14,9 @@ local Humanoid = Character:WaitForChild("Humanoid")
 local Animator = Humanoid:WaitForChild("Animator")
 
 local PlayerGui = Player:WaitForChild("PlayerGui")
-local CombatGui = PlayerGui:WaitForChild("CombatGui")
-local Background: Frame = CombatGui:WaitForChild("Background")
+
+local CombatGui = PlayerGui:WaitForChild("PlayerHud")
+local Background: Frame = CombatGui:WaitForChild("Background"):WaitForChild("CombatGui")
 
 local Animations = ReplicatedStorage:WaitForChild("Animations")
 

@@ -17,8 +17,8 @@ function CombatHandler:Init(modules)
 end
 
 function CombatHandler:RemoveAllSlots()
-	local CombatGui = PlayerGui:WaitForChild("CombatGui")
-	local Background: Frame = CombatGui:WaitForChild("Background")
+	local CombatGui = PlayerGui:WaitForChild("PlayerHud")
+	local Background: Frame = CombatGui:WaitForChild("Background"):WaitForChild("CombatGui")
 	for _, value in ipairs(Background:GetChildren()) do
 		if value:IsA("Frame") then
 			if value.Name ~= "Example" then
@@ -42,15 +42,16 @@ local Extra = {
 	},
 }
 
-function CombatHandler:CreateNewSlot(button: Enum.UserInputType, attack: string)
-	local CombatGui = PlayerGui:WaitForChild("CombatGui")
-	local Background: Frame = CombatGui:WaitForChild("Background")
+function CombatHandler:CreateNewSlot(button: Enum.KeyCode | Enum.UserInputType, attack: string)
+	local CombatGui = PlayerGui:WaitForChild("PlayerHud")
+	local Background: Frame = CombatGui:WaitForChild("Background"):WaitForChild("CombatGui")
 
 	local Slot: Frame = Background:WaitForChild("Example"):Clone()
 
 	local buttonName = Replace[button] or button.Name
+	local title: TextLabel = Slot:WaitForChild("Title")
 
-	Slot:WaitForChild("Title").Text = buttonName .. ": " .. attack
+	title.Text = buttonName .. ": " .. attack
 	Slot.Visible = true
 	Slot.Name = attack
 	Slot.Parent = Background
@@ -99,10 +100,8 @@ function CombatHandler.WeaponTypeChanged()
 end
 
 task.spawn(function()
-	print("Viado")
-	local Knit = require(game.ReplicatedStorage.Modules.Knit.Knit)
+	local Knit = require(game.ReplicatedStorage.Packages.Knit)
 	Knit.OnStart():await()
-	print("KnitStarted client")
 
 	-- Starter Weapons
 	for index, weapon in ipairs(script.Parent.Weapons.Starter:GetChildren()) do
