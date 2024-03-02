@@ -26,7 +26,10 @@ export type PlayerSlot = {
 
 	Data: {
 		Level: number,
+
 		Experience: number,
+		Mana: number,
+
 		Gold: number,
 		Equiped: {
 			Weapon: string,
@@ -48,8 +51,12 @@ export type PlayerSlot = {
 }
 export type SlotData = {
 	Level: number,
+
 	Experience: number,
+	Mana: number,
+
 	Gold: number,
+
 	Equiped: {
 		Weapon: string,
 		Id: number,
@@ -95,8 +102,12 @@ local ProfileTemplate: ProfileData = {
 			["LastJoin"] = os.date("%x"),
 			["Data"] = {
 				["Level"] = 1,
+
 				["Experience"] = 0,
+				["Mana"] = 50,
+
 				["Gold"] = 0,
+
 				["Equiped"] = {
 					["Weapon"] = "Melee",
 					["Id"] = 1,
@@ -295,6 +306,31 @@ return {
 			Gold = 30,
 		},
 	},
+
+	gameQuests = {
+		["Kill Goblins"] = {
+			Type = "Kill Enemies",
+			EnemyName = "Goblin",
+			Amount = 5,
+			Rewards = {
+				Experience = 100
+			}
+		}
+	},
+
+	questPrompts = {
+		["Kill Goblins"] = {
+			Title = "Test",
+			Description = "Testing description",
+			--> attributos: title e description
+		}
+	},
+
+	npcQuests = {
+		--> se ele tiver o nome aq
+		["Sung Jin-Woo"] = "Kill Goblins",
+	},
+
 	gameDialogs = {
 
 		["Sung Jin-Woo"] = {

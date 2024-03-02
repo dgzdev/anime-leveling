@@ -1,0 +1,18 @@
+{
+    "files.autoSave": "afterDelay",
+
+    "editor.formatOnSaveMode": "modificationsIfAvailable",
+    "editor.formatOnPaste": true,
+    "editor.formatOnType": false,
+
+    "robloxLsp.completion.enable": true,
+    "robloxLsp.completion.alwaysShowMethods": false,
+    "robloxLsp.color.mode": "Grammar",
+
+    "[lua]": {
+        "editor.formatOnSave": false,
+    },
+    "[luau]": {
+        "editor.formatOnSave": false,
+    },
+}

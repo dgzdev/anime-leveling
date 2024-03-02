@@ -7,6 +7,9 @@ local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
 local DefaultWeapons = {}
+
+local bounds = {}
+
 local SpecialWeapons = {}
 
 function CombatHandler:Init(modules)
@@ -66,12 +69,18 @@ function CombatHandler:Bind(weaponType: string, weaponName: string)
 	local binds1 = DefaultWeapons[weaponType]
 	local binds2 = SpecialWeapons[weaponName:gsub(" ", "")]
 
+	for _, name in ipairs(bounds) do
+		ContextActionService:UnbindAction(name)
+		bounds[_] = nil
+	end
+
 	if binds1 then
 		for input: Enum.UserInputType, weapon in pairs(binds1) do
 			if input.Name then
 				local extra = Extra[input] or {}
 				table.insert(extra, input)
 				ContextActionService:BindAction("skill_" .. input.Name, weapon.callback, true, table.unpack(extra))
+				bounds[#bounds + 1] = "skill_" .. input.Name
 				self:CreateNewSlot(input, weapon.name)
 			end
 		end
@@ -82,6 +91,7 @@ function CombatHandler:Bind(weaponType: string, weaponName: string)
 				local extra = Extra[input] or {}
 				table.insert(extra, input)
 				ContextActionService:BindAction("skill_" .. input.Name, weapon.callback, true, table.unpack(extra))
+				bounds[#bounds + 1] = "skill_" .. input.Name
 				self:CreateNewSlot(input, weapon.name)
 			end
 		end

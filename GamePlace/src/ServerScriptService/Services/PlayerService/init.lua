@@ -38,6 +38,7 @@ function PlayerService.OnPlayerJoin(player: Player)
 	player.CharacterAdded:Connect(function(character)
 		Manager:LoadCharacterAppearance(player, Manager:GetPlayerSlot().Character)
 		PlayerService:EquipWeapon(player, Data.Equiped.Id)
+		character.Humanoid.MaxHealth = math.floor(math.sqrt(100 * (Data.Points.Endurance + 1)) * 10)
 	end)
 
 	Manager:LoadCharacterAppearance(player, Manager:GetPlayerSlot().Character)

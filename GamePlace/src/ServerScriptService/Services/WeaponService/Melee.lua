@@ -33,7 +33,17 @@ Melee.Default = {
 			op.FilterDescendantsInstances = { Workspace:WaitForChild("Enemies") }
 		end
 
-		HitboxService:CreateBlockHitbox(p.Position * CFrame.new(0, 0, -2), Vector3.new(5, 5, 5), 10, 5, op)
+		HitboxService:CreateBlockHitbox(Character, p.Position * CFrame.new(0, 0, -2), Vector3.new(5, 5, 5), {
+			dmg = 10,
+			kb = 5,
+			op = op,
+			replicate = {
+				["module"] = "Universal",
+				["effect"] = "Replicate",
+				["VFX"] = "CombatHit",
+				["SFX"] = "Melee",
+			},
+		})
 	end,
 
 	Defense = function(...)

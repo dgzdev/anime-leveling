@@ -29,21 +29,29 @@ function ProgressionService:ExpToNextLevel(Player)
 	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
 	local Level = PlayerData.Level
 
-	return math.sqrt(100 * Level)
+	return math.floor(math.sqrt(100 * Level) * 10)
 end
 
 function ProgressionService:AddExp(Player, Amount)
 	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
 	local ExpToNextLevel = self:ExpToNextLevel(Player)
-	PlayerData.Experience += Amount
+	local Character = Player.Character
+	--PlayerData.Experience += Amount
 
-	if PlayerData.Experience >= ExpToNextLevel then
+
+	print("Experience Added: " .. Amount)
+
+	if Amount >= ExpToNextLevel or (PlayerData.Experience + Amount >= ExpToNextLevel) then
 		PlayerData.Level += 1
-		PlayerData.Experience = 0
+
+		print(PlayerData.Level)
+		self:AddExp(Player, Amount - ExpToNextLevel)
 		self.Client.LevelUp:Fire(Player, PlayerData.Level)
 	end
 
-	self.Client.ExpChanged:Fire(Player, PlayerData.Experience)
+	PlayerData.Experience += Amount
+
+	self.Client.ExpChanged:Fire(Player, PlayerData.Experience, self:ExpToNextLevel(Player))
 end
 
 function ProgressionService.Client:GetCurrentLevel(Player)

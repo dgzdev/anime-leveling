@@ -28,19 +28,92 @@ local Animations = ReplicatedStorage:WaitForChild("CameraAnimations")
 local function AnimateCamera(animation: string)
 	Camera.CameraType = Enum.CameraType.Scriptable
 	Camera.CameraSubject = Workspace:WaitForChild("Portal")
+	local Connections = {}
+
 	task.spawn(function()
 		local Animation = Animations:WaitForChild(animation)
 
+		local Fov = Animation:WaitForChild("FOV")
 		local Frames = Animation:WaitForChild("Frames")
-		for i = 1, #Frames:GetChildren(), 1 do
-			local Frame = Frames:FindFirstChild(tostring(i))
-			if not Frame then
-				break
-			end
-			local CFrame = Frame.Value
+		local Head = Character:WaitForChild("Head")
+		local NotChange = {
+			"Left Leg",
+			"Right Leg",
+			"Left Arm",
+			"Right Arm",
+			"Torso",
+		}
 
-			Camera.CFrame = CFrame
+		for i = 1, #Frames:GetChildren(), 1 do
 			task.wait()
+			local Frame = Frames:FindFirstChild(tostring(i))
+			local FOVFrame = Fov:FindFirstChild(tostring(i))
+
+			if not Frame then
+				continue
+			end
+			if not Frame then
+				continue
+			end
+
+			if i == 139 then
+				for _, basepart: BasePart in ipairs(Character:GetDescendants()) do
+					if basepart:IsA("BasePart") then
+						if table.find(NotChange, basepart.Name) then
+							continue
+						end
+
+						basepart.LocalTransparencyModifier = 1
+						Connections[#Connections + 1] = basepart
+							:GetPropertyChangedSignal("LocalTransparencyModifier")
+							:Connect(function()
+								basepart.LocalTransparencyModifier = 1
+							end)
+					end
+				end
+
+				Workspace.CurrentCamera.CameraSubject = Head
+			end
+
+			if i == 460 then
+				for _, c in ipairs(Connections) do
+					c:Disconnect()
+				end
+
+				print("volto")
+				for _, basepart: BasePart in ipairs(Character:GetDescendants()) do
+					if basepart:IsA("BasePart") then
+						basepart.LocalTransparencyModifier = basepart.Transparency
+						Connections[#Connections + 1] = basepart
+							:GetPropertyChangedSignal("LocalTransparencyModifier")
+							:Connect(function()
+								basepart.LocalTransparencyModifier = basepart.Transparency
+							end)
+					end
+				end
+
+				Workspace.CurrentCamera.CameraSubject = Character
+			end
+
+			if i >= 139 and i <= 460 then
+				Camera.CFrame = Head.CFrame
+				continue
+			end
+
+			if i == 1 then
+				Camera.CFrame = Frame.Value
+				Camera.FieldOfView = FOVFrame.Value
+				continue
+			end
+
+			local CF = Frame.Value
+			local FOV = FOVFrame.Value
+
+			Camera.CFrame = Camera.CFrame:Lerp(CF, 0.1)
+
+			TweenService:Create(Camera, TweenInfo.new(0.4, Enum.EasingStyle.Cubic), {
+				FieldOfView = FOV,
+			}):Play()
 		end
 
 		Root.CFrame = Torso.CFrame
@@ -53,6 +126,15 @@ local function AnimateCamera(animation: string)
 		ReplicatedStorage:SetAttribute("FirstTimeAnimationEnd", true)
 		PlayerEnterService:CutsceneEnd(Player)
 		Root.Anchored = false
+		local PlayerHud = PlayerGui:WaitForChild("PlayerHud")
+		PlayerHud.Enabled = true
+
+		local cutscene = PlayerGui:WaitForChild("Cutscene")
+		cutscene.Enabled = false
+
+		for _, c in ipairs(Connections) do
+			c:Disconnect()
+		end
 	end)
 end
 
@@ -64,6 +146,12 @@ function CutsceneController.Init()
 	Root.Anchored = true
 
 	PlayerEnterService:CutsceneStart(Player)
+
+	local cutscene = PlayerGui:WaitForChild("Cutscene")
+	cutscene.Enabled = true
+
+	local PlayerHud = PlayerGui:WaitForChild("PlayerHud")
+	PlayerHud.Enabled = false
 
 	local loadingGui = PlayerGui:FindFirstChild("loadingScreen", true)
 	if loadingGui then

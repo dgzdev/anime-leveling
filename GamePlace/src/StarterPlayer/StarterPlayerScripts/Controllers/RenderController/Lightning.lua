@@ -1,6 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
-local Universal = {}
+local LightningModule = {}
 
 local VFX = require(ReplicatedStorage.Modules.VFX)
 local SFX = require(ReplicatedStorage.Modules.SFX)
@@ -11,7 +11,7 @@ local LightningBolt = require(ReplicatedStorage.Modules.LightningBolt)
 local LightningSparks = require(ReplicatedStorage.Modules.LightningSparks)
 local LightningExplosion = require(ReplicatedStorage.Modules.LightningExplosion)
 
-function Universal.FlashStrike(RenderData: { root: BasePart })
+function LightningModule.FlashStrike(RenderData: { root: BasePart })
 	local Root = RenderData.root
 	RocksModule.Ground(
 		Root.CFrame.Position + Vector3.new(0, -5, 0),
@@ -22,6 +22,8 @@ function Universal.FlashStrike(RenderData: { root: BasePart })
 		false,
 		3
 	)
+
+	VFX:ApplyParticle(RenderData.root, "Slash", nil, CFrame.new(0, 0, -2) * CFrame.Angles(0, math.rad(180), 0))
 
 	local pos0 = Root.CFrame.Position
 	local pos1 = (Root.CFrame * CFrame.new(0, 0, -50)).Position
@@ -53,7 +55,7 @@ function Universal.FlashStrike(RenderData: { root: BasePart })
 	VFX:ApplyParticle(Root.Parent, "Fell")
 end
 
-function Universal.LightningWave(RenderData: { root: BasePart, part: BasePart })
+function LightningModule.LightningWave(RenderData: { root: BasePart, part: BasePart })
 	local Root = RenderData.root
 	RocksModule.Ground(
 		Root.CFrame.Position + Vector3.new(0, -5, 0),
@@ -76,7 +78,7 @@ function Universal.LightningWave(RenderData: { root: BasePart, part: BasePart })
 	VFX:ApplyParticle(Root.Parent, "Fell")
 end
 
-function Universal.Lightning(RenderData: { root: BasePart })
+function LightningModule.Lightning(RenderData: { root: BasePart })
 	local Root = RenderData.root
 	local part0 = Instance.new("Part")
 	part0.Name = "Lightning"
@@ -130,14 +132,14 @@ function Universal.Lightning(RenderData: { root: BasePart })
 	VFX:ApplyParticle(Root.Parent, "Fell")
 end
 
-function Universal.Start() end
+function LightningModule.Start() end
 
-function Universal.Caller(RenderData)
-	if Universal[RenderData.effect] then
-		task.spawn(Universal[RenderData.effect], RenderData)
+function LightningModule.Caller(RenderData)
+	if LightningModule[RenderData.effect] then
+		task.spawn(LightningModule[RenderData.effect], RenderData)
 	else
 		print("Render not found!")
 	end
 end
 
-return Universal
+return LightningModule

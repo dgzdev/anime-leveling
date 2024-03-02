@@ -57,6 +57,14 @@ Events.Buttons = {
 		Gui:FindFirstAncestorWhichIsA("ScreenGui").Enabled = false
 		CameraEvent:Fire("Lock")
 	end,
+
+	["Accept_Quest"] = function(Gui: GuiButton)
+		Gui:FindFirstAncestorOfClass("ScreenGui").Enabled = false
+	end,
+	["Refuse_Quest"] = function(Gui: GuiButton)
+		Gui:FindFirstAncestorOfClass("ScreenGui").Enabled = false
+	end,
+
 	["Default"] = function(Gui: GuiButton)
 		SoundService:WaitForChild("SFX"):WaitForChild("UIClick"):Play()
 	end,

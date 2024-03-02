@@ -13,6 +13,7 @@ local QuestService = Knit.CreateService({
 	Name = "QuestService",
 	Client = {
 		OnQuestEnd = Knit.CreateSignal(),
+		PromptRequest = Knit.CreateSignal(),
 	},
 })
 
@@ -41,6 +42,10 @@ function QuestService:FinishQuest(Player, questName)
 	self.Client.OnQuestEnd:Fire(Player, questName)
 end
 
+function QuestService:GetQuestInfo(questName)
+	
+end
+
 function QuestService:PromptQuest(Player: Player, questName: string)
 	if QuestHandler[Player.Name].Accepted then
 		return
@@ -52,6 +57,11 @@ function QuestService:PromptQuest(Player: Player, questName: string)
 		Finished = false,
 		questQueuePos = #PlayerData.Quest + 1,
 	}
+
+	-- quest data teria as informações da quest, como nome, descricao. Talvez o tipo e verificacoes de se a quest foi concluida.
+	-- mas isso ai é cntg
+	local QuestData = GameData.gameQuests[questName]
+	self.Client.PromptRequest:Fire(Player, QuestData)
 end
 
 function QuestService:DenyQuest(Player: Player)
@@ -82,6 +92,7 @@ function QuestService:AcceptQuest(Player: Player)
 	QuestHandler[Player.Name].Accepted = true
 
 	table.insert(PlayerData.Quest, QuestHandler[Player.Name])
+
 end
 
 function QuestService.Client:PromptQuest(Player: Player, questName: string)

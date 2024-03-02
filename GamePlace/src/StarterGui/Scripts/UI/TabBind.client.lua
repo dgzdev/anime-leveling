@@ -5,6 +5,8 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
 local CameraEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("CAMERA")
 
 local function LockMouse(boolean: boolean)
@@ -17,6 +19,14 @@ end
 
 local CanToggle = true
 local function toggleTabGui(TabGui: ScreenGui)
+	if not ReplicatedStorage:GetAttribute("FirstTimeAnimationEnd") then
+		return
+	end
+
+	if PlayerGui:FindFirstChild("loadingScreen") then
+		return
+	end
+
 	if not CanToggle then
 		return
 	end

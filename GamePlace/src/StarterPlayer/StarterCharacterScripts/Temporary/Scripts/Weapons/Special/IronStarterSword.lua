@@ -82,6 +82,16 @@ end
 local IronStarterSword = {
 	[Enum.KeyCode.Z] = {
 		callback = function(action, inputstate, inputobject)
+			if inputstate == Enum.UserInputState.Cancel then
+				if PlayingAnimation then
+					PlayingAnimation:Stop(0.15)
+				end
+				RunService:UnbindFromRenderStep("Lockmouse")
+				HoldingTime = 0
+				RootPart.Anchored = false
+				return
+			end
+
 			if inputstate == Enum.UserInputState.Begin then
 				if CheckCooldown("FlashStrike") then
 					return
@@ -94,17 +104,21 @@ local IronStarterSword = {
 				-- # HOLD ATTACK
 				local Animation: Animation = ReplicatedStorage:WaitForChild("Animations")
 					:WaitForChild("FlashStrike Hold")
-				local AnimationTrack: AnimationTrack = Animator:LoadAnimation(Animation)
+				PlayingAnimation = Animator:LoadAnimation(Animation)
 
-				AnimationTrack:Play(0.15)
+				PlayingAnimation:Play(0.15)
 
 				RunService:BindToRenderStep("Lockmouse", Enum.RenderPriority.Camera.Value, Lockmouse)
 
 				RootPart.Anchored = true
 
 				task.spawn(function()
+					local anim = PlayingAnimation.Name
 					while true do
-						if AnimationTrack.IsPlaying then
+						if anim ~= PlayingAnimation.Name then
+							break
+						end
+						if PlayingAnimation.IsPlaying then
 							HoldingTime += 0.1
 						else
 							break
@@ -113,9 +127,8 @@ local IronStarterSword = {
 					end
 				end)
 
-				PlayingAnimation = AnimationTrack
-				AnimationTrack:GetMarkerReachedSignal("HoldEnd"):Connect(function()
-					AnimationTrack:AdjustSpeed(0)
+				PlayingAnimation:GetMarkerReachedSignal("HoldEnd"):Connect(function()
+					PlayingAnimation:AdjustSpeed(0)
 				end)
 			elseif inputstate == Enum.UserInputState.End then
 				if CheckCooldown("FlashStrike") then
@@ -138,15 +151,16 @@ local IronStarterSword = {
 					task.spawn(function()
 						WeaponService:WeaponInput("FlashStrike", Enum.UserInputState.End, {
 							Position = RootPart.CFrame,
+							Camera = Camera.CFrame,
 						})
 					end)
 
 					local Animation: Animation = ReplicatedStorage:WaitForChild("Animations")
 						:WaitForChild("FlashStrike Release")
-					local AnimationTrack: AnimationTrack = Animator:LoadAnimation(Animation)
-					AnimationTrack:Play(0)
-					AnimationTrack:GetMarkerReachedSignal("attackend"):Connect(function()
-						AnimationTrack:AdjustSpeed(0)
+					PlayingAnimation = Animator:LoadAnimation(Animation)
+					PlayingAnimation:Play(0)
+					PlayingAnimation:GetMarkerReachedSignal("attackend"):Connect(function()
+						PlayingAnimation:AdjustSpeed(0)
 					end)
 
 					local V = (Camera.CFrame.LookVector * 60) * GetModelMass(Character)
@@ -156,7 +170,7 @@ local IronStarterSword = {
 					VFX:ApplyParticle(Character, "Stripes")
 
 					task.delay(0.5, function()
-						AnimationTrack:Stop(0.15)
+						PlayingAnimation:Stop(0.15)
 					end)
 				end
 

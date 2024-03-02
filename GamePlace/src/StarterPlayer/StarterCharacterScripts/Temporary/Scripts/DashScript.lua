@@ -114,7 +114,8 @@ function DashScript:Dash()
 		return
 	end
 
-	Animation.AnimationId = "rbxassetid://" .. DashAnimations[DashDiretionString]
+	local id = DashAnimations[DashDiretionString or "F"] or DashAnimations.F
+	Animation.AnimationId = `rbxassetid://{id or DashAnimations.F}`
 	local AnimationTrack = Animator:LoadAnimation(Animation)
 
 	VFX:ApplyParticle(Character, "Smoke")

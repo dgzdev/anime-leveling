@@ -28,12 +28,12 @@ local MovementModule = Knit.CreateController({
 		Movement = {
 			["WALK"] = {
 				WalkSpeed = StarterPlayer.CharacterWalkSpeed,
-				FOV = 60,
+				FOV = 70,
 				JumpPower = StarterPlayer.CharacterJumpPower,
 			},
 			["RUN"] = {
 				WalkSpeed = 23,
-				FOV = 70,
+				FOV = 80,
 				JumpPower = StarterPlayer.CharacterJumpPower,
 			},
 		},

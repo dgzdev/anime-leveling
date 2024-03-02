@@ -4,6 +4,7 @@
 local PathfindingService = game:GetService("PathfindingService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
+local TextService = game:GetService("TextService")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 local Module = {}
@@ -26,7 +27,7 @@ function NPC.new(Character: Model)
 
 	--// Variables
 	self.Character = Character
-	self.Humanoid = Character:WaitForChild("Humanoid")
+	self.Humanoid = Character:WaitForChild("Humanoid") :: Humanoid
 	self.HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
 
 	self.Config = {
@@ -35,6 +36,19 @@ function NPC.new(Character: Model)
 		NPC_WaitTimeMax = 5,
 		NPC_Speed = 6,
 	}
+
+	if GameData.npcQuests[Character.Name] then
+		self.Quest = GameData.npcQuests[Character.Name]
+		local questData = GameData.questPrompts[self.Quest]
+
+		self.Humanoid.WalkSpeed = 0
+		self.Humanoid.JumpPower = 0
+
+		Character:SetAttribute("Quest", self.Quest)
+		Character:SetAttribute("Title", questData.Title)
+		Character:SetAttribute("Description", questData.Description)
+	end
+
 
 	--// Prepare the NPC
 	self:Prepare()
@@ -65,6 +79,7 @@ function NPC.new(Character: Model)
 	self.Dialog = GameData.gameDialogs[Name] or { "No dialog" }
 
 	ProximityPrompt.Triggered:Connect(function(playerWhoTriggered)
+		--> puxar dialogo
 		ReplicatedStorage.Events.NPC:FireClient(playerWhoTriggered, {
 			NPC = self.Character,
 			Dialogs = self.Dialog,

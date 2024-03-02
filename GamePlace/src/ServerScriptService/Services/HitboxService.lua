@@ -1,6 +1,8 @@
 local Debris = game:GetService("Debris")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
+local Players = game:GetService("Players")
+local ServerStorage = game:GetService("ServerStorage")
 
 local Knit = require(ReplicatedStorage.Packages.Knit)
 
@@ -8,8 +10,12 @@ local VFX = require(ReplicatedStorage.Modules.VFX)
 local SFX = require(ReplicatedStorage.Modules.SFX)
 
 local RaycastHitbox = require(ReplicatedStorage.Modules.RaycastHitboxV4)
+local GameData = require(ServerStorage.GameData)
 
+local ProgressionService
 local RenderService
+local PlayerService
+local RagdollService
 
 local function GetModelMass(model: Model)
 	if not model:IsA("Model") then
@@ -26,17 +32,25 @@ end
 
 local HitboxService = Knit.CreateService({
 	Name = "HitboxService",
-	Client = {},
+	Client = {
+		killedEnemy = Knit.CreateSignal(),
+	},
 })
 
 function HitboxService:CreateBlockHitbox(
+	executor: Model,
 	p: CFrame,
 	s: Vector3,
-	dmg: number,
-	kb: number?,
-	ovp: OverlapParams?,
-	vfx: string?,
-	sfx: string?
+
+	params: {
+		dmg: number,
+		time: number?,
+		ragdoll: number?,
+		op: OverlapParams?,
+		kb: Vector3?,
+		max: number?,
+		replicate: {}?,
+	}
 )
 	--[[
 	local Part = Instance.new("Part")
@@ -50,9 +64,13 @@ function HitboxService:CreateBlockHitbox(
 	Debris:AddItem(Part, 1)
 	]]
 
+	-- @executor: Model
+	--character
+	--inimigo
+
 	local op: OverlapParams
-	if ovp then
-		op = ovp
+	if params.op then
+		op = params.op
 	else
 		op = OverlapParams.new()
 		op.FilterType = Enum.RaycastFilterType.Include
@@ -60,25 +78,55 @@ function HitboxService:CreateBlockHitbox(
 	end
 
 	local Damaged = {}
-	local ParstInBoundBox = Workspace:GetPartBoundsInBox(p, s, op)
+	local PartsInBoundBox = Workspace:GetPartBoundsInBox(p, s, op)
 
-	for _, part in ipairs(ParstInBoundBox) do
+	for _, part in ipairs(PartsInBoundBox) do
 		if part:IsA("BasePart") and part.Parent:IsA("Model") and part.Parent:FindFirstChild("Humanoid") then
 			if not Damaged[part.Parent] then
 				Damaged[part.Parent] = true
 				local Humanoid: Humanoid = part.Parent:FindFirstChild("Humanoid")
+				--if Humanoid.Health <= 0 then
+				--	return
+				--end
+
+				if params.ragdoll then
+					RagdollService:Ragdoll(part.Parent, params.ragdoll)
+				end
+
+				Humanoid:TakeDamage(params.dmg)
 				if Humanoid.Health <= 0 then
+					if Players:GetPlayerFromCharacter(executor) then
+						if Humanoid.Parent:IsDescendantOf(Workspace.Enemies) then
+							local Data = Humanoid.Parent:FindFirstChild("Data")
+							if Data ~= nil then
+								Data = require(Humanoid.Parent:FindFirstChild("Data"))
+								local ExpPerHP = Data.Info.ExpPerOneHealthPoint
+								if not ExpPerHP then
+									return
+								end
+								ProgressionService:AddExp(
+									Players:GetPlayerFromCharacter(executor),
+									Humanoid.MaxHealth * ExpPerHP
+								)
+							else
+								error("Enemy Data not found.")
+							end
+
+							self.Client.killedEnemy:Fire(Players:GetPlayerFromCharacter(executor))
+						end
+					end
 					return
 				end
 
-				Humanoid:TakeDamage(dmg)
-
-				if kb then
-					Humanoid.RootPart.AssemblyLinearVelocity = (kb * p.LookVector) * GetModelMass(part.Parent)
+				if params.kb then
+					Humanoid.RootPart.AssemblyLinearVelocity = (params.kb * p.LookVector) * GetModelMass(part.Parent)
 				end
 
-				VFX:ApplyParticle(part.Parent, vfx or "CombatHit")
-				SFX:Apply(part.Parent, sfx or "Melee")
+				if params.replicate then
+					local replicate = params.replicate or {}
+					replicate["root"] = Humanoid.RootPart
+					RenderService:RenderForPlayers(replicate)
+				end
 			end
 		end
 	end
@@ -90,6 +138,7 @@ function HitboxService:CreateRaycastHitbox(
 		dmg: number,
 		time: number?,
 		kb: Vector3?,
+		ragdoll: boolean?,
 		max: number?,
 		replicate: {}?,
 	},
@@ -104,6 +153,7 @@ function HitboxService:CreateRaycastHitbox(
 	local Damaged = {}
 
 	local hitbox = RaycastHitbox.new(Model)
+	local executor = Model:FindFirstAncestorWhichIsA("Model")
 
 	if rayparams then
 		hitbox.RaycastParams = rayparams
@@ -111,15 +161,47 @@ function HitboxService:CreateRaycastHitbox(
 
 	hitbox.OnHit:Connect(function(hit, humanoid)
 		if not Damaged[hit] then
+			hitbox:HitStop()
 			Damaged[hit] = true
-			if humanoid.Health <= 0 then
-				return
-			end
+			--if humanoid.Health <= 0 then
+			--	return
+			--end
 
 			humanoid:TakeDamage(dmg)
 
-			replicate["root"] = humanoid.RootPart
-			RenderService:RenderForPlayers(replicate)
+			if params.ragdoll then
+				RagdollService:Ragdoll(humanoid.Parent, params.ragdoll)
+			end
+
+			-- se matou e se o executor for jogador
+			if humanoid.Health <= 0 then
+				if Players:GetPlayerFromCharacter(executor) then
+					if humanoid.Parent:IsDescendantOf(Workspace.Enemies) then
+						local Data = humanoid.Parent:FindFirstChild("Data")
+						if Data ~= nil then
+							Data = require(humanoid.Parent:FindFirstChild("Data"))
+							local ExpPerHP = Data.Info.ExpPerOneHealthPoint
+							if not ExpPerHP then
+								return
+							end
+							ProgressionService:AddExp(
+								Players:GetPlayerFromCharacter(executor),
+								humanoid.MaxHealth * ExpPerHP
+							)
+						else
+							error("Enemy Data not found.")
+						end
+
+						self.Client.killedEnemy:Fire(Players:GetPlayerFromCharacter(executor))
+					end
+				end
+				return
+			end
+
+			if params.replicate then
+				replicate["root"] = humanoid.RootPart
+				RenderService:RenderForPlayers(replicate)
+			end
 
 			if kb then
 				humanoid.RootPart.AssemblyLinearVelocity = kb * GetModelMass(hit)
@@ -130,7 +212,10 @@ function HitboxService:CreateRaycastHitbox(
 end
 
 function HitboxService:KnitStart()
+	ProgressionService = Knit.GetService("ProgressionService")
 	RenderService = Knit.GetService("RenderService")
+	PlayerService = Knit.GetService("PlayerService")
+	RagdollService = Knit.GetService("RagdollService")
 end
 
 return HitboxService

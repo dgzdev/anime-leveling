@@ -49,7 +49,7 @@ Sword.Default = {
 
 		local Params = {
 			dmg = 10,
-			time = 2,
+			time = 1,
 			kb = 15,
 			max = 250,
 			replicate = {
@@ -87,63 +87,22 @@ Sword.Default = {
 			root = Character.PrimaryPart,
 		})
 
-		VFX:ApplyParticle(Character, "Slash", nil, CFrame.new(0, 0, -2) * CFrame.Angles(0, math.rad(180), 0))
-
-		-- blz
-
-		--[[ -> ISSO AQ E SO DEBUG
-			local part = Instance.new("Part")
-			part.Size = Vector3.new(5, 5, Size)
-			part.CFrame = Mid
-			part.Anchored = true
-			part.CanCollide = false
-			part.Parent = Workspace
-			part.Transparency = 0.6
-			Debris:AddItem(part, 2)
-		]]
-
 		local OverlapParams = OverlapParams.new()
 		OverlapParams.FilterType = Enum.RaycastFilterType.Include
 		OverlapParams.FilterDescendantsInstances = { Workspace.Enemies }
 
-		local Damaged = {}
-
-		local PartInBoundBox = Workspace:GetPartBoundsInBox(Mid, Vector3.new(5, 5, Size), OverlapParams)
-		for _, Part: BasePart in ipairs(PartInBoundBox) do
-			local Model = Part:FindFirstAncestorWhichIsA("Model")
-			if not Model then
-				continue
-			end
-
-			local Humanoid = Model:FindFirstChildWhichIsA("Humanoid")
-			if not Humanoid then
-				continue
-			end
-
-			if Damaged[Humanoid] then
-				continue
-			end
-
-			local Root: BasePart = Model.PrimaryPart
-			if not Root then
-				continue
-			end
-
-			Damaged[Humanoid] = true
-
-			Humanoid:TakeDamage(10)
-			RagdollService:Ragdoll(Model, 1.5)
-
-			local V = (Data.Position.LookVector * 15) * GetModelMass(Model)
-			Humanoid.RootPart.AssemblyLinearVelocity = V + Vector3.new(0, 15, 0)
-
-			VFX:ApplyParticle(Model, "SwordHit")
-			SFX:Apply(Model, "SwordHit")
-			return
-		end
-		if #Damaged > 0 then
-			VFX:ApplyParticle(Character, "SlashHit", nil, CFrame.new(0, 0, -2) * CFrame.Angles(0, math.rad(180), 0))
-		end
+		HitboxService:CreateBlockHitbox(Character, Mid, Vector3.new(5, 5, Size), {
+			dmg = 10,
+			kb = 15,
+			op = OverlapParams,
+			ragdoll = 1.5,
+			replicate = {
+				["module"] = "Universal",
+				["effect"] = "Replicate",
+				["VFX"] = "SwordHit",
+				["SFX"] = "SwordHit",
+			},
+		})
 	end,
 }
 
@@ -218,7 +177,7 @@ Sword["King'sLongsword"] = {
 
 		local Params = {
 			dmg = 10,
-			time = 2,
+			time = 1,
 			kb = 15,
 			max = 250,
 			replicate = {
@@ -236,7 +195,11 @@ Sword["King'sLongsword"] = {
 		Sword.Default.Defense(...)
 	end,
 
-	FlashStrike = function(Character: Model, InputState: Enum.UserInputState, Data: { Position: CFrame })
+	FlashStrike = function(
+		Character: Model,
+		InputState: Enum.UserInputState,
+		Data: { Position: CFrame, Camera: CFrame }
+	)
 		local Mid = Data.Position * CFrame.new(0, 0, -30)
 		local Size = 60
 
@@ -256,67 +219,29 @@ Sword["King'sLongsword"] = {
 			root = Character.PrimaryPart,
 		})
 
-		VFX:ApplyParticle(Character, "Slash", nil, CFrame.new(0, 0, -2) * CFrame.Angles(0, math.rad(180), 0))
-
-		-- blz
-
-		--[[ -> ISSO AQ E SO DEBUG
-			local part = Instance.new("Part")
-			part.Size = Vector3.new(5, 5, Size)
-			part.CFrame = Mid
-			part.Anchored = true
-			part.CanCollide = false
-			part.Parent = Workspace
-			part.Transparency = 0.6
-			Debris:AddItem(part, 2)
-		]]
-
 		local OverlapParams = OverlapParams.new()
 		OverlapParams.FilterType = Enum.RaycastFilterType.Include
 		OverlapParams.FilterDescendantsInstances = { Workspace.Enemies }
 
-		local Damaged = {}
+		HitboxService:CreateBlockHitbox(Character, Mid, Vector3.new(5, 5, Size), {
+			dmg = 10,
+			kb = 15,
+			ragdoll = 1.5,
+			op = OverlapParams,
+			replicate = {
+				["module"] = "Universal",
+				["effect"] = "Replicate",
+				["VFX"] = "LightningSwordHit",
+				["SFX"] = "SwordHit",
+			},
+		})
 
-		local PartInBoundBox = Workspace:GetPartBoundsInBox(Mid, Vector3.new(5, 5, Size), OverlapParams)
-		for _, Part: BasePart in ipairs(PartInBoundBox) do
-			local Model = Part:FindFirstAncestorWhichIsA("Model")
-			if not Model then
-				continue
-			end
-
-			local Humanoid = Model:FindFirstChildWhichIsA("Humanoid")
-			if not Humanoid then
-				continue
-			end
-
-			if Damaged[Humanoid] then
-				continue
-			end
-
-			if Humanoid.Health <= 0 then
-				continue
-			end
-
-			local Root: BasePart = Model.PrimaryPart
-			if not Root then
-				continue
-			end
-
-			Damaged[Humanoid] = true
-
-			Humanoid:TakeDamage(10)
-			RagdollService:Ragdoll(Model, 1.5)
-
-			local V = (Data.Position.LookVector * 15) * GetModelMass(Model)
-			Humanoid.RootPart.AssemblyLinearVelocity = V + Vector3.new(0, 5, 0)
-
-			SFX:Apply(Model, "SwordHit")
-			VFX:ApplyParticle(Model, "LightningSwordHit")
-			return
-		end
-		if #Damaged > 0 then
-			VFX:ApplyParticle(Character, "SlashHit", nil, CFrame.new(0, 0, -2) * CFrame.Angles(0, math.rad(180), 0))
-		end
+		RenderService:RenderForPlayersInArea(Mid.Position, 200, {
+			["module"] = "Universal",
+			["effect"] = "Replicate",
+			["VFX"] = "SlashHit",
+			root = Character.PrimaryPart,
+		})
 	end,
 
 	["Eletric Wave"] = function(Character: Model, InputState: Enum.UserInputState, Data: { Position: CFrame })
