@@ -99,7 +99,7 @@ local Sword = {
 			SetCooldown("Slash", PlayingAnimation.Length)
 
 			local DelayTime = 0.15
-			if _G.MeleeCombo == 1 then
+			if _G.Combo == 1 then
 				DelayTime = 0.3
 			end
 

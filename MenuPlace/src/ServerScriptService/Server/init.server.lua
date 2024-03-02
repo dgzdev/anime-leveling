@@ -99,7 +99,7 @@ local function OnPlayerAdded(plr: Player)
 	local Rig = ReplicatedStorage.Rig:Clone()
 	Rig.Parent = Workspace:WaitForChild("Characters")
 
-	Profile = ProfileStore:LoadProfileAsync(tostring(plr.UserId), "ForceLoad")
+	Profile = ProfileStore:LoadProfileAsync(`player_{plr.UserId}`, "ForceLoad")
 	if not Profile then
 		plr:Kick("Failed to load profile.")
 		return

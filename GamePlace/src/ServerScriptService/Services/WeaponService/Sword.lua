@@ -60,7 +60,7 @@ Sword.Default = {
 			},
 		}
 
-		HitboxService:CreateRaycastHitbox(Model, Params, Ray)
+		HitboxService:CreateBlockHitbox(Character, p.Position * CFrame.new(0,0,-3), Vector3.new(5, 5, 5), Params)
 	end,
 
 	Defense = function(...)
@@ -188,7 +188,7 @@ Sword["King'sLongsword"] = {
 			},
 		}
 
-		HitboxService:CreateRaycastHitbox(Model, Params, Ray)
+		HitboxService:CreateBlockHitbox(Character, p.Position * CFrame.new(0,0,-3), Vector3.new(6, 6, 6), Params)
 	end,
 
 	Defense = function(...)
