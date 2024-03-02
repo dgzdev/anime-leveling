@@ -1,3 +1,4 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 export type Rank = "E" | "D" | "C" | "B" | "A" | "S"
 export type SubRank = "I" | "II" | "III" | "IV" | "V"
 export type World = "World 1" | "World 2"
@@ -61,7 +62,7 @@ export type SlotData = {
 		Weapon: string,
 		Id: number,
 	},
-	Quest: {},
+	Quests: {},
 	Hotbar: { number },
 	Inventory: Inventory,
 	Skills: { [string]: {
@@ -306,7 +307,6 @@ return {
 			Gold = 30,
 		},
 	},
-
 	gameQuests = {
 		["Kill Goblins"] = {
 			Type = "Kill Enemies",
@@ -317,7 +317,6 @@ return {
 			}
 		}
 	},
-
 	questPrompts = {
 		["Kill Goblins"] = {
 			Title = "Test",
@@ -325,12 +324,10 @@ return {
 			--> attributos: title e description
 		}
 	},
-
 	npcQuests = {
 		--> se ele tiver o nome aq
 		["Sung Jin-Woo"] = "Kill Goblins",
 	},
-
 	gameDialogs = {
 
 		["Sung Jin-Woo"] = {
@@ -358,4 +355,11 @@ return {
 			"Until next time, Keep your guard up and your spirits high.",
 		},
 	},
+
+	weaponSupport = {
+		["Sword"] = {
+			Model = ReplicatedStorage.Models.WeaponSupports.Sword,
+			Position = CFrame.new(1.3, 1.1, 1) * CFrame.fromOrientation(math.rad(0), math.rad(-60), math.rad(-90)),
+		}
+	}
 }

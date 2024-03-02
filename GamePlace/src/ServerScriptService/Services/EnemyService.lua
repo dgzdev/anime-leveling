@@ -33,7 +33,7 @@ function EnemyService:UpdateHealthHud(humanoid: Humanoid, healthHud: BillboardGu
 	}):Play()
 
 	TweenService:Create(PrimaryHP, TweenInfo.new(0.5, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {
-		BackgroundColor3 = PrimaryHP.BackgroundColor3:Lerp(Color3.fromRGB(255,0,0), 1-(humanoid.Health / humanoid.MaxHealth))
+		BackgroundColor3 = Color3.fromRGB(38, 152, 105):Lerp(Color3.fromRGB(255,0,0), 1-(humanoid.Health / humanoid.MaxHealth))
 	}):Play()
 
 	EnemyName.Text = humanoid.Parent.Name

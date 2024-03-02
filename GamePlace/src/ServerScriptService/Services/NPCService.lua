@@ -7,9 +7,18 @@ local ServerStorage = game:GetService("ServerStorage")
 local TextService = game:GetService("TextService")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
-local Module = {}
+
 
 local GameData = require(ServerStorage.GameData)
+local Knit = require(ReplicatedStorage.Packages.Knit)
+
+local Module = Knit.CreateService({
+	Name = "NPCService",
+	Client = {
+	},
+})
+
+local QuestService
 
 local NPC = {}
 NPC.__index = NPC
@@ -79,12 +88,16 @@ function NPC.new(Character: Model)
 	self.Dialog = GameData.gameDialogs[Name] or { "No dialog" }
 
 	ProximityPrompt.Triggered:Connect(function(playerWhoTriggered)
-		--> puxar dialogo
-		ReplicatedStorage.Events.NPC:FireClient(playerWhoTriggered, {
-			NPC = self.Character,
-			Dialogs = self.Dialog,
-			Title = Name,
-		})
+		if self.Quest then
+			QuestService:PromptQuest(playerWhoTriggered, self.Quest)
+		else
+			--> puxar dialogo
+			ReplicatedStorage.Events.NPC:FireClient(playerWhoTriggered, {
+				NPC = self.Character,
+				Dialogs = self.Dialog,
+				Title = Name,
+			})
+		end
 	end)
 
 	--[[
@@ -102,7 +115,9 @@ function NPC.new(Character: Model)
 	self.ProximityPrompt = ProximityPrompt
 
 	Spawn(function()
-		self:MoveInRadius()
+		if not self.Quest then
+			self:MoveInRadius()
+		end
 	end)
 
 	return self
@@ -195,11 +210,13 @@ function NPC:Prepare()
 	end
 end
 
-function Module.Start()
+function Module.KnitStart()
 	local Folder = Workspace.NPC
 	for _, value in ipairs(Folder:GetChildren()) do
 		NPC.new(value)
 	end
+
+	QuestService = Knit.GetService("QuestService")
 end
 
 return Module

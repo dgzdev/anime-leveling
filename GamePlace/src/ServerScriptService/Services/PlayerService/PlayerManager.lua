@@ -103,7 +103,7 @@ function PlayerManager:LoadProfile()
 	local Profile = ProfileStore:LoadProfileAsync(`player_{self.Player.UserId}`, "ForceLoad")
 	if Profile then
 		Profile:Reconcile()
-		Profile.Data = GameData.profileTemplate
+		--Profile.Data = GameData.profileTemplate
 		self.Profile = Profile
 
 		Profile:SetMetaTag("Version", game.PlaceVersion)

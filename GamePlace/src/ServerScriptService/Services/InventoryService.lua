@@ -71,6 +71,26 @@ function InventoryService:EquipFromData(player: Player, playerData)
 	player:SetAttribute("WeaponType", WeaponType)
 	player:SetAttribute("Equiped", Equiped)
 
+	if player.Character:FindFirstChild("weaponSupport") then
+		player.Character:FindFirstChild("weaponSupport"):Destroy()
+	end
+
+	if GameData.weaponSupport[WeaponType] then
+		local Torso = player.Character:FindFirstChild("Torso")
+		local wpSupport = GameData.weaponSupport[WeaponType]
+		local model = wpSupport.Model:Clone()
+
+		model.Name = "weaponSupport"
+		model:PivotTo(Torso.CFrame)
+
+		local w0 = Instance.new("Motor6D", model)
+		w0.Part0 = Torso
+		w0.Part1 = model
+		w0.C1 = wpSupport.Position
+
+		model.Parent = player.Character
+	end
+
 	if WeaponType == "Sword" then
 		local Model = ReplicatedStorage.Models.Swords
 		local Sword = Model:FindFirstChild(Equiped)

@@ -9,36 +9,23 @@ local QuestService
 local Player = game.Players.LocalPlayer
 local PlayerGUI = Player:WaitForChild("PlayerGui")
 local PromptUI = PlayerGUI:WaitForChild("Prompt")
+local Background = PromptUI:WaitForChild("Background")
+local CameraEvent = game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("CAMERA")
 local Connections = {}
 
-local function ClearConnections()
-	for i, v in Connections do
-		v:Disconnect()
-		Connections[i] = nil
+local function LockMouse(boolean: boolean)
+	if boolean then
+		CameraEvent:Fire("Lock")
+	else
+		CameraEvent:Fire("Unlock")
 	end
 end
 
+
 function QuestController:CreatePrompt(QuestData: {[string]: string})
     PromptUI.Enabled = true
-	ClearConnections()
-
-	PromptUI.titleBackground.Title.Text = QuestData.Title or ""
-	PromptUI.message.Text = QuestData.Description or ""
-
-    table.insert(Connections, PromptUI.Accept.Once:Connect(function()
-        task.spawn(function()
-			QuestService:AcceptQuest()
-        end)
-		PromptUI.Enabled = false
-		ClearConnections()
-    end))
-	table.insert(Connections, PromptUI.Decline.Once:Connect(function()
-        task.spawn(function()
-			QuestService:DenyQuest()
-        end)
-		PromptUI.Enabled = false
-		ClearConnections()
-    end))
+	Background.titleBackground.Title.Text = QuestData.Title or ""
+	Background.message.Text = QuestData.Description or ""
 end
 
 function QuestController.KnitInit()
@@ -47,7 +34,8 @@ end
 
 function QuestController.KnitStart()
     QuestService.PromptRequest:Connect(function(QuestData: {})
-    QuestController:CreatePrompt(QuestData)
+    	QuestController:CreatePrompt(QuestData)
+		LockMouse(false)
     end)
 end
 

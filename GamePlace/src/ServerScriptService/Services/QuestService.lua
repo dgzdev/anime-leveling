@@ -20,13 +20,13 @@ local QuestService = Knit.CreateService({
 function QuestService:GetAllPlayerQuests(Player)
 	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
 
-	return PlayerData.Quest
+	return PlayerData.Quests
 end
 
 function QuestService:GetPlayerQuest(Player, questName)
 	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
 
-	for i, v in pairs(PlayerData.Quest) do
+	for i, v in pairs(PlayerData.Quests) do
 		if v.questName == questName then
 			return i
 		end
@@ -42,20 +42,33 @@ function QuestService:FinishQuest(Player, questName)
 	self.Client.OnQuestEnd:Fire(Player, questName)
 end
 
-function QuestService:GetQuestInfo(questName)
-	
+function QuestService:GetQuestInfo(Player : Player, questName)
+
 end
 
 function QuestService:PromptQuest(Player: Player, questName: string)
-	if QuestHandler[Player.Name].Accepted then
+	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
+	if QuestHandler[Player.Name] then
 		return
 	end
-	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
+
+	print(#PlayerData.Quests)
+	if #PlayerData.Quests >= 5 then
+		warn("You have max of quests (5)")
+		return
+	end
+
+	if self:GetPlayerQuest(Player, questName) then
+		warn("Already in this quest")
+		return
+	end
+
+
 	QuestHandler[Player.Name] = {
 		questName = questName,
 		Accepted = false,
 		Finished = false,
-		questQueuePos = #PlayerData.Quest + 1,
+		questQueuePos = #PlayerData.Quests + 1,
 	}
 
 	-- quest data teria as informações da quest, como nome, descricao. Talvez o tipo e verificacoes de se a quest foi concluida.
@@ -91,20 +104,22 @@ function QuestService:AcceptQuest(Player: Player)
 
 	QuestHandler[Player.Name].Accepted = true
 
-	table.insert(PlayerData.Quest, QuestHandler[Player.Name])
+	table.insert(PlayerData.Quests, QuestHandler[Player.Name])
+
+	QuestHandler[Player.Name] = nil
 
 end
 
 function QuestService.Client:PromptQuest(Player: Player, questName: string)
-	return QuestService.Server:PromptQuest(Player, questName)
+	return self.Server:PromptQuest(Player, questName)
 end
 
 function QuestService.Client:AcceptQuest(Player: Player)
-	return QuestService.Server:AcceptQuest(Player)
+	return self.Server:AcceptQuest(Player)
 end
 
 function QuestService.Client:DenyQuest(Player: Player)
-	return QuestService.Server:DenyQuest(Player)
+	return self.Server:DenyQuest(Player)
 end
 
 function QuestService.KnitInit()

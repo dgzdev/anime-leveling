@@ -6,6 +6,14 @@ local CameraEvent = game:GetService("ReplicatedStorage"):WaitForChild("Events"):
 local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
+Knit.OnStart():await()
+
+local QuestService = Knit.GetService("QuestService")
+
+print(QuestService)
+
+
 local function LockMouse(boolean: boolean)
 	if boolean then
 		CameraEvent:Fire("Lock")
@@ -60,9 +68,13 @@ Events.Buttons = {
 
 	["Accept_Quest"] = function(Gui: GuiButton)
 		Gui:FindFirstAncestorOfClass("ScreenGui").Enabled = false
+		QuestService:AcceptQuest(game.Players.LocalPlayer)
+		LockMouse(true)
 	end,
 	["Refuse_Quest"] = function(Gui: GuiButton)
 		Gui:FindFirstAncestorOfClass("ScreenGui").Enabled = false
+		QuestService:DenyQuest(game.Players.LocalPlayer)
+		LockMouse(true)
 	end,
 
 	["Default"] = function(Gui: GuiButton)
