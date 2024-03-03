@@ -31,6 +31,10 @@ local function getpercentage()
 end
 
 local function FadeOut()
+	TweenService:Create(Value, TweenInfo.new(0.25, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut, 0, false, 0), {
+		Size = UDim2.fromScale(1, 1),
+	}):Play()
+
 	game:SetAttribute("Loaded", true)
 	local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut, 0, false, 0)
 	local tween = TweenService:Create(bg, tweenInfo, {
@@ -65,17 +69,18 @@ task.spawn(function()
 	end
 end)
 
-local skipButton = Instance.new("TextButton", screenGui)
+local skipButton = Instance.new("TextButton")
 skipButton.Size = UDim2.fromScale(0.15, 0.2)
 skipButton.AnchorPoint = Vector2.new(0, 0)
-skipButton.Position = UDim2.fromScale(0.15, 0.8)
+skipButton.Position = UDim2.fromScale(0.1, 0.7)
 skipButton.BackgroundTransparency = 1
 skipButton.Font = Enum.Font.GothamMedium
+skipButton.ZIndex = 10
 
 skipButton.TextColor3 = Color3.new(1, 1, 1)
 
 skipButton.Text = "Skip"
-skipButton.TextSize = 24
+skipButton.TextSize = 36
 skipButton.Visible = false
 
 screenGui.Parent = playerGui
@@ -88,7 +93,10 @@ if not game:IsLoaded() then
 	game.Loaded:Wait()
 end
 
-task.delay(20, function()
+task.wait(5)
+
+task.delay(5, function()
+	skipButton.Parent = bg
 	skipButton.Visible = true
 end)
 

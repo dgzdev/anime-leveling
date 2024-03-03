@@ -9,11 +9,18 @@ local StarterGui = game:GetService("StarterGui")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Player = Players.LocalPlayer
-local Character = Player.Character
+local Character = Player.Character or Player.CharacterAdded:Wait()
 local Humanoid = Character:WaitForChild("Humanoid")
 local PlayerEvents = ReplicatedStorage:WaitForChild("Player")
 
 function OnRagdoll(Ragdolled)
+	Character = Player.Character or Player.CharacterAdded:Wait()
+	Humanoid = Character:WaitForChild("Humanoid")
+
+	if not Humanoid then
+		return
+	end
+
 	if Ragdolled then
 		Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, false)
 		Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
@@ -25,8 +32,6 @@ end
 
 function Ragdoll:KnitStart()
 	Player.CharacterAdded:Connect(function(character)
-		Character = character
-		Humanoid = character:WaitForChild("Humanoid")
 		OnRagdoll(false)
 	end)
 
