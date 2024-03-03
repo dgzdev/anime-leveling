@@ -65,8 +65,23 @@ _G.Combo = 1
 local Melee = {
 	[Enum.UserInputType.MouseButton1] = {
 		callback = function(action, inputstate, inputobject)
+			if inputstate == Enum.UserInputState.Cancel then
+				if PlayingAnimation then
+					PlayingAnimation:Stop(0.15)
+				end
+				HoldingTime = 0
+				RootPart.Anchored = false
+				return
+			end
+
 			if inputstate ~= Enum.UserInputState.Begin then
 				return
+			end
+
+			if PlayingAnimation then
+				if PlayingAnimation.IsPlaying then
+					return
+				end
 			end
 
 			if CheckCooldown("Punch") then
@@ -96,12 +111,12 @@ local Melee = {
 
 			local ComboAnimation: Animation = Combos[_G.Combo]
 
+			SFX:Create(RootPart, "MeleeSwing", 0, 60, false)
 			if PlayingAnimation then
 				PlayingAnimation:Stop()
 			end
 
 			PlayingAnimation = Animator:LoadAnimation(ComboAnimation)
-
 			SetCooldown("Punch", PlayingAnimation.Length)
 
 			local DelayTime = 0.15
@@ -129,6 +144,15 @@ local Melee = {
 	},
 	[Enum.UserInputType.MouseButton2] = {
 		callback = function(action, inputstate, inputobject)
+			if inputstate == Enum.UserInputState.Cancel then
+				if PlayingAnimation then
+					PlayingAnimation:Stop(0.15)
+				end
+				HoldingTime = 0
+				RootPart.Anchored = false
+				return
+			end
+
 			if inputstate ~= Enum.UserInputState.Begin then
 				return
 			end
@@ -136,10 +160,130 @@ local Melee = {
 			if CheckCooldown("Block") then
 				return
 			end
-
-			print("mb2")
 		end,
 		name = "Block",
+	},
+	[Enum.KeyCode.Z] = {
+		callback = function(action, inputstate, inputobject)
+			if inputstate == Enum.UserInputState.Cancel then
+				if PlayingAnimation then
+					PlayingAnimation:Stop(0.15)
+				end
+				HoldingTime = 0
+				RootPart.Anchored = false
+				return
+			end
+
+			if inputstate ~= Enum.UserInputState.Begin then
+				return
+			end
+
+			if PlayingAnimation then
+				if PlayingAnimation.IsPlaying then
+					return
+				end
+			end
+
+			if CheckCooldown("Ground Slam") then
+				return
+			end
+
+			if Humanoid.WalkSpeed == 0 then
+				return
+			end
+
+			if RootPart.Anchored then
+				return
+			end
+
+			if Humanoid:GetState() ~= Enum.HumanoidStateType.Running then
+				return
+			end
+
+			if Humanoid.Health <= 0 then
+				return
+			end
+
+			RootPart.Anchored = true
+
+			SetCooldown("Ground Slam", 3)
+
+			PlayingAnimation = Animator:LoadAnimation(Animations:WaitForChild("Melee"):WaitForChild("Ground Slam"))
+			PlayingAnimation:Play()
+			PlayingAnimation:GetMarkerReachedSignal("end"):Once(function()
+				SFX:Create(RootPart, "Ground-Slam", 10, 80, false)
+				PlayingAnimation:AdjustSpeed(0)
+			end)
+
+			task.spawn(function()
+				WeaponService:WeaponInput("Ground Slam", Enum.UserInputState.End, {
+					Position = RootPart.CFrame,
+				})
+			end)
+
+			task.wait(2)
+
+			PlayingAnimation:Stop(0.3)
+			RootPart.Anchored = false
+		end,
+		name = "Ground Slam",
+	},
+	[Enum.KeyCode.X] = {
+		callback = function(action, inputstate, inputobject)
+			if inputstate == Enum.UserInputState.Cancel then
+				if PlayingAnimation then
+					PlayingAnimation:Stop(0.15)
+				end
+				HoldingTime = 0
+				RootPart.Anchored = false
+				return
+			end
+
+			if inputstate ~= Enum.UserInputState.Begin then
+				return
+			end
+
+			if PlayingAnimation then
+				if PlayingAnimation.IsPlaying then
+					return
+				end
+			end
+
+			if CheckCooldown("Strong Punch") then
+				return
+			end
+
+			if Humanoid.WalkSpeed == 0 then
+				return
+			end
+
+			if RootPart.Anchored then
+				return
+			end
+
+			if Humanoid:GetState() ~= Enum.HumanoidStateType.Running then
+				return
+			end
+
+			if Humanoid.Health <= 0 then
+				return
+			end
+
+			RootPart.Anchored = true
+
+			SetCooldown("Strong Punch", 2)
+
+			task.spawn(function()
+				WeaponService:WeaponInput("Strong Punch", Enum.UserInputState.End, {
+					Position = RootPart.CFrame,
+				})
+			end)
+
+			task.wait(1)
+
+			RootPart.Anchored = false
+		end,
+		name = "Strong Punch",
 	},
 }
 

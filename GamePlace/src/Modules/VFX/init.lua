@@ -6,10 +6,10 @@ local VFX = {}
 local VFXFolder = ReplicatedStorage.VFX
 
 function VFX:_ApplyParticle(
-	target: Model,
+	target: BasePart | Model | Part | nil,
 	action: string,
 	time: number?,
-	offset: CFrame?,
+	offset: CFrame | Vector3 | nil,
 	doNotWeld: boolean?,
 	v: Vector3?
 )
@@ -82,7 +82,7 @@ function VFX:ApplyParticle(
 	end)
 end
 
-function VFX:_CreateInfinite(target: Model, action: string)
+function VFX:_CreateInfinite(target: Model | BasePart, action: string)
 	local block = VFXFolder:FindFirstChild(action)
 	if not block then
 		return error("VFX not found")

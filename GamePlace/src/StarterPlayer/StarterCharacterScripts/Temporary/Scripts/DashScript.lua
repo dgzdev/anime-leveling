@@ -91,10 +91,6 @@ function DashScript:Dash()
 	end
 
 	Cooldown = tick() + 1.5
-
-	local DashVelocity = DashDirection * 40 * GetModelMass(Character)
-	HumanoidRootPart.AssemblyLinearVelocity = DashVelocity
-
 	local Animation = Instance.new("Animation")
 
 	local WalkDirWorld = getWalkDirectionCameraSpace()
@@ -134,7 +130,7 @@ function DashScript:Dash()
 
 	task.wait()
 	AnimationTrack:Play()
-	AnimationTrack:AdjustSpeed(1.5)
+	AnimationTrack:AdjustSpeed(1)
 	RunService:BindToRenderStep("DashEffects", Enum.RenderPriority.Last.Value, function()
 		Stripes.CFrame = HumanoidRootPart.CFrame
 
@@ -149,6 +145,9 @@ function DashScript:Dash()
 			RunService:UnbindFromRenderStep("DashEffects")
 		end
 	end)
+
+	local DashVelocity = DashDirection * 40 * GetModelMass(Character)
+	HumanoidRootPart.AssemblyLinearVelocity = DashVelocity
 end
 
 function DashScript:Init()

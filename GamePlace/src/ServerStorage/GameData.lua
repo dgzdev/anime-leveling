@@ -114,7 +114,7 @@ local ProfileTemplate: ProfileData = {
 					["Id"] = 1,
 				},
 				["Quests"] = {},
-				["Hotbar"] = { 1, 2, 3, 4 },
+				["Hotbar"] = { 1, 3, 4, 5 },
 				["Inventory"] = {
 					["Melee"] = {
 						AchiveDate = os.time(),
@@ -131,10 +131,15 @@ local ProfileTemplate: ProfileData = {
 						Rank = "E",
 						Id = 3,
 					},
+					["Luxury Sword"] = {
+						AchiveDate = os.time(),
+						Rank = "D",
+						Id = 4,
+					},
 					["King's Longsword"] = {
 						AchiveDate = os.time(),
 						Rank = "S",
-						Id = 4,
+						Id = 5,
 					},
 				},
 				["Skills"] = {
@@ -198,10 +203,15 @@ return {
 			Rank = "E",
 			Id = 3,
 		},
+		["Luxury Sword"] = {
+			AchiveDate = os.time(),
+			Rank = "D",
+			Id = 4,
+		},
 		["King's Longsword"] = {
 			AchiveDate = os.time(),
 			Rank = "S",
-			Id = 4,
+			Id = 5,
 		},
 	},
 	gameWeapons = {
@@ -220,6 +230,12 @@ return {
 			Damage = 20,
 			Rarity = "E",
 			SubRarity = "II", -- "II" | "III" | "IV" | "V"
+		},
+		["Luxury Sword"] = {
+			Type = "Sword",
+			Damage = 30,
+			Rarity = "D",
+			SubRarity = "I", -- "II" | "III" | "IV" | "V"
 		},
 		["King's Longsword"] = {
 			Type = "Sword",
@@ -311,18 +327,18 @@ return {
 		["Kill Goblins"] = {
 			Type = "Kill Enemies",
 			EnemyName = "Goblin",
-			Amount = 5,
+			Amount = 1,
 			Rewards = {
-				Experience = 100
-			}
-		}
+				Experience = 100,
+			},
+		},
 	},
 	questPrompts = {
 		["Kill Goblins"] = {
 			Title = "Test",
 			Description = "Testing description",
 			--> attributos: title e description
-		}
+		},
 	},
 	npcQuests = {
 		--> se ele tiver o nome aq
@@ -360,6 +376,6 @@ return {
 		["Sword"] = {
 			Model = ReplicatedStorage.Models.WeaponSupports.Sword,
 			Position = CFrame.new(1.3, 1.1, 1) * CFrame.fromOrientation(math.rad(0), math.rad(-60), math.rad(-90)),
-		}
-	}
+		},
+	},
 }

@@ -57,6 +57,22 @@ local function AnimateCamera(animation: string)
 			end
 
 			if i == 139 then
+				Connections[#Connections + 1] = Character.DescendantAdded:Connect(function(desc: BasePart)
+					if desc:IsA("BasePart") then
+						local basepart = desc
+						if table.find(NotChange, basepart.Name) then
+							return
+						end
+
+						basepart.LocalTransparencyModifier = 1
+						Connections[#Connections + 1] = basepart
+							:GetPropertyChangedSignal("LocalTransparencyModifier")
+							:Connect(function()
+								basepart.LocalTransparencyModifier = 1
+							end)
+					end
+				end)
+
 				for _, basepart: BasePart in ipairs(Character:GetDescendants()) do
 					if basepart:IsA("BasePart") then
 						if table.find(NotChange, basepart.Name) then
@@ -80,7 +96,6 @@ local function AnimateCamera(animation: string)
 					c:Disconnect()
 				end
 
-				print("volto")
 				for _, basepart: BasePart in ipairs(Character:GetDescendants()) do
 					if basepart:IsA("BasePart") then
 						basepart.LocalTransparencyModifier = basepart.Transparency
@@ -153,26 +168,69 @@ function CutsceneController.Init()
 	local PlayerHud = PlayerGui:WaitForChild("PlayerHud")
 	PlayerHud.Enabled = false
 
-	local loadingGui = PlayerGui:FindFirstChild("loadingScreen", true)
-	if loadingGui then
-		loadingGui.Destroying:Wait()
-	end
-
 	local Animation = ReplicatedStorage:WaitForChild("Animations"):WaitForChild("Portal")
 	AnimationTrack = Animator:LoadAnimation(Animation)
+	AnimationTrack:Play(0)
+	AnimationTrack:AdjustSpeed(0)
+
+	local frames = ReplicatedStorage:WaitForChild("CameraAnimations")
+		:WaitForChild("Portal Leave")
+		:WaitForChild("Frames")
+		:WaitForChild("0")
+	Camera.CFrame = frames.Value
+
+	if not game:GetAttribute("Loaded") then
+		game:GetAttributeChangedSignal("Loaded"):Wait()
+	end
 
 	AnimationTrack.Looped = false
 
 	AnimationTrack.KeyframeReached:Connect(function(keyframeName)
+		if keyframeName == "leave" then
+			local teleport = SoundService:WaitForChild("Join"):WaitForChild("teleport")
+			teleport:Clone()
+
+			if teleport.Playing then
+				return
+			end
+
+			teleport.Parent = Workspace:WaitForChild("Portal"):WaitForChild("01")
+			teleport:Play()
+
+			teleport.Ended:Once(function()
+				teleport:Destroy()
+			end)
+		end
+
+		if keyframeName == "look" then
+			local swing = SoundService:WaitForChild("Join"):WaitForChild("Swing")
+			if swing.Playing then
+				return
+			end
+			swing:Play()
+		end
+
+		if keyframeName == "levantando" then
+			local levantando = SoundService:WaitForChild("Join"):WaitForChild("getup")
+			if levantando.Playing then
+				return
+			end
+			levantando:Play()
+		end
+
 		if keyframeName == "hit" then
-			SoundService:WaitForChild("Join"):WaitForChild("hit1"):Play()
+			local hit = SoundService:WaitForChild("Join"):WaitForChild("hit1")
+			if hit.Playing then
+				return
+			end
+			hit:Play()
 		end
 		if keyframeName == "end" then
 			AnimationTrack:AdjustSpeed(0)
 		end
 	end)
 
-	AnimationTrack:Play(0)
+	AnimationTrack:AdjustSpeed(1)
 	task.wait()
 	AnimateCamera("Portal Leave")
 end

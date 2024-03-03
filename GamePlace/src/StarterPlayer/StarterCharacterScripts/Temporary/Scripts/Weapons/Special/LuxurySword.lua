@@ -54,9 +54,9 @@ end
 local function SetCooldown(name: string, cooldown: number)
 	Cooldowns[name] = tick() + cooldown
 	local Frame: Frame = Background:FindFirstChild(name)
+	Frame.BackgroundTransparency = 0.65
 
 	if Frame then
-		Frame.BackgroundTransparency = 0.65
 		task.spawn(function()
 			local Ready: ImageLabel = Frame:WaitForChild("Ready")
 			Ready.Visible = false
@@ -79,7 +79,7 @@ local function CheckCooldown(name: string)
 	return false
 end
 
-local KingsLongsword = {
+local LuxurySword = {
 	[Enum.KeyCode.Z] = {
 		callback = function(action, inputstate, inputobject)
 			if inputstate == Enum.UserInputState.Cancel then
@@ -118,7 +118,6 @@ local KingsLongsword = {
 						if anim ~= PlayingAnimation.Name then
 							break
 						end
-
 						if PlayingAnimation.IsPlaying then
 							HoldingTime += 0.1
 						else
@@ -128,17 +127,10 @@ local KingsLongsword = {
 					end
 				end)
 
-				PlayingAnimation = PlayingAnimation
 				PlayingAnimation:GetMarkerReachedSignal("HoldEnd"):Connect(function()
 					PlayingAnimation:AdjustSpeed(0)
 				end)
 			elseif inputstate == Enum.UserInputState.End then
-				-- # RELEASE ATTACK
-				if PlayingAnimation then
-					PlayingAnimation:Stop(0)
-				end
-				RunService:UnbindFromRenderStep("Lockmouse")
-
 				if CheckCooldown("FlashStrike") then
 					return
 				end
@@ -147,12 +139,15 @@ local KingsLongsword = {
 					return
 				end
 
+				-- # RELEASE ATTACK
+				if PlayingAnimation then
+					PlayingAnimation:Stop(0)
+				end
+
 				RootPart.Anchored = false
 
 				if HoldingTime > 0.45 then
-					HoldingTime = 0
 					SetCooldown("FlashStrike", 1)
-
 					SFX:Create(RootPart, "Rebellion slash", 0, 60, false)
 
 					task.spawn(function()
@@ -171,121 +166,26 @@ local KingsLongsword = {
 					end)
 
 					local V = (Camera.CFrame.LookVector * 60) * GetModelMass(Character)
-					RootPart.AssemblyLinearVelocity = V * Vector3.new(1, 0.4, 1)
+					RootPart.AssemblyLinearVelocity = V * Vector3.new(1, 0.5, 1)
 
 					VFX:ApplyParticle(Character, "Smoke")
 					VFX:ApplyParticle(Character, "Stripes")
 
 					task.delay(0.5, function()
-						PlayingAnimation:Stop(0.3)
+						PlayingAnimation:Stop(0.15)
 					end)
-				else
-					HoldingTime = 0
 				end
+
+				RunService:UnbindFromRenderStep("Lockmouse")
+				HoldingTime = 0
 			end
 		end,
 		name = "FlashStrike",
 	},
-	[Enum.KeyCode.X] = {
-		callback = function(action, inputstate, inputobject)
-			if inputstate == Enum.UserInputState.Cancel then
-				if PlayingAnimation then
-					PlayingAnimation:Stop(0.15)
-				end
-				RunService:UnbindFromRenderStep("Lockmouse")
-				HoldingTime = 0
-				RootPart.Anchored = false
-				return
-			end
-
-			if inputstate ~= Enum.UserInputState.Begin then
-				return
-			end
-
-			if CheckCooldown("Eletric Wave") then
-				return
-			end
-
-			if Humanoid.Health <= 0 then
-				return
-			end
-
-			SetCooldown("Eletric Wave", 1)
-			RootPart.Anchored = true
-
-			local Animation =
-				ReplicatedStorage:WaitForChild("Animations"):WaitForChild("Sword"):WaitForChild("Hit"):WaitForChild("4")
-
-			if PlayingAnimation then
-				PlayingAnimation:Stop()
-			end
-
-			PlayingAnimation = Animator:LoadAnimation(Animation)
-			PlayingAnimation:AdjustSpeed(0.25)
-			PlayingAnimation:Play()
-
-			task.spawn(function()
-				WeaponService:WeaponInput("Eletric Wave", Enum.UserInputState.End, {
-					Position = RootPart.CFrame,
-				})
-			end)
-
-			task.wait(1.5)
-			RootPart.Anchored = false
-		end,
-		name = "Eletric Wave",
-	},
-	[Enum.KeyCode.V] = {
-		callback = function(action, inputstate, inputobject)
-			if inputstate == Enum.UserInputState.Cancel then
-				if PlayingAnimation then
-					PlayingAnimation:Stop(0.15)
-				end
-				RunService:UnbindFromRenderStep("Lockmouse")
-				HoldingTime = 0
-				RootPart.Anchored = false
-				return
-			end
-
-			if inputstate ~= Enum.UserInputState.Begin then
-				return
-			end
-
-			if Humanoid.Health <= 0 then
-				return
-			end
-
-			if CheckCooldown("Lightning") then
-				return
-			end
-
-			SetCooldown("Lightning", 1)
-			WeaponService:WeaponInput("Lightning", Enum.UserInputState.End, {
-				Position = RootPart.CFrame,
-			})
-
-			local Animation =
-				ReplicatedStorage:WaitForChild("Animations"):WaitForChild("Sword"):WaitForChild("Hit"):WaitForChild("4")
-
-			if PlayingAnimation then
-				PlayingAnimation:Stop()
-			end
-
-			PlayingAnimation = Animator:LoadAnimation(Animation)
-			PlayingAnimation:AdjustSpeed(0.25)
-			PlayingAnimation:Play(0.15)
-
-			RootPart.Anchored = true
-			task.wait(0.9)
-			RootPart.Anchored = false
-		end,
-
-		name = "Lightning",
-	},
 }
 
-function KingsLongsword.Start()
+function LuxurySword.Start()
 	WeaponService = Knit.GetService("WeaponService")
 end
 
-return KingsLongsword
+return LuxurySword

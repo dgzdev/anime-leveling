@@ -5,6 +5,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
+
 local Default = require(script.Parent.Parent.Default)
 
 local Player = Players.LocalPlayer
@@ -25,6 +26,8 @@ local PlayingAnimation: AnimationTrack
 local Cooldowns = {
 	["FlashStrike"] = 0,
 }
+
+local SFX = require(ReplicatedStorage.Modules.SFX)
 
 local function SetCooldown(name: string, cooldown: number)
 	Cooldowns[name] = tick() + cooldown
@@ -59,8 +62,22 @@ _G.Combo = 1
 local Sword = {
 	[Enum.UserInputType.MouseButton1] = {
 		callback = function(action, inputstate, inputobject)
+			if inputstate == Enum.UserInputState.Cancel then
+				if PlayingAnimation then
+					PlayingAnimation:Stop(0.15)
+				end
+				RootPart.Anchored = false
+				return
+			end
+
 			if inputstate ~= Enum.UserInputState.Begin then
 				return
+			end
+
+			if PlayingAnimation then
+				if PlayingAnimation.IsPlaying then
+					return
+				end
 			end
 
 			if CheckCooldown("Slash") then
@@ -94,8 +111,9 @@ local Sword = {
 				PlayingAnimation:Stop()
 			end
 
-			PlayingAnimation = Animator:LoadAnimation(ComboAnimation)
+			SFX:Create(RootPart, "Slash", 0, 60, false)
 
+			PlayingAnimation = Animator:LoadAnimation(ComboAnimation)
 			SetCooldown("Slash", PlayingAnimation.Length)
 
 			local DelayTime = 0.15
@@ -123,6 +141,14 @@ local Sword = {
 	},
 	[Enum.UserInputType.MouseButton2] = {
 		callback = function(action, inputstate, inputobject)
+			if inputstate == Enum.UserInputState.Cancel then
+				if PlayingAnimation then
+					PlayingAnimation:Stop(0.15)
+				end
+				RootPart.Anchored = false
+				return
+			end
+
 			if inputstate ~= Enum.UserInputState.Begin then
 				return
 			end
@@ -130,8 +156,6 @@ local Sword = {
 			if CheckCooldown("Defense") then
 				return
 			end
-
-			print("mb2")
 		end,
 		name = "Defense",
 	},

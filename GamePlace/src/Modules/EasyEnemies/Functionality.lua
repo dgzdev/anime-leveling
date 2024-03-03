@@ -239,7 +239,7 @@ function Functionality:FindNearestTarget()
 
 	local Overlap: any = OverlapParams.new()
 	Overlap.FilterDescendantsInstances = { self.Instance }
-	Overlap.FilterType = Enum.RaycastFilterType.Blacklist
+	Overlap.FilterType = Enum.RaycastFilterType.Exclude
 
 	local target_elements: any = workspace:GetPartBoundsInBox(
 		self.Instance:FindFirstChild("HumanoidRootPart").CFrame,

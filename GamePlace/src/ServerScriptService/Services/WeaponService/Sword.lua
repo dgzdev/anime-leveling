@@ -10,6 +10,8 @@ local Default
 local RenderService
 local RagdollService
 local HitboxService
+local Hitbox2Service
+local CombatService
 
 local VFX = require(ReplicatedStorage.Modules.VFX)
 local SFX = require(ReplicatedStorage.Modules.SFX)
@@ -60,7 +62,26 @@ Sword.Default = {
 			},
 		}
 
-		HitboxService:CreateBlockHitbox(Character, p.Position * CFrame.new(0,0,-3), Vector3.new(5, 5, 5), Params)
+		local weapon = Character:FindFirstChild("Weapon")
+		if not weapon then
+			return
+		end
+
+		local damage = 10
+
+		Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
+			local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
+			if Humanoid then
+				if Humanoid:GetAttribute("Died") then
+					return
+				end
+				if (Humanoid.Health - damage) <= 0 then
+					Humanoid:SetAttribute("Died", true)
+					CombatService:RegisterHumanoidKilled(Character, Humanoid)
+				end
+				Humanoid:TakeDamage(damage)
+			end
+		end)
 	end,
 
 	Defense = function(...)
@@ -160,6 +181,34 @@ Sword.IronStarterSword = {
 	FlashStrike = Sword.Default.FlashStrike,
 }
 
+Sword.LuxurySword = {
+	Attack = function(
+		Character: Model,
+		InputState: Enum.UserInputState,
+		p: {
+			Position: CFrame,
+			Combo: number,
+			Combos: number,
+		}
+	)
+		Sword.Default.Attack(Character, InputState, p)
+	end,
+
+	Defense = function(
+		Character: Model,
+		InputState: Enum.UserInputState,
+		p: {
+			Position: CFrame,
+			Combo: number,
+			Combos: number,
+		}
+	)
+		Sword.Default.Defense(Character, InputState, p)
+	end,
+
+	FlashStrike = Sword.Default.FlashStrike,
+}
+
 Sword["King'sLongsword"] = {
 	Attack = function(
 		Character: Model,
@@ -188,7 +237,26 @@ Sword["King'sLongsword"] = {
 			},
 		}
 
-		HitboxService:CreateBlockHitbox(Character, p.Position * CFrame.new(0,0,-3), Vector3.new(6, 6, 6), Params)
+		local weapon = Character:FindFirstChild("Weapon")
+		if not weapon then
+			return
+		end
+
+		local damage = 10
+
+		Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
+			local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
+			if Humanoid then
+				if Humanoid:GetAttribute("Died") then
+					return
+				end
+				if (Humanoid.Health - damage) <= 0 then
+					Humanoid:SetAttribute("Died", true)
+					CombatService:RegisterHumanoidKilled(Character, Humanoid)
+				end
+				Humanoid:TakeDamage(damage)
+			end
+		end)
 	end,
 
 	Defense = function(...)
@@ -388,7 +456,11 @@ function Sword.Start(default)
 
 	RenderService = Knit.GetService("RenderService")
 	RagdollService = Knit.GetService("RagdollService")
+
 	HitboxService = Knit.GetService("HitboxService")
+	Hitbox2Service = Knit.GetService("Hitbox2Service")
+
+	CombatService = Knit.GetService("CombatService")
 end
 
 return Sword

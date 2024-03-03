@@ -10,6 +10,9 @@ local playerGui = player:WaitForChild("PlayerGui")
 
 local screenGui = ReplicatedFirst:WaitForChild("loadingScreen"):Clone()
 
+local sound = ReplicatedFirst:WaitForChild("desolate")
+sound:Play()
+
 local bg = screenGui:WaitForChild("Background")
 
 local LoadingBar = bg:WaitForChild("LoadingBar")
@@ -25,6 +28,24 @@ local function getpercentage()
 	local n = loadedAssets / assetsToLoad
 	n = math.clamp(n, 0, 1)
 	return n
+end
+
+local function FadeOut()
+	game:SetAttribute("Loaded", true)
+	local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut, 0, false, 0)
+	local tween = TweenService:Create(bg, tweenInfo, {
+		Position = UDim2.fromScale(0, 1),
+	})
+
+	TweenService:Create(sound, TweenInfo.new(0.5, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut, 0, false, 0), {
+		Volume = 0,
+	}):Play()
+
+	tween:Play()
+	tween.Completed:Wait()
+	bg.Visible = false
+	screenGui:Destroy()
+	script:Destroy()
 end
 
 task.spawn(function()
@@ -44,12 +65,10 @@ task.spawn(function()
 	end
 end)
 
-local loadingRing = bg:WaitForChild("LoadingIcon")
-
 local skipButton = Instance.new("TextButton", screenGui)
 skipButton.Size = UDim2.fromScale(0.15, 0.2)
-skipButton.AnchorPoint = Vector2.new(0.5)
-skipButton.Position = UDim2.fromScale(0.5, 0.6)
+skipButton.AnchorPoint = Vector2.new(0, 0)
+skipButton.Position = UDim2.fromScale(0.15, 0.8)
 skipButton.BackgroundTransparency = 1
 skipButton.Font = Enum.Font.GothamMedium
 
@@ -59,18 +78,9 @@ skipButton.Text = "Skip"
 skipButton.TextSize = 24
 skipButton.Visible = false
 
+screenGui.Parent = playerGui
 -- Remove the default loading screen
 ReplicatedFirst:RemoveDefaultLoadingScreen()
-
-screenGui.Parent = playerGui
-
-local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.In, -1)
-local tween = TweenService:Create(loadingRing, tweenInfo, { Rotation = 360 })
-tween:Play()
-
-TweenService:Create(loadingRing, TweenInfo.new(1.3, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut, -1, true, 0), {
-	ImageTransparency = 0.9,
-}):Play()
 
 local start = tick()
 
@@ -82,26 +92,24 @@ task.delay(20, function()
 	skipButton.Visible = true
 end)
 
+skipButton.Activated:Connect(function(inputObject, clickCount)
+	print("[Loading] Skipped loading screen. (Took " .. math.floor(tick() - start) .. " seconds.)")
+	FadeOut()
+end)
+
 local assets = SoundService:GetDescendants()
 for _, a in ipairs(Workspace:GetDescendants()) do
 	if a:IsA("Sound") then
 		table.insert(assets, a)
 	end
 end
+
 ContentProvider:PreloadAsync(assets, function()
 	loadedAssets += 1
 	task.wait()
 end)
 
-skipButton.Activated:Connect(function(inputObject, clickCount)
-	screenGui:Destroy()
-	print("[Loading] Skipped loading screen. (Took " .. math.floor(tick() - start) .. " seconds.)")
-	script:Destroy()
-end)
-
 local endTick = tick()
 
-screenGui:Destroy()
 print("[Loading] Loaded in " .. math.floor(endTick - start) .. " seconds.")
-print(loadedAssets)
-script:Destroy()
+FadeOut()

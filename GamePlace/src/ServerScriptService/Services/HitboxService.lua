@@ -16,6 +16,7 @@ local ProgressionService
 local RenderService
 local PlayerService
 local RagdollService
+local CombatService
 
 local function GetModelMass(model: Model)
 	if not model:IsA("Model") then
@@ -85,38 +86,21 @@ function HitboxService:CreateBlockHitbox(
 			if not Damaged[part.Parent] then
 				Damaged[part.Parent] = true
 				local Humanoid: Humanoid = part.Parent:FindFirstChild("Humanoid")
-				--if Humanoid.Health <= 0 then
-				--	return
-				--end
+
+				if Humanoid.Health <= 0 then
+					return
+				end
 
 				if params.ragdoll then
 					RagdollService:Ragdoll(part.Parent, params.ragdoll)
 				end
 
-				Humanoid:TakeDamage(params.dmg)
-				if Humanoid.Health <= 0 then
-					if Players:GetPlayerFromCharacter(executor) then
-						if Humanoid.Parent:IsDescendantOf(Workspace.Enemies) then
-							local Data = Humanoid.Parent:FindFirstChild("Data")
-							if Data ~= nil then
-								Data = require(Humanoid.Parent:FindFirstChild("Data"))
-								local ExpPerHP = Data.Info.ExpPerOneHealthPoint
-								if not ExpPerHP then
-									return
-								end
-								ProgressionService:AddExp(
-									Players:GetPlayerFromCharacter(executor),
-									Humanoid.MaxHealth * ExpPerHP
-								)
-							else
-								error("Enemy Data not found.")
-							end
-
-							self.Client.killedEnemy:Fire(Players:GetPlayerFromCharacter(executor))
-						end
-					end
-					return
+				if (Humanoid.Health - params.dmg) <= 0 then
+					-- @executor -> character, @humanoid: Humanoid
+					CombatService:RegisterHumanoidKilled(executor, Humanoid)
 				end
+
+				Humanoid:TakeDamage(params.dmg)
 
 				if params.kb then
 					Humanoid.RootPart.AssemblyLinearVelocity = (params.kb * p.LookVector) * GetModelMass(part.Parent)
@@ -167,36 +151,20 @@ function HitboxService:CreateRaycastHitbox(
 			--	return
 			--end
 
-			humanoid:TakeDamage(dmg)
+			if humanoid.Health <= 0 then
+				return
+			end
 
 			if params.ragdoll then
 				RagdollService:Ragdoll(humanoid.Parent, params.ragdoll)
 			end
 
 			-- se matou e se o executor for jogador
-			if humanoid.Health <= 0 then
-				if Players:GetPlayerFromCharacter(executor) then
-					if humanoid.Parent:IsDescendantOf(Workspace.Enemies) then
-						local Data = humanoid.Parent:FindFirstChild("Data")
-						if Data ~= nil then
-							Data = require(humanoid.Parent:FindFirstChild("Data"))
-							local ExpPerHP = Data.Info.ExpPerOneHealthPoint
-							if not ExpPerHP then
-								return
-							end
-							ProgressionService:AddExp(
-								Players:GetPlayerFromCharacter(executor),
-								humanoid.MaxHealth * ExpPerHP
-							)
-						else
-							error("Enemy Data not found.")
-						end
-
-						self.Client.killedEnemy:Fire(Players:GetPlayerFromCharacter(executor))
-					end
-				end
-				return
+			if (humanoid.Health - dmg) <= 0 then
+				CombatService:RegisterHumanoidKilled(executor, humanoid)
 			end
+
+			humanoid:TakeDamage(dmg)
 
 			if params.replicate then
 				replicate["root"] = humanoid.RootPart
@@ -216,6 +184,7 @@ function HitboxService:KnitStart()
 	RenderService = Knit.GetService("RenderService")
 	PlayerService = Knit.GetService("PlayerService")
 	RagdollService = Knit.GetService("RagdollService")
+	CombatService = Knit.GetService("CombatService")
 end
 
 return HitboxService

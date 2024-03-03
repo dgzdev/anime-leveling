@@ -5,6 +5,7 @@ local DungeonService = Knit.CreateService({
 	Name = "DungeonService",
 })
 local DungeonAssets = ReplicatedStorage.Models.Dungeon
+local DungeonFolder = game.Workspace:FindFirstChild("Dungeon")
 
 local function GetDungeonAssets(DungeonName: string)
 	return DungeonAssets[DungeonName]
@@ -38,13 +39,12 @@ function DungeonService:GetRandomDoor(Room)
 	return Doors[math.random(1, #Doors)]
 end
 
-
 function DungeonService:GenerateLinearDungeon(DungeonName: string, MIN_ROOMS: number, MAX_ROOMS: number)
 	local ROOMS_AMOUNT = 5
 
 	local StartRoom = GetDungeonAssets(DungeonName).Start
-	StartRoom:PivotTo(CFrame.new(0,400,0))
-	StartRoom.Parent = game.Workspace.Dungeon
+	StartRoom:PivotTo(CFrame.new(0, 400, 0))
+	StartRoom.Parent = DungeonFolder
 
 	local LastRoom = StartRoom
 
@@ -63,8 +63,7 @@ function DungeonService:GenerateLinearDungeon(DungeonName: string, MIN_ROOMS: nu
 			continue
 		end
 
-
-		Room.Parent = game.Workspace.Dungeon
+		Room.Parent = DungeonFolder
 		LastRoom = Room
 	end
 
@@ -78,12 +77,12 @@ function DungeonService:GenerateLinearDungeon(DungeonName: string, MIN_ROOMS: nu
 		if DungeonService:CanPlace(AnchorDoor, BossRoom) then
 			BossRoom:PivotTo(AnchorDoor:GetPivot() * CFrame.Angles(0, math.rad(180), 0))
 		end
+
+		task.wait()
 	end
 
-
-	BossRoom.Parent = game.Workspace.Dungeon
+	BossRoom.Parent = DungeonFolder
 end
-
 
 function DungeonService.KnitInit()
 	-- DungeonService:GenerateLinearDungeon("Company", 5, 10)

@@ -26,14 +26,15 @@ function EnemyService:UpdateHealthHud(humanoid: Humanoid, healthHud: BillboardGu
 	local HPInfo: TextLabel = Background:FindFirstChild("HPInfo")
 	local EnemyName: TextLabel = healthHud:FindFirstChild("EnemyName")
 
-	HPInfo.Text = math.floor(humanoid.Health) .. " / " .. math.floor(humanoid.MaxHealth)
+	HPInfo.Text = tostring(math.floor(humanoid.Health))
 
-	TweenService:Create(PrimaryHP, TweenInfo.new(0.5, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {
-		Size = UDim2.fromScale(humanoid.Health / humanoid.MaxHealth, 1)
+	TweenService:Create(PrimaryHP, TweenInfo.new(0.85, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {
+		Size = UDim2.fromScale(humanoid.Health / humanoid.MaxHealth, 1),
 	}):Play()
 
-	TweenService:Create(PrimaryHP, TweenInfo.new(0.5, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {
-		BackgroundColor3 = Color3.fromRGB(38, 152, 105):Lerp(Color3.fromRGB(255,0,0), 1-(humanoid.Health / humanoid.MaxHealth))
+	TweenService:Create(PrimaryHP, TweenInfo.new(0.85, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {
+		BackgroundColor3 = Color3.fromRGB(38, 152, 105)
+			:Lerp(Color3.fromRGB(255, 0, 0), 1 - (humanoid.Health / humanoid.MaxHealth)),
 	}):Play()
 
 	EnemyName.Text = humanoid.Parent.Name
@@ -77,20 +78,25 @@ function EnemyService:CreateEnemy(
 	healthHud.Parent = model
 	healthHud.Adornee = model:FindFirstChild("Head")
 
+	local clone = model:Clone()
+	clone.Parent = ServerStorage:WaitForChild("Enemies")
 
 	Humanoid.Died:Connect(function()
-		for _, Animation: AnimationTrack in ipairs(Animator:GetPlayingAnimationTracks()) do
-			Animation:Stop(0)
+		for _, value in ipairs(Animator:GetPlayingAnimationTracks()) do
+			value:Stop()
 		end
 
-		task.wait(2)
-		model.Parent = ServerStorage:WaitForChild("Storage")
-		task.wait(RespawnTime)
+		task.wait(1)
+		model:Destroy()
 
-		model.Parent = Workspace.Enemies
-		Humanoid.Health = Humanoid.MaxHealth
+		task.wait(5)
 
-		self:UpdateHealthHud(Humanoid, healthHud)
+		local c = clone:Clone()
+
+		c:FindFirstChild(Data.Name):Destroy()
+		c:FindFirstChild(healthHud.Name):Destroy()
+
+		c.Parent = Workspace.Enemies
 	end)
 
 	self:UpdateHealthHud(Humanoid, healthHud)
@@ -116,6 +122,7 @@ function EnemyService:CreateEnemy(
 	end
 
 	model:SetAttribute("Enemy", true)
+	model:SetAttribute("Died", false)
 
 	local function createLightAttack(target: Model)
 		local hum = target:FindFirstChildWhichIsA("Humanoid")
@@ -130,7 +137,7 @@ function EnemyService:CreateEnemy(
 		})
 	end
 
-	return EasyEnemies.new(model, {
+	local eN = EasyEnemies.new(model, {
 		health = Humanoid, -- Enemy Health
 		damage = Damage, -- Enemy Base Damage
 		wander = false, -- Enemy Wandering
@@ -165,6 +172,8 @@ function EnemyService:CreateEnemy(
 			end,
 		},
 	})
+	self.en = eN
+	return eN
 end
 
 function EnemyService.ChildAdded(child: Instance)

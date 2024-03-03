@@ -46,7 +46,6 @@ function GuiController:BindPlayerHud()
 	local PlayerExperienceNeed = ProgressionService:ExpToNextLevel(Players.LocalPlayer)
 
 	local percentage = math.floor(tonumber(PlayerExperience / PlayerExperienceNeed) * 100)
-	print(PlayerExperienceNeed)
 
 	levelValue.Text = transformInString(PlayerLevel)
 	healthValue.Text = transformInString(Humanoid.Health)
@@ -54,7 +53,7 @@ function GuiController:BindPlayerHud()
 	manaValue.Text = transformInString(PlayerMana)
 	expValue.Text = transformInString(percentage) .. "%"
 
-	expGradient.Offset = Vector2.new(percentage, 0)
+	expGradient.Offset = Vector2.new(percentage/100, 0)
 
 	local LevelUp = ProgressionService.LevelUp
 	local ExpChanged = ProgressionService.ExpChanged
@@ -64,13 +63,10 @@ function GuiController:BindPlayerHud()
 		levelValue.Text = transformInString(PlayerLevel)
 	end)
 	ExpChanged:Connect(function(exp: number, max: number)
-		print(exp, max)
-
 		PlayerExperience = exp
 		PlayerExperienceNeed = max
 
 		percentage = math.floor(tonumber(PlayerExperience / PlayerExperienceNeed) * 100)
-		print(percentage)
 
 		expValue.Text = transformInString(percentage) .. "%"
 		TweenService:Create(expGradient, TweenInfo.new(0.75, Enum.EasingStyle.Cubic), {

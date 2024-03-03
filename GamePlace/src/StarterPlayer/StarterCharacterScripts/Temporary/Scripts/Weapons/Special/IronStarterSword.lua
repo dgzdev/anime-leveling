@@ -148,6 +148,8 @@ local IronStarterSword = {
 
 				if HoldingTime > 0.45 then
 					SetCooldown("FlashStrike", 1)
+					SFX:Create(RootPart, "Rebellion slash", 0, 60, false)
+
 					task.spawn(function()
 						WeaponService:WeaponInput("FlashStrike", Enum.UserInputState.End, {
 							Position = RootPart.CFrame,

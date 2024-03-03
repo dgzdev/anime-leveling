@@ -118,7 +118,9 @@ function InventoryService:EquipFromData(player: Player, playerData)
 		local Motor6D = Instance.new("Motor6D")
 		Motor6D.Part0 = RightHand
 		Motor6D.Part1 = SwordClone.PrimaryPart
-		Motor6D.C1 = (CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(90), 0, 0))
+
+		Motor6D.C1 = (CFrame.new(0, 0, 0) * (SwordClone:GetAttribute("Offset") or CFrame.Angles(math.rad(90), 0, 0)))
+
 		Motor6D.Parent = RightHand
 	end
 
