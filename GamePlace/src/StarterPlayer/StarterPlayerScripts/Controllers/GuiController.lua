@@ -53,7 +53,7 @@ function GuiController:BindPlayerHud()
 	manaValue.Text = transformInString(PlayerMana)
 	expValue.Text = transformInString(percentage) .. "%"
 
-	expGradient.Offset = Vector2.new(percentage/100, 0)
+	expGradient.Offset = Vector2.new(percentage / 100, 0)
 
 	local LevelUp = ProgressionService.LevelUp
 	local ExpChanged = ProgressionService.ExpChanged
@@ -106,6 +106,8 @@ function GuiController:BindPlayerHud()
 	BindHumanoid()
 	Players.LocalPlayer.CharacterAdded:Connect(BindHumanoid)
 end
+
+function GuiController:BindQuestEvents() end
 
 function GuiController:KnitStart()
 	local camera = Workspace.CurrentCamera

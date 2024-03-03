@@ -36,15 +36,10 @@ function ProgressionService:AddExp(Player, Amount)
 	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
 	local ExpToNextLevel = self:ExpToNextLevel(Player)
 	local Character = Player.Character
-	--PlayerData.Experience += Amount
-
-
-	print("Experience Added: " .. Amount)
 
 	if Amount >= ExpToNextLevel or (PlayerData.Experience + Amount >= ExpToNextLevel) then
 		PlayerData.Level += 1
 
-		print(PlayerData.Level)
 		self:AddExp(Player, Amount - ExpToNextLevel)
 		self.Client.LevelUp:Fire(Player, PlayerData.Level)
 	end

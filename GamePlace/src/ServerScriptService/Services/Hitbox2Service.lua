@@ -131,7 +131,6 @@ function HitboxService:CreateHitboxFromModel(
 				table.insert(Hitted, char)
 
 				local response = callback(char)
-				print("chego na response")
 				if response == false then
 					break
 				end

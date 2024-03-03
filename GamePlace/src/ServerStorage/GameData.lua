@@ -335,13 +335,11 @@ return {
 	},
 	questPrompts = {
 		["Kill Goblins"] = {
-			Title = "Test",
-			Description = "Testing description",
-			--> attributos: title e description
+			Title = "Defeat Goblins!",
+			Description = "Defeat 5 Goblins and return to me for a reward!",
 		},
 	},
 	npcQuests = {
-		--> se ele tiver o nome aq
 		["Sung Jin-Woo"] = "Kill Goblins",
 	},
 	gameDialogs = {

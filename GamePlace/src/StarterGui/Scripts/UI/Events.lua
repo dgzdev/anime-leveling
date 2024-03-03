@@ -11,9 +11,6 @@ Knit.OnStart():await()
 
 local QuestService = Knit.GetService("QuestService")
 
-print(QuestService)
-
-
 local function LockMouse(boolean: boolean)
 	if boolean then
 		CameraEvent:Fire("Lock")

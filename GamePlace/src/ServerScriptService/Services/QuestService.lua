@@ -14,6 +14,8 @@ local QuestService = Knit.CreateService({
 	Name = "QuestService",
 	Client = {
 		OnQuestEnd = Knit.CreateSignal(),
+		OnQuestReceive = Knit.CreateSignal(),
+		OnQuestUpdate = Knit.CreateSignal(),
 		PromptRequest = Knit.CreateSignal(),
 	},
 })
@@ -28,9 +30,7 @@ function QuestService:GetPlayerQuest(Player, questName)
 	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
 
 	for i, v in pairs(PlayerData.Quests) do
-		--print(v.questName)
 		if v.questName == questName then
-			--print(i)
 			return i
 		end
 	end
@@ -66,7 +66,6 @@ function QuestService:PromptQuest(Player: Player, questName: string)
 		return
 	end
 
-	print(#PlayerData.Quests)
 	if #PlayerData.Quests >= 5 then
 		warn("You have max of quests (5)")
 		return
@@ -87,7 +86,8 @@ function QuestService:PromptQuest(Player: Player, questName: string)
 
 	-- quest data teria as informações da quest, como nome, descricao. Talvez o tipo e verificacoes de se a quest foi concluida.
 	-- mas isso ai é cntg
-	self.Client.PromptRequest:Fire(Player, QuestData)
+	local questPrompt = GameData.questPrompts[questName]
+	self.Client.PromptRequest:Fire(Player, questPrompt, QuestData)
 end
 
 function QuestService:DenyQuest(Player: Player)
