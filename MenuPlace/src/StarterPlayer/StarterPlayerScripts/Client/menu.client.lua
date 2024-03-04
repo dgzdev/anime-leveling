@@ -15,8 +15,7 @@ local SlotSelection = StarterGui:WaitForChild("SlotSelection"):Clone()
 
 CustomizationGui.Parent = PlayerGui
 
-local title1: TextLabel = PressAnyKey:WaitForChild("title1")
-local title2: TextLabel = PressAnyKey:WaitForChild("title2")
+local title1: ImageLabel = PressAnyKey:WaitForChild("Logo")
 local pressanykey: TextLabel = PressAnyKey:WaitForChild("pressanykey")
 
 require(script.Parent:WaitForChild("UI")):Init()
@@ -118,9 +117,7 @@ local function fadeIn()
 	sound1:Play()
 
 	local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.In, 0, false, 1)
-	local tween = TweenService:Create(title1, tweenInfo, { TextTransparency = 0 })
-	tween:Play()
-	tween = TweenService:Create(title2, tweenInfo, { TextTransparency = 0 })
+	local tween = TweenService:Create(title1, tweenInfo, { ImageTransparency = 0 })
 	tween:Play()
 	tween = TweenService:Create(pressanykey, tweenInfo, { TextTransparency = 0 })
 	tween:Play()
@@ -137,16 +134,13 @@ local function fadeOut()
 	SoundService:WaitForChild("SFX"):WaitForChild("button.wav"):Play()
 
 	local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0.25)
-	local tween = TweenService:Create(title1, tweenInfo, { TextTransparency = 1 })
+	local tween = TweenService:Create(title1, tweenInfo, { ImageTransparency = 1 })
 	tween:Play()
-
-	local tween2 = TweenService:Create(title2, tweenInfo, { TextTransparency = 1 })
-	tween2:Play()
 
 	tween = TweenService:Create(pressanykey, tweenInfo, { TextTransparency = 1 })
 	tween:Play()
 
-	tween2.Completed:Wait()
+	tween.Completed:Wait()
 
 	PressAnyKey.Enabled = false
 
@@ -158,6 +152,7 @@ local function fadeOut()
 	tw:Play()
 	tw.Completed:Wait()
 
+	MenuCamera.CF0 = Workspace.CurrentCamera.CFrame
 	MenuCamera:Enable()
 
 	SlideIn()
@@ -165,7 +160,7 @@ end
 
 local function onInputBegan(input)
 	MenuCamera:Disable()
-	MenuCamera.CF0 = CharacterPart.CFrame
+
 	if hasPressedButton then
 		return
 	end
@@ -196,7 +191,7 @@ local Camera = Workspace.CurrentCamera
 Camera.CameraType = Enum.CameraType.Scriptable
 Camera.CFrame = ViewPart.CFrame
 
-MenuCamera.CF0 = ViewPart.CFrame
+MenuCamera.CF0 = Workspace.CurrentCamera.CFrame
 MenuCamera:Enable()
 
 PressAnyKey.Parent = PlayerGui
@@ -205,8 +200,7 @@ PressAnyKey.Enabled = true
 
 UserInputService.InputBegan:Connect(onInputBegan)
 
-title1.TextTransparency = 1
-title2.TextTransparency = 1
+title1.ImageTransparency = 1
 pressanykey.TextTransparency = 1
 
 fadeIn()

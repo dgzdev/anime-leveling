@@ -47,6 +47,7 @@ function CombatService:RegisterNPCEnemyKilledByPlayer(Character: Model, EnemyHum
 					warn("Quest Finished")
 					QuestService:FinishQuest(Player, Quest.questName, Quest.questData)
 				end
+				QuestService.Client.OnQuestUpdate:Fire(Player, Quest.questName, Quest.questData)
 			end
 		end
 		self.Client.killedEnemy:Fire(Players:GetPlayerFromCharacter(Character))

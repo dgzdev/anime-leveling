@@ -7,7 +7,24 @@ local Knit = require(game.ReplicatedStorage.Packages.Knit)
 local Default
 
 local HitboxService
+local Hitbox2Service
+local RagdollService
 local RenderService
+local CombatService
+
+local function GetModelMass(model: Model): number
+	local mass = 0
+	for _, part in ipairs(model:GetDescendants()) do
+		if part:IsA("BasePart") then
+			mass += part:GetMass()
+		end
+	end
+	return mass
+end
+
+local function ApplyRagdoll(model: Model, time: number)
+	RagdollService:Ragdoll(model, time)
+end
 
 Melee.Default = {
 	Attack = function(
@@ -34,17 +51,24 @@ Melee.Default = {
 			op.FilterDescendantsInstances = { Workspace:WaitForChild("Enemies") }
 		end
 
-		HitboxService:CreateBlockHitbox(Character, p.Position * CFrame.new(0, 0, -2), Vector3.new(5, 5, 5), {
-			dmg = 10,
-			kb = 5,
-			op = op,
-			replicate = {
-				["module"] = "Universal",
-				["effect"] = "Replicate",
-				["VFX"] = "CombatHit",
-				["SFX"] = "Melee",
-			},
-		})
+		Hitbox2Service:CreatePartHitbox(Character, Vector3.new(5, 5, 5), 25, function(hitted: Model)
+			local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
+
+			local damage = 10
+			if Humanoid then
+				if Humanoid:GetAttribute("Died") then
+					return
+				end
+				if (Humanoid.Health - damage) <= 0 then
+					Humanoid:SetAttribute("Died", true)
+					CombatService:RegisterHumanoidKilled(Character, Humanoid)
+				end
+
+				Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * 5)
+					* GetModelMass(hitted)
+				Humanoid:TakeDamage(damage)
+			end
+		end, op)
 	end,
 
 	Defense = function(...)
@@ -100,16 +124,41 @@ Melee.Melee = {
 			op.FilterDescendantsInstances = { Workspace:WaitForChild("Enemies") }
 		end
 
-		HitboxService:CreateBlockHitbox(Character, p.Position * CFrame.new(0, 0, -2), Vector3.new(5, 5, 5), {
-			dmg = 10,
-			kb = 15,
-			ragdoll = 2,
-			op = op,
-			replicate = {
-				["module"] = "Melee",
-				["effect"] = "StrongPunch",
-			},
-		})
+		--[[
+			function HitboxService:CreatePartHitbox(Character: Model, HitboxSize: Vector3, Ticks: number, callback: any)
+
+			Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
+				local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
+				if Humanoid then
+					if Humanoid:GetAttribute("Died") then
+						return
+					end
+					if (Humanoid.Health - damage) <= 0 then
+						Humanoid:SetAttribute("Died", true)
+						CombatService:RegisterHumanoidKilled(Character, Humanoid)
+					end
+					Humanoid:TakeDamage(damage)
+				end
+
+		]]
+
+		Hitbox2Service:CreatePartHitbox(Character, Vector3.new(5, 5, 5), 25, function(hitted)
+			local damage = 10
+			local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
+			if Humanoid then
+				if Humanoid:GetAttribute("Died") then
+					return
+				end
+				if (Humanoid.Health - damage) <= 0 then
+					Humanoid:SetAttribute("Died", true)
+					CombatService:RegisterHumanoidKilled(Character, Humanoid)
+				end
+				ApplyRagdoll(hitted, 2)
+				Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * 15)
+					* GetModelMass(hitted)
+				Humanoid:TakeDamage(damage)
+			end
+		end, op)
 	end,
 	["Ground Slam"] = function(
 		Character: Model,
@@ -133,18 +182,23 @@ Melee.Melee = {
 			op.FilterDescendantsInstances = { Workspace:WaitForChild("Enemies") }
 		end
 
-		HitboxService:CreateBlockHitbox(Character, p.Position * CFrame.new(0, 0, 0), Vector3.new(25, 5, 25), {
-			dmg = 30,
-			kb = 15,
-			ragdoll = 3,
-			op = op,
-			replicate = {
-				["module"] = "Universal",
-				["effect"] = "Replicate",
-				["VFX"] = "CombatHit",
-				["SFX"] = "Melee",
-			},
-		})
+		Hitbox2Service:CreatePartHitbox(Character, Vector3.new(25, 5, 25), 35, function(hitted)
+			local damage = 10
+			local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
+			if Humanoid then
+				if Humanoid:GetAttribute("Died") then
+					return
+				end
+				if (Humanoid.Health - damage) <= 0 then
+					Humanoid:SetAttribute("Died", true)
+					CombatService:RegisterHumanoidKilled(Character, Humanoid)
+				end
+				ApplyRagdoll(hitted, 2)
+				Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * 10)
+					* GetModelMass(hitted)
+				Humanoid:TakeDamage(damage)
+			end
+		end, op)
 
 		RenderService:RenderForPlayersInArea(p.Position.Position, 100, {
 			["module"] = "Melee",
@@ -157,7 +211,10 @@ function Melee.Start(default)
 	default = default
 
 	HitboxService = Knit.GetService("HitboxService")
+	Hitbox2Service = Knit.GetService("Hitbox2Service")
 	RenderService = Knit.GetService("RenderService")
+	CombatService = Knit.GetService("CombatService")
+	RagdollService = Knit.GetService("RagdollService")
 end
 
 return Melee

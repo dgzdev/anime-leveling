@@ -26,6 +26,9 @@ local ScrollLimits = {
 }
 
 function CameraModule:Init()
+	character = player.Character or player.CharacterAdded:Wait()
+	humanoid = character:WaitForChild("Humanoid")
+
 	-- ? Check if the OTS module is loaded.
 	self:CheckCondition(self.OTS ~= nil, "[CameraModule] OTS is nil, this is a problem.")
 
@@ -33,7 +36,14 @@ function CameraModule:Init()
 		self:EnableCamera()
 	end
 
+	player.CharacterAdded:Connect(function()
+		humanoid = character:WaitForChild("Humanoid")
+		character = player.Character or player.CharacterAdded:Wait()
+		self:EnableCamera()
+	end)
+
 	humanoid.Died:Once(function()
+		CameraModule.OTS:SetMouseStep(false)
 		self:DisableCamera()
 	end)
 end

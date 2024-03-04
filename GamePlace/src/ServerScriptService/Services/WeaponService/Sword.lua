@@ -13,6 +13,10 @@ local HitboxService
 local Hitbox2Service
 local CombatService
 
+local function ApplyRagdoll(model: Model, time: number)
+	RagdollService:Ragdoll(model, time)
+end
+
 local VFX = require(ReplicatedStorage.Modules.VFX)
 local SFX = require(ReplicatedStorage.Modules.SFX)
 
@@ -25,10 +29,6 @@ local function GetModelMass(model: Model)
 	end
 	return mass
 end
-
-local LightningBolt = require(ReplicatedStorage.Modules.LightningBolt)
-local LightningSparks = require(ReplicatedStorage.Modules.LightningSparks)
-local LightningExplosion = require(ReplicatedStorage.Modules.LightningExplosion)
 
 Sword.Default = {
 	Attack = function(
@@ -79,6 +79,9 @@ Sword.Default = {
 					Humanoid:SetAttribute("Died", true)
 					CombatService:RegisterHumanoidKilled(Character, Humanoid)
 				end
+				Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * 2.5)
+					* GetModelMass(hitted)
+
 				Humanoid:TakeDamage(damage)
 			end
 		end)
@@ -90,17 +93,6 @@ Sword.Default = {
 
 	FlashStrike = function(Character: Model, InputState: Enum.UserInputState, Data: { Position: CFrame })
 		local Mid = Data.Position * CFrame.new(0, 0, -30)
-		local Size = 60
-
-		local Rayparams = RaycastParams.new()
-		Rayparams.FilterType = Enum.RaycastFilterType.Exclude
-		Rayparams.FilterDescendantsInstances = { Character }
-		local RaycastResult = Workspace:Raycast(Data.Position.Position, Data.Position.LookVector * 60, Rayparams)
-		if RaycastResult then
-			local Distance = (Data.Position.Position - RaycastResult.Position).Magnitude
-			Mid = Data.Position * CFrame.new(0, 0, -(Distance / 2))
-			Size = Distance
-		end
 
 		RenderService:RenderForPlayersInArea(Mid.Position, 200, {
 			module = "Universal",
@@ -108,22 +100,28 @@ Sword.Default = {
 			root = Character.PrimaryPart,
 		})
 
-		local OverlapParams = OverlapParams.new()
-		OverlapParams.FilterType = Enum.RaycastFilterType.Include
-		OverlapParams.FilterDescendantsInstances = { Workspace.Enemies }
+		local op = OverlapParams.new()
+		op.FilterType = Enum.RaycastFilterType.Include
+		op.FilterDescendantsInstances = { Workspace.Enemies }
 
-		HitboxService:CreateBlockHitbox(Character, Mid, Vector3.new(5, 5, Size), {
-			dmg = 10,
-			kb = 15,
-			op = OverlapParams,
-			ragdoll = 1.5,
-			replicate = {
-				["module"] = "Universal",
-				["effect"] = "Replicate",
-				["VFX"] = "SwordHit",
-				["SFX"] = "SwordHit",
-			},
-		})
+		Hitbox2Service:CreatePartHitbox(Character, Vector3.new(5, 5, 5), 30, function(hitted)
+			local damage = 10
+			local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
+			if Humanoid then
+				if Humanoid:GetAttribute("Died") then
+					return
+				end
+				if (Humanoid.Health - damage) <= 0 then
+					Humanoid:SetAttribute("Died", true)
+					CombatService:RegisterHumanoidKilled(Character, Humanoid)
+				end
+				Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * 15)
+					* GetModelMass(hitted)
+				ApplyRagdoll(hitted, 2)
+				Humanoid:TakeDamage(damage)
+				return false
+			end
+		end, op)
 	end,
 }
 
@@ -232,7 +230,7 @@ Sword["King'sLongsword"] = {
 			replicate = {
 				["module"] = "Universal",
 				["effect"] = "Replicate",
-				["VFX"] = "SwordHit",
+				["VFX"] = "LightningSwordHit",
 				["SFX"] = "SwordHit",
 			},
 		}
@@ -254,6 +252,8 @@ Sword["King'sLongsword"] = {
 					Humanoid:SetAttribute("Died", true)
 					CombatService:RegisterHumanoidKilled(Character, Humanoid)
 				end
+				Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * 1.5)
+					* GetModelMass(hitted)
 				Humanoid:TakeDamage(damage)
 			end
 		end)
@@ -269,40 +269,39 @@ Sword["King'sLongsword"] = {
 		Data: { Position: CFrame, Camera: CFrame }
 	)
 		local Mid = Data.Position * CFrame.new(0, 0, -30)
-		local Size = 60
 
-		local Rayparams = RaycastParams.new()
-		Rayparams.FilterType = Enum.RaycastFilterType.Exclude
-		Rayparams.FilterDescendantsInstances = { Character }
-		local RaycastResult = Workspace:Raycast(Data.Position.Position, Data.Position.LookVector * 60, Rayparams)
-		if RaycastResult then
-			local Distance = (Data.Position.Position - RaycastResult.Position).Magnitude
-			Mid = Data.Position * CFrame.new(0, 0, -(Distance / 2))
-			Size = Distance
+		local Root: BasePart = Character:FindFirstChild("HumanoidRootPart")
+		if not Root then
+			return
 		end
 
 		RenderService:RenderForPlayersInArea(Mid.Position, 200, {
 			module = "Lightning",
 			effect = "FlashStrike",
-			root = Character.PrimaryPart,
+			root = Root,
 		})
 
-		local OverlapParams = OverlapParams.new()
-		OverlapParams.FilterType = Enum.RaycastFilterType.Include
-		OverlapParams.FilterDescendantsInstances = { Workspace.Enemies }
+		local op = OverlapParams.new()
+		op.FilterType = Enum.RaycastFilterType.Include
+		op.FilterDescendantsInstances = { Workspace.Enemies }
 
-		HitboxService:CreateBlockHitbox(Character, Mid, Vector3.new(5, 5, Size), {
-			dmg = 10,
-			kb = 15,
-			ragdoll = 1.5,
-			op = OverlapParams,
-			replicate = {
-				["module"] = "Universal",
-				["effect"] = "Replicate",
-				["VFX"] = "LightningSwordHit",
-				["SFX"] = "SwordHit",
-			},
-		})
+		Hitbox2Service:CreatePartHitbox(Character, Vector3.new(5, 5, 5), 30, function(hitted)
+			local damage = 10
+			local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
+			if Humanoid then
+				if Humanoid:GetAttribute("Died") then
+					return
+				end
+				if (Humanoid.Health - damage) <= 0 then
+					Humanoid:SetAttribute("Died", true)
+					CombatService:RegisterHumanoidKilled(Character, Humanoid)
+				end
+				Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * 25)
+					* GetModelMass(hitted)
+				ApplyRagdoll(hitted, 2)
+				Humanoid:TakeDamage(damage)
+			end
+		end, op)
 
 		RenderService:RenderForPlayersInArea(Mid.Position, 200, {
 			["module"] = "Universal",
@@ -403,49 +402,45 @@ Sword["King'sLongsword"] = {
 		local Mid = Data.Position * CFrame.new(0, 0, -30)
 		local Size = Vector3.new(7, 7, 60)
 
+		local Distance = 120
+
+		local Root: BasePart = Character:FindFirstChild("HumanoidRootPart")
+		if not Root then
+			return
+		end
+
 		local op = OverlapParams.new()
 		op.FilterType = Enum.RaycastFilterType.Include
 		op.FilterDescendantsInstances = { Workspace.Enemies }
 
-		local Parts = Workspace:GetPartBoundsInBox(Mid, Size, op)
-		for _, Part: BasePart in ipairs(Parts) do
-			local Model = Part:FindFirstAncestorWhichIsA("Model")
-			if not Model then
-				continue
-			end
+		RenderService:RenderForPlayersInArea(Root.CFrame.Position, 200, {
+			module = "Lightning",
+			effect = "Lightning",
+			root = Root,
+		})
 
-			local Humanoid = Model:FindFirstChildWhichIsA("Humanoid")
-			if not Humanoid then
-				continue
-			end
-
-			if Humanoid.Health <= 0 then
-				continue
-			end
-
-			local Root: BasePart = Model.PrimaryPart
+		Hitbox2Service:CreateFixedHitbox(Mid, Vector3.new(5, 5, Size), 32, function(hitted)
+			local damage = 10
+			local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
 			if not Root then
-				continue
+				return
 			end
 
-			RenderService:RenderForPlayersInArea(Root.CFrame.Position, 200, {
-				module = "Lightning",
-				effect = "Lightning",
-				root = Root,
-			})
+			if Humanoid then
+				if Humanoid:GetAttribute("Died") then
+					return
+				end
+				if (Humanoid.Health - damage) <= 0 then
+					Humanoid:SetAttribute("Died", true)
+					CombatService:RegisterHumanoidKilled(Character, Humanoid)
+				end
 
-			task.delay(0.65, function()
-				Humanoid:TakeDamage(50)
-				RagdollService:Ragdoll(Model, 2)
-
-				local V = (Data.Position.LookVector * 15) * GetModelMass(Model)
-				Humanoid.RootPart.AssemblyLinearVelocity = V + Vector3.new(0, 15, 0)
-
-				SFX:Create(Model, "Lightning", 0, 120)
-			end)
-
-			return
-		end
+				Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * 15)
+					* GetModelMass(hitted)
+				ApplyRagdoll(hitted, 3)
+				Humanoid:TakeDamage(damage)
+			end
+		end)
 	end,
 }
 

@@ -33,6 +33,13 @@ function RagdollService:Ragdoll(Character: Model, time: number?)
 	end
 end
 
+function RagdollService:UnRagdoll(Character: Model)
+	local Humanoid: Humanoid = Character:WaitForChild("Humanoid")
+	Ragdoll.UnRagdollCharacter(Character)
+	Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, true)
+	Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+end
+
 Players.PlayerAdded:Connect(function(Player)
 	Player.CharacterAdded:Connect(function(Character)
 		local Humanoid = Character:WaitForChild("Humanoid")

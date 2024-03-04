@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
 local Knit = require(ReplicatedStorage.Packages.Knit)
+local CameraEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("CAMERA")
 
 local PlayerService
 
@@ -42,6 +43,8 @@ function HumanoidHandler:BindHumanoid(Humanoid: Humanoid)
 
 		diedRespawn.Activated:Once(function()
 			PlayerService:Respawn(Player)
+			task.wait()
+			CameraEvent:Fire("Lock")
 		end)
 
 		diedBackground.BackgroundTransparency = 1

@@ -10,13 +10,26 @@ local GameData = require(ServerStorage.GameData)
 
 local QuestHandler = {}
 
+--[[
+	OnQuestReceive
+	* nome: string
+	* parametros: defeat 5 enemies :: Table
+
+	OnQuestEnd
+	* nome -> string
+
+	OnQuestUpdate
+	* nome -> string
+	* parametros -> defeat 5 enemies
+]]
+
 local QuestService = Knit.CreateService({
 	Name = "QuestService",
 	Client = {
-		OnQuestEnd = Knit.CreateSignal(),
-		OnQuestReceive = Knit.CreateSignal(),
-		OnQuestUpdate = Knit.CreateSignal(),
-		PromptRequest = Knit.CreateSignal(),
+		OnQuestEnd = Knit.CreateSignal(), -- * terminou a quest
+		OnQuestReceive = Knit.CreateSignal(), -- * recebeu uma quest
+		OnQuestUpdate = Knit.CreateSignal(), --> atualizou a quest
+		PromptRequest = Knit.CreateSignal(), -- * pedir para aceitar a quest
 	},
 })
 
@@ -118,6 +131,8 @@ function QuestService:AcceptQuest(Player: Player)
 	QuestHandler[Player.Name].Accepted = true
 
 	table.insert(PlayerData.Quests, QuestHandler[Player.Name])
+
+	self.Client.OnQuestReceive:Fire(Player, QuestHandler[Player.Name].questName, QuestHandler[Player.Name].questData)
 
 	QuestHandler[Player.Name] = nil
 end

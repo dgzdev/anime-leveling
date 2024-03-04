@@ -34,9 +34,8 @@ function QuestController.KnitInit()
 end
 
 function QuestController.KnitStart()
-	QuestService.PromptRequest:Connect(function(QuestData: {})
-		print(QuestData)
-		QuestController:CreatePrompt(QuestData)
+	QuestService.PromptRequest:Connect(function(questPrompt: {})
+		QuestController:CreatePrompt(questPrompt)
 		LockMouse(false)
 	end)
 end

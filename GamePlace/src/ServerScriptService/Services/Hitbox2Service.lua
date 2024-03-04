@@ -1,8 +1,6 @@
 local Workspace = game:GetService("Workspace")
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
-local HitboxService = Knit.CreateService({ Name = "HitboxService2" })
-
 --[[
     Módulo responsável por fornecer hitboxes de forma mais prática
 ]]
@@ -144,7 +142,12 @@ function HitboxService:CreateHitboxFromModel(
 end
 
 -- funciona da mesma forma que o CreatePartHitbox, porém sem criar uma part, apenas utilizando o GetPartBoundsInBox()
-function HitboxService:CreateHitbox(Character: Model, HitboxSize: Vector3, CheckTicks: number, callback)
+function HitboxService:CreateHitbox(
+	Character: Model,
+	HitboxSize: Vector3,
+	CheckTicks: number,
+	callback: (hitted: Model) -> nil
+)
 	local Humanoid = Character:WaitForChild("Humanoid")
 
 	local Hitted = {}
@@ -183,9 +186,38 @@ function HitboxService:CreateHitbox(Character: Model, HitboxSize: Vector3, Check
 	end)
 end
 
+function HitboxService:CreateFixedHitbox(Position: CFrame, Size: Vector3, Ticks: number, callback)
+	local Hitted = {}
+	local Params = OverlapParams.new()
+	Params.FilterType = Enum.RaycastFilterType.Include
+	Params.FilterDescendantsInstances = { Enemies }
+
+	for i = 0, Ticks, 1 do
+		local CharactersInside = HitboxService:GetCharactersInBoxArea(Position, Size, Params)
+
+		for _, char in ipairs(CharactersInside) do
+			if table.find(Hitted, char) then
+				continue
+			end
+			table.insert(Hitted, char)
+			local response = callback(char)
+			if response == false then
+				break
+			end
+		end
+		task.wait()
+	end
+end
+
 -- cria uma hitbox com part, welda, posiciona na frente do character fornecido com base no tamanho da hitbox, o callback retornara o character hitado
 --ticks é quantas vezes ele vai verificar a hitbox: 5 ticks = 5 vezes com o intervalo a cada frame
-function HitboxService:CreatePartHitbox(Character: Model, HitboxSize: Vector3, Ticks: number, callback)
+function HitboxService:CreatePartHitbox(
+	Character: Model,
+	HitboxSize: Vector3,
+	Ticks: number,
+	callback,
+	params: OverlapParams?
+)
 	local RootPart = Character:WaitForChild("HumanoidRootPart")
 	local Humanoid = Character:WaitForChild("Humanoid")
 	local Weld = Instance.new("WeldConstraint")
@@ -203,9 +235,12 @@ function HitboxService:CreatePartHitbox(Character: Model, HitboxSize: Vector3, T
 	Hitbox.Parent = Character
 
 	local Hitted = {}
-	local Params = OverlapParams.new()
-	Params.FilterType = Enum.RaycastFilterType.Include
-	Params.FilterDescendantsInstances = { Enemies }
+	local Params = params
+	if not Params then
+		Params = OverlapParams.new()
+		Params.FilterType = Enum.RaycastFilterType.Include
+		Params.FilterDescendantsInstances = { Enemies }
+	end
 
 	for i = 0, Ticks, 1 do
 		local CharactersInside = HitboxService:GetCharactersInPart(Hitbox, Params)

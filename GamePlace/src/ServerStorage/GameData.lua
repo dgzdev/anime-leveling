@@ -185,7 +185,7 @@ local function CreateHumanoidDescription(desc: { [string]: any }): HumanoidDescr
 end
 
 return {
-	profileKey = "DEVELOPMENT_1",
+	profileKey = "DEVELOPMENT_2",
 	profileTemplate = ProfileTemplate,
 	defaultInventory = {
 		["Melee"] = {
@@ -327,7 +327,7 @@ return {
 		["Kill Goblins"] = {
 			Type = "Kill Enemies",
 			EnemyName = "Goblin",
-			Amount = 1,
+			Amount = 5,
 			Rewards = {
 				Experience = 100,
 			},

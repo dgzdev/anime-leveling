@@ -10,6 +10,7 @@ local EasyEnemies = require(ReplicatedStorage.Modules.EasyEnemies)
 local GameData = require(ServerStorage.GameData)
 
 local WeaponService
+local RagdollService
 
 local HealthHud: BillboardGui = ReplicatedStorage.Models.HealthHud
 
@@ -65,11 +66,12 @@ function EnemyService:CreateEnemy(
 	local Damage = EnemyData.Info.Damage
 
 	local RespawnTime = 10
-	local Inteligence = props.inteligence or 5
+	local Inteligence = props.inteligence or 10
 	local Humanoid = model:FindFirstChildWhichIsA("Humanoid")
 
 	Humanoid.MaxHealth = EnemyData.Info.Health
 	Humanoid.Health = EnemyData.Info.Health
+	Humanoid.AutoRotate = true
 
 	local Root = Humanoid.RootPart
 	local Animator: Animator = Humanoid:WaitForChild("Animator")
@@ -80,6 +82,8 @@ function EnemyService:CreateEnemy(
 
 	local clone = model:Clone()
 	clone.Parent = ServerStorage:WaitForChild("Enemies")
+
+	RagdollService:UnRagdoll(clone)
 
 	Humanoid.Died:Connect(function()
 		for _, value in ipairs(Animator:GetPlayingAnimationTracks()) do
@@ -195,6 +199,7 @@ end
 
 function EnemyService.KnitStart()
 	WeaponService = Knit.GetService("WeaponService")
+	RagdollService = Knit.GetService("RagdollService")
 
 	local Folder: Folder = Workspace.Enemies
 

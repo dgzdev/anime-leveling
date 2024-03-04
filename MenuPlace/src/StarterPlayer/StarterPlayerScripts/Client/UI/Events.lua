@@ -148,6 +148,7 @@ Events.Buttons = {
 		local c: Model = Workspace:WaitForChild("Characters"):WaitForChild("Rig")
 		local head: BasePart = c:WaitForChild("Head")
 
+		MenuCamera.CF0 = Workspace.CurrentCamera.CFrame
 		MenuCamera:Disable()
 
 		SlideOut()
@@ -238,6 +239,7 @@ Events.Buttons = {
 			tween:Play()
 			tween.Completed:Wait()
 
+			MenuCamera.CF0 = Workspace.CurrentCamera.CFrame
 			MenuCamera:Disable()
 
 			CharacterCustomization.Enabled = false
@@ -282,11 +284,11 @@ Events.Buttons = {
 	["Edit"] = function(Gui: GuiButton)
 		--> isso aqui e quando vc clica no botão pra editar, da uma lida q vc vai chegar onde eu to codando ali
 		SlideOut()
-		TweenService:Create(
+		local a = TweenService:Create(
 			Workspace.CurrentCamera,
 			TweenInfo.new(0.25),
 			{ CFrame = Workspace.CurrentCamera.CFrame * CFrame.new(0, 0, 1.5) }
-		):Play()
+		)
 
 		local function SlideIn()
 			local OriginalPositions = {
@@ -310,8 +312,11 @@ Events.Buttons = {
 			tween = TweenService:Create(Mid, tweenInfo, { Position = OriginalPositions.M })
 			tween:Play()
 		end
-
+		a:Play()
+		a.Completed:Wait()
 		SlideIn()
+		MenuCamera.CF0 = Workspace.CurrentCamera.CFrame
+		MenuCamera:Enable()
 	end,
 	["Close"] = function(Gui: GuiButton)
 		Gui:FindFirstAncestorWhichIsA("ScreenGui").Enabled = false

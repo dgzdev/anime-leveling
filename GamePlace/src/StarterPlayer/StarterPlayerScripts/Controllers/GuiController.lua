@@ -5,6 +5,7 @@ local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 local PlayerService
 local ProgressionService
+local QuestService
 
 local GuiController = Knit.CreateController({
 	Name = "GuiController",
@@ -22,19 +23,20 @@ function GuiController:BindPlayerHud()
 
 	local PlayerStatus = frame:WaitForChild("PlayerStatus")
 
-	local healthPR: ImageLabel = PlayerStatus:FindFirstChild("healthPR", true)
-	local manaPR = PlayerStatus:FindFirstChild("manaPR", true)
-	local expPR = PlayerStatus:FindFirstChild("expPR", true)
+	local healthPR: ImageLabel = PlayerStatus:WaitForChild("healthBG"):WaitForChild("healthPR")
+	local expPR: ImageLabel = PlayerStatus:WaitForChild("expBG"):WaitForChild("expPR")
+	local manaPR: ImageLabel = PlayerStatus:WaitForChild("manaBG"):WaitForChild("manaPR")
+	local levelBG: ImageLabel = PlayerStatus:WaitForChild("levelBG")
 
 	local Gradient: UIGradient = healthPR:WaitForChild("UIGradient")
 	local expGradient: UIGradient = expPR:WaitForChild("UIGradient")
 	local manaGradient: UIGradient = manaPR:WaitForChild("UIGradient")
 
-	local healthValue: TextLabel = healthPR:FindFirstChild("healthValue", true)
+	local healthValue: TextLabel = healthPR:WaitForChild("healthValue")
 
-	local levelValue: TextLabel = PlayerStatus:FindFirstChild("levelValue", true)
-	local manaValue: TextLabel = PlayerStatus:FindFirstChild("manaValue", true)
-	local expValue: TextLabel = PlayerStatus:FindFirstChild("expValue", true)
+	local levelValue: TextLabel = levelBG:WaitForChild("levelValue")
+	local manaValue: TextLabel = manaPR:WaitForChild("manaValue")
+	local expValue: TextLabel = expPR:WaitForChild("expValue")
 
 	local function transformInString(number: number): string
 		return tostring(math.floor(number))
@@ -107,7 +109,65 @@ function GuiController:BindPlayerHud()
 	Players.LocalPlayer.CharacterAdded:Connect(BindHumanoid)
 end
 
-function GuiController:BindQuestEvents() end
+function GuiController:ConvertQuestData(questData: {
+	Amount: number,
+	EnemyName: string,
+	Rewards: {
+		Experience: number,
+	},
+	Type: string,
+}): string
+	local amount = questData.Amount
+	local enemyName = questData.EnemyName
+	local rewards = questData.Rewards
+	local questType = questData.Type
+
+	local str = "%s %u %s"
+
+	local Table = {
+		["Type"] = {
+			["Kill Enemies"] = "Defeat",
+		},
+		["EnemyName"] = {
+			["Goblin"] = "%ss",
+		},
+	}
+
+	local TypeString = Table.Type[questType]
+	local EnemyString = (Table.EnemyName[enemyName]):format(enemyName)
+
+	return str:format(TypeString, amount, EnemyString)
+end
+
+function GuiController:BindQuestEvents()
+	local PlayerHud = Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("PlayerHud")
+	local QuestGui = PlayerHud:WaitForChild("Background"):WaitForChild("QuestGui")
+
+	local Title = QuestGui:WaitForChild("Title")
+	local Example = QuestGui:WaitForChild("Example")
+
+	QuestService.OnQuestEnd:Connect(function(questName: string)
+		local new = QuestGui:FindFirstChild(questName)
+		if new then
+			new:Destroy()
+		end
+	end)
+	QuestService.OnQuestReceive:Connect(function(questName: string, questData)
+		local questString = self:ConvertQuestData(questData)
+		local new = Example:Clone()
+		new.Label.Text = questString
+		new.Name = questName
+		new.Parent = QuestGui
+		new.Visible = true
+	end)
+	QuestService.OnQuestUpdate:Connect(function(questName: string, questData)
+		local questString = self:ConvertQuestData(questData)
+		local new = QuestGui:FindFirstChild(questName)
+		if new then
+			new.Label.Text = questString
+		end
+	end)
+end
 
 function GuiController:KnitStart()
 	local camera = Workspace.CurrentCamera
@@ -118,8 +178,10 @@ function GuiController:KnitStart()
 
 	PlayerService = Knit.GetService("PlayerService")
 	ProgressionService = Knit.GetService("ProgressionService")
+	QuestService = Knit.GetService("QuestService")
 
 	self:BindPlayerHud()
+	self:BindQuestEvents()
 
 	local amt = -0.005
 	local defaultFov = 70
