@@ -89,28 +89,7 @@ function HitboxService:CreateHitboxFromModel(
 	local size = model:GetExtentsSize()
 	scale = scale or 1
 
-	size = size * scale
-
-	local p0 = Instance.new("Part")
-	p0.Size = size
-
-	p0.Transparency = 0.8
-	p0.CanCollide = false
-	p0.Massless = true
-
-	p0:PivotTo(model:GetBoundingBox())
-
-	local w0 = Instance.new("WeldConstraint", p0)
-	w0.Part0 = model.PrimaryPart
-	w0.Part1 = p0
-
-	p0.Parent = Character
-
-	local Humanoid = Character:WaitForChild("Humanoid")
-
 	local Hitted = {}
-	local RootPart = Character:WaitForChild("HumanoidRootPart")
-	local ComboCounterAtTime = Humanoid:GetAttribute("ComboCounter")
 
 	local Params = OverlapParams.new()
 	Params.FilterType = Enum.RaycastFilterType.Include
@@ -118,7 +97,7 @@ function HitboxService:CreateHitboxFromModel(
 
 	task.spawn(function()
 		for i = 0, CheckTicks or 16, 1 do
-			local Hitbox = HitboxService:GetCharactersInBoxArea(p0.CFrame, size, Params)
+			local Hitbox = HitboxService:GetCharactersInBoxArea(model:GetPivot(), size, Params)
 			for i, char in pairs(Hitbox) do
 				if char == Character then
 					continue
@@ -134,10 +113,8 @@ function HitboxService:CreateHitboxFromModel(
 				end
 			end
 
-			task.wait()
+			task.wait(1 / 60)
 		end
-
-		p0:Destroy()
 	end)
 end
 
@@ -181,7 +158,7 @@ function HitboxService:CreateHitbox(
 				end
 			end
 
-			task.wait()
+			task.wait(1 / 60)
 		end
 	end)
 end
@@ -205,7 +182,7 @@ function HitboxService:CreateFixedHitbox(Position: CFrame, Size: Vector3, Ticks:
 				break
 			end
 		end
-		task.wait()
+		task.wait(1 / 60)
 	end
 end
 
@@ -258,7 +235,7 @@ function HitboxService:CreatePartHitbox(
 				break
 			end
 		end
-		task.wait()
+		task.wait(1 / 60)
 	end
 
 	Hitbox:Destroy()

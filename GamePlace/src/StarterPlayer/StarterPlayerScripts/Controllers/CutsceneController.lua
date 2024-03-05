@@ -45,7 +45,7 @@ local function AnimateCamera(animation: string)
 		}
 
 		for i = 1, #Frames:GetChildren(), 1 do
-			task.wait()
+			task.wait(1 / 60)
 			local Frame = Frames:FindFirstChild(tostring(i))
 			local FOVFrame = Fov:FindFirstChild(tostring(i))
 

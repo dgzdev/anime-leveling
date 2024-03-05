@@ -1,0 +1,6 @@
+{
+    "robloxLsp.typeChecking.mode": "Disabled",
+    "editor.smoothScrolling": true,
+    "editor.cursorSmoothCaretAnimation": "on",
+    "editor.cursorBlinking": "smooth"
+}

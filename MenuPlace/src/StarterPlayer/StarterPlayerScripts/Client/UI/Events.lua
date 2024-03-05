@@ -13,6 +13,11 @@ local Start = ReplicatedStorage:WaitForChild("Start")
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
+local Knit = require(ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit"))
+Knit.Start({ ServicePromises = false }):await()
+
+local ClothingService = Knit.GetService("ClothingService")
+
 local function SlideOut()
 	local SlotSelection = PlayerGui:WaitForChild("SlotSelection")
 	local RightSide = SlotSelection:WaitForChild("RightSide")
@@ -62,60 +67,12 @@ local Mid: Frame = CharacterCustomization:WaitForChild("Mid")
 local LeftSlots: Frame = LeftSide:WaitForChild("Slots")
 local RightSlots: Frame = RightSide:WaitForChild("Slots")
 
-local customization: { List: {}, Selected: {}, [string]: number } = Requests:InvokeServer("Customization")
+local customization = ClothingService:GetClothingData(Player)
 
 local MenuCamera = require(ReplicatedStorage:WaitForChild("MenuCamera"))
 
-local function UpdateSlots()
-	task.spawn(function()
-		for _, object in ipairs(LeftSlots:GetChildren()) do
-			if customization.List[object.Name] then
-				local p = customization.List[object.Name]
-				local min: NumberValue, max: NumberValue = object:WaitForChild("Min"), object:WaitForChild("Max")
-
-				min.Value = 0
-				max.Value = #p
-
-				for i, v in pairs(customization.List[object.Name]) do
-					if v == customization["Selected"][object.Name] then
-						object:WaitForChild("Number").Text = tostring(i)
-					else
-						object:WaitForChild("Number").Text = "1"
-					end
-				end
-			end
-		end
-		for _, object in ipairs(RightSlots:GetChildren()) do
-			if customization.List[object.Name] then
-				local p = customization.List[object.Name]
-				local min: NumberValue, max: NumberValue = object:WaitForChild("Min"), object:WaitForChild("Max")
-
-				min.Value = 0
-				max.Value = #p
-
-				for i, v in pairs(customization.List[object.Name]) do
-					if v == customization["Selected"][object.Name] then
-						object:WaitForChild("Number").Text = tostring(i)
-					else
-						object:WaitForChild("Number").Text = "1"
-					end
-				end
-			end
-		end
-	end)
-end
-
-UpdateSlots()
-
 local Character = Workspace:WaitForChild("Characters"):WaitForChild("Rig")
-local Humanoid: Humanoid = Character:WaitForChild("Humanoid")
 
-local function ApplyHumanoidDescription()
-	--> isso aq vai atualizar o humanoid pro novo acessorio q o player escolheu
-	Requests:InvokeServer("UpdateHumanoidDescription", customization["Selected"])
-end
-
-local lastSelected = table.clone(customization["Selected"])
 function CheckTableEquality(t1, t2)
 	for i, v in pairs(t1) do
 		if t2[i] ~= v then
@@ -129,19 +86,6 @@ function CheckTableEquality(t1, t2)
 	end
 	return true
 end
-
-task.spawn(function()
-	while true do
-		local newSelected = customization["Selected"]
-
-		if not CheckTableEquality(lastSelected, newSelected) then
-			ApplyHumanoidDescription()
-			lastSelected = table.clone(newSelected)
-		end
-
-		task.wait(0.25)
-	end
-end)
 
 Events.Buttons = {
 	["Play"] = function()
@@ -187,34 +131,42 @@ Events.Buttons = {
 	end,
 
 	["Left"] = function(Gui: GuiButton)
+		local object = Gui.Parent.Name
 		local number: TextLabel = Gui.Parent:WaitForChild("Number")
 
-		local min: NumberValue = Gui.Parent:WaitForChild("Min")
-		local max: NumberValue = Gui.Parent:WaitForChild("Max")
-		local current = math.clamp(tonumber(number.Text) - 1, min.Value, max.Value)
+		if tonumber(number.Text) == 0 then
+			return
+		end
 
-		number.Text = tostring(current)
+		local Response
+		if object == "Shirt" then
+			Response = ClothingService:UpdateShirt(tonumber(number.Text) - 1)
+		elseif object == "Pants" then
+			Response = ClothingService:UpdatePants(tonumber(number.Text) - 1)
+		elseif object == "Shoes" then
+			Response = ClothingService:UpdateShoes(tonumber(number.Text) - 1)
+		end
 
-		if current == 0 then
-			customization["Selected"][Gui.Parent.Name] = 0
-		else
-			customization["Selected"][Gui.Parent.Name] = customization.List[Gui.Parent.Name][current]
+		if Response ~= false then
+			number.Text = tonumber(number.Text) - 1
 		end
 	end,
 
 	["Right"] = function(Gui: GuiButton)
+		local object = Gui.Parent.Name
 		local number: TextLabel = Gui.Parent:WaitForChild("Number")
 
-		local min: NumberValue = Gui.Parent:WaitForChild("Min")
-		local max: NumberValue = Gui.Parent:WaitForChild("Max")
-		local current = math.clamp(tonumber(number.Text) + 1, min.Value, max.Value)
+		local Response
+		if object == "Shirt" then
+			Response = ClothingService:UpdateShirt(tonumber(number.Text) + 1)
+		elseif object == "Pants" then
+			Response = ClothingService:UpdatePants(tonumber(number.Text) + 1)
+		elseif object == "Shoes" then
+			Response = ClothingService:UpdateShoes(tonumber(number.Text) + 1)
+		end
 
-		number.Text = tostring(current)
-
-		if current == 0 then
-			customization["Selected"][Gui.Parent.Name] = 0
-		else
-			customization["Selected"][Gui.Parent.Name] = customization.List[Gui.Parent.Name][current]
+		if Response ~= false then
+			number.Text = tonumber(number.Text) + 1
 		end
 	end,
 
@@ -334,8 +286,5 @@ Events.Hover = {
 		SoundService:WaitForChild("SFX"):WaitForChild("UIHover"):Play()
 	end,
 }
-
-local Request = ReplicatedStorage:WaitForChild("Request")
-local customization = Request:InvokeServer("Customization")
 
 return Events

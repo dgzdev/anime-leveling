@@ -30,6 +30,34 @@ local function GetModelMass(model: Model)
 	return mass
 end
 
+local SwordHitFunction = function(Character: Model, hitted: Model, kb: number, vfx: string, sfx: string, dmg: number?)
+	local damage = dmg or 10
+	local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
+	if Humanoid then
+		if Humanoid:GetAttribute("Died") then
+			return
+		end
+
+		if (Humanoid.Health - damage) <= 0 then
+			Humanoid:SetAttribute("Died", true)
+			CombatService:RegisterHumanoidKilled(Character, Humanoid)
+		end
+
+		RenderService:RenderForPlayersInArea(hitted.PrimaryPart.CFrame.Position, 200, {
+			module = "Universal",
+			effect = "Replicate",
+			root = hitted.PrimaryPart,
+			["VFX"] = vfx,
+			["SFX"] = sfx,
+		})
+
+		Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * kb) * GetModelMass(hitted)
+		ApplyRagdoll(hitted, 2)
+		Humanoid:TakeDamage(damage)
+		return false
+	end
+end
+
 Sword.Default = {
 	Attack = function(
 		Character: Model,
@@ -67,23 +95,8 @@ Sword.Default = {
 			return
 		end
 
-		local damage = 10
-
 		Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
-			local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
-			if Humanoid then
-				if Humanoid:GetAttribute("Died") then
-					return
-				end
-				if (Humanoid.Health - damage) <= 0 then
-					Humanoid:SetAttribute("Died", true)
-					CombatService:RegisterHumanoidKilled(Character, Humanoid)
-				end
-				Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * 2.5)
-					* GetModelMass(hitted)
-
-				Humanoid:TakeDamage(damage)
-			end
+			SwordHitFunction(Character, hitted, 2.5, "SwordHit", "SwordHit")
 		end)
 	end,
 
@@ -104,23 +117,8 @@ Sword.Default = {
 		op.FilterType = Enum.RaycastFilterType.Include
 		op.FilterDescendantsInstances = { Workspace.Enemies }
 
-		Hitbox2Service:CreatePartHitbox(Character, Vector3.new(5, 5, 5), 30, function(hitted)
-			local damage = 10
-			local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
-			if Humanoid then
-				if Humanoid:GetAttribute("Died") then
-					return
-				end
-				if (Humanoid.Health - damage) <= 0 then
-					Humanoid:SetAttribute("Died", true)
-					CombatService:RegisterHumanoidKilled(Character, Humanoid)
-				end
-				Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * 15)
-					* GetModelMass(hitted)
-				ApplyRagdoll(hitted, 2)
-				Humanoid:TakeDamage(damage)
-				return false
-			end
+		Hitbox2Service:CreatePartHitbox(Character, Vector3.new(5, 5, 5), 42, function(hitted)
+			SwordHitFunction(Character, hitted, 15, "SwordHit", "SwordHit")
 		end, op)
 	end,
 }
@@ -222,40 +220,13 @@ Sword["King'sLongsword"] = {
 		Ray.FilterType = Enum.RaycastFilterType.Include
 		Ray.FilterDescendantsInstances = { Workspace:FindFirstChild("Enemies") }
 
-		local Params = {
-			dmg = 10,
-			time = 1,
-			kb = 15,
-			max = 250,
-			replicate = {
-				["module"] = "Universal",
-				["effect"] = "Replicate",
-				["VFX"] = "LightningSwordHit",
-				["SFX"] = "SwordHit",
-			},
-		}
-
 		local weapon = Character:FindFirstChild("Weapon")
 		if not weapon then
 			return
 		end
 
-		local damage = 10
-
 		Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
-			local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
-			if Humanoid then
-				if Humanoid:GetAttribute("Died") then
-					return
-				end
-				if (Humanoid.Health - damage) <= 0 then
-					Humanoid:SetAttribute("Died", true)
-					CombatService:RegisterHumanoidKilled(Character, Humanoid)
-				end
-				Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * 1.5)
-					* GetModelMass(hitted)
-				Humanoid:TakeDamage(damage)
-			end
+			SwordHitFunction(Character, hitted, 2.5, "LightningSwordHit", "SwordHit")
 		end)
 	end,
 
@@ -285,22 +256,8 @@ Sword["King'sLongsword"] = {
 		op.FilterType = Enum.RaycastFilterType.Include
 		op.FilterDescendantsInstances = { Workspace.Enemies }
 
-		Hitbox2Service:CreatePartHitbox(Character, Vector3.new(5, 5, 5), 30, function(hitted)
-			local damage = 10
-			local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
-			if Humanoid then
-				if Humanoid:GetAttribute("Died") then
-					return
-				end
-				if (Humanoid.Health - damage) <= 0 then
-					Humanoid:SetAttribute("Died", true)
-					CombatService:RegisterHumanoidKilled(Character, Humanoid)
-				end
-				Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * 25)
-					* GetModelMass(hitted)
-				ApplyRagdoll(hitted, 2)
-				Humanoid:TakeDamage(damage)
-			end
+		Hitbox2Service:CreatePartHitbox(Character, Vector3.new(5, 5, 5), 42, function(hitted)
+			SwordHitFunction(Character, hitted, 15, "LightningSwordHit", "SwordHit")
 		end, op)
 
 		RenderService:RenderForPlayersInArea(Mid.Position, 200, {
@@ -420,26 +377,7 @@ Sword["King'sLongsword"] = {
 		})
 
 		Hitbox2Service:CreateFixedHitbox(Mid, Vector3.new(5, 5, Size), 32, function(hitted)
-			local damage = 10
-			local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
-			if not Root then
-				return
-			end
-
-			if Humanoid then
-				if Humanoid:GetAttribute("Died") then
-					return
-				end
-				if (Humanoid.Health - damage) <= 0 then
-					Humanoid:SetAttribute("Died", true)
-					CombatService:RegisterHumanoidKilled(Character, Humanoid)
-				end
-
-				Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * 15)
-					* GetModelMass(hitted)
-				ApplyRagdoll(hitted, 3)
-				Humanoid:TakeDamage(damage)
-			end
+			SwordHitFunction(Character, hitted, 15, "LightningSwordHit", "SwordHit")
 		end)
 	end,
 }

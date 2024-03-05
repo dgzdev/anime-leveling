@@ -5,9 +5,6 @@ local ServerStorage = game:GetService("ServerStorage")
 local TeleportService = game:GetService("TeleportService")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
---!strict
--- Author: @SinceVoid
--- Esse é o arquivo principal do servidor, onde todos os módulos serão carregados.
 
 -- ====================================================================================================
 --// Modules
@@ -16,31 +13,33 @@ local GameData = require(ServerStorage.GameData)
 local ProfileService = require(ServerStorage.ProfileService)
 local ProfileStore = ProfileService.GetProfileStore(GameData.profileKey, GameData.profileTemplate)
 
+local Rig = ReplicatedStorage.Rig:Clone()
+Rig.Parent = Workspace:WaitForChild("Characters")
+Rig:PivotTo(Workspace:WaitForChild("Spawn").CFrame)
+
+local Knit = require(ReplicatedStorage.Packages.Knit)
+
+local ClothingService = require(script:WaitForChild("ClothingService"))
+local PlayerService = require(script:WaitForChild("PlayerService"))
+
+Knit.Start():await()
+
 local Characters = Workspace:WaitForChild("Characters")
 
-local Profile: { Data: GameData.PlayerData } | nil
+local Profile: { Data: GameData.ProfileData } | nil
 
-ReplicatedStorage.Request.OnServerInvoke = function(player: Player, request: string, description: HumanoidDescription)
-	repeat
-		task.wait(0.1)
-	until Profile
-
-	local slot = Profile.Data.Slots[Profile.Data.Selected_Slot]
-
-	if request == "Customization" then
+local serverRequests = {
+	["Slots"] = function(slot, description: HumanoidDescription)
+		return Profile.Data
+	end,
+	["Customization"] = function(slot, description: HumanoidDescription)
 		local d = {}
 		d["List"] = GameData.CharacterCustomization
 		d["Selected"] = slot.Character
 		return d
-	end
-
-	if request == "Slots" then
-		return Profile.Data
-	end
-
-	local Humanoid: Humanoid = Workspace.Characters.Rig:WaitForChild("Humanoid")
-
-	if request == "UpdateHumanoidDescription" then
+	end,
+	["UpdateHumanoidDescription"] = function(slot, description: HumanoidDescription)
+		local Humanoid: Humanoid = Workspace.Characters.Rig:WaitForChild("Humanoid")
 		local currentDesc = Humanoid:GetAppliedDescription()
 
 		for name, value in pairs(description) do
@@ -62,15 +61,20 @@ ReplicatedStorage.Request.OnServerInvoke = function(player: Player, request: str
 
 		Humanoid:ApplyDescription(currentDesc, Enum.AssetTypeVerification.Default)
 		return
-	end
-
-	if request == "RotateCharacter" then
+	end,
+	["RotateCharacter"] = function(slot, description: HumanoidDescription)
 		local c: Model = Workspace:WaitForChild("Characters"):WaitForChild("Rig")
-		c:PivotTo(c:GetPivot() * CFrame.Angles(0, math.rad(-45), 0))
-		return
-	end
+		local Root: BasePart = c:WaitForChild("HumanoidRootPart")
 
-	if request == "SaveCharacter" then
+		TweenService
+			:Create(Root, TweenInfo.new(0.25, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, 0, false, 0.5), {
+				CFrame = Root.CFrame * CFrame.Angles(0, math.rad(-45), 0),
+			})
+			:Play()
+		return
+	end,
+	["SaveCharacter"] = function(slot, description: HumanoidDescription)
+		local Humanoid: Humanoid = Workspace.Characters.Rig:WaitForChild("Humanoid")
 		local HumanoidDescription = Humanoid:GetAppliedDescription()
 
 		local d = {}
@@ -92,59 +96,28 @@ ReplicatedStorage.Request.OnServerInvoke = function(player: Player, request: str
 
 		slot.Character = d
 		Profile:Save()
+	end,
+}
+
+ReplicatedStorage.Request.OnServerInvoke = function(player: Player, request: string, description: HumanoidDescription)
+	repeat
+		task.wait(0.1)
+	until Profile
+
+	local slot = Profile.Data.Slots[Profile.Data.Selected_Slot]
+
+	if serverRequests[request] then
+		return serverRequests[request](slot, description)
+	else
+		return error("Invalid request.")
 	end
 end
 
 local function OnPlayerAdded(plr: Player)
-	local Rig = ReplicatedStorage.Rig:Clone()
-	Rig.Parent = Workspace:WaitForChild("Characters")
-
-	Profile = ProfileStore:LoadProfileAsync(`player_{plr.UserId}`, "ForceLoad")
-	if not Profile then
-		plr:Kick("Failed to load profile.")
-		return
-	end
-	if not plr:IsDescendantOf(Players) then
-		Profile:Release()
-		return
-	end
-
-	Profile:Reconcile()
-
-	if RunService:IsStudio() then
-		-- Profile.Data = GameData.profileTemplate
-	end
-
-	print(Profile.Data)
-
-	local ProfileData: GameData.PlayerData = Profile.Data
-	local SelectedSlot = ProfileData["Selected_Slot"]
-	local Slot = ProfileData.Slots[SelectedSlot]
-	local CharacterData = Slot.Character
-
-	local Description = Instance.new("HumanoidDescription")
-	for name, value in pairs(CharacterData) do
-		if name == "Colors" then
-			local BodyColor = Color3.fromRGB(unpack(value))
-			Description.HeadColor = BodyColor
-			Description.LeftArmColor = BodyColor
-			Description.LeftLegColor = BodyColor
-			Description.RightArmColor = BodyColor
-			Description.RightLegColor = BodyColor
-			Description.TorsoColor = BodyColor
-			continue
-		end
-		Description[name] = value
-	end
-
-	for _, Character in ipairs(Characters:GetChildren()) do
-		local Humanoid = Character:WaitForChild("Humanoid") :: Humanoid
-		Humanoid:ApplyDescription(Description, Enum.AssetTypeVerification.Default)
-	end
+	Profile = PlayerService:GetProfile(plr)
 end
-local function OnPlayerRemoving(plr: Player)
-	Profile:Release()
-end
+
+local function OnPlayerRemoving(plr: Player) end
 
 local Start = ReplicatedStorage:WaitForChild("Start")
 Start.OnServerEvent:Connect(function(player)
@@ -152,24 +125,17 @@ Start.OnServerEvent:Connect(function(player)
 
 	local Character = Workspace.Characters:GetChildren()[1]
 	local Humanoid: Humanoid = Character:WaitForChild("Humanoid")
-	local Animator: Animator = Humanoid:WaitForChild("Animator")
 	local Root: BasePart = Character.PrimaryPart
 
-	for _, anim in ipairs(Animator:GetPlayingAnimationTracks()) do
-		anim:Stop(0)
-	end
+	Root.Anchored = false
 
 	Character:PivotTo(Workspace:WaitForChild("Spawn").CFrame)
-
-	Root.Anchored = false
 
 	Humanoid:MoveTo(Workspace.CharacterStopPosition.CFrame.Position)
 
 	Humanoid.MoveToFinished:Wait()
 
 	task.wait(0.06)
-
-	Root.Anchored = true
 
 	local anim =
 		TweenService:Create(Root, TweenInfo.new(3, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut, 0, false, 0.5), {

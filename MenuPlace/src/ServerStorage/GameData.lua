@@ -88,15 +88,22 @@ local ProfileTemplate: ProfileData = {
 	Slots = {
 		[1] = {
 			["Character"] = {
-				["FaceAccessory"] = 14579692783,
-				["HairAccessory"] = 16007640385,
-				["BackAccessory"] = 0,
-				["WaistAccessory"] = 0,
-				["ShouldersAccessory"] = 0,
-				["NeckAccessory"] = 0,
-				["HatAccessory"] = 0,
-				["Shirt"] = 11321632482,
-				["Pants"] = 7730552127,
+				["Shirt"] = {
+					Id = 1,
+					Color = { 255, 0, 0 },
+				},
+				["Pants"] = {
+					Id = 1,
+					Color = { 0, 0, 255 },
+				},
+				["Shoes"] = {
+					Id = 1,
+					Color = { 0, 255, 0 },
+				},
+				["Hair"] = {
+					Id = 1,
+					Color = { 255, 255, 0 },
+				},
 				["Colors"] = { 255, 204, 153 },
 			},
 			["Location"] = "Character Creation",

@@ -65,6 +65,11 @@
                 "$className": "Folder",
                 "$ignoreUnknownInstances": true,
                 "$path": "src/Modules"
+            },
+            "Packages": {
+                "$className": "Folder",
+                "$ignoreUnknownInstances": true,
+                "$path": "Packages"
             }
         },
         "ReplicatedFirst": {
