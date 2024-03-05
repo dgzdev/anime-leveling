@@ -7,6 +7,7 @@ local SoundService = game:GetService("SoundService")
 local StarterGui = game:GetService("StarterGui")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
+local Rig = Workspace.Characters:WaitForChild("Rig")
 
 local Start = ReplicatedStorage:WaitForChild("Start")
 
@@ -17,6 +18,11 @@ local Knit = require(ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Kn
 Knit.Start({ ServicePromises = false }):await()
 
 local ClothingService = Knit.GetService("ClothingService")
+
+local ColorPickerModule = require(game.ReplicatedStorage.Color)
+
+local TurnRight = false
+local TurnLeft = false
 
 local function SlideOut()
 	local SlotSelection = PlayerGui:WaitForChild("SlotSelection")
@@ -64,14 +70,13 @@ local RightSide: Frame = CharacterCustomization:WaitForChild("RightSide")
 local LeftSide: Frame = CharacterCustomization:WaitForChild("LeftSide")
 local Mid: Frame = CharacterCustomization:WaitForChild("Mid")
 
-local LeftSlots: Frame = LeftSide:WaitForChild("Slots")
-local RightSlots: Frame = RightSide:WaitForChild("Slots")
-
 local customization = ClothingService:GetClothingData(Player)
 
 local MenuCamera = require(ReplicatedStorage:WaitForChild("MenuCamera"))
 
 local Character = Workspace:WaitForChild("Characters"):WaitForChild("Rig")
+
+local activeFrame = "Hair"
 
 function CheckTableEquality(t1, t2)
 	for i, v in pairs(t1) do
@@ -87,7 +92,48 @@ function CheckTableEquality(t1, t2)
 	return true
 end
 
+
+Events.ButtonDown = {
+	["TurnRight"] = function()
+		TurnRight = true
+		task.spawn(function()
+			repeat
+				task.wait()
+				Character.HumanoidRootPart.CFrame *= CFrame.Angles(0, math.rad(3), 0)
+			until TurnRight == false
+		end)
+	end,
+	["TurnLeft"] = function()
+		TurnLeft = true
+		task.spawn(function()
+			repeat
+				task.wait()
+				Character.HumanoidRootPart.CFrame *= CFrame.Angles(0, math.rad(-3), 0)
+			until TurnLeft == false
+		end)
+	end,
+}
+
+Events.ButtonUp = {
+	["TurnRight"] = function()
+		TurnRight = false
+	end,
+	["TurnLeft"] = function()
+		TurnLeft = false
+	end
+}
+
 Events.Buttons = {
+	["SetActive"] = function(Gui: GuiButton)
+		for index, value in ipairs(Gui.Parent.Parent:GetChildren()) do
+			if value:IsA("Frame") then
+				value:SetAttribute("Active", false)
+			end
+		end
+		Gui.Parent:SetAttribute("Active", true)
+		activeFrame = Gui.Parent.Name
+	end,
+
 	["Play"] = function()
 		local c: Model = Workspace:WaitForChild("Characters"):WaitForChild("Rig")
 		local head: BasePart = c:WaitForChild("Head")
@@ -127,13 +173,12 @@ Events.Buttons = {
 	end,
 
 	["Rotate"] = function()
-		Requests:InvokeServer("RotateCharacter")
+		--Requests:InvokeServer("RotateCharacter")
 	end,
-
 	["Left"] = function(Gui: GuiButton)
 		local object = Gui.Parent.Name
 		local number: TextLabel = Gui.Parent:WaitForChild("Number")
-
+		print(object)
 		if tonumber(number.Text) == 0 then
 			return
 		end
@@ -145,7 +190,17 @@ Events.Buttons = {
 			Response = ClothingService:UpdatePants(tonumber(number.Text) - 1)
 		elseif object == "Shoes" then
 			Response = ClothingService:UpdateShoes(tonumber(number.Text) - 1)
+		elseif object == "Hair" then
+			Response = ClothingService:UpdateHair(tonumber(number.Text) - 1)
 		end
+
+		for index, value in ipairs(Gui.Parent.Parent:GetChildren()) do
+			if value:IsA("Frame") then
+				value:SetAttribute("Active", false)
+			end
+		end
+		Gui.Parent:SetAttribute("Active", true)
+		activeFrame = Gui.Parent.Name
 
 		if Response ~= false then
 			number.Text = tonumber(number.Text) - 1
@@ -156,6 +211,8 @@ Events.Buttons = {
 		local object = Gui.Parent.Name
 		local number: TextLabel = Gui.Parent:WaitForChild("Number")
 
+		print(object)
+
 		local Response
 		if object == "Shirt" then
 			Response = ClothingService:UpdateShirt(tonumber(number.Text) + 1)
@@ -163,7 +220,17 @@ Events.Buttons = {
 			Response = ClothingService:UpdatePants(tonumber(number.Text) + 1)
 		elseif object == "Shoes" then
 			Response = ClothingService:UpdateShoes(tonumber(number.Text) + 1)
+		elseif object == "Hair" then
+			Response = ClothingService:UpdateHair(tonumber(number.Text) + 1)
 		end
+
+		for index, value in ipairs(Gui.Parent.Parent:GetChildren()) do
+			if value:IsA("Frame") then
+				value:SetAttribute("Active", false)
+			end
+		end
+		Gui.Parent:SetAttribute("Active", true)
+		activeFrame = Gui.Parent.Name
 
 		if Response ~= false then
 			number.Text = tonumber(number.Text) + 1
@@ -171,8 +238,6 @@ Events.Buttons = {
 	end,
 
 	["Save"] = function(Gui: GuiButton)
-		Requests:InvokeServer("SaveCharacter")
-
 		local function slideOut()
 			CharacterCustomization.Enabled = true
 
@@ -195,6 +260,26 @@ Events.Buttons = {
 			MenuCamera:Disable()
 
 			CharacterCustomization.Enabled = false
+
+			local ClothingInfo = {
+				Shirt = 0,
+				Pants = 0,
+				Shoes = 0,
+				Hair = 0,
+			}
+
+			for i,v in pairs(workspace.Characters.Rig.Clothes:GetChildren()) do
+				for j,k in pairs(v:GetDescendants()) do
+					if k:IsA("BasePart") and k:GetAttribute("CanColor") then
+						ClothingInfo[v.Name] = k.Color
+						break
+					end
+				end
+			end
+
+
+			-->
+			ClothingService:SaveClothingColors(ClothingInfo)
 		end
 
 		slideOut()
@@ -234,7 +319,7 @@ Events.Buttons = {
 	end,
 
 	["Edit"] = function(Gui: GuiButton)
-		--> isso aqui e quando vc clica no botão pra editar, da uma lida q vc vai chegar onde eu to codando ali
+		--* isso aqui e quando vc clica no botão pra editar, da uma lida q vc vai chegar onde eu to codando ali
 		SlideOut()
 		local a = TweenService:Create(
 			Workspace.CurrentCamera,
@@ -267,8 +352,6 @@ Events.Buttons = {
 		a:Play()
 		a.Completed:Wait()
 		SlideIn()
-		MenuCamera.CF0 = Workspace.CurrentCamera.CFrame
-		MenuCamera:Enable()
 	end,
 	["Close"] = function(Gui: GuiButton)
 		Gui:FindFirstAncestorWhichIsA("ScreenGui").Enabled = false
@@ -286,5 +369,27 @@ Events.Hover = {
 		SoundService:WaitForChild("SFX"):WaitForChild("UIHover"):Play()
 	end,
 }
+
+local Picker = ColorPickerModule.New(CharacterCustomization, {
+	Position = UDim2.fromScale(0.65,0.3)
+})
+
+Picker.Updated:Connect(function(color : Color3)
+	-- Fired every time the color changes
+
+	--[[
+		activeFrame: string | "Hair", "Shirt", "Pants", "Shoes"
+	]]
+	if not Rig.Clothes[activeFrame] then return end
+
+	for i,v in pairs(Rig.Clothes[activeFrame]:GetDescendants()) do
+		if v:IsA("BasePart") and v:GetAttribute("CanColor") then
+			v.Color = color
+		end
+	end
+
+	--print(color)
+end)
+
 
 return Events

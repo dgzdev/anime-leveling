@@ -27,6 +27,21 @@ function GuiObject.new(object: GuiButton)
 		end
 		Events.Buttons.Default(self.Object, self)
 	end)
+
+	self.Object.MouseButton1Down:Connect(function(x, y)
+		local Event = self.Object:GetAttribute("Event")
+		if Events.ButtonDown[Event] then
+			Events.ButtonDown[Event](self.Object, self)
+		end
+	end)
+
+	self.Object.MouseButton1Up:Connect(function(x, y)
+		local Event = self.Object:GetAttribute("Event")
+		if Events.ButtonUp[Event] then
+			Events.ButtonUp[Event](self.Object, self)
+		end
+	end)
+
 	self.Object.MouseEnter:Connect(function(x, y)
 		local Event = self.Object:GetAttribute("Event")
 		if Events.Hover[Event] then

@@ -36,7 +36,7 @@ function PlayerService.OnPlayerJoin(player: Player)
 	local Slot = Manager:GetPlayerSlot()
 	local CharacterData = Slot.Character
 
-	ClothingService:LoadCharacter(CharacterData)
+	ClothingService:LoadCharacter(player, CharacterData)
 end
 
 function PlayerService.OnPlayerLeave(player: Player)
