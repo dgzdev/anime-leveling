@@ -32,6 +32,7 @@ function ClothingService:GetShirt(Player,ShirtNumber)
 end
 
 function ClothingService:SaveShirtColor(Player,CColor3)
+	if not CColor3 then return end
 	local PlayerSlot = PlayerService:GetSlot(Player)
 	local SaveColor = CColor3:ToHex()
 	PlayerSlot.Character.Shirt.Color = SaveColor
@@ -77,6 +78,7 @@ function ClothingService:GetPants(Player,PantsNumber)
 end
 
 function ClothingService:SavePantsColor(Player,CColor3)
+	if not CColor3 then return end
 	local PlayerSlot = PlayerService:GetSlot(Player)
 	local SaveColor = CColor3:ToHex()
 	PlayerSlot.Character.Pants.Color = SaveColor
@@ -121,6 +123,7 @@ function ClothingService:GetShoes(Player,ShoesNumber)
 end
 
 function ClothingService:SaveShoesColor(Player,CColor3)
+	if not CColor3 then return end
 	local PlayerSlot = PlayerService:GetSlot(Player)
 	local SaveColor = CColor3:ToHex()
 	PlayerSlot.Character.Shoes.Color = SaveColor
@@ -195,6 +198,7 @@ function ClothingService:WearHair(HairFolder)
 end
 
 function ClothingService:SaveHairColor(Player,CColor3: Color3)
+	if not CColor3 then return end
 	local PlayerSlot = PlayerService:GetSlot(Player)
 	local SaveColor = CColor3:ToHex()
 	PlayerSlot.Character.Hair.Color = SaveColor

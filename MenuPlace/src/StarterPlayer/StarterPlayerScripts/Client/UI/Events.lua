@@ -261,12 +261,7 @@ Events.Buttons = {
 
 			CharacterCustomization.Enabled = false
 
-			local ClothingInfo = {
-				Shirt = 0,
-				Pants = 0,
-				Shoes = 0,
-				Hair = 0,
-			}
+			local ClothingInfo = {}
 
 			for i,v in pairs(workspace.Characters.Rig.Clothes:GetChildren()) do
 				for j,k in pairs(v:GetDescendants()) do
