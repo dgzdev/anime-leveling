@@ -99,7 +99,7 @@ Events.ButtonDown = {
 		task.spawn(function()
 			repeat
 				task.wait()
-				Character.HumanoidRootPart.CFrame *= CFrame.Angles(0, math.rad(3), 0)
+				Character.HumanoidRootPart.CFrame *= CFrame.Angles(0, math.rad(.5), 0)
 			until TurnRight == false
 		end)
 	end,
@@ -108,7 +108,7 @@ Events.ButtonDown = {
 		task.spawn(function()
 			repeat
 				task.wait()
-				Character.HumanoidRootPart.CFrame *= CFrame.Angles(0, math.rad(-3), 0)
+				Character.HumanoidRootPart.CFrame *= CFrame.Angles(0, math.rad(-.5), 0)
 			until TurnLeft == false
 		end)
 	end,
