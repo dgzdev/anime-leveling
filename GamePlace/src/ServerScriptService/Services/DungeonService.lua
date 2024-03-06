@@ -39,14 +39,13 @@ function DungeonService:GetRandomDungeonRoom()
 	return Rooms[math.random(1, #Rooms)]
 end
 
-
 function DungeonService:GetRandomDoor(Room)
 	local Doors = Room.Doors:GetChildren()
 	return Doors[math.random(1, #Doors)]
 end
 
 function DungeonService:GenerateLinearDungeon(DungeonName: string, MIN_ROOMS: number, MAX_ROOMS: number)
-	local ROOMS_AMOUNT = 5
+	local ROOMS_AMOUNT = 20
 
 	local StartRoom = GetDungeonAssets(DungeonName).Start
 	StartRoom:PivotTo(CFrame.new(0, 400, 0))
@@ -56,7 +55,9 @@ function DungeonService:GenerateLinearDungeon(DungeonName: string, MIN_ROOMS: nu
 
 	local tries = 20
 	local lastRoomTested = 0
-	for roomIndex = 1, ROOMS_AMOUNT, 1 do
+
+	local roomIndex = 1
+	while roomIndex <= ROOMS_AMOUNT do
 		local Room = DungeonService:GetRandomRoom(DungeonName)
 		local AnchorDoor: BasePart = DungeonService:GetRandomDoor(LastRoom)
 		local RoomRandomDoor: BasePart = DungeonService:GetRandomDoor(Room)
@@ -66,16 +67,14 @@ function DungeonService:GenerateLinearDungeon(DungeonName: string, MIN_ROOMS: nu
 
 		Room:PivotTo(AnchorDoor:GetPivot() * CFrame.Angles(0, math.rad(180), 0))
 		if not DungeonService:CanPlace(AnchorDoor, Room) then
-			if lastRoomTested == 0 then
-				lastRoomTested = #DungeonFolder:GetChildren()
-			end
-
-			
 			Room:Destroy()
-			roomIndex -= 1
 			tries -= 1
 
 			if tries <= 0 then
+				if lastRoomTested == 0 then
+					lastRoomTested = #DungeonFolder:GetChildren()
+				end
+
 				lastRoomTested -= 1
 				LastRoom = DungeonFolder:GetChildren()[lastRoomTested]
 				tries = 20
@@ -84,27 +83,23 @@ function DungeonService:GenerateLinearDungeon(DungeonName: string, MIN_ROOMS: nu
 			continue
 		end
 
+		RoomRandomDoor:FindFirstChild("Door"):Destroy()
+		AnchorDoor:FindFirstChild("Door"):Destroy()
 		tries = 20
 
+		roomIndex += 1
 		Room.Parent = DungeonFolder
 		LastRoom = Room
+		task.wait()
 	end
 
-	local BossRoom = GetDungeonAssets(DungeonName).Boss
+	local BossRoom = GetDungeonAssets(DungeonName).Boss:Clone()
 	local AnchorDoor = DungeonService:GetRandomDoor(LastRoom)
 	BossRoom.PrimaryPart = BossRoom.Doors["1"]
 
 	--verificar a se a sala do boss é valida
-	local tries = 5
-	while tries < 0 do
-		if DungeonService:CanPlace(AnchorDoor, BossRoom) then
-			BossRoom:PivotTo(AnchorDoor:GetPivot() * CFrame.Angles(0, math.rad(180), 0))
-		end
 
-		task.wait()
-	end
-
-	BossRoom.Parent = DungeonFolder
+	-- BossRoom.Parent = DungeonFolder
 end
 
 function DungeonService.KnitInit()

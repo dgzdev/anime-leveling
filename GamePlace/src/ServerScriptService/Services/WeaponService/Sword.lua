@@ -34,7 +34,15 @@ local function GetModelMass(model: Model)
 	return mass
 end
 
-local SwordHitFunction = function(Character: Model, hitted: Model, kb: number, vfx: string, sfx: string, dmg: number?)
+local SwordHitFunction = function(
+	Character: Model,
+	hitted: Model,
+	kb: number,
+	vfx: string,
+	sfx: string,
+	dmg: number?,
+	ragdoll: number?
+)
 	local damage = dmg or 10
 	local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
 	if Humanoid then
@@ -56,7 +64,11 @@ local SwordHitFunction = function(Character: Model, hitted: Model, kb: number, v
 		})
 
 		Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * kb) * GetModelMass(hitted)
-		ApplyRagdoll(hitted, 2)
+		local rag = ragdoll or 2
+		if rag > 0 then
+			ApplyRagdoll(hitted, rag)
+		end
+
 		Humanoid:TakeDamage(damage)
 		return false
 	end
@@ -100,7 +112,7 @@ Sword.Default = {
 		end
 
 		Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
-			SwordHitFunction(Character, hitted, 2.5, "SwordHit", "SwordHit")
+			SwordHitFunction(Character, hitted, 2.5, "SwordHit", "SwordHit", nil, 0)
 		end)
 	end,
 
@@ -230,7 +242,7 @@ Sword["King'sLongsword"] = {
 		end
 
 		Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
-			SwordHitFunction(Character, hitted, 2.5, "LightningSwordHit", "SwordHit")
+			SwordHitFunction(Character, hitted, 2.5, "LightningSwordHit", "SwordHit", nil, 0)
 		end)
 	end,
 

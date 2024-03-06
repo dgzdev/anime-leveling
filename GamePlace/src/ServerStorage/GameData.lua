@@ -313,7 +313,7 @@ return {
 		["Kill Goblins"] = {
 			Type = "Kill Enemies",
 			EnemyName = "Goblin",
-			Amount = 5,
+			Amount = 1,
 			Rewards = {
 				Experience = 100,
 			},

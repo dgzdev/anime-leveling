@@ -74,7 +74,7 @@ end
 
 function QuestService:PromptQuest(Player: Player, questName: string)
 	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
-	local QuestData = GameData.gameQuests[questName]
+	local QuestData = table.clone(GameData.gameQuests[questName]) -- importante dar table.clone()
 	if QuestHandler[Player.Name] then
 		return
 	end

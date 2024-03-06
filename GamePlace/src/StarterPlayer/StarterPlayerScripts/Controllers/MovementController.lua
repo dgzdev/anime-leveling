@@ -17,6 +17,8 @@ local CameraEvent = Events:WaitForChild("CAMERA")
 
 local Knit = require(ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit"))
 
+local ProgressionService
+
 local MovementModule = Knit.CreateController({
 	Name = "MovementController",
 
@@ -39,6 +41,11 @@ local MovementModule = Knit.CreateController({
 		},
 	},
 })
+
+function UpdateRunWalkSpeed()
+	local calculate = ProgressionService:CalculateSpeed(Player)
+	MovementModule.CharacterProperties.Movement.RUN.WalkSpeed += calculate()
+end
 
 function MovementModule:ChangeCharacterState(state: CharacterState)
 	if self.CharacterProperties.CharacterState == state then
@@ -104,6 +111,8 @@ function MovementModule:CreateBinds()
 end
 
 function MovementModule:KnitStart()
+	ProgressionService = Knit.GetService("ProgressionService")
+
 	Player.CharacterAdded:Connect(function(character)
 		Character = character
 		Humanoid = character:WaitForChild("Humanoid")

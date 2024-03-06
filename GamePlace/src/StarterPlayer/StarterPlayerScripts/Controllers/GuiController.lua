@@ -139,6 +139,27 @@ function GuiController:ConvertQuestData(questData: {
 	return str:format(TypeString, amount, EnemyString)
 end
 
+function GuiController:AlertGui(message: string)
+	local PlayerHud = Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("PlayerHud")
+	local AlertGui = PlayerHud:WaitForChild("Background"):WaitForChild("AlertGui")
+
+	TweenService:Create(
+		AlertGui,
+		TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
+		{ Position = UDim2.fromScale(0.5, 0.03) }
+	):Play()
+
+	AlertGui.Information.Text = message
+
+	task.delay(5, function()
+		TweenService:Create(
+			AlertGui,
+			TweenInfo.new(0.1, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
+			{ Position = UDim2.fromScale(0.5, -1) }
+		):Play()
+	end)
+end
+
 function GuiController:BindQuestEvents()
 	local PlayerHud = Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("PlayerHud")
 	local QuestGui = PlayerHud:WaitForChild("Background"):WaitForChild("QuestGui")
@@ -146,12 +167,27 @@ function GuiController:BindQuestEvents()
 	local Title = QuestGui:WaitForChild("Title")
 	local Example = QuestGui:WaitForChild("Example")
 
+	local playerQuests = {}
+
 	QuestService.OnQuestEnd:Connect(function(questName: string)
 		local new = QuestGui:FindFirstChild(questName)
 		if new then
+			local questData = playerQuests[questName]
+			local message = "Quest completed! "
+			local rewards = questData.Rewards
+
+			if rewards then
+				message = message .. "Received "
+				if rewards.Experience then
+					message = message .. `<font color="#FFB641">{rewards.Experience} Experience </font>`
+				end
+			end
+
+			GuiController:AlertGui(message)
 			new:Destroy()
 		end
 	end)
+
 	QuestService.OnQuestReceive:Connect(function(questName: string, questData)
 		local questString = self:ConvertQuestData(questData)
 		local new = Example:Clone()
@@ -159,6 +195,8 @@ function GuiController:BindQuestEvents()
 		new.Name = questName
 		new.Parent = QuestGui
 		new.Visible = true
+
+		playerQuests[questName] = questData
 	end)
 	QuestService.OnQuestUpdate:Connect(function(questName: string, questData)
 		local questString = self:ConvertQuestData(questData)
