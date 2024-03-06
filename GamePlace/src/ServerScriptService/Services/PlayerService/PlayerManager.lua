@@ -33,55 +33,6 @@ function PlayerManager:GetProfile()
 	return self.Profile
 end
 
-function PlayerManager:LoadCharacterAppearance(player: Player, data: CharacterData)
-	task.wait()
-	local character = player.Character or player.CharacterAdded:Wait()
-
-	local Head = character:FindFirstChild("Head")
-	local Torso = character:FindFirstChild("Torso")
-	local HumanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-	local RightArm = character:FindFirstChild("Right Arm")
-	local LeftArm = character:FindFirstChild("Left Arm")
-	local RightLeg = character:FindFirstChild("Right Leg")
-	local LeftLeg = character:FindFirstChild("Left Leg")
-
-	local humanoid: Humanoid = character:WaitForChild("Humanoid")
-
-	local HumanoidDescription = Instance.new("HumanoidDescription")
-
-	HumanoidDescription.BodyTypeScale = 1
-	HumanoidDescription.HeadScale = 1
-
-	for name, value in pairs(data) do
-		if name == "Colors" then
-			local Color = Color3.fromRGB(value[1], value[2], value[3])
-			HumanoidDescription.HeadColor = Color
-			HumanoidDescription.LeftArmColor = Color
-			HumanoidDescription.RightArmColor = Color
-			HumanoidDescription.LeftLegColor = Color
-			HumanoidDescription.RightLegColor = Color
-			HumanoidDescription.TorsoColor = Color
-		else
-			HumanoidDescription[name] = value
-		end
-	end
-	task.wait()
-	humanoid:ApplyDescription(HumanoidDescription, Enum.AssetTypeVerification.Default)
-end
-
-export type CharacterData = {
-	["FaceAccessory"]: number,
-	["HairAccessory"]: number,
-	["BackAccessory"]: number,
-	["WaistAccessory"]: number,
-	["ShouldersAccessory"]: number,
-	["NeckAccessory"]: number,
-	["HatAccessory"]: number,
-	["Shirt"]: number,
-	["Pants"]: number,
-	["Colors"]: { number },
-}
-
 function PlayerManager:Newbie()
 	local newbieBadge = GameData.newbieBadge
 	return BadgeService:AwardBadge(self.Player.UserId, newbieBadge)

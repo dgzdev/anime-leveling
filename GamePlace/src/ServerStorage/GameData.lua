@@ -25,30 +25,7 @@ export type PlayerSlot = {
 	Location: string | "Character Creation",
 	LastJoin: string,
 
-	Data: {
-		Level: number,
-
-		Experience: number,
-		Mana: number,
-
-		Gold: number,
-		Equiped: {
-			Weapon: string,
-			Id: number,
-		},
-		Hotbar: { number },
-		Inventory: Inventory,
-		Skills: { [string]: {
-			AchiveDate: number | nil,
-			Level: number,
-		} },
-		Points: {
-			Inteligence: number,
-			Strength: number,
-			Agility: number,
-			Endurance: number,
-		},
-	},
+	Data: SlotData,
 }
 export type SlotData = {
 	Level: number,
@@ -69,6 +46,7 @@ export type SlotData = {
 		AchiveDate: number | nil,
 		Level: number,
 	} },
+	PointsAvailable: number,
 	Points: {
 		Inteligence: number,
 		Strength: number,
@@ -88,15 +66,22 @@ local ProfileTemplate: ProfileData = {
 	Slots = {
 		[1] = {
 			["Character"] = {
-				["FaceAccessory"] = 14579692783,
-				["HairAccessory"] = 16007640385,
-				["BackAccessory"] = 0,
-				["WaistAccessory"] = 0,
-				["ShouldersAccessory"] = 0,
-				["NeckAccessory"] = 0,
-				["HatAccessory"] = 0,
-				["Shirt"] = 11321632482,
-				["Pants"] = 7730552127,
+				["Shirt"] = {
+					Id = 1,
+					Color = "#ff0000",
+				},
+				["Pants"] = {
+					Id = 1,
+					Color = "#ff0000",
+				},
+				["Shoes"] = {
+					Id = 1,
+					Color = "#ff0000",
+				},
+				["Hair"] = {
+					Id = 1,
+					Color = "#ff0000",
+				},
 				["Colors"] = { 255, 204, 153 },
 			},
 			["Location"] = "Character Creation",
@@ -160,6 +145,7 @@ local ProfileTemplate: ProfileData = {
 						["Level"] = 1,
 					},
 				},
+				["PointsAvailable"] = 0,
 				["Points"] = {
 					["Inteligence"] = 0,
 					["Strength"] = 0,
@@ -185,7 +171,7 @@ local function CreateHumanoidDescription(desc: { [string]: any }): HumanoidDescr
 end
 
 return {
-	profileKey = "DEVELOPMENT_2",
+	profileKey = "DEVELOPMENT_6",
 	profileTemplate = ProfileTemplate,
 	defaultInventory = {
 		["Melee"] = {

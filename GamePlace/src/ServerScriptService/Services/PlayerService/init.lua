@@ -3,6 +3,7 @@ local Knit = require(game:GetService("ReplicatedStorage"):WaitForChild("Packages
 local ServerStorage = game:GetService("ServerStorage")
 
 local InventoryService
+local ClothingService
 
 local GameData = require(ServerStorage.GameData)
 
@@ -12,6 +13,7 @@ local PlayerService = Knit.CreateService({
 })
 
 local PlayerManager = require(script.PlayerManager)
+
 local Managers: { [number]: typeof(PlayerManager) | nil } = {}
 
 -- ========================================
@@ -40,7 +42,7 @@ function PlayerService.OnPlayerJoin(player: Player)
 	Data.Quests = GameData.profileTemplate.Slots[1].Data.Quests
 
 	player.CharacterAdded:Connect(function(character)
-		Manager:LoadCharacterAppearance(player, Manager:GetPlayerSlot().Character)
+		ClothingService:LoadCharacter(player, Manager:GetPlayerSlot().Character)
 		PlayerService:EquipWeapon(player, Data.Equiped.Id)
 
 		local Character = player.Character or player.CharacterAdded:Wait()
@@ -49,7 +51,7 @@ function PlayerService.OnPlayerJoin(player: Player)
 		Humanoid.MaxHealth = math.floor(math.sqrt(100 * (Data.Points.Endurance + 1)) * 10)
 	end)
 
-	Manager:LoadCharacterAppearance(player, Manager:GetPlayerSlot().Character)
+	ClothingService:LoadCharacter(player, Manager:GetPlayerSlot().Character)
 	PlayerService:EquipWeapon(player, Data.Equiped.Id)
 end
 
@@ -88,6 +90,16 @@ function PlayerService:GetData(player: Player | Model): GameData.SlotData
 
 	return Manager:GetData()
 end
+
+function PlayerService:GetSlot(player: Player)
+	local Manager = Managers[player.UserId]
+	if not Manager then
+		return error("No manager")
+	end
+
+	return Manager:GetPlayerSlot()
+end
+
 function PlayerService.Client:GetData(player: Player)
 	local data = self.Server:GetData(player)
 	return data
@@ -151,6 +163,7 @@ end
 
 function PlayerService:KnitStart()
 	InventoryService = Knit.GetService("InventoryService")
+	ClothingService = Knit.GetService("ClothingService")
 end
 
 game:BindToClose(function()

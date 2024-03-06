@@ -15,6 +15,10 @@ local function GetModelMass(model: Model)
 	local mass = 0
 	for _, part: BasePart in ipairs(model:GetDescendants()) do
 		if part:IsA("BasePart") then
+			if part.Massless == true then
+				mass += 0.1
+				continue
+			end
 			mass += part:GetMass()
 		end
 	end
@@ -146,7 +150,8 @@ function DashScript:Dash()
 		end
 	end)
 
-	local DashVelocity = DashDirection * 40 * GetModelMass(Character)
+	local mass = GetModelMass(Character)
+	local DashVelocity = DashDirection * 50 * mass
 	HumanoidRootPart.AssemblyLinearVelocity = DashVelocity
 end
 

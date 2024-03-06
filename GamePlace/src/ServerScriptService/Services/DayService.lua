@@ -8,7 +8,7 @@ local DayService = Knit.CreateService({
 
 local stepRate = 1 / 30
 local step = 0.05
-local initialTime = math.random(1, 1440)
+local initialTime = math.random(400, 900)
 
 function DayService:KnitStart()
 	task.spawn(function()

@@ -39,7 +39,7 @@ function ProgressionService:AddExp(Player, Amount)
 
 	if Amount >= ExpToNextLevel or (PlayerData.Experience + Amount >= ExpToNextLevel) then
 		PlayerData.Level += 1
-
+		PlayerData.PointsAvailable += 1
 		self:AddExp(Player, Amount - ExpToNextLevel)
 		self.Client.LevelUp:Fire(Player, PlayerData.Level)
 	end
