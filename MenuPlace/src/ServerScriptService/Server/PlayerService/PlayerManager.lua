@@ -40,7 +40,7 @@ function PlayerManager:LoadProfile()
 	if Profile then
 		Profile:Reconcile()
 
-		--Profile.Data = GameData.profileTemplate
+		-- Profile.Data = GameData.profileTemplate
 
 		self.Profile = Profile
 

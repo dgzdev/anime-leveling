@@ -2,5 +2,7 @@
     "robloxLsp.typeChecking.mode": "Disabled",
     "editor.smoothScrolling": true,
     "editor.cursorSmoothCaretAnimation": "on",
-    "editor.cursorBlinking": "smooth"
+    "editor.cursorBlinking": "smooth",
+    "files.autoSave": "onFocusChange",
+    
 }

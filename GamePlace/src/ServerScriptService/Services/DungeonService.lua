@@ -34,6 +34,12 @@ function DungeonService:CanPlace(AnchorDoor, Room)
 	return true
 end
 
+function DungeonService:GetRandomDungeonRoom()
+	local Rooms = DungeonFolder:GetChildren()
+	return Rooms[math.random(1, #Rooms)]
+end
+
+
 function DungeonService:GetRandomDoor(Room)
 	local Doors = Room.Doors:GetChildren()
 	return Doors[math.random(1, #Doors)]
@@ -48,20 +54,37 @@ function DungeonService:GenerateLinearDungeon(DungeonName: string, MIN_ROOMS: nu
 
 	local LastRoom = StartRoom
 
+	local tries = 20
+	local lastRoomTested = 0
 	for roomIndex = 1, ROOMS_AMOUNT, 1 do
 		local Room = DungeonService:GetRandomRoom(DungeonName)
 		local AnchorDoor: BasePart = DungeonService:GetRandomDoor(LastRoom)
 		local RoomRandomDoor: BasePart = DungeonService:GetRandomDoor(Room)
 
 		Room.PrimaryPart = RoomRandomDoor
+		Room.Name = roomIndex
 
 		Room:PivotTo(AnchorDoor:GetPivot() * CFrame.Angles(0, math.rad(180), 0))
-
 		if not DungeonService:CanPlace(AnchorDoor, Room) then
+			if lastRoomTested == 0 then
+				lastRoomTested = #DungeonFolder:GetChildren()
+			end
+
+			
 			Room:Destroy()
 			roomIndex -= 1
+			tries -= 1
+
+			if tries <= 0 then
+				lastRoomTested -= 1
+				LastRoom = DungeonFolder:GetChildren()[lastRoomTested]
+				tries = 20
+			end
+
 			continue
 		end
+
+		tries = 20
 
 		Room.Parent = DungeonFolder
 		LastRoom = Room
