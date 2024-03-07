@@ -42,7 +42,7 @@ Handler.TerrainMaterialConversion = {
 	--[Enum.Material.Salt] = "Concrete",
 	--[Enum.Material.Limestone] = "Concrete",
 	[Enum.Material.Basalt] = "Concrete",
-	--[Enum.Material.Pavement] = "Concrete",
+	[Enum.Material.Pavement] = "Concrete",
 	[Enum.Material.Brick] = "Brick",
 	--[Enum.Material.Glacier] = "Ice",
 }

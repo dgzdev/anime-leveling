@@ -128,6 +128,15 @@ function EnemyService:CreateEnemy(
 	model:SetAttribute("Enemy", true)
 	model:SetAttribute("Died", false)
 
+	task.spawn(function()
+		while true do
+			if model:GetAttribute("Stun") then
+				task.wait(1)
+				model:SetAttribute("Stun", false)
+			end
+			model:GetAttributeChangedSignal("Stun"):Wait()
+		end
+	end)
 	local function createLightAttack(target: Model)
 		local hum = target:FindFirstChildWhichIsA("Humanoid")
 		if not hum then
@@ -144,10 +153,10 @@ function EnemyService:CreateEnemy(
 	local eN = EasyEnemies.new(model, {
 		health = Humanoid, -- Enemy Health
 		damage = Damage, -- Enemy Base Damage
-		wander = false, -- Enemy Wandering
+		wander = true, -- Enemy Wandering
 
-		attack_range = Inteligence * 5, -- Enemy Search Radius
-		attack_radius = 7, -- Enemy Attack Radius
+		attack_range = Inteligence * 7, -- Enemy Search Radius
+		attack_radius = 12, -- Enemy Attack Radius
 
 		attack_ally = false, -- Enemy Attacking Team Members
 		attack_npcs = false, -- Enemy Attacking Random NPC's

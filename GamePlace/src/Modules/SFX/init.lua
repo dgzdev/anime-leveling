@@ -53,7 +53,11 @@ function Sounds:_Create(target: Model, action: string, min: number?, max: number
 		return error("SFX not found")
 	end
 
-	local sound: Sound = SFX:Clone()
+	local sound: Sound | Folder = SFX:Clone()
+	if sound:IsA("Folder") then
+		sound = self:GetRandomFrom(sound):Clone()
+	end
+
 	sound:SetAttribute("Ignore", true)
 
 	sound.RollOffMaxDistance = max or 60

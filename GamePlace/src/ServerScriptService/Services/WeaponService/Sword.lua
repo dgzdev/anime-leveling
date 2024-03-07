@@ -68,6 +68,8 @@ local SwordHitFunction = function(
 			ApplyRagdoll(hitted, rag)
 		end
 
+		Hitbox2Service:CreateStun(hitted, 0.75)
+
 		Humanoid:TakeDamage(damage)
 		return false
 	end
@@ -83,36 +85,16 @@ Sword.Default = {
 			Combos: number,
 		}
 	)
-		local Model = Character:FindFirstChild("Weapon")
-		if not Model then
-			return
-		end
-
 		local Ray = RaycastParams.new()
 		Ray.FilterType = Enum.RaycastFilterType.Include
 		Ray.FilterDescendantsInstances = { Workspace.Enemies }
 
-		local Params = {
-			dmg = 10,
-			time = 1,
-			kb = 15,
-			max = 250,
-			replicate = {
-				["module"] = "Universal",
-				["effect"] = "Replicate",
-				["VFX"] = "SwordHit",
-				["SFX"] = "SwordHit",
-			},
-		}
-
-		local weapon = Character:FindFirstChild("Weapon")
-		if not weapon then
-			return
+		local WeaponFolder = Character:FindFirstChild("Weapons")
+		for i, weapon: Model in ipairs(WeaponFolder:GetChildren()) do
+			Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
+				SwordHitFunction(Character, hitted, 5, "SwordHit", "SwordHit", nil, 0)
+			end)
 		end
-
-		Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
-			SwordHitFunction(Character, hitted, 5, "SwordHit", "SwordHit", nil, 0)
-		end)
 	end,
 
 	Defense = function(...)
@@ -132,9 +114,12 @@ Sword.Default = {
 		op.FilterType = Enum.RaycastFilterType.Include
 		op.FilterDescendantsInstances = { Workspace.Enemies }
 
-		Hitbox2Service:CreatePartHitbox(Character, Vector3.new(5, 5, 5), 42, function(hitted)
-			SwordHitFunction(Character, hitted, 30, "SwordHit", "SwordHit")
-		end, op)
+		local WeaponFolder = Character:FindFirstChild("Weapons")
+		for i, weapon: Model in ipairs(WeaponFolder:GetChildren()) do
+			Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
+				SwordHitFunction(Character, hitted, 5, "SwordHit", "SwordHit", nil, 0)
+			end, op)
+		end
 	end,
 }
 
@@ -226,23 +211,16 @@ Sword["King'sLongsword"] = {
 		InputState: Enum.UserInputState,
 		p: { Position: CFrame, Combo: number, Combos: number }
 	)
-		local Model = Character:FindFirstChild("Weapon")
-		if not Model then
-			return
-		end
-
 		local Ray = RaycastParams.new()
 		Ray.FilterType = Enum.RaycastFilterType.Include
 		Ray.FilterDescendantsInstances = { Workspace:FindFirstChild("Enemies") }
 
-		local weapon = Character:FindFirstChild("Weapon")
-		if not weapon then
-			return
+		local WeaponFolder = Character:FindFirstChild("Weapons")
+		for i, weapon: Model in ipairs(WeaponFolder:GetChildren()) do
+			Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
+				SwordHitFunction(Character, hitted, 5, "LightningSwordHit", "SwordHit", nil, 0)
+			end)
 		end
-
-		Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
-			SwordHitFunction(Character, hitted, 5, "LightningSwordHit", "SwordHit", nil, 0)
-		end)
 	end,
 
 	Defense = function(...)
@@ -271,9 +249,12 @@ Sword["King'sLongsword"] = {
 		op.FilterType = Enum.RaycastFilterType.Include
 		op.FilterDescendantsInstances = { Workspace.Enemies }
 
-		Hitbox2Service:CreatePartHitbox(Character, Vector3.new(5, 5, 5), 42, function(hitted)
-			SwordHitFunction(Character, hitted, 30, "LightningSwordHit", "SwordHit")
-		end, op)
+		local WeaponFolder = Character:FindFirstChild("Weapons")
+		for i, weapon: Model in ipairs(WeaponFolder:GetChildren()) do
+			Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
+				SwordHitFunction(Character, hitted, 5, "LightningSwordHit", "SwordHit", nil, 0)
+			end, op)
+		end
 
 		RenderService:RenderForPlayersInArea(Mid.Position, 200, {
 			["module"] = "Universal",
@@ -391,9 +372,12 @@ Sword["King'sLongsword"] = {
 			root = Root,
 		})
 
-		Hitbox2Service:CreateFixedHitbox(Mid, Vector3.new(5, 5, Size), 32, function(hitted)
-			SwordHitFunction(Character, hitted, 30, "LightningSwordHit", "SwordHit")
-		end)
+		local WeaponFolder = Character:FindFirstChild("Weapons")
+		for i, weapon: Model in ipairs(WeaponFolder:GetChildren()) do
+			Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
+				SwordHitFunction(Character, hitted, 5, "LightningSwordHit", "SwordHit", nil, 0)
+			end, op)
+		end
 	end,
 }
 
