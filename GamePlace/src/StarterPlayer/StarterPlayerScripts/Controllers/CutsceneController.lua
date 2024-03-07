@@ -56,6 +56,10 @@ local function AnimateCamera(animation: string)
 				continue
 			end
 
+			if AnimationTrack.IsPlaying == false then
+				break
+			end
+
 			if i == 139 then
 				Connections[#Connections + 1] = Character.DescendantAdded:Connect(function(desc: BasePart)
 					if desc:IsA("BasePart") then
@@ -132,8 +136,8 @@ local function AnimateCamera(animation: string)
 		end
 
 		Root.CFrame = Torso.CFrame
-		AnimationTrack:Stop()
 		task.wait()
+		AnimationTrack:Stop()
 		CameraEvent:Fire("Enable")
 		task.wait()
 		Humanoid:ChangeState(Enum.HumanoidStateType.Running)
