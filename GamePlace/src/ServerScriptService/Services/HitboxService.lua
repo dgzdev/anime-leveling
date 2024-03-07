@@ -26,13 +26,12 @@ local function GetModelMass(model: Model)
 	for _, part: BasePart in ipairs(model:GetDescendants()) do
 		if part:IsA("BasePart") then
 			if part.Massless then
-				mass += 0.1
 				continue
 			end
 			mass += part:GetMass()
 		end
 	end
-	return mass
+	return mass + 1
 end
 
 local HitboxService = Knit.CreateService({

@@ -36,13 +36,12 @@ local function GetModelMass(model: Model)
 	for _, part: BasePart in ipairs(model:GetDescendants()) do
 		if part:IsA("BasePart") then
 			if part.Massless then
-				mass += 0.1
 				continue
 			end
 			mass += part:GetMass()
 		end
 	end
-	return mass
+	return mass + 1
 end
 
 local Camera = Workspace.CurrentCamera
@@ -174,7 +173,7 @@ local KingsLongsword = {
 						PlayingAnimation:AdjustSpeed(0)
 					end)
 
-					local V = (Camera.CFrame.LookVector * 60) * GetModelMass(Character)
+					local V = (Camera.CFrame.LookVector * 120) * GetModelMass(Character)
 					RootPart.AssemblyLinearVelocity = V * Vector3.new(1, 0.4, 1)
 
 					VFX:ApplyParticle(Character, "Smoke")

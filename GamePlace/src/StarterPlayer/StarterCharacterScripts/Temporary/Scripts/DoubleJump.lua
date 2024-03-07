@@ -5,13 +5,12 @@ local function GetModelMass(model: Model)
 	for _, part: BasePart in ipairs(model:GetDescendants()) do
 		if part:IsA("BasePart") then
 			if part.Massless then
-				mass += 0.1
 				continue
 			end
 			mass += part:GetMass()
 		end
 	end
-	return mass
+	return mass + 1
 end
 
 function DoubleJump:Init()
@@ -32,7 +31,7 @@ function DoubleJump:Init()
 					if jumpUsage >= 1 then
 						jumpUsage -= 1
 
-						local LookV = humanoid.MoveDirection * 25 * GetModelMass(char)
+						local LookV = humanoid.MoveDirection * 50 * GetModelMass(char)
 						humanoidRootPart.AssemblyLinearVelocity = LookV
 
 						humanoid:ChangeState(Enum.HumanoidStateType.Jumping)

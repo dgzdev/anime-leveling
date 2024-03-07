@@ -25,13 +25,12 @@ local function GetModelMass(model: Model)
 	for _, part: BasePart in ipairs(model:GetDescendants()) do
 		if part:IsA("BasePart") then
 			if part.Massless then
-				mass += 0.1
 				continue
 			end
 			mass += part:GetMass()
 		end
 	end
-	return mass
+	return mass + 1
 end
 
 local SwordHitFunction = function(
@@ -112,7 +111,7 @@ Sword.Default = {
 		end
 
 		Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
-			SwordHitFunction(Character, hitted, 2.5, "SwordHit", "SwordHit", nil, 0)
+			SwordHitFunction(Character, hitted, 5, "SwordHit", "SwordHit", nil, 0)
 		end)
 	end,
 
@@ -134,7 +133,7 @@ Sword.Default = {
 		op.FilterDescendantsInstances = { Workspace.Enemies }
 
 		Hitbox2Service:CreatePartHitbox(Character, Vector3.new(5, 5, 5), 42, function(hitted)
-			SwordHitFunction(Character, hitted, 15, "SwordHit", "SwordHit")
+			SwordHitFunction(Character, hitted, 30, "SwordHit", "SwordHit")
 		end, op)
 	end,
 }
@@ -242,7 +241,7 @@ Sword["King'sLongsword"] = {
 		end
 
 		Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
-			SwordHitFunction(Character, hitted, 2.5, "LightningSwordHit", "SwordHit", nil, 0)
+			SwordHitFunction(Character, hitted, 5, "LightningSwordHit", "SwordHit", nil, 0)
 		end)
 	end,
 
@@ -273,7 +272,7 @@ Sword["King'sLongsword"] = {
 		op.FilterDescendantsInstances = { Workspace.Enemies }
 
 		Hitbox2Service:CreatePartHitbox(Character, Vector3.new(5, 5, 5), 42, function(hitted)
-			SwordHitFunction(Character, hitted, 15, "LightningSwordHit", "SwordHit")
+			SwordHitFunction(Character, hitted, 30, "LightningSwordHit", "SwordHit")
 		end, op)
 
 		RenderService:RenderForPlayersInArea(Mid.Position, 200, {
@@ -361,7 +360,7 @@ Sword["King'sLongsword"] = {
 			Humanoid:TakeDamage(30)
 			RagdollService:Ragdoll(Model, 1.5)
 
-			local V = (Data.Position.LookVector * 15) * GetModelMass(Model)
+			local V = (Data.Position.LookVector * 30) * GetModelMass(Model)
 			Humanoid.RootPart.AssemblyLinearVelocity = V + Vector3.new(0, 15, 0)
 
 			VFX:ApplyParticle(Model, "LightningSwordHit")
@@ -393,7 +392,7 @@ Sword["King'sLongsword"] = {
 		})
 
 		Hitbox2Service:CreateFixedHitbox(Mid, Vector3.new(5, 5, Size), 32, function(hitted)
-			SwordHitFunction(Character, hitted, 15, "LightningSwordHit", "SwordHit")
+			SwordHitFunction(Character, hitted, 30, "LightningSwordHit", "SwordHit")
 		end)
 	end,
 }

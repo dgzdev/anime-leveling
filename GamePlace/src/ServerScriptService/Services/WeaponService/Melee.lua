@@ -17,13 +17,12 @@ local function GetModelMass(model: Model)
 	for _, part: BasePart in ipairs(model:GetDescendants()) do
 		if part:IsA("BasePart") then
 			if part.Massless then
-				mass += 0.1
 				continue
 			end
 			mass += part:GetMass()
 		end
 	end
-	return mass
+	return mass + 1
 end
 
 local function ApplyRagdoll(model: Model, time: number)
@@ -68,7 +67,7 @@ Melee.Default = {
 					CombatService:RegisterHumanoidKilled(Character, Humanoid)
 				end
 
-				Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * 5)
+				Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * 10)
 					* GetModelMass(hitted)
 				Humanoid:TakeDamage(damage)
 			end
@@ -158,7 +157,7 @@ Melee.Melee = {
 					CombatService:RegisterHumanoidKilled(Character, Humanoid)
 				end
 				ApplyRagdoll(hitted, 2)
-				Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * 15)
+				Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * 30)
 					* GetModelMass(hitted)
 				Humanoid:TakeDamage(damage)
 			end
@@ -198,7 +197,7 @@ Melee.Melee = {
 					CombatService:RegisterHumanoidKilled(Character, Humanoid)
 				end
 				ApplyRagdoll(hitted, 2)
-				Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * 10)
+				Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * 20)
 					* GetModelMass(hitted)
 				Humanoid:TakeDamage(damage)
 			end

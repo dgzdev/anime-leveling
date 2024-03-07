@@ -16,13 +16,12 @@ local function GetModelMass(model: Model)
 	for _, part: BasePart in ipairs(model:GetDescendants()) do
 		if part:IsA("BasePart") then
 			if part.Massless == true then
-				mass += 0.1
 				continue
 			end
 			mass += part:GetMass()
 		end
 	end
-	return mass
+	return mass + 1
 end
 
 local function CheckHigher(Vector: Vector3)
@@ -151,7 +150,7 @@ function DashScript:Dash()
 	end)
 
 	local mass = GetModelMass(Character)
-	local DashVelocity = DashDirection * 50 * mass
+	local DashVelocity = DashDirection * 100 * mass
 	HumanoidRootPart.AssemblyLinearVelocity = DashVelocity
 end
 

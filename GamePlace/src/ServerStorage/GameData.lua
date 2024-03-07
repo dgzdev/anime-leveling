@@ -99,7 +99,7 @@ local ProfileTemplate: ProfileData = {
 					["Id"] = 1,
 				},
 				["Quests"] = {},
-				["Hotbar"] = { 1, 3, 4, 5 },
+				["Hotbar"] = { 1, 4, 5, 6 },
 				["Inventory"] = {
 					["Melee"] = {
 						AchiveDate = os.time(),
@@ -125,6 +125,11 @@ local ProfileTemplate: ProfileData = {
 						AchiveDate = os.time(),
 						Rank = "S",
 						Id = 5,
+					},
+					["TestDagger"] = {
+						AchiveDate = os.time(),
+						Rank = "E",
+						Id = 6,
 					},
 				},
 				["Skills"] = {
@@ -199,6 +204,11 @@ return {
 			Rank = "S",
 			Id = 5,
 		},
+		["TestDagger"] = {
+			AchiveDate = os.time(),
+			Rank = "E",
+			Id = 6,
+		},
 	},
 	gameWeapons = {
 		["Melee"] = {
@@ -227,6 +237,12 @@ return {
 			Type = "Sword",
 			Damage = 50,
 			Rarity = "S",
+			SubRarity = "I", -- "II" | "III" | "IV" | "V"
+		},
+		["TestDagger"] = {
+			Type = "Dagger",
+			Damage = 5,
+			Rarity = "E",
 			SubRarity = "I", -- "II" | "III" | "IV" | "V"
 		},
 	},

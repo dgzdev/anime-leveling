@@ -46,28 +46,11 @@ function Hud:OrganizeHotbar(Profile)
 
 			Slot.Visible = true
 
-			if itemType == "Melee" then
-				local itemImage = ReplicatedStorage:WaitForChild("Models")
-					:WaitForChild(itemType .. "s")
-					:FindFirstChild(itemName, true) :: ImageLabel
-				if not itemImage then
-					continue
-				end
-
-				local itemClone = itemImage:Clone() :: ImageLabel
-
-				itemClone.Parent = Slot
-			end
-
-			if itemType == "Sword" then
-				local itemModel = ReplicatedStorage:WaitForChild("Models")
-					:WaitForChild(itemType .. "s")
-					:FindFirstChild(itemName, true)
-				if not itemModel then
-					continue
-				end
-
-				local itemClone = itemModel:Clone() :: Model
+			local HaveModel = ReplicatedStorage.Models[itemType .. "s"][itemName]:FindFirstChildWhichIsA("Model", true)
+			local HaveImage =
+				ReplicatedStorage.Models[itemType .. "s"][itemName]:FindFirstChildWhichIsA("ImageLabel", true)
+			if HaveModel then
+				local itemClone = HaveModel:Clone() :: Model
 
 				local SlotImage = Slot:WaitForChild("SlotImage") :: ViewportFrame
 				local WorldModel = SlotImage:WaitForChild("WorldModel") :: WorldModel
@@ -79,7 +62,6 @@ function Hud:OrganizeHotbar(Profile)
 
 				itemClone.Parent = WorldModel
 				local Size = itemClone:GetExtentsSize().Magnitude
-				local size = itemClone:GetExtentsSize()
 				itemClone:PivotTo(CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(90), math.rad(90), 0))
 
 				Camera.FieldOfView = 80
@@ -87,6 +69,11 @@ function Hud:OrganizeHotbar(Profile)
 				Camera.CameraType = Enum.CameraType.Scriptable
 				Camera.CFrame = CFrame.new(0, 1.4, (Size / 2) + 1)
 				Camera.Focus = Camera.CFrame
+			end
+			if HaveImage then
+				local itemClone = HaveImage:Clone() :: ImageLabel
+
+				itemClone.Parent = Slot
 			end
 		end
 	end
