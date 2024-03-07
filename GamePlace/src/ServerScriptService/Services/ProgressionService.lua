@@ -14,12 +14,40 @@ local ProgressionService = Knit.CreateService({
 		ExpChanged = Knit.CreateSignal(),
 
 		NewPoint = Knit.CreateSignal(),
+		PointWasted = Knit.CreateSignal(),
 	},
 })
+
+ProgressionService.LocalStatus = {
+	["Inteligence"] = 0,
+	["Strength"] = 0,
+	["Agility"] = 0,
+	["Endurance"] = 0,
+}
 
 function ProgressionService:GetCurrentLevel(Player)
 	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
 	return PlayerData.Level
+end
+
+function ProgressionService:GetPointsAvailable(Player)
+	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
+
+	return PlayerData.PointsAvailable
+end
+
+function ProgressionService:GetPointsDistribuition(Player)
+	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
+
+	return PlayerData.Points
+end
+
+function ProgressionService.Client:GetPointsDistribuition(Player)
+	return self.Server:GetPointsDistribuition(Player)
+end
+
+function ProgressionService.Client:GetPointsAvailable(Player)
+	return self.Server:GetPointsAvailable(Player)
 end
 
 function ProgressionService:GetCurrentExperience(Player)
@@ -30,12 +58,22 @@ end
 function ProgressionService:ApplyAvailablePoint(Player, PointType)
 	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
 
+	if PlayerData.PointsAvailable < 1 then
+		return false -- No points available
+	end
+
 	if not PlayerData.Points[PointType] then
-		return false
+		return false -- Invalid point type
 	end
 
 	PlayerData.Points[PointType] += 1
 	PlayerData.PointsAvailable -= 1
+
+	if self.LocalStatus[PointType] then
+		self.LocalStatus[PointType] += 1
+	end
+
+	return true
 end
 
 function ProgressionService:ExpToNextLevel(Player)
@@ -73,6 +111,10 @@ function ProgressionService:AddExp(Player, Amount)
 	PlayerData.Experience += Amount
 
 	self.Client.ExpChanged:Fire(Player, PlayerData.Experience, self:ExpToNextLevel(Player))
+end
+
+function ProgressionService.Client:ApplyAvailablePoint(Player, PointType)
+	return self.Server:ApplyAvailablePoint(Player, PointType)
 end
 
 function ProgressionService.Client:CalculateSpeed(Player)

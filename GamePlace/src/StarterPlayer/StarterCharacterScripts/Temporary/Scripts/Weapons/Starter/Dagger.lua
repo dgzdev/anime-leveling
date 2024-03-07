@@ -100,6 +100,10 @@ local Dagger = {
 				return
 			end
 
+			if Character:GetAttribute("Stun") then
+				return
+			end
+
 			local Combos = Animations:WaitForChild("Dagger"):WaitForChild("Hit"):GetChildren()
 			table.sort(Combos, function(a, b)
 				return a.Name < b.Name
@@ -151,6 +155,10 @@ local Dagger = {
 			end
 
 			if CheckCooldown("Defense") then
+				return
+			end
+
+			if Character:GetAttribute("Stun") then
 				return
 			end
 		end,

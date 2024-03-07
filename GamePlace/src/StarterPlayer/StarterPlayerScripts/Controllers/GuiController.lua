@@ -11,6 +11,11 @@ local GuiController = Knit.CreateController({
 	Name = "GuiController",
 })
 
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+local Menu_UI = PlayerGui:WaitForChild("Menu_UI")
+local Points = Menu_UI:WaitForChild("Points")
+
 function GuiController:BindPlayerHud()
 	local plrGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 	local teste = plrGui:WaitForChild("PlayerHud")
@@ -207,6 +212,36 @@ function GuiController:BindQuestEvents()
 	end)
 end
 
+function GuiController:RenderPoints(points: {
+	Attack: number,
+	Endurance: number,
+	Agility: number,
+	Inteligence: number,
+}?)
+	local Background = Points:WaitForChild("Background")
+	local PointsGui = Background:WaitForChild("Points")
+	local PointsValue: TextLabel = Background:WaitForChild("PointsValue")
+	local PlayerPoints = points or ProgressionService:GetPointsDistribuition(Players.LocalPlayer)
+
+	for pointName: string, value: number in pairs(PlayerPoints) do
+		local point = PointsGui:FindFirstChild(pointName)
+		if point then
+			local PointsText = point:FindFirstChild("Points", true)
+			local Size = point:FindFirstChild("Size", true)
+
+			PointsText.Text = tostring(value)
+			local percentage = value / 100
+
+			TweenService:Create(Size, TweenInfo.new(1.2), {
+				Size = UDim2.fromScale(1, percentage),
+			}):Play()
+		end
+	end
+
+	local Text = "%u POINTS"
+	PointsValue.Text = Text:format(ProgressionService:GetPointsAvailable(Players.LocalPlayer) or 0)
+end
+
 function GuiController:KnitStart()
 	local camera = Workspace.CurrentCamera
 
@@ -220,6 +255,14 @@ function GuiController:KnitStart()
 
 	self:BindPlayerHud()
 	self:BindQuestEvents()
+	self:RenderPoints()
+
+	ProgressionService.NewPoint:Connect(function()
+		self:RenderPoints()
+	end)
+	ProgressionService.PointWasted:Connect(function()
+		self:RenderPoints()
+	end)
 
 	local amt = -0.005
 	local defaultFov = 70

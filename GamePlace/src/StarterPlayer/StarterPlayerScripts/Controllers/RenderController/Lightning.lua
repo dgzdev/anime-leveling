@@ -132,6 +132,42 @@ function LightningModule.Lightning(RenderData: { root: BasePart })
 	VFX:ApplyParticle(Root.Parent, "Fell")
 end
 
+function LightningModule.LStrike(RenderData: { root: BasePart })
+	local Root = RenderData.root
+	RocksModule.Ground(
+		Root.CFrame.Position + Vector3.new(0, -5, 0),
+		15,
+		Vector3.new(2.5, 2.5, 2.5),
+		{ Workspace.CurrentCamera, Workspace.Enemies, Workspace.NPC },
+		15,
+		false,
+		3
+	)
+
+	VFX:ApplyParticle(RenderData.root, "Slash", nil, CFrame.new(0, 0, -2) * CFrame.Angles(0, math.rad(180), 0))
+
+	local A1, A2 = {}, Root:FindFirstChildWhichIsA("Attachment")
+
+	A1.WorldPosition, A1.WorldAxis = Root.CFrame.Position, Vector3.new()
+
+	for i = 1, 5, 1 do
+		task.wait(0.1)
+		local NewBolt = LightningBolt.new(A1, A2, 120)
+		NewBolt.Color = Color3.new(0, 0, 0)
+		NewBolt.CurveSize0, NewBolt.CurveSize1 = 1, 2
+		NewBolt.PulseSpeed = 6
+		NewBolt.AnimationSpeed = 10
+		NewBolt.ColorOffsetSpeed = 6
+		NewBolt.PulseLength = 0.5
+		NewBolt.FadeLength = 0.25
+		NewBolt.MaxRadius = 1
+
+		LightningSparks.new(NewBolt)
+	end
+
+	VFX:ApplyParticle(Root.Parent, "Fell")
+end
+
 function LightningModule.Start() end
 
 function LightningModule.Caller(RenderData)

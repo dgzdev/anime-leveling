@@ -104,6 +104,10 @@ local KingsLongsword = {
 					return
 				end
 
+				if Character:GetAttribute("Stun") then
+					return
+				end
+
 				-- # HOLD ATTACK
 				local Animation: Animation = ReplicatedStorage:WaitForChild("Animations")
 					:WaitForChild("FlashStrike Hold")
@@ -150,6 +154,10 @@ local KingsLongsword = {
 					return
 				end
 
+				if Character:GetAttribute("Stun") then
+					return
+				end
+
 				RootPart.Anchored = false
 
 				if HoldingTime > 0.45 then
@@ -173,7 +181,7 @@ local KingsLongsword = {
 						PlayingAnimation:AdjustSpeed(0)
 					end)
 
-					local V = (Camera.CFrame.LookVector * 120) * GetModelMass(Character)
+					local V = (Camera.CFrame.LookVector * 200) * GetModelMass(Character)
 					RootPart.AssemblyLinearVelocity = V * Vector3.new(1, 0.4, 1)
 
 					VFX:ApplyParticle(Character, "Smoke")

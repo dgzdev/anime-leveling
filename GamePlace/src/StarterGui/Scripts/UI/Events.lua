@@ -10,6 +10,7 @@ local Knit = require(game.ReplicatedStorage.Packages.Knit)
 Knit.OnStart():await()
 
 local QuestService = Knit.GetService("QuestService")
+local ProgressionService = Knit.GetService("ProgressionService")
 
 local function LockMouse(boolean: boolean)
 	if boolean then
@@ -58,6 +59,31 @@ local function toggleTabGui(TabGui: ScreenGui)
 end
 
 Events.Buttons = {
+	["Use"] = function(Gui: GuiButton)
+		local PointType = Gui.Parent.Parent.Name
+
+		local max = 100
+
+		local success = ProgressionService:ApplyAvailablePoint(PointType)
+		if success then
+			local Size = Gui.Parent.Parent:FindFirstChild("Size", true)
+			local Points = Gui.Parent.Parent:FindFirstChild("Points", true)
+			local Background = Gui:FindFirstAncestor("Background") --- dc
+			local PointsValue = Background:FindFirstChild("PointsValue", true)
+
+			local text = "%c POINTS"
+			PointsValue.Text = text:format(ProgressionService:GetPointsAvailable(Players.LocalPlayer) or 0)
+
+			Points.Text = tonumber(Points.Text) + 1
+
+			local percentage = tonumber(Points.Text) / max
+
+			TweenService:Create(Size, TweenInfo.new(1.2), {
+				Size = UDim2.fromScale(1, percentage),
+			}):Play()
+		end
+		--print(PointType)
+	end,
 	["Close"] = function(Gui: GuiButton)
 		Gui:FindFirstAncestorWhichIsA("ScreenGui").Enabled = false
 		CameraEvent:Fire("Lock")

@@ -1,5 +1,6 @@
 local Debris = game:GetService("Debris")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerStorage = game:GetService("ServerStorage")
 local Workspace = game:GetService("Workspace")
 local Sword = {}
 
@@ -10,8 +11,26 @@ local Default
 local RenderService
 local RagdollService
 local HitboxService
-local Hitbox2Service
 local CombatService
+local PlayerService
+local ProgressionService
+
+local GameData = require(ServerStorage.GameData)
+
+local function CalculateDamage(BaseDamage)
+	local LocalStatus = ProgressionService.LocalStatus
+
+	if not BaseDamage then
+		return
+	end
+
+	if not LocalStatus.Strength then
+		warn("Couldn't find any local status with this name")
+		return
+	end
+
+	return math.floor(math.sqrt((10 * BaseDamage) * ((LocalStatus.Strength + 1) * 0.3)))
+end
 
 local function ApplyRagdoll(model: Model, time: number)
 	RagdollService:Ragdoll(model, time)
@@ -42,7 +61,25 @@ local SwordHitFunction = function(
 	dmg: number?,
 	ragdoll: number?
 )
-	local damage = dmg or 10
+	---eu vou fazer um calculo com o parametro de dano base
+	--> infelizmente, ta tudo separado e cada tipo de arma tem uma funcao dessa
+	--> o ideal seria q ele pegasse o dano base da arma q ele ta usando, somasse com os pontos gastos e multiplicasse pelo tipo de ataque
+	-- ! ja venho
+
+	local data = PlayerService:GetData(Character)
+	if not data then
+		return
+	end
+
+	local weapon = data.Equiped.Weapon
+	local weaponData = GameData.gameWeapons[weapon]
+	if not weaponData then
+		return
+	end
+
+	dmg = dmg or 1
+
+	local damage = CalculateDamage(weaponData.Damage * dmg)
 	local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
 	if Humanoid then
 		if Humanoid:GetAttribute("Died") then
@@ -64,11 +101,12 @@ local SwordHitFunction = function(
 
 		Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * kb) * GetModelMass(hitted)
 		local rag = ragdoll or 2
-		if rag > 0 then
-			ApplyRagdoll(hitted, rag)
-		end
 
-		Hitbox2Service:CreateStun(hitted, 0.75)
+		HitboxService:CreateStun(hitted, 0.75, function()
+			if rag > 0 then
+				ApplyRagdoll(hitted, rag)
+			end
+		end)
 
 		Humanoid:TakeDamage(damage)
 		return false
@@ -91,7 +129,7 @@ Sword.Default = {
 
 		local WeaponFolder = Character:FindFirstChild("Weapons")
 		for i, weapon: Model in ipairs(WeaponFolder:GetChildren()) do
-			Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
+			HitboxService:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
 				SwordHitFunction(Character, hitted, 5, "SwordHit", "SwordHit", nil, 0)
 			end)
 		end
@@ -116,7 +154,7 @@ Sword.Default = {
 
 		local WeaponFolder = Character:FindFirstChild("Weapons")
 		for i, weapon: Model in ipairs(WeaponFolder:GetChildren()) do
-			Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
+			HitboxService:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
 				SwordHitFunction(Character, hitted, 5, "SwordHit", "SwordHit", nil, 0)
 			end, op)
 		end
@@ -217,7 +255,7 @@ Sword["King'sLongsword"] = {
 
 		local WeaponFolder = Character:FindFirstChild("Weapons")
 		for i, weapon: Model in ipairs(WeaponFolder:GetChildren()) do
-			Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
+			HitboxService:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
 				SwordHitFunction(Character, hitted, 5, "LightningSwordHit", "SwordHit", nil, 0)
 			end)
 		end
@@ -251,7 +289,7 @@ Sword["King'sLongsword"] = {
 
 		local WeaponFolder = Character:FindFirstChild("Weapons")
 		for i, weapon: Model in ipairs(WeaponFolder:GetChildren()) do
-			Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
+			HitboxService:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
 				SwordHitFunction(Character, hitted, 5, "LightningSwordHit", "SwordHit", nil, 0)
 			end, op)
 		end
@@ -374,7 +412,7 @@ Sword["King'sLongsword"] = {
 
 		local WeaponFolder = Character:FindFirstChild("Weapons")
 		for i, weapon: Model in ipairs(WeaponFolder:GetChildren()) do
-			Hitbox2Service:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
+			HitboxService:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
 				SwordHitFunction(Character, hitted, 5, "LightningSwordHit", "SwordHit", nil, 0)
 			end, op)
 		end
@@ -384,15 +422,16 @@ Sword["King'sLongsword"] = {
 function Sword.Start(default)
 	default = default
 
-	Knit.OnStart()
-
 	RenderService = Knit.GetService("RenderService")
 	RagdollService = Knit.GetService("RagdollService")
 
 	HitboxService = Knit.GetService("HitboxService")
-	Hitbox2Service = Knit.GetService("Hitbox2Service")
+	HitboxService = Knit.GetService("HitboxService")
 
+	ProgressionService = Knit.GetService("ProgressionService")
 	CombatService = Knit.GetService("CombatService")
+
+	PlayerService = Knit.GetService("PlayerService")
 end
 
 return Sword

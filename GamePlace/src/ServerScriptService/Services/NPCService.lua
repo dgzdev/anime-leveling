@@ -8,14 +8,12 @@ local TextService = game:GetService("TextService")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
-
 local GameData = require(ServerStorage.GameData)
 local Knit = require(ReplicatedStorage.Packages.Knit)
 
 local Module = Knit.CreateService({
 	Name = "NPCService",
-	Client = {
-	},
+	Client = {},
 })
 
 local QuestService
@@ -57,7 +55,6 @@ function NPC.new(Character: Model)
 		Character:SetAttribute("Title", questData.Title)
 		Character:SetAttribute("Description", questData.Description)
 	end
-
 
 	--// Prepare the NPC
 	self:Prepare()

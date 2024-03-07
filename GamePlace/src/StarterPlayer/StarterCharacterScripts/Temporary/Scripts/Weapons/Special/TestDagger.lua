@@ -1,3 +1,4 @@
+-- Lightning Strike
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
 local WeaponService
 
@@ -57,9 +58,9 @@ end
 local function SetCooldown(name: string, cooldown: number)
 	Cooldowns[name] = tick() + cooldown
 	local Frame: Frame = Background:FindFirstChild(name)
-	Frame.BackgroundTransparency = 0.65
 
 	if Frame then
+		Frame.BackgroundTransparency = 0.65
 		task.spawn(function()
 			local Ready: ImageLabel = Frame:WaitForChild("Ready")
 			Ready.Visible = false
@@ -82,7 +83,7 @@ local function CheckCooldown(name: string)
 	return false
 end
 
-local LuxurySword = {
+local TestDagger = {
 	[Enum.KeyCode.Z] = {
 		callback = function(action, inputstate, inputobject)
 			if inputstate == Enum.UserInputState.Cancel then
@@ -95,108 +96,43 @@ local LuxurySword = {
 				return
 			end
 
-			if inputstate == Enum.UserInputState.Begin then
-				if CheckCooldown("FlashStrike") then
-					return
-				end
-
-				if Humanoid.Health <= 0 then
-					return
-				end
-
-				if Character:GetAttribute("Stun") then
-					return
-				end
-
-				-- # HOLD ATTACK
-				local Animation: Animation = ReplicatedStorage:WaitForChild("Animations")
-					:WaitForChild("FlashStrike Hold")
-				PlayingAnimation = Animator:LoadAnimation(Animation)
-
-				PlayingAnimation:Play(0.15)
-
-				RunService:BindToRenderStep("Lockmouse", Enum.RenderPriority.Camera.Value, Lockmouse)
-
-				RootPart.Anchored = true
-
-				task.spawn(function()
-					local anim = PlayingAnimation.Name
-					while true do
-						if anim ~= PlayingAnimation.Name then
-							break
-						end
-						if PlayingAnimation.IsPlaying then
-							HoldingTime += 0.1
-						else
-							break
-						end
-						task.wait(0.1)
-					end
-				end)
-
-				PlayingAnimation:GetMarkerReachedSignal("HoldEnd"):Connect(function()
-					PlayingAnimation:AdjustSpeed(0)
-				end)
-			elseif inputstate == Enum.UserInputState.End then
-				if CheckCooldown("FlashStrike") then
-					return
-				end
-
-				if Humanoid.Health <= 0 then
-					return
-				end
-
-				if Character:GetAttribute("Stun") then
-					return
-				end
-
-				-- # RELEASE ATTACK
-				if PlayingAnimation then
-					PlayingAnimation:Stop(0)
-				end
-
-				RootPart.Anchored = false
-
-				if HoldingTime > 0.45 then
-					SetCooldown("FlashStrike", 1)
-					SFX:Create(RootPart, "Rebellion slash", 0, 60, false)
-
-					task.spawn(function()
-						WeaponService:WeaponInput("FlashStrike", Enum.UserInputState.End, {
-							Position = RootPart.CFrame,
-							Camera = Camera.CFrame,
-						})
-					end)
-
-					local Animation: Animation = ReplicatedStorage:WaitForChild("Animations")
-						:WaitForChild("FlashStrike Release")
-					PlayingAnimation = Animator:LoadAnimation(Animation)
-					PlayingAnimation:Play(0)
-					PlayingAnimation:GetMarkerReachedSignal("attackend"):Connect(function()
-						PlayingAnimation:AdjustSpeed(0)
-					end)
-
-					local V = (Camera.CFrame.LookVector * 200) * GetModelMass(Character)
-					RootPart.AssemblyLinearVelocity = V * Vector3.new(1, 0.5, 1)
-
-					VFX:ApplyParticle(Character, "Smoke")
-					VFX:ApplyParticle(Character, "Stripes")
-
-					task.delay(0.5, function()
-						PlayingAnimation:Stop(0.15)
-					end)
-				end
-
-				RunService:UnbindFromRenderStep("Lockmouse")
-				HoldingTime = 0
+			if inputstate ~= Enum.UserInputState.Begin then
+				return
 			end
+
+			if Humanoid.Health <= 0 then
+				return
+			end
+
+			if CheckCooldown("LStrike") then
+				return
+			end
+
+			SetCooldown("LStrike", 1)
+
+			task.spawn(function()
+				WeaponService:WeaponInput("LStrike", Enum.UserInputState.End, {
+					Position = RootPart.CFrame,
+				})
+			end)
+
+			local Animation =
+				ReplicatedStorage:WaitForChild("Animations"):WaitForChild("Sword"):WaitForChild("Hit"):WaitForChild("2")
+
+			if PlayingAnimation then
+				PlayingAnimation:Stop()
+			end
+
+			PlayingAnimation = Animator:LoadAnimation(Animation)
+			PlayingAnimation:AdjustSpeed(0.25)
+			PlayingAnimation:Play(0.15)
 		end,
-		name = "FlashStrike",
+		name = "LStrike",
 	},
 }
 
-function LuxurySword.Start()
+function TestDagger.Start()
 	WeaponService = Knit.GetService("WeaponService")
 end
 
-return LuxurySword
+return TestDagger

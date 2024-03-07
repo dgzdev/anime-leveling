@@ -1,193 +1,283 @@
 local Debris = game:GetService("Debris")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
-local Players = game:GetService("Players")
-local ServerStorage = game:GetService("ServerStorage")
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
-local Knit = require(ReplicatedStorage.Packages.Knit)
-
-local VFX = require(ReplicatedStorage.Modules.VFX)
-local SFX = require(ReplicatedStorage.Modules.SFX)
-
-local RaycastHitbox = require(ReplicatedStorage.Modules.RaycastHitboxV4)
-local GameData = require(ServerStorage.GameData)
-
-local ProgressionService
-local RenderService
-local PlayerService
-local RagdollService
-local CombatService
-
-local function GetModelMass(model: Model)
-	if not model:IsA("Model") then
-		return error("GetModelMass: model is not a Model.")
-	end
-	local mass = 0
-	for _, part: BasePart in ipairs(model:GetDescendants()) do
-		if part:IsA("BasePart") then
-			if part.Massless then
-				continue
-			end
-			mass += part:GetMass()
-		end
-	end
-	return mass + 1
-end
+--[[
+    Módulo responsável por fornecer hitboxes de forma mais prática
+]]
 
 local HitboxService = Knit.CreateService({
 	Name = "HitboxService",
-	Client = {
-		killedEnemy = Knit.CreateSignal(),
-	},
+	Client = {},
 })
 
-function HitboxService:CreateBlockHitbox(
-	executor: Model,
-	p: CFrame,
-	s: Vector3,
+local Enemies = game.Workspace:FindFirstChild("Enemies")
 
-	params: {
-		dmg: number,
-		time: number?,
-		ragdoll: number?,
-		op: OverlapParams?,
-		kb: Vector3?,
-		max: number?,
-		replicate: {}?,
-	}
-)
-	--[[
-	local Part = Instance.new("Part")
-	Part.Anchored = true
-	Part.CanCollide = false
-	Part.Size = s
-	Part.CFrame = p
-	Part.Name = "Hitbox"
-	Part.Parent = Workspace
-	Part.Transparency = 0.5
-	Debris:AddItem(Part, 1)
-	]]
+-- retorna todos os characters encontrados em uma table
+function HitboxService:GetHumanoidsInTable(tabela)
+	local Characters = {}
 
-	-- @executor: Model
-	--character
-	--inimigo
-
-	local op: OverlapParams
-	if params.op then
-		op = params.op
-	else
-		op = OverlapParams.new()
-		op.FilterType = Enum.RaycastFilterType.Include
-		op.FilterDescendantsInstances = { Workspace:FindFirstChild("Enemies") }
-	end
-
-	local Damaged = {}
-	local PartsInBoundBox = Workspace:GetPartBoundsInBox(p, s, op)
-
-	for _, part in ipairs(PartsInBoundBox) do
-		if part:IsA("BasePart") and part.Parent:IsA("Model") and part.Parent:FindFirstChild("Humanoid") then
-			if not Damaged[part.Parent] then
-				Damaged[part.Parent] = true
-				local Humanoid: Humanoid = part.Parent:FindFirstChild("Humanoid")
-
-				if Humanoid.Health <= 0 then
-					return
-				end
-
-				if params.ragdoll then
-					RagdollService:Ragdoll(part.Parent, params.ragdoll)
-				end
-
-				if (Humanoid.Health - params.dmg) <= 0 then
-					-- @executor -> character, @humanoid: Humanoid
-					CombatService:RegisterHumanoidKilled(executor, Humanoid)
-				end
-
-				Humanoid:TakeDamage(params.dmg)
-
-				if params.kb then
-					Humanoid.RootPart.AssemblyLinearVelocity = (params.kb * p.LookVector) * GetModelMass(part.Parent)
-				end
-
-				if params.replicate then
-					local replicate = params.replicate or {}
-					replicate["root"] = Humanoid.RootPart
-					RenderService:RenderForPlayers(replicate)
-				end
-			end
+	for i, v in ipairs(tabela) do
+		local Character = v.Parent
+		if table.find(Characters, Character) then
+			continue
 		end
+
+		table.insert(Characters, Character)
 	end
+
+	return Characters
 end
 
-function HitboxService:CreateRaycastHitbox(
-	Model: Model,
-	params: {
-		dmg: number,
-		time: number?,
-		kb: Vector3?,
-		ragdoll: boolean?,
-		max: number?,
-		replicate: {}?,
-	},
-	rayparams: RaycastParams
-)
-	local dmg = params.dmg or 1
-	local time = params.time or 1
-	local kb = params.kb or 0
-	local max = params.kb or 250
-	local replicate = params.replicate or {}
+function HitboxService.Client:GetHumanoidsInTable(player, table)
+	return self.Server:GetHumanoidsInTable(table)
+end
 
-	local Damaged = {}
+function HitboxService:GetCharactersInBoxArea(cframe, size, Params)
+	local Params = Params or OverlapParams.new()
 
-	local hitbox = RaycastHitbox.new(Model)
-	local executor = Model:FindFirstAncestorWhichIsA("Model")
-
-	if rayparams then
-		hitbox.RaycastParams = rayparams
+	if not cframe then
+		return print("CFrame is nil")
+	end
+	if not size then
+		return print("Size is nil")
 	end
 
-	hitbox.OnHit:Connect(function(hit, humanoid)
-		if not Damaged[hit] then
-			hitbox:HitStop()
-			Damaged[hit] = true
-			--if humanoid.Health <= 0 then
-			--	return
-			--end
+	local Parts = game.Workspace:GetPartBoundsInBox(cframe, size, Params)
 
-			if humanoid.Health <= 0 then
-				return
-			end
+	local Characters = HitboxService:GetHumanoidsInTable(Parts)
 
-			if params.ragdoll then
-				RagdollService:Ragdoll(humanoid.Parent, params.ragdoll)
-			end
+	return Characters
+end
 
-			-- se matou e se o executor for jogador
-			if (humanoid.Health - dmg) <= 0 then
-				CombatService:RegisterHumanoidKilled(executor, humanoid)
-			end
+function HitboxService:GetCharactersInPart(part: Part, Params: OverlapParams)
+	local Params = Params or OverlapParams.new()
+	local Parts = game.Workspace:GetPartsInPart(part, Params)
+	local Characters = HitboxService:GetHumanoidsInTable(Parts)
+	return Characters
+end
 
-			humanoid:TakeDamage(dmg)
+function HitboxService.Client:GetCharactersInBoxArea(player, cframe, size, Params)
+	return self.Server:GetCharactersInBoxArea(cframe, size, Params)
+end
 
-			if params.replicate then
-				replicate["root"] = humanoid.RootPart
-				RenderService:RenderForPlayers(replicate)
-			end
+function HitboxService:CreateStun(target: Model, time: number, callback: () -> nil)
+	local Pr = target.PrimaryPart
+	local Stun = Instance.new("LinearVelocity")
+	Stun.VelocityConstraintMode = Enum.VelocityConstraintMode.Vector
+	Stun.MaxForce = math.huge
 
-			if kb then
-				humanoid.RootPart.AssemblyLinearVelocity = kb * GetModelMass(hit)
-			end
+	Stun.VectorVelocity = Vector3.new(0, 0, 1)
+
+	local Highlight = Instance.new("Highlight")
+	Highlight.FillColor = Color3.new(1, 0, 0)
+	Highlight.FillTransparency = 0.3
+	Highlight.DepthMode = Enum.HighlightDepthMode.Occluded
+	Highlight.OutlineColor = Color3.new(1, 1, 1)
+	Highlight.OutlineTransparency = 0.1
+	Highlight.Parent = target
+	Debris:AddItem(Highlight, time)
+
+	local att0 = Instance.new("Attachment", Pr)
+	Stun.Attachment0 = att0
+
+	Stun.Attachment0 = Pr:FindFirstChildWhichIsA("Attachment")
+	target:SetAttribute("Stun", true)
+
+	Stun.Parent = att0
+
+	task.spawn(function()
+		task.wait(time)
+		att0:Destroy()
+		target:SetAttribute("Stun", false)
+		if callback then
+			callback()
 		end
 	end)
-	hitbox:HitStart(time)
 end
 
-function HitboxService:KnitStart()
-	ProgressionService = Knit.GetService("ProgressionService")
-	RenderService = Knit.GetService("RenderService")
-	PlayerService = Knit.GetService("PlayerService")
-	RagdollService = Knit.GetService("RagdollService")
-	CombatService = Knit.GetService("CombatService")
+function HitboxService:GetCharactersInCircleArea(position, radius, Params)
+	local Params = Params or OverlapParams.new()
+
+	if not position then
+		return print("Position is nil")
+	end
+	if not radius then
+		return print("Radius is nil")
+	end
+
+	local Parts = game.Workspace:GetPartBoundsInRadius(position, radius, Params)
+
+	local Characters = HitboxService:GetHumanoidsInTable(Parts)
+
+	return Characters
 end
+function HitboxService.Client:GetCharactersInCircleArea(player, position, radius, Params)
+	return self.Server:GetCharactersInCircleArea(position, radius, Params)
+end
+
+function HitboxService:CreateHitboxFromModel(
+	Character: Model,
+	model: Model,
+	scale: number?,
+	CheckTicks: number,
+	callback: any
+)
+	local size = model:GetExtentsSize()
+	scale = scale or 1
+
+	local Hitted = {}
+
+	local Params = OverlapParams.new()
+	Params.FilterType = Enum.RaycastFilterType.Include
+	Params.FilterDescendantsInstances = { Workspace.Enemies }
+
+	task.spawn(function()
+		for i = 0, CheckTicks or 16, 1 do
+			local Hitbox = HitboxService:GetCharactersInBoxArea(model:GetPivot(), size, Params)
+			for i, char in pairs(Hitbox) do
+				if char == Character then
+					continue
+				end
+				if table.find(Hitted, char) then
+					continue
+				end
+				table.insert(Hitted, char)
+
+				local response = callback(char)
+				if response == false then
+					break
+				end
+			end
+
+			task.wait(1 / 60)
+		end
+	end)
+end
+
+-- funciona da mesma forma que o CreatePartHitbox, porém sem criar uma part, apenas utilizando o GetPartBoundsInBox()
+function HitboxService:CreateHitbox(
+	Character: Model,
+	HitboxSize: Vector3,
+	CheckTicks: number,
+	callback: (hitted: Model) -> nil
+)
+	local Humanoid = Character:WaitForChild("Humanoid")
+
+	local Hitted = {}
+	local RootPart = Character:WaitForChild("HumanoidRootPart")
+	local ComboCounterAtTime = Humanoid:GetAttribute("ComboCounter")
+
+	local Params = OverlapParams.new()
+	Params.FilterType = Enum.RaycastFilterType.Include
+	Params.FilterDescendantsInstances = { Enemies }
+
+	task.spawn(function()
+		for i = 0, CheckTicks or 16, 1 do
+			local Hitbox = HitboxService:GetCharactersInBoxArea(
+				RootPart.CFrame * CFrame.new(0, 0, -(HitboxSize.Z / 2)),
+				HitboxSize,
+				Params
+			)
+
+			for i, char in ipairs(Hitbox) do
+				if char == Character then
+					continue
+				end
+				if table.find(Hitted, char) then
+					continue
+				end
+				table.insert(Hitted, char)
+
+				local response = callback(char)
+				if response == false then
+					break
+				end
+			end
+
+			task.wait(1 / 60)
+		end
+	end)
+end
+
+function HitboxService:CreateFixedHitbox(Position: CFrame, Size: Vector3, Ticks: number, callback)
+	local Hitted = {}
+	local Params = OverlapParams.new()
+	Params.FilterType = Enum.RaycastFilterType.Include
+	Params.FilterDescendantsInstances = { Enemies }
+
+	for i = 0, Ticks, 1 do
+		local CharactersInside = HitboxService:GetCharactersInBoxArea(Position, Size, Params)
+
+		for _, char in ipairs(CharactersInside) do
+			if table.find(Hitted, char) then
+				continue
+			end
+			table.insert(Hitted, char)
+			local response = callback(char)
+			if response == false then
+				break
+			end
+		end
+		task.wait(1 / 60)
+	end
+end
+
+-- cria uma hitbox com part, welda, posiciona na frente do character fornecido com base no tamanho da hitbox, o callback retornara o character hitado
+--ticks é quantas vezes ele vai verificar a hitbox: 5 ticks = 5 vezes com o intervalo a cada frame
+function HitboxService:CreatePartHitbox(
+	Character: Model,
+	HitboxSize: Vector3,
+	Ticks: number,
+	callback,
+	params: OverlapParams?
+)
+	local RootPart = Character:WaitForChild("HumanoidRootPart")
+	local Humanoid = Character:WaitForChild("Humanoid")
+	local Weld = Instance.new("WeldConstraint")
+	local Hitbox = Instance.new("Part")
+	Weld.Part0 = RootPart
+	Weld.Part1 = Hitbox
+	Weld.Parent = Hitbox
+	Hitbox.Name = "Hitbox"
+	Hitbox.Anchored = false
+	Hitbox.CanCollide = false
+	Hitbox.Massless = true
+	Hitbox.Transparency = 1
+	Hitbox.Size = HitboxSize
+	Hitbox.CFrame = RootPart.CFrame * CFrame.new(0, 0, -HitboxSize.Z / 2)
+	Hitbox.Parent = Character
+
+	local Hitted = {}
+	local Params = params
+	if not Params then
+		Params = OverlapParams.new()
+		Params.FilterType = Enum.RaycastFilterType.Include
+		Params.FilterDescendantsInstances = { Enemies }
+	end
+
+	for i = 0, Ticks, 1 do
+		local CharactersInside = HitboxService:GetCharactersInPart(Hitbox, Params)
+
+		for _, char in ipairs(CharactersInside) do
+			if char == Character then
+				continue
+			end
+			if table.find(Hitted, char) then
+				continue
+			end
+			table.insert(Hitted, char)
+			local response = callback(char)
+			if response == false then
+				break
+			end
+		end
+		task.wait(1 / 60)
+	end
+
+	Hitbox:Destroy()
+end
+
+function HitboxService.KnitInit() end
 
 return HitboxService

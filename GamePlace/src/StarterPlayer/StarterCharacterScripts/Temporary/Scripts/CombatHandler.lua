@@ -61,6 +61,7 @@ function CombatHandler:CreateNewSlot(button: Enum.KeyCode | Enum.UserInputType, 
 end
 
 function CombatHandler:Bind(weaponType: string, weaponName: string)
+	_G.Combo = 1
 	if not weaponType or not weaponName then
 		return
 	end

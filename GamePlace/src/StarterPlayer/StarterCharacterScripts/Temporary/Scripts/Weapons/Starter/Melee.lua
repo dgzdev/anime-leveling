@@ -104,6 +104,10 @@ local Melee = {
 				return
 			end
 
+			if Character:GetAttribute("Stun") then
+				return
+			end
+
 			local Combos = Animations:WaitForChild("Melee"):WaitForChild("Hit"):GetChildren()
 			table.sort(Combos, function(a, b)
 				return a.Name < b.Name
@@ -157,6 +161,10 @@ local Melee = {
 				return
 			end
 
+			if Character:GetAttribute("Stun") then
+				return
+			end
+
 			if CheckCooldown("Block") then
 				return
 			end
@@ -201,6 +209,10 @@ local Melee = {
 			end
 
 			if Humanoid.Health <= 0 then
+				return
+			end
+
+			if Character:GetAttribute("Stun") then
 				return
 			end
 
@@ -266,6 +278,10 @@ local Melee = {
 			end
 
 			if Humanoid.Health <= 0 then
+				return
+			end
+
+			if Character:GetAttribute("Stun") then
 				return
 			end
 

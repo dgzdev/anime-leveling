@@ -21,6 +21,28 @@ function PlayerManager.new(player: Player)
 	self.Humanoid = self.Character:WaitForChild("Humanoid")
 	self.PlayerGui = player:WaitForChild("PlayerGui")
 
+	local Animator = self.Humanoid:WaitForChild("Animator")
+
+	task.spawn(function()
+		while true do
+			local Character = player.Character or player.CharacterAdded:Wait()
+			if Character:GetAttribute("Stun") then
+				local rd = math.random(1, #ReplicatedStorage.Animations.Hit:GetChildren())
+				local anim = Animator:LoadAnimation(ReplicatedStorage.Animations.Hit[tostring(rd)])
+
+				anim:Play(0.1, 1, 0.3)
+				anim.Ended:Wait()
+				anim:Play(0, 1, 0)
+
+				task.wait(1)
+				Character:SetAttribute("Stun", false)
+
+				anim:Stop()
+			end
+			Character:GetAttributeChangedSignal("Stun"):Wait()
+		end
+	end)
+
 	self.Player.CharacterAdded:Connect(function(character)
 		self.Character = character
 		self.Humanoid = character:WaitForChild("Humanoid")

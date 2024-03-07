@@ -14,31 +14,23 @@ function Indication:BindToAllNPCS()
 	local Player = Players.LocalPlayer
 
 	for _, instance in ipairs(game.Workspace:GetDescendants()) do
-		if not instance:IsA("Model") then
-			continue
-		end
-		if not instance:FindFirstChild("Humanoid") then
-			continue
-		end
-		if not instance:FindFirstChild("Head") then
+		if not instance:IsA("Humanoid") then
 			continue
 		end
 
-		DamageIndication.new(instance)
+		DamageIndication.new(instance.Parent)
 	end
 
 	game.Workspace.DescendantAdded:Connect(function(descendant)
-		if not descendant:IsA("Model") then
-			return
-		end
-		if not descendant:FindFirstChild("Humanoid") then
-			return
-		end
-		if not descendant:FindFirstChild("Head") then
+		if not descendant:IsA("Humanoid") then
 			return
 		end
 
-		DamageIndication.new(descendant)
+		DamageIndication.new(descendant.Parent)
+	end)
+
+	Workspace:FindFirstChild("Enemies").ChildAdded:Connect(function(enemy)
+		DamageIndication.new(enemy)
 	end)
 end
 
