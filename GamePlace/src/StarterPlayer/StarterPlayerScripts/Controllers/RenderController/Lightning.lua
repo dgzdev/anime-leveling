@@ -1,5 +1,9 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
+
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
+local ShakerController = Knit.GetController("ShakerController")
+
 local LightningModule = {}
 
 local VFX = require(ReplicatedStorage.Modules.VFX)

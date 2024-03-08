@@ -1,6 +1,8 @@
 -- Lightning Strike
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
+
 local WeaponService
+local ShakerController
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -126,6 +128,8 @@ local TestDagger = {
 			PlayingAnimation = Animator:LoadAnimation(Animation)
 			PlayingAnimation:AdjustSpeed(0.25)
 			PlayingAnimation:Play(0.15)
+
+			ShakerController:Shake(ShakerController.Presets.Bump)
 		end,
 		name = "LStrike",
 	},
@@ -133,6 +137,7 @@ local TestDagger = {
 
 function TestDagger.Start()
 	WeaponService = Knit.GetService("WeaponService")
+	ShakerController = Knit.GetController("ShakerController")
 end
 
 return TestDagger

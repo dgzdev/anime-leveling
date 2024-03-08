@@ -1,5 +1,7 @@
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
+
 local WeaponService
+local ShakerController
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -185,6 +187,8 @@ local IronStarterSword = {
 					task.delay(0.5, function()
 						PlayingAnimation:Stop(0.15)
 					end)
+
+					ShakerController:Shake(ShakerController.Presets.Bump)
 				end
 
 				RunService:UnbindFromRenderStep("Lockmouse")
@@ -197,6 +201,7 @@ local IronStarterSword = {
 
 function IronStarterSword.Start()
 	WeaponService = Knit.GetService("WeaponService")
+	ShakerController = Knit.GetController("ShakerController")
 end
 
 return IronStarterSword

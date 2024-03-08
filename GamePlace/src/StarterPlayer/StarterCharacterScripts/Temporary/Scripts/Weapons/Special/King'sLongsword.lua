@@ -1,5 +1,7 @@
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
+
 local WeaponService
+local ShakerController
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -190,6 +192,8 @@ local KingsLongsword = {
 					task.delay(0.5, function()
 						PlayingAnimation:Stop(0.3)
 					end)
+
+					ShakerController:Shake(ShakerController.Presets.Bump)
 				else
 					HoldingTime = 0
 				end
@@ -297,6 +301,7 @@ local KingsLongsword = {
 
 function KingsLongsword.Start()
 	WeaponService = Knit.GetService("WeaponService")
+	ShakerController = Knit.GetController("ShakerController")
 end
 
 return KingsLongsword

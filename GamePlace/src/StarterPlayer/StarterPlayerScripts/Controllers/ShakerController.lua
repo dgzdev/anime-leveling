@@ -18,6 +18,10 @@ function ShakerController:Shake(preset: any)
 	self.Shaker:Shake(preset)
 end
 
+function ShakerController:GetPresets(): typeof(CameraShaker.Presets)
+	return self.Presets
+end
+
 function ShakerController:KnitStart()
 	self.Shaker:Start()
 end
