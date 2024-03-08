@@ -132,6 +132,7 @@ local ProfileTemplate: ProfileData = {
 						Id = 6,
 					},
 				},
+				["SkillsTreeUnlocked"] = {}
 				["Skills"] = {
 					["Inteligence"] = {
 						["AchiveDate"] = os.time(),
@@ -247,6 +248,41 @@ return {
 		},
 	},
 	newbieBadge = 2066631008828576,
+	gameSkillsTree = {
+			["1"] = {
+				Pendencies = nil,
+				Name = "1"
+				branches = {
+					["2"] = {
+						Pendencies = "1"
+						Name = "2"
+						branches = {
+							["4"] = {
+								Pendencies = "2"
+								Name = "4"
+								branches = {
+									["8"] = {}
+								}
+							}
+							["5"] = {
+								Pendencies = "2"
+							}
+						}
+					}, 
+					["3"] = {
+						Pendencies = "1"
+						branches = {
+							["6"] = {
+
+							}
+							["7"] = {
+								
+							}
+						}
+					}
+				}
+			}
+	}
 	gameEnemies = {
 		["Teste"] = {
 			Health = 10000,
