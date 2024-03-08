@@ -190,7 +190,7 @@ function HitboxService:CreateHitbox(
 				table.insert(Hitted, char)
 
 				local response = callback(char)
-				if response == false then
+				if response == false or response == "break" then
 					break
 				end
 			end

@@ -390,31 +390,36 @@ Sword["King'sLongsword"] = {
 	end,
 
 	Lightning = function(Character: Model, InputState: Enum.UserInputState, Data: { Position: CFrame })
-		local Mid = Data.Position * CFrame.new(0, 0, -30)
 		local Size = Vector3.new(7, 7, 60)
-
-		local Distance = 120
 
 		local Root: BasePart = Character:FindFirstChild("HumanoidRootPart")
 		if not Root then
 			return
 		end
 
-		local op = OverlapParams.new()
-		op.FilterType = Enum.RaycastFilterType.Include
-		op.FilterDescendantsInstances = { Workspace.Enemies }
-
-		RenderService:RenderForPlayersInArea(Root.CFrame.Position, 200, {
-			module = "Lightning",
-			effect = "Lightning",
-			root = Root,
-		})
-
 		local WeaponFolder = Character:FindFirstChild("Weapons")
+		local alreadyHitted = false
 		for i, weapon: Model in ipairs(WeaponFolder:GetChildren()) do
-			HitboxService:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
-				SwordHitFunction(Character, hitted, 5, "LightningSwordHit", "SwordHit", nil, 0)
-			end, op)
+			HitboxService:CreateHitbox(Character, Size, 16, function(hitted: Model | BasePart)
+				if alreadyHitted then
+					return "break"
+				end
+
+				alreadyHitted = true
+				SwordHitFunction(Character, hitted, 30, "LightningSwordHit", "SwordHit", 2, 2)
+
+				if hitted:IsA("Accessory") then
+					hitted = hitted.Parent
+				end
+
+				RenderService:RenderForPlayersInArea(Root.CFrame.Position, 200, {
+					module = "Lightning",
+					effect = "Lightning",
+					root = hitted.PrimaryPart or hitted,
+				})
+
+				return "break"
+			end)
 		end
 	end,
 }

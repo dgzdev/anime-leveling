@@ -138,33 +138,6 @@ Melee.Default = {
 	Defense = function(...)
 		Default.Defense(...)
 	end,
-}
-
--- item melee
-Melee.Melee = {
-	Attack = function(
-		Character: Model,
-		InputState: Enum.UserInputState,
-		p: {
-			Position: CFrame,
-			Combo: number,
-			Combos: number,
-		}
-	)
-		Melee.Default.Attack(Character, InputState, p)
-	end,
-
-	Defense = function(
-		Character: Model,
-		InputState: Enum.UserInputState,
-		p: {
-			Position: CFrame,
-			Combo: number,
-			Combos: number,
-		}
-	)
-		Melee.Default.Defense(Character, InputState, p)
-	end,
 
 	["Strong Punch"] = function(
 		Character: Model,
@@ -243,6 +216,66 @@ Melee.Melee = {
 		})
 	end,
 }
+
+-- item melee
+Melee.Melee = {
+	Attack = function(
+		Character: Model,
+		InputState: Enum.UserInputState,
+		p: {
+			Position: CFrame,
+			Combo: number,
+			Combos: number,
+		}
+	)
+		Melee.Default.Attack(Character, InputState, p)
+	end,
+
+	Defense = function(
+		Character: Model,
+		InputState: Enum.UserInputState,
+		p: {
+			Position: CFrame,
+			Combo: number,
+			Combos: number,
+		}
+	)
+		Melee.Default.Defense(Character, InputState, p)
+	end,
+
+	["Strong Punch"] = Melee.Default["Strong Punch"],
+	["Ground Slam"] = Melee.Default["Ground Slam"],
+}
+
+Melee.Melee2 = {
+	Attack = function(
+		Character: Model,
+		InputState: Enum.UserInputState,
+		p: {
+			Position: CFrame,
+			Combo: number,
+			Combos: number,
+		}
+	)
+		Melee.Default.Attack(Character, InputState, p)
+	end,
+
+	Defense = function(
+		Character: Model,
+		InputState: Enum.UserInputState,
+		p: {
+			Position: CFrame,
+			Combo: number,
+			Combos: number,
+		}
+	)
+		Melee.Default.Defense(Character, InputState, p)
+	end,
+
+	["Strong Punch"] = Melee.Default["Strong Punch"],
+	["Ground Slam"] = Melee.Default["Ground Slam"],
+}
+
 function Melee.Start(default)
 	default = default
 

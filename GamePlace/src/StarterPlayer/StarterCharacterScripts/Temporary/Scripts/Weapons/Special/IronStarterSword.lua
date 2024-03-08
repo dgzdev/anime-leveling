@@ -187,8 +187,6 @@ local IronStarterSword = {
 					task.delay(0.5, function()
 						PlayingAnimation:Stop(0.15)
 					end)
-
-					ShakerController:Shake(ShakerController.Presets.Bump)
 				end
 
 				RunService:UnbindFromRenderStep("Lockmouse")

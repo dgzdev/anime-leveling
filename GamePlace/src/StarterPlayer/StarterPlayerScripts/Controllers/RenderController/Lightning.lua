@@ -57,6 +57,7 @@ function LightningModule.FlashStrike(RenderData: { root: BasePart })
 	end
 
 	VFX:ApplyParticle(Root.Parent, "Fell")
+	ShakerController:Shake(ShakerController.Presets.Bump)
 end
 
 function LightningModule.LightningWave(RenderData: { root: BasePart, part: BasePart })
@@ -80,6 +81,7 @@ function LightningModule.LightningWave(RenderData: { root: BasePart, part: BaseP
 	)
 
 	VFX:ApplyParticle(Root.Parent, "Fell")
+	ShakerController:Shake(ShakerController.Presets.Explosion)
 end
 
 function LightningModule.Lightning(RenderData: { root: BasePart })
@@ -133,6 +135,7 @@ function LightningModule.Lightning(RenderData: { root: BasePart })
 		3
 	)
 
+	ShakerController:Shake(ShakerController.Presets.Explosion)
 	VFX:ApplyParticle(Root.Parent, "Fell")
 end
 
@@ -170,6 +173,7 @@ function LightningModule.LStrike(RenderData: { root: BasePart })
 	end
 
 	VFX:ApplyParticle(Root.Parent, "Fell")
+	ShakerController:Shake(ShakerController.Presets.Bump)
 end
 
 function LightningModule.Start() end

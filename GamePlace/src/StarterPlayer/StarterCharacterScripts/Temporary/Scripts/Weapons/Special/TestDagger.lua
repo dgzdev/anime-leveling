@@ -128,8 +128,6 @@ local TestDagger = {
 			PlayingAnimation = Animator:LoadAnimation(Animation)
 			PlayingAnimation:AdjustSpeed(0.25)
 			PlayingAnimation:Play(0.15)
-
-			ShakerController:Shake(ShakerController.Presets.Bump)
 		end,
 		name = "LStrike",
 	},

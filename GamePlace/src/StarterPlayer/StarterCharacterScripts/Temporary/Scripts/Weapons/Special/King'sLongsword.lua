@@ -192,8 +192,6 @@ local KingsLongsword = {
 					task.delay(0.5, function()
 						PlayingAnimation:Stop(0.3)
 					end)
-
-					ShakerController:Shake(ShakerController.Presets.Bump)
 				else
 					HoldingTime = 0
 				end
@@ -291,6 +289,7 @@ local KingsLongsword = {
 			PlayingAnimation:Play(0.15)
 
 			RootPart.Anchored = true
+
 			task.wait(0.9)
 			RootPart.Anchored = false
 		end,

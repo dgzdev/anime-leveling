@@ -27,6 +27,15 @@ export type PlayerSlot = {
 
 	Data: SlotData,
 }
+
+export type TreeNode = {
+	Pendencies: string | nil | { string },
+	Name: string,
+	PointsToUnlock: number,
+	NodeApproval: string | nil,
+	branches: {},
+}
+
 export type SlotData = {
 	Level: number,
 
@@ -42,6 +51,7 @@ export type SlotData = {
 	Quests: {},
 	Hotbar: { number },
 	Inventory: Inventory,
+	SkillsTreeUnlocked: {},
 	Skills: { [string]: {
 		AchiveDate: number | nil,
 		Level: number,
@@ -95,11 +105,11 @@ local ProfileTemplate: ProfileData = {
 				["Gold"] = 0,
 
 				["Equiped"] = {
-					["Weapon"] = "Melee",
-					["Id"] = 1,
+					["Weapon"] = "Melee2",
+					["Id"] = 7,
 				},
 				["Quests"] = {},
-				["Hotbar"] = { 1, 4, 5, 6 },
+				["Hotbar"] = { 7, 4, 5, 6 },
 				["Inventory"] = {
 					["Melee"] = {
 						AchiveDate = os.time(),
@@ -131,8 +141,13 @@ local ProfileTemplate: ProfileData = {
 						Rank = "E",
 						Id = 6,
 					},
+					["Melee2"] = {
+						AchiveDate = os.time(),
+						Rank = "E",
+						Id = 7,
+					},
 				},
-				["SkillsTreeUnlocked"] = {},
+				["SkillsTreeUnlocked"] = { "1" },
 				["Skills"] = {
 					["Inteligence"] = {
 						["AchiveDate"] = os.time(),
@@ -210,11 +225,20 @@ return {
 			Rank = "E",
 			Id = 6,
 		},
+		["Melee2"] = {
+			AchiveDate = os.time(),
+			Rank = "E",
+			Id = 7,
+		},
 	},
 	gameWeapons = {
 		["Melee"] = {
 			Type = "Melee",
 			Damage = 5,
+		},
+		["Melee2"] = {
+			Type = "Melee",
+			Damage = 10,
 		},
 		["Starter Sword"] = {
 			Type = "Sword",
@@ -249,39 +273,39 @@ return {
 	},
 	newbieBadge = 2066631008828576,
 	gameSkillsTree = {
-			["1"] = {
-				Pendencies = nil,
-				Name = "1",
-				branches = {
-					["2"] = {
-						Pendencies = "1",
-						Name = "2",
-						branches = {
-							["4"] = {
-								Pendencies = "2",
-								Name = "4",
-								branches = {
-									["8"] = {}
+		["1"] = {
+			Pendencies = nil,
+			Name = "1",
+			branches = {
+				["2"] = {
+					Pendencies = "1",
+					Name = "2",
+					branches = {
+						["4"] = {
+							Pendencies = "2",
+							Name = "4",
+							branches = {
+								["8"] = {
+									Pendencies = { "4", "5" },
 								},
 							},
-							["5"] = {
-								Pendencies = "2"
-							},
 						},
-					}, 
-					["3"] = {
-						Pendencies = "1",
-						branches = {
-							["6"] = {
-
-							},
-							["7"] = {
-								
-							},
+						["5"] = {
+							Pendencies = "2",
+							Name = "5",
 						},
-					}
-				}
-			}
+					},
+				},
+				["3"] = {
+					Pendencies = "1",
+					Name = "3",
+					branches = {
+						["6"] = {},
+						["7"] = {},
+					},
+				},
+			},
+		},
 	},
 	gameEnemies = {
 		["Teste"] = {
