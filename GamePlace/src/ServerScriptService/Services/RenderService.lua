@@ -29,7 +29,7 @@ function RenderService:RenderForPlayersInArea(Position: Vector3, Area: number, R
 	end
 end
 
-function RenderService:RenderForPlayersExceptCaster(RenderData: {})
+function RenderService:RenderForPlayersExceptCaster(RenderData: { casterHumanoid: Humanoid })
 	local casterPlayer = Players:GetPlayerFromCharacter(RenderData.casterHumanoid.Parent)
 	local playersToRender = game.Players:GetPlayers()
 

@@ -3,6 +3,5 @@
 *.rbxl
 *.env
 *.txt
-Packages/
 *.exe
 *.lock
