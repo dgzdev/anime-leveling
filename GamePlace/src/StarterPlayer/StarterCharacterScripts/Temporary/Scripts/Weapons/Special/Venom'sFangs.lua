@@ -128,6 +128,18 @@ local TestDagger = {
 		end,
 		name = "LStrike",
 	},
+	[Enum.KeyCode.X] = {
+		callback = function(action, inputstate, inputobject)
+			print("ok")
+
+			task.spawn(function()
+				WeaponService:WeaponInput("teste", Enum.UserInputState.End, {
+					Position = RootPart.CFrame,
+				})
+			end)
+		end,
+		name = "teste",
+	},
 }
 
 function TestDagger.Start()

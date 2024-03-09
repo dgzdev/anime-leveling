@@ -156,6 +156,24 @@ Dagger["Venom'sFangs"] = {
 		Dagger.Default.Defense(Character, InputState, p)
 	end,
 
+	["teste"] = function(
+		Character: Model,
+		InputState: Enum.UserInputState,
+		p: {
+			Position: CFrame,
+			Combo: number,
+			Combos: number,
+		}
+	)
+		print("server recebeu")
+
+		RenderService:RenderForPlayersInArea(p.Position.Position, 200, {
+			module = "Lightning",
+			effect = "FlashStrike",
+			root = Character.PrimaryPart,
+		})
+	end,
+
 	["LStrike"] = function(
 		Character: Model,
 		InputState: Enum.UserInputState,
