@@ -55,23 +55,36 @@ function SkillTreeService:GetAvailableSkillsToUnlock(Player)
 	local SkillsTreeUnlocked = PlayerData.SkillsTreeUnlocked
 	local SkillTree = self:GetAllSkills()
 	local ToUnlock = {}
+	local FindInData
+
 
 	local function ReadTree(node)
 		if not node then
 			return
 		end
 		for name, skillInfo: GameData.TreeNode in pairs(node) do
+			print(skillInfo.Name)
 			if skillInfo.Pendencies == nil then
 				table.insert(ToUnlock, skillInfo.Name)
 				ReadTree(skillInfo.branches)
 				break
 			end
 
-			if skillInfo.Pendencies == "table" then
-				for _, PendencyName in pairs(skillInfo.Pendencies) do
-					if not SkillsTreeUnlocked[skillInfo.Pendencies] then
+			if typeof(skillInfo.Pendencies) == "table" then
+				for _, PendencyName in ipairs(skillInfo.Pendencies) do
+					for i,v in ipairs(SkillsTreeUnlocked) do
+						if PendencyName == v then
+							--print(v)
+							FindInData = {}
+							table.insert(FindInData, v)
+						end
 						break
 					end
+					if #FindInData < #skillInfo.Pendencies then
+						break
+					end
+					FindInData = nil
+					print(skillInfo.Name, " Inserido aqui")
 					table.insert(ToUnlock, PendencyName)
 					ReadTree(node.branches)
 				end
@@ -81,10 +94,19 @@ function SkillTreeService:GetAvailableSkillsToUnlock(Player)
 				continue
 			end
 
-			if not SkillsTreeUnlocked[skillInfo.Pendencies] then
+			for i,v in ipairs(SkillsTreeUnlocked) do
+				if skillInfo.Pendencies == v then
+					print(v, skillInfo.Name)
+					FindInData = v
+				end
 				break
 			end
 
+			if FindInData == nil then
+				break
+			end
+
+			print(skillInfo.Name, " Inserido aqui")
 			table.insert(ToUnlock, skillInfo.Name)
 			ReadTree(skillInfo.branches)
 		end
@@ -93,6 +115,13 @@ function SkillTreeService:GetAvailableSkillsToUnlock(Player)
 
 	return ToUnlock
 end
+
+
+function SkillTreeService.Client:GetSkillsAvailableToUnlock(Player)
+	print(Player)
+	return	self.Server:GetAvailableSkillsToUnlock(Player)
+end
+
 
 function SkillTreeService.KnitStart()
 	PlayerService = Knit.GetService("PlayerService")

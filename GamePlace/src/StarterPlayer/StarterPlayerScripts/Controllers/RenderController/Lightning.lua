@@ -28,6 +28,7 @@ function LightningModule.FlashStrike(RenderData: { root: BasePart })
 	)
 
 	VFX:ApplyParticle(RenderData.root, "Slash", nil, CFrame.new(0, 0, -2) * CFrame.Angles(0, math.rad(180), 0))
+	VFX:ApplyParticle(Root.Parent,"LightningSlam",nil, CFrame.new(0, 0, -2) * CFrame.Angles(math.rad(90), 0 ,math.rad(90)) , true)
 
 	local pos0 = Root.CFrame.Position
 	local pos1 = (Root.CFrame * CFrame.new(0, 0, -50)).Position
@@ -141,6 +142,7 @@ end
 
 function LightningModule.LStrike(RenderData: { root: BasePart })
 	local Root = RenderData.root
+
 	RocksModule.Ground(
 		Root.CFrame.Position + Vector3.new(0, -5, 0),
 		15,

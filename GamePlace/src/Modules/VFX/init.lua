@@ -106,4 +106,32 @@ function VFX:CreateInfinite(target: Model, action: string)
 	end)
 end
 
+function VFX:CreateParticle(position: CFrame, action: string, time: number?)
+	local block = VFXFolder:FindFirstChild(action)
+	if not block then
+		return error("VFX not found")
+	end
+
+	local particle = block:Clone() :: BasePart
+	particle.Parent = Workspace.VFXs
+	particle.CFrame = position
+	particle.Transparency = 1
+	particle.Massless = true
+	particle.CanCollide = false
+	particle.Anchored = true
+
+	for _, pe: ParticleEmitter in ipairs(particle:GetDescendants()) do
+		if pe:IsA("ParticleEmitter") then
+			local c = pe:GetAttribute("EmitCount") or 1
+			local emitDelay = pe:GetAttribute("EmitDelay") or 0.1
+			task.wait(emitDelay)
+			pe:Emit(tonumber(c))
+		end
+		task.wait()
+	end
+
+	Debris:AddItem(particle, time or 2)
+	return particle
+end
+
 return VFX

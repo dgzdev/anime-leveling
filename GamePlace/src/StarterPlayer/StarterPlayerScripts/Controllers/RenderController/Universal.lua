@@ -7,8 +7,22 @@ local SFX = require(ReplicatedStorage.Modules.SFX)
 
 local RocksModule = require(ReplicatedStorage.Modules.RocksModule)
 
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
+local ShakerController = Knit.GetController("ShakerController")
+
+
+function Universal.VenomPalm(RenderData: {root: BasePart, position: CFrame})
+	local Root = RenderData.root
+
+	VFX:ApplyParticle(Root.Parent,"VenomPalm",3,nil,true)
+	VFX:CreateParticle(RenderData.position, "darkCuts", 3)
+
+	ShakerController:Shake(ShakerController.Presets.Bump)
+end
+
 function Universal.FlashStrike(RenderData: { root: BasePart })
 	local Root = RenderData.root
+
 	RocksModule.Ground(
 		Root.CFrame.Position + Vector3.new(0, -5, 0),
 		15,

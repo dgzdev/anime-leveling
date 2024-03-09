@@ -256,14 +256,16 @@ local Melee = {
 			PlayingAnimation:GetMarkerReachedSignal("end"):Once(function()
 				SFX:Create(RootPart, "Ground-Slam", 10, 80, false)
 				PlayingAnimation:AdjustSpeed(0)
+				
+				task.spawn(function()
+					WeaponService:WeaponInput("Ground Slam", Enum.UserInputState.End, {
+						Position = RootPart.CFrame,
+					})
+				end)
+				
 			end)
 
-			task.spawn(function()
-				WeaponService:WeaponInput("Ground Slam", Enum.UserInputState.End, {
-					Position = RootPart.CFrame,
-				})
-			end)
-
+	
 			task.wait(2)
 
 			PlayingAnimation:Stop(0.3)

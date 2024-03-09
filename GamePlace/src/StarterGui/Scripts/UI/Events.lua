@@ -11,6 +11,8 @@ Knit.OnStart():await()
 
 local QuestService = Knit.GetService("QuestService")
 local ProgressionService = Knit.GetService("ProgressionService")
+local SkillTreeService = Knit.GetService("SkillTreeService")
+
 
 local function LockMouse(boolean: boolean)
 	if boolean then
@@ -83,6 +85,10 @@ Events.Buttons = {
 			}):Play()
 		end
 		--print(PointType)
+	end,
+	["GetSkillsAvailable"] = function(Gui: GuiButton)
+		local Skills = SkillTreeService:GetSkillsAvailableToUnlock(Players.LocalPlayer)
+		print(Skills)
 	end,
 	["Close"] = function(Gui: GuiButton)
 		Gui:FindFirstAncestorWhichIsA("ScreenGui").Enabled = false

@@ -156,7 +156,7 @@ Dagger["Venom'sFangs"] = {
 		Dagger.Default.Defense(Character, InputState, p)
 	end,
 
-	["teste"] = function(
+	["Venom Palm"] = function(
 		Character: Model,
 		InputState: Enum.UserInputState,
 		p: {
@@ -165,14 +165,45 @@ Dagger["Venom'sFangs"] = {
 			Combos: number,
 		}
 	)
-		print("server recebeu")
+		local CFramePosition = p.Position
+		local WeaponFolder = Character:FindFirstChild("Weapons")
 
-		RenderService:RenderForPlayersInArea(p.Position.Position, 200, {
-			module = "Lightning",
-			effect = "FlashStrike",
+		RenderService:RenderForPlayersInArea(CFramePosition.Position, 200, { --> VFX na Render
+			module = "Universal",
+			effect = "VenomPalm",
 			root = Character.PrimaryPart,
+			position = CFramePosition
 		})
+
+		task.spawn(function() -- Para tirar o delay da skill.
+			for i, weapon: Model in ipairs(WeaponFolder:GetChildren()) do --> Hitbox
+				HitboxService:CreateFixedHitbox(CFramePosition,Vector3.new(5,5,5),1, function(hitted: Model)
+					task.spawn(function()
+						DaggerHitFunction(Character, hitted, 2, "DaggerHit", "DaggerHit", 2.5, 1)
+					end)
+				end)
+			end
+		end)
+
+
+
+		--> Teleporta o jogador para trás
+		local Ray = RaycastParams.new()
+		Ray.FilterType = Enum.RaycastFilterType.Exclude
+		Ray.FilterDescendantsInstances = { Character, Workspace.Enemies, Workspace.NPC }
+
+		local Distance = 25
+
+		local RayResult = Workspace:Raycast(CFramePosition.Position, CFramePosition.LookVector * Distance, Ray)
+		if RayResult then
+			Distance = (CFramePosition.Position - RayResult.Position).Magnitude ---distancia q ele deve teleportar
+		end
+
+		Character:PivotTo(Character:GetPivot() * CFrame.new(0, 0, Distance))
+
+
 	end,
+
 
 	["LStrike"] = function(
 		Character: Model,
@@ -229,14 +260,18 @@ Dagger["Venom'sFangs"] = {
 		HitboxService:CreateFixedHitbox(
 			CFramePosition * CFrame.new(0, 0, -(Distance / 2)),
 			Size,
-			32,
+			10,
 			function(hitted: Model)
 				--> Encontrou um inimigo
-				DaggerHitFunction(Character, hitted, 5, "DaggerHit", "DaggerHit", 2, 0)
+				for i = 1 , 5, 1 do
+					task.wait(.1)
+					DaggerHitFunction(Character, hitted, 5, "DaggerHit", "DaggerHit", 2, 0)
+				end
 			end
 		)
 	end,
 }
+
 
 function Dagger.Start(default)
 	Default = default

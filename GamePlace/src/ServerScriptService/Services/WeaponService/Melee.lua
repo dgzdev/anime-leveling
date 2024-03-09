@@ -207,16 +207,17 @@ Melee.Default = {
 			op.FilterType = Enum.RaycastFilterType.Include
 			op.FilterDescendantsInstances = { Workspace:WaitForChild("Enemies") }
 		end
-
-		HitboxService:CreatePartHitbox(Character, Vector3.new(25, 5, 25), 35, function(hitted)
-			MeleeHitFunction(Character, hitted, 30, "CombatHit", "Melee", nil, 2)
-		end, op)
-
+		
 		RenderService:RenderForPlayersInArea(p.Position.Position, 100, {
 			["module"] = "Melee",
 			["effect"] = "GroundSlam",
 			root = Character.PrimaryPart,
 		})
+
+		HitboxService:CreatePartHitbox(Character, Vector3.new(25, 5, 25), 3, function(hitted)
+			MeleeHitFunction(Character, hitted, 30, "CombatHit", "Melee", nil, 2)
+		end, op)
+
 	end,
 }
 

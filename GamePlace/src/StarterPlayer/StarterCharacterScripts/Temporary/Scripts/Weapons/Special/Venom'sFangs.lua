@@ -27,9 +27,7 @@ local Background: Frame = CombatGui:WaitForChild("Background"):WaitForChild("Com
 local PlayingAnimation: AnimationTrack
 local HoldingTime = 0
 
-local Cooldowns = {
-	["FlashStrike"] = 0,
-}
+local Cooldowns = {}
 
 local VFX = require(ReplicatedStorage.Modules.VFX)
 local SFX = require(ReplicatedStorage.Modules.SFX)
@@ -57,6 +55,7 @@ local function Lockmouse()
 		)
 	)
 end
+
 local function SetCooldown(name: string, cooldown: number)
 	Cooldowns[name] = tick() + cooldown
 	local Frame: Frame = Background:WaitForChild("Slots"):FindFirstChild(name)
@@ -95,6 +94,7 @@ local TestDagger = {
 				return
 			end
 
+
 			if inputstate ~= Enum.UserInputState.Begin then
 				return
 			end
@@ -115,8 +115,7 @@ local TestDagger = {
 				})
 			end)
 
-			local Animation =
-				ReplicatedStorage:WaitForChild("Animations"):WaitForChild("Sword"):WaitForChild("Hit"):WaitForChild("2")
+			local Animation = ReplicatedStorage:WaitForChild("Animations"):WaitForChild("Sword"):WaitForChild("Hit"):WaitForChild("2")
 
 			if PlayingAnimation then
 				PlayingAnimation:Stop()
@@ -130,15 +129,76 @@ local TestDagger = {
 	},
 	[Enum.KeyCode.X] = {
 		callback = function(action, inputstate, inputobject)
-			print("ok")
 
-			task.spawn(function()
-				WeaponService:WeaponInput("teste", Enum.UserInputState.End, {
-					Position = RootPart.CFrame,
-				})
-			end)
+			if inputstate == Enum.UserInputState.Cancel then
+				if PlayingAnimation then
+					PlayingAnimation:Stop(0.15)
+				end
+				RunService:UnbindFromRenderStep("Lockmouse")
+				HoldingTime = 0
+				RootPart.Anchored = false
+				return
+			end
+
+
+			if Humanoid.Health <= 0 then
+				return
+			end
+
+
+			if inputstate == Enum.UserInputState.Begin then
+				if CheckCooldown("Venom Palm") then
+					return
+				end
+
+				--> Animação de segurar
+				local Animation: Animation = ReplicatedStorage:WaitForChild("Animations"):WaitForChild("FlashStrike Hold")
+				PlayingAnimation = Animator:LoadAnimation(Animation)
+
+				PlayingAnimation:Play(0.15)
+				PlayingAnimation:GetMarkerReachedSignal("HoldEnd"):Connect(function()
+					PlayingAnimation:AdjustSpeed(0)
+				end)
+
+				RootPart.Anchored = true
+
+				task.spawn(function()
+					while true do
+						HoldingTime+=0.1
+						if PlayingAnimation.IsPlaying == false then
+							break
+						end
+						task.wait(.1)
+					end
+				end)
+
+
+
+			elseif inputstate == Enum.UserInputState.End then
+				--> Animação de soltar
+				if PlayingAnimation then
+					PlayingAnimation:Stop(0.15)
+				end
+
+				RootPart.Anchored = false
+
+				if HoldingTime > 0.45 then
+
+					task.spawn(function()
+						WeaponService:WeaponInput("Venom Palm", Enum.UserInputState.End, {
+							Position = RootPart.CFrame,
+						})
+					end)
+
+					SetCooldown("Venom Palm", 3)
+					SFX:Create(RootPart,"Death")
+
+				end
+
+				HoldingTime = 0
+			end
 		end,
-		name = "teste",
+		name = "Venom Palm",
 	},
 }
 

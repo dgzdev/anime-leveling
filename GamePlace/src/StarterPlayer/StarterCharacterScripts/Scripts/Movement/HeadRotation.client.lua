@@ -38,5 +38,5 @@ function HandleCharacter(Character)
 	Bind()
 end
 
-HandleCharacter(Player.Character or Player.CharacterAdded:Wait())
-Player.CharacterAdded:Connect(HandleCharacter)
+-- HandleCharacter(Player.Character or Player.CharacterAdded:Wait())
+-- Player.CharacterAdded:Connect(HandleCharacter)

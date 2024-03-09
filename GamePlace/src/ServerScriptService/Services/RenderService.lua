@@ -29,6 +29,19 @@ function RenderService:RenderForPlayersInArea(Position: Vector3, Area: number, R
 	end
 end
 
+function RenderService:RenderForPlayersExceptCaster(RenderData: {})
+	local casterPlayer = Players:GetPlayerFromCharacter(RenderData.casterHumanoid.Parent)
+	local playersToRender = game.Players:GetPlayers()
+
+	local index = table.find(playersToRender, casterPlayer)
+
+	if index then
+		table.remove(playersToRender, index)
+	end
+
+	RenderService:RenderForPlayers(RenderData, playersToRender)
+end
+
 function RenderService:CreateRenderData(casterHumanoid: Humanoid, module: string, effect: string, arguments: {}?)
 	local RenderData = {
 		casterHumanoid = casterHumanoid,

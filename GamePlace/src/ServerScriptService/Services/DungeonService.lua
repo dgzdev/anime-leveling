@@ -45,7 +45,7 @@ function DungeonService:GetRandomDoor(Room)
 end
 
 function DungeonService:GenerateLinearDungeon(DungeonName: string, MIN_ROOMS: number, MAX_ROOMS: number)
-	local ROOMS_AMOUNT = 20
+	local ROOMS_AMOUNT = 10
 
 	local StartRoom = GetDungeonAssets(DungeonName).Start
 	StartRoom:PivotTo(CFrame.new(0, 400, 0))
@@ -103,7 +103,7 @@ function DungeonService:GenerateLinearDungeon(DungeonName: string, MIN_ROOMS: nu
 end
 
 function DungeonService.KnitInit()
-	-- DungeonService:GenerateLinearDungeon("Company", 5, 10)
+	-- 	DungeonService:GenerateLinearDungeon("Company", 5, 10)
 end
 function DungeonService.KnitStart() end
 
