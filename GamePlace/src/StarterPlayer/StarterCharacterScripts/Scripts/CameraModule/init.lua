@@ -69,16 +69,7 @@ CameraModule.EnableCamera = function(self)
 			SETTINGS.Offset.Y,
 			math.clamp(SETTINGS.Offset.Z, ScrollLimits.Min, ScrollLimits.Max)
 		)
-		CameraSettings["ZoomedShoulder"].Offset = Vector3.new(1.1, 1.4, SETTINGS.Offset.Z / 2)
 	end, false, Enum.UserInputType.MouseWheel)
-
-	ContextActionService:BindAction("ZoomShoulder", function(actionName, inputState, inputObject)
-		if inputState == Enum.UserInputState.Begin then
-			self.OTS:SetActiveCameraSettings("ZoomedShoulder")
-		elseif inputState == Enum.UserInputState.End then
-			self.OTS:SetActiveCameraSettings("DefaultShoulder")
-		end
-	end, false, Enum.KeyCode.C)
 
 	if self.OTS.IsEnabled == false then
 		self.OTS:Enable()

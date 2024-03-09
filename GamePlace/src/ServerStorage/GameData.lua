@@ -28,6 +28,16 @@ export type PlayerSlot = {
 	Data: SlotData,
 }
 
+export type QuestData = {
+	Type: string,
+	EnemyName: string | nil,
+	Amount: number | nil,
+	Rewards: {
+		Experience: number | nil,
+		Gold: number | nil,
+	},
+}
+
 export type TreeNode = {
 	Pendencies: string | nil | { string },
 	Name: string,
@@ -105,13 +115,13 @@ local ProfileTemplate: ProfileData = {
 				["Gold"] = 0,
 
 				["Equiped"] = {
-					["Weapon"] = "Melee2",
+					["Weapon"] = "Golden Gauntlets",
 					["Id"] = 7,
 				},
 				["Quests"] = {},
 				["Hotbar"] = { 7, 4, 5, 6 },
 				["Inventory"] = {
-					["Melee"] = {
+					["Fists"] = {
 						AchiveDate = os.time(),
 						Rank = "E",
 						Id = 1,
@@ -131,17 +141,17 @@ local ProfileTemplate: ProfileData = {
 						Rank = "D",
 						Id = 4,
 					},
-					["King's Longsword"] = {
+					["Maou's Sword"] = {
 						AchiveDate = os.time(),
 						Rank = "S",
 						Id = 5,
 					},
-					["TestDagger"] = {
+					["Venom's Fangs"] = {
 						AchiveDate = os.time(),
 						Rank = "E",
 						Id = 6,
 					},
-					["Melee2"] = {
+					["Golden Gauntlets"] = {
 						AchiveDate = os.time(),
 						Rank = "E",
 						Id = 7,
@@ -195,7 +205,7 @@ return {
 	profileKey = "DEVELOPMENT_7",
 	profileTemplate = ProfileTemplate,
 	defaultInventory = {
-		["Melee"] = {
+		["Fists"] = {
 			AchiveDate = os.time(),
 			Rank = "E",
 			Id = 1,
@@ -215,28 +225,28 @@ return {
 			Rank = "D",
 			Id = 4,
 		},
-		["King's Longsword"] = {
+		["Maou's Sword"] = {
 			AchiveDate = os.time(),
 			Rank = "S",
 			Id = 5,
 		},
-		["TestDagger"] = {
+		["Venom's Fangs"] = {
 			AchiveDate = os.time(),
 			Rank = "E",
 			Id = 6,
 		},
-		["Melee2"] = {
+		["Golden Gauntlets"] = {
 			AchiveDate = os.time(),
 			Rank = "E",
 			Id = 7,
 		},
 	},
 	gameWeapons = {
-		["Melee"] = {
+		["Fists"] = {
 			Type = "Melee",
 			Damage = 5,
 		},
-		["Melee2"] = {
+		["Golden Gauntlets"] = {
 			Type = "Melee",
 			Damage = 10,
 		},
@@ -258,13 +268,13 @@ return {
 			Rarity = "D",
 			SubRarity = "I", -- "II" | "III" | "IV" | "V"
 		},
-		["King's Longsword"] = {
+		["Maou's Sword"] = {
 			Type = "Sword",
 			Damage = 50,
 			Rarity = "S",
 			SubRarity = "I", -- "II" | "III" | "IV" | "V"
 		},
-		["TestDagger"] = {
+		["Venom's Fangs"] = {
 			Type = "Dagger",
 			Damage = 5,
 			Rarity = "E",

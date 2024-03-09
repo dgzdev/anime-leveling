@@ -31,8 +31,9 @@ function DoubleJump:Init()
 					if jumpUsage >= 1 then
 						jumpUsage -= 1
 
-						local LookV = humanoid.MoveDirection * 50 * GetModelMass(char)
-						humanoidRootPart.AssemblyLinearVelocity = LookV
+						local LookV = humanoid.MoveDirection * 75 * GetModelMass(char)
+						humanoidRootPart.AssemblyLinearVelocity = Vector3.new()
+						humanoidRootPart.AssemblyLinearVelocity = LookV + Vector3.new(0, 60, 0)
 
 						humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 						humanoid.StateChanged:Connect(function(old, new)

@@ -33,6 +33,23 @@ function SkillTreeService:FindSkillInTree(SkillName)
 	end
 end
 
+function SkillTreeService:UnlockNewSkill(Player, SkillName)
+	local SkillInfo: GameData.TreeNode = self:FindSkillInTree(SkillName)
+	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
+	local SkillsTreeUnlocked = PlayerData.SkillsTreeUnlocked
+
+	if SkillsTreeUnlocked[SkillInfo.Pendencies] and PlayerData.PointsAvailable > SkillInfo.PointsToUnlock then
+		table.insert(PlayerData.SkillsTreeUnlocked, SkillInfo.Name)
+	end
+
+	return SkillInfo
+end
+
+function SkillTreeService:GetUnlockedSkills(Player)
+	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
+	return PlayerData.SkillsTreeUnlocked
+end
+
 function SkillTreeService:GetAvailableSkillsToUnlock(Player)
 	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
 	local SkillsTreeUnlocked = PlayerData.SkillsTreeUnlocked

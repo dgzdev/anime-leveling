@@ -48,6 +48,8 @@ local function ApplyRagdoll(model: Model, time: number)
 	RagdollService:Ragdoll(model, time)
 end
 
+local BlockAnimation
+
 local MeleeHitFunction = function(
 	Character: Model,
 	hitted: Model,
@@ -65,6 +67,17 @@ local MeleeHitFunction = function(
 	local weapon = data.Equiped.Weapon
 	local weaponData = GameData.gameWeapons[weapon]
 	if not weaponData then
+		return
+	end
+
+	if hitted:GetAttribute("Defense") == true then
+		RenderService:RenderForPlayersInArea(hitted.PrimaryPart.CFrame.Position, 200, {
+			module = "Universal",
+			effect = "Replicate",
+			root = hitted.PrimaryPart,
+			["VFX"] = "BlockedHit",
+			["SFX"] = "Block",
+		})
 		return
 	end
 
@@ -130,13 +143,21 @@ Melee.Default = {
 			op.FilterDescendantsInstances = { Workspace:WaitForChild("Enemies") }
 		end
 
-		HitboxService:CreatePartHitbox(Character, Vector3.new(5, 5, 5), 25, function(hitted: Model)
+		HitboxService:CreatePartHitbox(Character, Vector3.new(2, 5, 2), 25, function(hitted: Model)
 			MeleeHitFunction(Character, hitted, 5, "CombatHit", "Melee", nil, 0)
 		end, op)
 	end,
 
-	Defense = function(...)
-		Default.Defense(...)
+	Defense = function(
+		Character: Model,
+		InputState: Enum.UserInputState,
+		p: {
+			Position: CFrame,
+			Combo: number,
+			Combos: number,
+		}
+	)
+		Default.Defense(Character, InputState, p)
 	end,
 
 	["Strong Punch"] = function(
@@ -161,25 +182,7 @@ Melee.Default = {
 			op.FilterDescendantsInstances = { Workspace:WaitForChild("Enemies") }
 		end
 
-		--[[
-			function HitboxService:CreatePartHitbox(Character: Model, HitboxSize: Vector3, Ticks: number, callback: any)
-
-			HitboxService:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
-				local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
-				if Humanoid then
-					if Humanoid:GetAttribute("Died") then
-						return
-					end
-					if (Humanoid.Health - damage) <= 0 then
-						Humanoid:SetAttribute("Died", true)
-						CombatService:RegisterHumanoidKilled(Character, Humanoid)
-					end
-					Humanoid:TakeDamage(damage)
-				end
-
-		]]
-
-		HitboxService:CreatePartHitbox(Character, Vector3.new(5, 5, 5), 25, function(hitted)
+		HitboxService:CreatePartHitbox(Character, Vector3.new(2, 5, 2), 25, function(hitted)
 			MeleeHitFunction(Character, hitted, 30, "CombatHit", "Melee", nil, 2)
 		end, op)
 	end,
@@ -218,7 +221,7 @@ Melee.Default = {
 }
 
 -- item melee
-Melee.Melee = {
+Melee.Fists = {
 	Attack = function(
 		Character: Model,
 		InputState: Enum.UserInputState,
@@ -247,7 +250,7 @@ Melee.Melee = {
 	["Ground Slam"] = Melee.Default["Ground Slam"],
 }
 
-Melee.Melee2 = {
+Melee["GoldenGauntlets"] = {
 	Attack = function(
 		Character: Model,
 		InputState: Enum.UserInputState,
@@ -257,7 +260,24 @@ Melee.Melee2 = {
 			Combos: number,
 		}
 	)
-		Melee.Default.Attack(Character, InputState, p)
+		local op = OverlapParams.new()
+
+		if Character:GetAttribute("Enemy") then
+			local Characters = {}
+			for _, plrs in ipairs(Players:GetPlayers()) do
+				table.insert(Characters, plrs.Character)
+			end
+
+			op.FilterType = Enum.RaycastFilterType.Include
+			op.FilterDescendantsInstances = Characters
+		else
+			op.FilterType = Enum.RaycastFilterType.Include
+			op.FilterDescendantsInstances = { Workspace:WaitForChild("Enemies") }
+		end
+
+		HitboxService:CreatePartHitbox(Character, Vector3.new(2, 5, 2), 25, function(hitted: Model)
+			MeleeHitFunction(Character, hitted, 5, "CombatHit", "Melee", nil, 0)
+		end, op)
 	end,
 
 	Defense = function(
@@ -277,7 +297,7 @@ Melee.Melee2 = {
 }
 
 function Melee.Start(default)
-	default = default
+	Default = default
 
 	HitboxService = Knit.GetService("HitboxService")
 	HitboxService = Knit.GetService("HitboxService")

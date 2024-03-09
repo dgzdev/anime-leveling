@@ -131,7 +131,7 @@ Dagger.Default = {
 	end,
 }
 
-Dagger.TestDagger = {
+Dagger["Venom'sFangs"] = {
 	Attack = function(
 		Character: Model,
 		InputState: Enum.UserInputState,
@@ -221,7 +221,7 @@ Dagger.TestDagger = {
 }
 
 function Dagger.Start(default)
-	default = default
+	Default = default
 
 	RenderService = Knit.GetService("RenderService")
 	RagdollService = Knit.GetService("RagdollService")

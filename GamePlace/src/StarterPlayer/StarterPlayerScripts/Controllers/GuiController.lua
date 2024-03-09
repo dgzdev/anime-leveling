@@ -91,8 +91,8 @@ function GuiController:BindPlayerHud()
 			local health, maxHealth = Humanoid.Health, Humanoid.MaxHealth
 			local healthPercent = health / maxHealth
 
-			local colorA = Color3.fromRGB(180, 119, 255)
-			local colorB = Color3.fromRGB(255, 0, 0)
+			local colorA = Color3.fromRGB(255, 123, 125)
+			local colorB = Color3.fromRGB(44, 21, 21)
 
 			local lerpColor = colorB:Lerp(colorA, healthPercent)
 

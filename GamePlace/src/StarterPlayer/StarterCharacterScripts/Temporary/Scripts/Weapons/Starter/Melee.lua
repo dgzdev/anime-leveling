@@ -25,7 +25,7 @@ local SFX = require(ReplicatedStorage.Modules.SFX)
 
 local Animations = ReplicatedStorage:WaitForChild("Animations")
 
-local PlayingAnimation: AnimationTrack
+local PlayingAnimation: AnimationTrack | nil
 local HoldingTime = 0
 
 local Cooldowns = {
@@ -34,19 +34,16 @@ local Cooldowns = {
 
 local function SetCooldown(name: string, cooldown: number)
 	Cooldowns[name] = tick() + cooldown
-	local Frame: Frame = Background:FindFirstChild(name)
-	Frame.BackgroundTransparency = 0.65
+	local Frame: Frame = Background:WaitForChild("Slots"):FindFirstChild(name)
 
 	if Frame then
 		task.spawn(function()
-			local Ready: ImageLabel = Frame:WaitForChild("Ready")
-			Ready.Visible = false
-
-			local anim = TweenService:Create(Frame, TweenInfo.new(cooldown), { BackgroundTransparency = 0 })
+			local btn = Frame:FindFirstChild("Button", true)
+			btn.BackgroundColor3 = Color3.fromRGB(241, 127, 129)
+			local anim =
+				TweenService:Create(btn, TweenInfo.new(cooldown), { BackgroundColor3 = Color3.new(0.9, 0.9, 0.9) })
 			anim:Play()
 			anim.Completed:Wait()
-
-			Ready.Visible = true
 		end)
 	end
 end
@@ -152,12 +149,7 @@ local Melee = {
 				if PlayingAnimation then
 					PlayingAnimation:Stop(0.15)
 				end
-				HoldingTime = 0
 				RootPart.Anchored = false
-				return
-			end
-
-			if inputstate ~= Enum.UserInputState.Begin then
 				return
 			end
 
@@ -165,8 +157,47 @@ local Melee = {
 				return
 			end
 
-			if CheckCooldown("Block") then
-				return
+			if inputstate == Enum.UserInputState.Begin then
+				if CheckCooldown("Block") then
+					return
+				end
+				if PlayingAnimation then
+					if PlayingAnimation.IsPlaying then
+						return
+					end
+				end
+
+				if Humanoid.Health <= 0 then
+					return
+				end
+
+				if Character:GetAttribute("Stun") then
+					return
+				end
+
+				task.spawn(function()
+					WeaponService:WeaponInput("Defense", Enum.UserInputState.Begin, {
+						Position = RootPart.CFrame,
+					})
+				end)
+
+				PlayingAnimation = Animator:LoadAnimation(Animations:WaitForChild("Melee"):WaitForChild("Block"))
+				PlayingAnimation:Play(0.2)
+
+				SetCooldown("Block", 0.75)
+			end
+			if inputstate == Enum.UserInputState.End then
+				if PlayingAnimation then
+					PlayingAnimation:Stop(0.3)
+
+					task.spawn(function()
+						WeaponService:WeaponInput("Defense", Enum.UserInputState.End, {
+							Position = RootPart.CFrame,
+						})
+					end)
+
+					PlayingAnimation = nil
+				end
 			end
 		end,
 		name = "Block",

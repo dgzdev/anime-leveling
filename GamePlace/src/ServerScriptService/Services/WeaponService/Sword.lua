@@ -243,7 +243,7 @@ Sword.LuxurySword = {
 	FlashStrike = Sword.Default.FlashStrike,
 }
 
-Sword["King'sLongsword"] = {
+Sword["Maou'sSword"] = {
 	Attack = function(
 		Character: Model,
 		InputState: Enum.UserInputState,
@@ -425,7 +425,7 @@ Sword["King'sLongsword"] = {
 }
 
 function Sword.Start(default)
-	default = default
+	Default = default
 
 	RenderService = Knit.GetService("RenderService")
 	RagdollService = Knit.GetService("RagdollService")

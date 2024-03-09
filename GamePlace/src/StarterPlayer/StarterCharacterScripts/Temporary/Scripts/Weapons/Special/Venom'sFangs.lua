@@ -59,19 +59,16 @@ local function Lockmouse()
 end
 local function SetCooldown(name: string, cooldown: number)
 	Cooldowns[name] = tick() + cooldown
-	local Frame: Frame = Background:FindFirstChild(name)
+	local Frame: Frame = Background:WaitForChild("Slots"):FindFirstChild(name)
 
 	if Frame then
-		Frame.BackgroundTransparency = 0.65
 		task.spawn(function()
-			local Ready: ImageLabel = Frame:WaitForChild("Ready")
-			Ready.Visible = false
-
-			local anim = TweenService:Create(Frame, TweenInfo.new(cooldown), { BackgroundTransparency = 0 })
+			local btn = Frame:FindFirstChild("Button", true)
+			btn.BackgroundColor3 = Color3.fromRGB(241, 127, 129)
+			local anim =
+				TweenService:Create(btn, TweenInfo.new(cooldown), { BackgroundColor3 = Color3.new(0.9, 0.9, 0.9) })
 			anim:Play()
 			anim.Completed:Wait()
-
-			Ready.Visible = true
 		end)
 	end
 end

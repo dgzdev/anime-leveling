@@ -70,7 +70,7 @@ function WeaponService.KnitStart()
 
 	for _, weapon in pairs(Weapons) do
 		if weapon.Start then
-			weapon.Start()
+			weapon.Start(Weapons.Default)
 		end
 	end
 end

@@ -21,10 +21,10 @@ end
 
 function CombatHandler:RemoveAllSlots()
 	local CombatGui = PlayerGui:WaitForChild("PlayerHud")
-	local Background: Frame = CombatGui:WaitForChild("Background"):WaitForChild("CombatGui")
+	local Background: Frame = CombatGui:WaitForChild("Background"):WaitForChild("CombatGui"):WaitForChild("Slots")
 	for _, value in ipairs(Background:GetChildren()) do
 		if value:IsA("Frame") then
-			if value.Name ~= "Example" then
+			if value.Name ~= "Example" and value.Name ~= "A" then
 				value:Destroy()
 			end
 		end
@@ -49,15 +49,23 @@ function CombatHandler:CreateNewSlot(button: Enum.KeyCode | Enum.UserInputType, 
 	local CombatGui = PlayerGui:WaitForChild("PlayerHud")
 	local Background: Frame = CombatGui:WaitForChild("Background"):WaitForChild("CombatGui")
 
-	local Slot: Frame = Background:WaitForChild("Example"):Clone()
+	local A: TextLabel = Background:WaitForChild("Slots"):WaitForChild("A")
+	local Slot: Frame = Background:WaitForChild("Slots"):WaitForChild("Example"):Clone()
 
 	local buttonName = Replace[button] or button.Name
 	local title: TextLabel = Slot:WaitForChild("Title")
 
-	title.Text = buttonName .. ": " .. attack
+	local Button = title:WaitForChild("Button")
+	local ButtonText: TextLabel = Button:WaitForChild("ButtonText")
+
+	title.Text = attack
+	ButtonText.Text = buttonName
+
+	A.Text = Player:GetAttribute("Equiped")
+
 	Slot.Visible = true
 	Slot.Name = attack
-	Slot.Parent = Background
+	Slot.Parent = Background:WaitForChild("Slots")
 end
 
 function CombatHandler:Bind(weaponType: string, weaponName: string)
