@@ -66,23 +66,15 @@
             "$className": "ReplicatedStorage",
             "$ignoreUnknownInstances": true,
             "$path": "src/ReplicatedStorage",
-            "Shared": {
-                "$className": "Folder",
-                "$ignoreUnknownInstances": true,
-                "Requester": {
-                    "$className": "RemoteFunction"
-                },
-                "Events": {
-                    "$className": "RemoteEvent"
-                }
-            },
             "Modules": {
                 "$className": "Folder",
                 "$ignoreUnknownInstances": true,
-                "$path": "src/Modules"
+                "$path": "Modules"
             },
             "Packages": {
-                "$path": "Packages"
+                "$path": "Packages",
+                "$className": "Folder",
+                "$ignoreUnknownInstances": true
             }
         },
         "ReplicatedFirst": {

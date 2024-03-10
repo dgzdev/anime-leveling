@@ -238,6 +238,8 @@ Melee["GoldenGauntlets"] = {
 	["Ground Slam"] = Melee.Default["Ground Slam"],
 }
 
+Melee.Omnitrix = Melee.Default
+
 function Melee.Start(default)
 	Default = default
 

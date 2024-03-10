@@ -119,7 +119,7 @@ local ProfileTemplate: ProfileData = {
 					["Id"] = 7,
 				},
 				["Quests"] = {},
-				["Hotbar"] = { 7, 4, 5, 6 },
+				["Hotbar"] = { 7, 10, 9, 6 },
 				["Inventory"] = {
 					["Fists"] = {
 						AchiveDate = os.time(),
@@ -155,6 +155,21 @@ local ProfileTemplate: ProfileData = {
 						AchiveDate = os.time(),
 						Rank = "E",
 						Id = 7,
+					},
+					["Nyon"] = {
+						AchiveDate = os.time(),
+						Rank = "S",
+						Id = 8,
+					},
+					["Mister"] = {
+						AchiveDate = os.time(),
+						Rank = "S",
+						Id = 9,
+					},
+					["Omnitrix"] = {
+						AchiveData = os.time(),
+						Rank = "S",
+						Id = 10,
 					},
 				},
 				["SkillsTreeUnlocked"] = { "1" },
@@ -240,6 +255,21 @@ return {
 			Rank = "E",
 			Id = 7,
 		},
+		["Nyon"] = {
+			AchiveDate = os.time(),
+			Rank = "S",
+			Id = 8,
+		},
+		["Mister"] = {
+			AchiveDate = os.time(),
+			Rank = "S",
+			Id = 9,
+		},
+		["Omnitrix"] = {
+			AchiveData = os.time(),
+			Rank = "S",
+			Id = 10,
+		},
 	},
 	gameWeapons = {
 		["Fists"] = {
@@ -278,6 +308,24 @@ return {
 			Type = "Dagger",
 			Damage = 5,
 			Rarity = "E",
+			SubRarity = "I", -- "II" | "III" | "IV" | "V"
+		},
+		["Nyon"] = {
+			Type = "Sword",
+			Damage = 20,
+			Rarity = "S",
+			SubRarity = "I", -- "II" | "III" | "IV" | "V"
+		},
+		["Mister"] = {
+			Type = "Sword",
+			Damage = 30,
+			Rarity = "S",
+			SubRarity = "I", -- "II" | "III" | "IV" | "V"
+		},
+		["Omnitrix"] = {
+			Type = "Melee",
+			Damage = 300,
+			Rarity = "S",
 			SubRarity = "I", -- "II" | "III" | "IV" | "V"
 		},
 	},

@@ -131,17 +131,8 @@ function EnemyService:CreateEnemy(
 	task.spawn(function()
 		while true do
 			if model:GetAttribute("Stun") then
-				local rd = math.random(1, #ReplicatedStorage.Animations.Hit:GetChildren())
-				local anim = Animator:LoadAnimation(ReplicatedStorage.Animations.Hit[tostring(rd)])
-
-				anim:Play(0.35, 1, 1)
-				anim.Ended:Wait()
-				anim:Play(0, 1, 0)
-
 				task.wait(1)
 				model:SetAttribute("Stun", false)
-
-				anim:Stop()
 			end
 			model:GetAttributeChangedSignal("Stun"):Wait()
 		end

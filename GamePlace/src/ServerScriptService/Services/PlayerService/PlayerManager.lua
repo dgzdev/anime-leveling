@@ -28,17 +28,8 @@ function PlayerManager.new(player: Player)
 		while true do
 			local Character = player.Character or player.CharacterAdded:Wait()
 			if Character:GetAttribute("Stun") then
-				local rd = math.random(1, #ReplicatedStorage.Animations.Hit:GetChildren())
-				local anim = Animator:LoadAnimation(ReplicatedStorage.Animations.Hit[tostring(rd)])
-
-				anim:Play(0.1, 1, 0.3)
-				anim.Ended:Wait()
-				anim:Play(0, 1, 0)
-
 				task.wait(1)
 				Character:SetAttribute("Stun", false)
-
-				anim:Stop()
 			end
 			Character:GetAttributeChangedSignal("Stun"):Wait()
 		end

@@ -280,6 +280,9 @@ Sword["Maou'sSword"] = {
 	end,
 }
 
+Sword["Nyon"] = Sword.Default
+Sword["Mister"] = Sword.Default
+
 function Sword.Start(default)
 	Default = default
 

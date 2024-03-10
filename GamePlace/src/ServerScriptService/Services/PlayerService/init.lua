@@ -36,10 +36,10 @@ function PlayerService.OnPlayerJoin(player: Player)
 	end
 
 	local Data = Manager:GetData()
+
 	Data.Inventory = GameData.defaultInventory
 	Data.Hotbar = GameData.profileTemplate.Slots[1].Data.Hotbar
 	Data.Equiped = GameData.profileTemplate.Slots[1].Data.Equiped
-	Data.Quests = GameData.profileTemplate.Slots[1].Data.Quests
 
 	player.CharacterAdded:Connect(function(character)
 		ClothingService:LoadCharacter(player, Manager:GetPlayerSlot().Character)
