@@ -28,7 +28,13 @@ function LightningModule.FlashStrike(RenderData: { root: BasePart })
 	)
 
 	VFX:ApplyParticle(RenderData.root, "Slash", nil, CFrame.new(0, 0, -2) * CFrame.Angles(0, math.rad(180), 0))
-	VFX:ApplyParticle(Root.Parent,"LightningSlam",nil, CFrame.new(0, 0, -2) * CFrame.Angles(math.rad(90), 0 ,math.rad(90)) , true)
+	VFX:ApplyParticle(
+		Root.Parent,
+		"LightningSlam",
+		nil,
+		CFrame.new(0, 0, -2) * CFrame.Angles(math.rad(90), 0, math.rad(90)),
+		true
+	)
 
 	local pos0 = Root.CFrame.Position
 	local pos1 = (Root.CFrame * CFrame.new(0, 0, -50)).Position
@@ -140,9 +146,9 @@ function LightningModule.Lightning(RenderData: { root: BasePart })
 	VFX:ApplyParticle(Root.Parent, "Fell")
 end
 
-function LightningModule.LStrike(RenderData: { root: BasePart })
+function LightningModule.LStrike(RenderData: { root: BasePart, position: CFrame })
 	local Root = RenderData.root
-
+	local Position = RenderData.position
 	RocksModule.Ground(
 		Root.CFrame.Position + Vector3.new(0, -5, 0),
 		15,
@@ -153,7 +159,17 @@ function LightningModule.LStrike(RenderData: { root: BasePart })
 		3
 	)
 
-	VFX:ApplyParticle(RenderData.root, "Slash", nil, CFrame.new(0, 0, -2) * CFrame.Angles(0, math.rad(180), 0))
+	VFX:ApplyParticle(
+		RenderData.root,
+		"BlueSlash",
+		nil,
+		CFrame.new(0, 0, -2) * CFrame.Angles(math.rad(90), 0, 0),
+		false
+	)
+
+	VFX:CreateParticle(Position, "BlinkVFX", 3) --> Lines effect
+
+	SFX:Create(Root, "YamatoSwing")
 
 	local A1, A2 = {}, Root:FindFirstChildWhichIsA("Attachment")
 

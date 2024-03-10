@@ -57,13 +57,12 @@ function SkillTreeService:GetAvailableSkillsToUnlock(Player)
 	local ToUnlock = {}
 	local FindInData
 
-
 	local function ReadTree(node)
 		if not node then
 			return
 		end
 		for name, skillInfo: GameData.TreeNode in pairs(node) do
-			print(skillInfo.Name)
+			--print(skillInfo.Name)
 			if skillInfo.Pendencies == nil then
 				table.insert(ToUnlock, skillInfo.Name)
 				ReadTree(skillInfo.branches)
@@ -71,22 +70,18 @@ function SkillTreeService:GetAvailableSkillsToUnlock(Player)
 			end
 
 			if typeof(skillInfo.Pendencies) == "table" then
+				local Verification = 0
 				for _, PendencyName in ipairs(skillInfo.Pendencies) do
-					for i,v in ipairs(SkillsTreeUnlocked) do
-						if PendencyName == v then
-							--print(v)
-							FindInData = {}
-							table.insert(FindInData, v)
-						end
+					if Verification == #skillInfo.Pendencies then
+						table.insert(ToUnlock, skillInfo.Name)
+						--print(skillInfo.Name, " Inserido aqui")
+						ReadTree(node.branches)
 						break
 					end
-					if #FindInData < #skillInfo.Pendencies then
-						break
+					if SkillsTreeUnlocked[PendencyName] then
+						Verification += 1
+						continue
 					end
-					FindInData = nil
-					print(skillInfo.Name, " Inserido aqui")
-					table.insert(ToUnlock, PendencyName)
-					ReadTree(node.branches)
 				end
 			end
 
@@ -94,19 +89,13 @@ function SkillTreeService:GetAvailableSkillsToUnlock(Player)
 				continue
 			end
 
-			for i,v in ipairs(SkillsTreeUnlocked) do
-				if skillInfo.Pendencies == v then
-					print(v, skillInfo.Name)
-					FindInData = v
-				end
+			if not SkillsTreeUnlocked[skillInfo.Pendencies] then
+				--print(SkillsTreeUnlocked)
+				--print(skillInfo.Name, skillInfo.Pendencies)
 				break
 			end
 
-			if FindInData == nil then
-				break
-			end
-
-			print(skillInfo.Name, " Inserido aqui")
+			--print(skillInfo.Name, " Inserido aqui")
 			table.insert(ToUnlock, skillInfo.Name)
 			ReadTree(skillInfo.branches)
 		end
@@ -116,12 +105,10 @@ function SkillTreeService:GetAvailableSkillsToUnlock(Player)
 	return ToUnlock
 end
 
-
 function SkillTreeService.Client:GetSkillsAvailableToUnlock(Player)
 	print(Player)
-	return	self.Server:GetAvailableSkillsToUnlock(Player)
+	return self.Server:GetAvailableSkillsToUnlock(Player)
 end
-
 
 function SkillTreeService.KnitStart()
 	PlayerService = Knit.GetService("PlayerService")

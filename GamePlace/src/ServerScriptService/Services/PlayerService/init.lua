@@ -40,6 +40,7 @@ function PlayerService.OnPlayerJoin(player: Player)
 	Data.Inventory = GameData.defaultInventory
 	Data.Hotbar = GameData.profileTemplate.Slots[1].Data.Hotbar
 	Data.Equiped = GameData.profileTemplate.Slots[1].Data.Equiped
+	Data.SkillsTreeUnlocked = GameData.profileTemplate.Slots[1].Data.SkillsTreeUnlocked
 
 	player.CharacterAdded:Connect(function(character)
 		ClothingService:LoadCharacter(player, Manager:GetPlayerSlot().Character)

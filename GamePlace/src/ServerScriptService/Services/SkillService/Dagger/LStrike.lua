@@ -31,6 +31,7 @@ return function(
 		module = "Lightning",
 		effect = "LStrike",
 		root = Character.PrimaryPart,
+		position = CFramePosition,
 	})
 
 	task.spawn(function()

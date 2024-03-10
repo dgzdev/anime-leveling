@@ -94,7 +94,6 @@ local TestDagger = {
 				return
 			end
 
-
 			if inputstate ~= Enum.UserInputState.Begin then
 				return
 			end
@@ -115,8 +114,8 @@ local TestDagger = {
 				})
 			end)
 
-			local Animation = ReplicatedStorage:WaitForChild("Animations"):WaitForChild("Sword"):WaitForChild("Hit"):WaitForChild("2")
-
+			local Animation =
+				ReplicatedStorage:WaitForChild("Animations"):WaitForChild("Sword"):WaitForChild("Hit"):WaitForChild("2")
 			if PlayingAnimation then
 				PlayingAnimation:Stop()
 			end
@@ -125,11 +124,10 @@ local TestDagger = {
 			PlayingAnimation:AdjustSpeed(0.25)
 			PlayingAnimation:Play(0.15)
 		end,
-		name = "LStrike",
+		name = "Venom Dash",
 	},
 	[Enum.KeyCode.X] = {
 		callback = function(action, inputstate, inputobject)
-
 			if inputstate == Enum.UserInputState.Cancel then
 				if PlayingAnimation then
 					PlayingAnimation:Stop(0.15)
@@ -140,11 +138,9 @@ local TestDagger = {
 				return
 			end
 
-
 			if Humanoid.Health <= 0 then
 				return
 			end
-
 
 			if inputstate == Enum.UserInputState.Begin then
 				if CheckCooldown("Venom Palm") then
@@ -152,7 +148,8 @@ local TestDagger = {
 				end
 
 				--> Animação de segurar
-				local Animation: Animation = ReplicatedStorage:WaitForChild("Animations"):WaitForChild("FlashStrike Hold")
+				local Animation: Animation = ReplicatedStorage:WaitForChild("Animations")
+					:WaitForChild("FlashStrike Hold")
 				PlayingAnimation = Animator:LoadAnimation(Animation)
 
 				PlayingAnimation:Play(0.15)
@@ -164,16 +161,13 @@ local TestDagger = {
 
 				task.spawn(function()
 					while true do
-						HoldingTime+=0.1
+						HoldingTime += 0.1
 						if PlayingAnimation.IsPlaying == false then
 							break
 						end
-						task.wait(.1)
+						task.wait(0.1)
 					end
 				end)
-
-
-
 			elseif inputstate == Enum.UserInputState.End then
 				--> Animação de soltar
 				if PlayingAnimation then
@@ -183,7 +177,6 @@ local TestDagger = {
 				RootPart.Anchored = false
 
 				if HoldingTime > 0.45 then
-
 					task.spawn(function()
 						WeaponService:WeaponInput("Venom Palm", Enum.UserInputState.End, {
 							Position = RootPart.CFrame,
@@ -191,8 +184,7 @@ local TestDagger = {
 					end)
 
 					SetCooldown("Venom Palm", 3)
-					SFX:Create(RootPart,"Death")
-
+					SFX:Create(RootPart, "Death")
 				end
 
 				HoldingTime = 0

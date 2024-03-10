@@ -172,7 +172,7 @@ local ProfileTemplate: ProfileData = {
 						Id = 10,
 					},
 				},
-				["SkillsTreeUnlocked"] = { "1" },
+				["SkillsTreeUnlocked"] = { ["1"] = true },
 				["Skills"] = {
 					["Inteligence"] = {
 						["AchiveDate"] = os.time(),
