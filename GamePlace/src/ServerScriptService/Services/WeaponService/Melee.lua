@@ -13,6 +13,8 @@ local RenderService
 local CombatService
 local ProgressionService
 local PlayerService
+local WeaponService
+local SkillService
 
 local GameData = require(ServerStorage.GameData)
 
@@ -104,14 +106,22 @@ local MeleeHitFunction = function(
 			["SFX"] = sfx,
 		})
 
-		Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * kb) * GetModelMass(hitted)
 		local rag = ragdoll or 2
+		kb = kb or 0
 
-		HitboxService:CreateStun(hitted, 0.75, function()
+		if kb == 0 then
+			HitboxService:CreateStun(hitted, 0.75, function()
+				if rag > 0 then
+					ApplyRagdoll(hitted, rag)
+				end
+			end)
+		else
+			Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * kb)
+				* GetModelMass(hitted)
 			if rag > 0 then
 				ApplyRagdoll(hitted, rag)
 			end
-		end)
+		end
 
 		Humanoid:TakeDamage(damage)
 		return false
@@ -128,23 +138,10 @@ Melee.Default = {
 			Combos: number,
 		}
 	)
-		local op = OverlapParams.new()
+		local op = WeaponService:GetOverlapParams(Character)
 
-		if Character:GetAttribute("Enemy") then
-			local Characters = {}
-			for _, plrs in ipairs(Players:GetPlayers()) do
-				table.insert(Characters, plrs.Character)
-			end
-
-			op.FilterType = Enum.RaycastFilterType.Include
-			op.FilterDescendantsInstances = Characters
-		else
-			op.FilterType = Enum.RaycastFilterType.Include
-			op.FilterDescendantsInstances = { Workspace:WaitForChild("Enemies") }
-		end
-
-		HitboxService:CreatePartHitbox(Character, Vector3.new(2, 5, 2), 25, function(hitted: Model)
-			MeleeHitFunction(Character, hitted, 5, "CombatHit", "Melee", nil, 0)
+		HitboxService:CreateHitbox(Character, Vector3.new(2, 5, 2), 25, function(hitted: Model)
+			MeleeHitFunction(Character, hitted, 0, "CombatHit", "Melee", nil, 0)
 		end, op)
 	end,
 
@@ -160,64 +157,18 @@ Melee.Default = {
 		Default.Defense(Character, InputState, p)
 	end,
 
-	["Strong Punch"] = function(
-		Character: Model,
-		InputState: Enum.UserInputState,
-		p: {
-			Position: CFrame,
-		}
-	)
-		local op = OverlapParams.new()
+	["Strong Punch"] = function(...)
+		local args = table.pack(...)
+		local send = { "Strong Punch", args[1], args[2], args[3], MeleeHitFunction }
 
-		if Character:GetAttribute("Enemy") then
-			local Characters = {}
-			for _, plrs in ipairs(Players:GetPlayers()) do
-				table.insert(Characters, plrs.Character)
-			end
-
-			op.FilterType = Enum.RaycastFilterType.Include
-			op.FilterDescendantsInstances = Characters
-		else
-			op.FilterType = Enum.RaycastFilterType.Include
-			op.FilterDescendantsInstances = { Workspace:WaitForChild("Enemies") }
-		end
-
-		HitboxService:CreatePartHitbox(Character, Vector3.new(2, 5, 2), 25, function(hitted)
-			MeleeHitFunction(Character, hitted, 30, "CombatHit", "Melee", nil, 2)
-		end, op)
+		SkillService:CallSkill(table.unpack(send))
 	end,
-	["Ground Slam"] = function(
-		Character: Model,
-		InputState: Enum.UserInputState,
-		p: {
-			Position: CFrame,
-		}
-	)
-		local op = OverlapParams.new()
 
-		if Character:GetAttribute("Enemy") then
-			local Characters = {}
-			for _, plrs in ipairs(Players:GetPlayers()) do
-				table.insert(Characters, plrs.Character)
-			end
+	["Ground Slam"] = function(...)
+		local args = table.pack(...)
+		local send = { "GroundSlam", args[1], args[2], args[3], MeleeHitFunction }
 
-			op.FilterType = Enum.RaycastFilterType.Include
-			op.FilterDescendantsInstances = Characters
-		else
-			op.FilterType = Enum.RaycastFilterType.Include
-			op.FilterDescendantsInstances = { Workspace:WaitForChild("Enemies") }
-		end
-		
-		RenderService:RenderForPlayersInArea(p.Position.Position, 100, {
-			["module"] = "Melee",
-			["effect"] = "GroundSlam",
-			root = Character.PrimaryPart,
-		})
-
-		HitboxService:CreatePartHitbox(Character, Vector3.new(25, 5, 25), 3, function(hitted)
-			MeleeHitFunction(Character, hitted, 30, "CombatHit", "Melee", nil, 2)
-		end, op)
-
+		SkillService:CallSkill(table.unpack(send))
 	end,
 }
 
@@ -261,24 +212,14 @@ Melee["GoldenGauntlets"] = {
 			Combos: number,
 		}
 	)
-		local op = OverlapParams.new()
+		local op = WeaponService:GetOverlapParams(Character)
 
-		if Character:GetAttribute("Enemy") then
-			local Characters = {}
-			for _, plrs in ipairs(Players:GetPlayers()) do
-				table.insert(Characters, plrs.Character)
-			end
-
-			op.FilterType = Enum.RaycastFilterType.Include
-			op.FilterDescendantsInstances = Characters
-		else
-			op.FilterType = Enum.RaycastFilterType.Include
-			op.FilterDescendantsInstances = { Workspace:WaitForChild("Enemies") }
+		local WeaponFolder = Character:FindFirstChild("Weapons")
+		for i, weapon: Model in ipairs(WeaponFolder:GetChildren()) do
+			HitboxService:CreateHitboxFromModel(Character, weapon, 1, 10, function(hitted: Model)
+				MeleeHitFunction(Character, hitted, 5, "CombatHit", "Melee", nil, 0)
+			end, op)
 		end
-
-		HitboxService:CreatePartHitbox(Character, Vector3.new(2, 5, 2), 25, function(hitted: Model)
-			MeleeHitFunction(Character, hitted, 5, "CombatHit", "Melee", nil, 0)
-		end, op)
 	end,
 
 	Defense = function(
@@ -300,7 +241,8 @@ Melee["GoldenGauntlets"] = {
 function Melee.Start(default)
 	Default = default
 
-	HitboxService = Knit.GetService("HitboxService")
+	SkillService = Knit.GetService("SkillService")
+	WeaponService = Knit.GetService("WeaponService")
 	HitboxService = Knit.GetService("HitboxService")
 	RenderService = Knit.GetService("RenderService")
 	CombatService = Knit.GetService("CombatService")

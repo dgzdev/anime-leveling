@@ -57,6 +57,24 @@ function WeaponService.Client:WeaponInput(
 	self.Server:WeaponInput(Character, ActionName, InputState, Data)
 end
 
+function WeaponService:GetOverlapParams(Character)
+	local op = OverlapParams.new()
+	if Character:GetAttribute("Enemy") then
+		local Characters = {}
+		for _, plrs in ipairs(Players:GetPlayers()) do
+			table.insert(Characters, plrs.Character)
+		end
+
+		op.FilterType = Enum.RaycastFilterType.Include
+		op.FilterDescendantsInstances = Characters
+	else
+		op.FilterType = Enum.RaycastFilterType.Include
+		op.FilterDescendantsInstances = { workspace:WaitForChild("Enemies") }
+	end
+
+	return op
+end
+
 function WeaponService.KnitInit()
 	for _, weapon in ipairs(script:GetChildren()) do
 		if not weapon:IsA("ModuleScript") then

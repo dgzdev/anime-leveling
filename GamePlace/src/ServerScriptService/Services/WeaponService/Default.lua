@@ -1,8 +1,6 @@
 local Default = {}
 
-function Default.Attack(Character: Model, InputState: Enum.UserInputState, p: { Position: CFrame })
-	print("Default Attack")
-end
+function Default.Attack(Character: Model, InputState: Enum.UserInputState, p: { Position: CFrame }) end
 
 function Default.Defense(Character: Model, InputState: Enum.UserInputState, p: { Position: CFrame })
 	if InputState == Enum.UserInputState.Begin then

@@ -14,6 +14,7 @@ local HitboxService
 local CombatService
 local PlayerService
 local ProgressionService
+local SkillService
 
 local GameData = require(ServerStorage.GameData)
 
@@ -99,14 +100,23 @@ local SwordHitFunction = function(
 			["SFX"] = sfx,
 		})
 
-		Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * kb) * GetModelMass(hitted)
 		local rag = ragdoll or 2
 
-		HitboxService:CreateStun(hitted, 0.75, function()
+		kb = kb or 0
+
+		if kb == 0 then
+			HitboxService:CreateStun(hitted, 0.75, function()
+				if rag > 0 then
+					ApplyRagdoll(hitted, rag)
+				end
+			end)
+		else
+			Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * kb)
+				* GetModelMass(hitted)
 			if rag > 0 then
 				ApplyRagdoll(hitted, rag)
 			end
-		end)
+		end
 
 		Humanoid:TakeDamage(damage)
 		return false
@@ -139,25 +149,11 @@ Sword.Default = {
 		print("Defense")
 	end,
 
-	FlashStrike = function(Character: Model, InputState: Enum.UserInputState, Data: { Position: CFrame })
-		local Mid = Data.Position * CFrame.new(0, 0, -30)
+	FlashStrike = function(...)
+		local args = table.pack(...)
+		local send = { "FlashStrike", args[1], args[2], args[3], SwordHitFunction }
 
-		RenderService:RenderForPlayersInArea(Mid.Position, 200, {
-			module = "Universal",
-			effect = "FlashStrike",
-			root = Character.PrimaryPart,
-		})
-
-		local op = OverlapParams.new()
-		op.FilterType = Enum.RaycastFilterType.Include
-		op.FilterDescendantsInstances = { Workspace.Enemies }
-
-		local WeaponFolder = Character:FindFirstChild("Weapons")
-		for i, weapon: Model in ipairs(WeaponFolder:GetChildren()) do
-			HitboxService:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
-				SwordHitFunction(Character, hitted, 5, "SwordHit", "SwordHit", nil, 0)
-			end, op)
-		end
+		SkillService:CallSkill(table.unpack(send))
 	end,
 }
 
@@ -265,162 +261,22 @@ Sword["Maou'sSword"] = {
 		Sword.Default.Defense(...)
 	end,
 
-	FlashStrike = function(
-		Character: Model,
-		InputState: Enum.UserInputState,
-		Data: { Position: CFrame, Camera: CFrame }
-	)
-		local Mid = Data.Position * CFrame.new(0, 0, -30)
+	FlashStrike = function(...)
+		local args = table.pack(...)
+		local send = { "LightningFlashStrike", args[1], args[2], args[3], SwordHitFunction }
 
-		local Root: BasePart = Character:FindFirstChild("HumanoidRootPart")
-		if not Root then
-			return
-		end
-
-		RenderService:RenderForPlayersInArea(Mid.Position, 200, {
-			module = "Lightning",
-			effect = "FlashStrike",
-			root = Root,
-		})
-
-		local op = OverlapParams.new()
-		op.FilterType = Enum.RaycastFilterType.Include
-		op.FilterDescendantsInstances = { Workspace.Enemies }
-
-		local WeaponFolder = Character:FindFirstChild("Weapons")
-		for i, weapon: Model in ipairs(WeaponFolder:GetChildren()) do
-			HitboxService:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
-				SwordHitFunction(Character, hitted, 5, "LightningSwordHit", "SwordHit", nil, 0)
-			end, op)
-		end
-
-		RenderService:RenderForPlayersInArea(Mid.Position, 200, {
-			["module"] = "Universal",
-			["effect"] = "Replicate",
-			["VFX"] = "SlashHit",
-			root = Character.PrimaryPart,
-		})
+		SkillService:CallSkill(table.unpack(send))
 	end,
 
-	["Eletric Wave"] = function(Character: Model, InputState: Enum.UserInputState, Data: { Position: CFrame })
-		local Mid = Data.Position * CFrame.new(0, 0, -60)
-		local InitialSize = Vector3.new(5, 5, 5)
-		local FinalSize = Vector3.new(60, 5, 5)
-
-		local effectPart = Instance.new("Part")
-		effectPart.Size = InitialSize
-		effectPart.CFrame = Data.Position
-		effectPart.Anchored = true
-		effectPart.CanCollide = false
-		effectPart.Transparency = 1
-		effectPart.Parent = Workspace:WaitForChild("VFXs")
-
-		VFX:CreateInfinite(effectPart, "InfiniteLightning")
-
-		RenderService:RenderForPlayersInArea(Mid.Position, 200, {
-			module = "Lightning",
-			effect = "LightningWave",
-			root = Character.PrimaryPart,
-		})
-
-		SFX:Create(effectPart, "LightningFlashes", 0, 120, true)
-
-		local Tween = game:GetService("TweenService"):Create(
-			effectPart,
-			TweenInfo.new(1.35, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut),
-			{ Size = FinalSize, CFrame = Mid }
-		)
-		Tween:Play()
-		Tween.Completed:Connect(function(playbackState)
-			for _, p: ParticleEmitter in ipairs(effectPart:GetChildren()) do
-				if p:IsA("ParticleEmitter") then
-					p.Enabled = false
-				end
-			end
-			task.wait(1)
-			effectPart:Destroy()
-		end)
-
-		local Damaged = {}
-		effectPart.Touched:Connect(function(Part)
-			local Model = Part:FindFirstAncestorWhichIsA("Model")
-			if not Model then
-				return
-			end
-
-			if Part:IsDescendantOf(Character) then
-				return
-			end
-
-			if not Part:IsDescendantOf(Workspace.Enemies) then
-				return
-			end
-
-			local Humanoid = Model:FindFirstChildWhichIsA("Humanoid")
-			if not Humanoid then
-				return
-			end
-
-			if Humanoid.Health <= 0 then
-				return
-			end
-
-			if Damaged[Humanoid] then
-				return
-			end
-
-			local Root: BasePart = Model.PrimaryPart
-			if not Root then
-				return
-			end
-
-			Damaged[Humanoid] = true
-
-			Humanoid:TakeDamage(30)
-			RagdollService:Ragdoll(Model, 1.5)
-
-			local V = (Data.Position.LookVector * 30) * GetModelMass(Model)
-			Humanoid.RootPart.AssemblyLinearVelocity = V + Vector3.new(0, 15, 0)
-
-			VFX:ApplyParticle(Model, "LightningSwordHit")
-			VFX:ApplyParticle(Model, "Fell")
-			SFX:Create(Model, "LightningFlashesQuick", 0, 70)
-		end)
-		return
+	["Eletric Wave"] = function(...)
+		SkillService:CallSkill("EletricWave", ...)
 	end,
 
-	Lightning = function(Character: Model, InputState: Enum.UserInputState, Data: { Position: CFrame })
-		local Size = Vector3.new(7, 7, 60)
+	Lightning = function(...)
+		local args = table.pack(...)
+		local send = { "Lightning", args[1], args[2], args[3], SwordHitFunction }
 
-		local Root: BasePart = Character:FindFirstChild("HumanoidRootPart")
-		if not Root then
-			return
-		end
-
-		local WeaponFolder = Character:FindFirstChild("Weapons")
-		local alreadyHitted = false
-		for i, weapon: Model in ipairs(WeaponFolder:GetChildren()) do
-			HitboxService:CreateHitbox(Character, Size, 16, function(hitted: Model | BasePart)
-				if alreadyHitted then
-					return "break"
-				end
-
-				alreadyHitted = true
-				SwordHitFunction(Character, hitted, 30, "LightningSwordHit", "SwordHit", 2, 2)
-
-				if hitted:IsA("Accessory") then
-					hitted = hitted.Parent
-				end
-
-				RenderService:RenderForPlayersInArea(Root.CFrame.Position, 200, {
-					module = "Lightning",
-					effect = "Lightning",
-					root = hitted.PrimaryPart or hitted,
-				})
-
-				return "break"
-			end)
-		end
+		SkillService:CallSkill(table.unpack(send))
 	end,
 }
 
@@ -429,8 +285,8 @@ function Sword.Start(default)
 
 	RenderService = Knit.GetService("RenderService")
 	RagdollService = Knit.GetService("RagdollService")
+	SkillService = Knit.GetService("SkillService")
 
-	HitboxService = Knit.GetService("HitboxService")
 	HitboxService = Knit.GetService("HitboxService")
 
 	ProgressionService = Knit.GetService("ProgressionService")

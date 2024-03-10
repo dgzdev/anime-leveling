@@ -47,9 +47,11 @@ function VFX:_ApplyParticle(
 
 	if v then
 		for _, p: ParticleEmitter in ipairs(particle:GetDescendants()) do
-			if p:IsA("ParticleEmitter") then
-				p.Acceleration = v
-			end
+			task.spawn(function()
+				if p:IsA("ParticleEmitter") then
+					p.Acceleration = v
+				end
+			end)
 		end
 	end
 
@@ -57,10 +59,12 @@ function VFX:_ApplyParticle(
 
 	for _, pe: ParticleEmitter in ipairs(particle:GetDescendants()) do
 		if pe:IsA("ParticleEmitter") then
-			local c = pe:GetAttribute("EmitCount") or 1
-			local emitDelay = pe:GetAttribute("EmitDelay") or 0.1
-			task.wait(emitDelay)
-			pe:Emit(tonumber(c))
+			task.spawn(function()
+				local c = pe:GetAttribute("EmitCount") or 1
+				local emitDelay = pe:GetAttribute("EmitDelay") or 0.1
+				task.wait(emitDelay)
+				pe:Emit(tonumber(c))
+			end)
 		end
 		task.wait()
 	end

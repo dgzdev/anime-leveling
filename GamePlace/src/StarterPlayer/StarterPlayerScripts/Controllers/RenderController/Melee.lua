@@ -22,7 +22,9 @@ function Melee.GroundSlam(RenderData: { root: BasePart })
 	VFX:ApplyParticle(RenderData.root, "GroundSlam", 2, CFrame.new(0, -2.6, 0) * CFrame.Angles(math.rad(90), 0, 0))
 end
 
-function Melee.StrongPunch(RenderData: { root: BasePart }) end
+function Melee.StrongPunch(RenderData: { root: BasePart })
+	VFX:ApplyParticle(RenderData.root, "StrongPunch", 2, CFrame.new(0, 0, -2) * CFrame.Angles(math.rad(90), 0, 0), true)
+end
 
 function Melee.Start() end
 

@@ -121,16 +121,19 @@ function HitboxService:CreateHitboxFromModel(
 	model: Model,
 	scale: number?,
 	CheckTicks: number,
-	callback: any
+	callback: any,
+	Params: OverlapParams?
 )
 	local size = model:GetExtentsSize()
 	scale = scale or 1
 
 	local Hitted = {}
 
-	local Params = OverlapParams.new()
-	Params.FilterType = Enum.RaycastFilterType.Include
-	Params.FilterDescendantsInstances = { Workspace.Enemies }
+	if not Params then
+		Params = OverlapParams.new()
+		Params.FilterType = Enum.RaycastFilterType.Include
+		Params.FilterDescendantsInstances = { Workspace.Enemies }
+	end
 
 	task.spawn(function()
 		for i = 0, CheckTicks or 16, 1 do
@@ -144,10 +147,7 @@ function HitboxService:CreateHitboxFromModel(
 				end
 				table.insert(Hitted, char)
 
-				local response = callback(char)
-				if response == false then
-					break
-				end
+				task.spawn(callback, char)
 			end
 
 			task.wait(1 / 60)
@@ -160,7 +160,8 @@ function HitboxService:CreateHitbox(
 	Character: Model,
 	HitboxSize: Vector3,
 	CheckTicks: number,
-	callback: (hitted: Model) -> nil
+	callback: (hitted: Model) -> nil,
+	Params: OverlapParams?
 )
 	local Humanoid = Character:WaitForChild("Humanoid")
 
@@ -168,9 +169,11 @@ function HitboxService:CreateHitbox(
 	local RootPart = Character:WaitForChild("HumanoidRootPart")
 	local ComboCounterAtTime = Humanoid:GetAttribute("ComboCounter")
 
-	local Params = OverlapParams.new()
-	Params.FilterType = Enum.RaycastFilterType.Include
-	Params.FilterDescendantsInstances = { Enemies }
+	if not Params then
+		Params = OverlapParams.new()
+		Params.FilterType = Enum.RaycastFilterType.Include
+		Params.FilterDescendantsInstances = { Enemies }
+	end
 
 	task.spawn(function()
 		for i = 0, CheckTicks or 16, 1 do
@@ -189,10 +192,7 @@ function HitboxService:CreateHitbox(
 				end
 				table.insert(Hitted, char)
 
-				local response = callback(char)
-				if response == false or response == "break" then
-					break
-				end
+				task.spawn(callback, char)
 			end
 
 			task.wait(1 / 60)
@@ -200,11 +200,20 @@ function HitboxService:CreateHitbox(
 	end)
 end
 
-function HitboxService:CreateFixedHitbox(Position: CFrame, Size: Vector3, Ticks: number, callback)
+function HitboxService:CreateFixedHitbox(
+	Position: CFrame,
+	Size: Vector3,
+	Ticks: number,
+	callback,
+	Params: OverlapParams?
+)
 	local Hitted = {}
-	local Params = OverlapParams.new()
-	Params.FilterType = Enum.RaycastFilterType.Include
-	Params.FilterDescendantsInstances = { Enemies }
+
+	if not Params then
+		Params = OverlapParams.new()
+		Params.FilterType = Enum.RaycastFilterType.Include
+		Params.FilterDescendantsInstances = { Enemies }
+	end
 
 	for i = 0, Ticks, 1 do
 		local CharactersInside = HitboxService:GetCharactersInBoxArea(Position, Size, Params)
@@ -214,10 +223,7 @@ function HitboxService:CreateFixedHitbox(Position: CFrame, Size: Vector3, Ticks:
 				continue
 			end
 			table.insert(Hitted, char)
-			local response = callback(char)
-			if response == false then
-				break
-			end
+			task.spawn(callback, char)
 		end
 		task.wait(1 / 60)
 	end
@@ -243,7 +249,7 @@ function HitboxService:CreatePartHitbox(
 	Hitbox.Anchored = false
 	Hitbox.CanCollide = false
 	Hitbox.Massless = true
-	Hitbox.Transparency = 1
+	Hitbox.Transparency = 0.5
 	Hitbox.Size = HitboxSize
 	Hitbox.CFrame = RootPart.CFrame * CFrame.new(0, 0, -HitboxSize.Z / 2)
 	Hitbox.Parent = Character
@@ -267,10 +273,7 @@ function HitboxService:CreatePartHitbox(
 				continue
 			end
 			table.insert(Hitted, char)
-			local response = callback(char)
-			if response == false then
-				break
-			end
+			task.spawn(callback, char)
 		end
 		task.wait(1 / 60)
 	end

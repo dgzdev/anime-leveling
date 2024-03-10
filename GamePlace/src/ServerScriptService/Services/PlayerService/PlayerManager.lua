@@ -1,6 +1,7 @@
 local BadgeService = game:GetService("BadgeService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
+local TweenService = game:GetService("TweenService")
 
 local PlayerManager = {}
 PlayerManager.__index = PlayerManager
@@ -43,10 +44,37 @@ function PlayerManager.new(player: Player)
 		end
 	end)
 
+	local function CreatePlayerHealth()
+		local PlayerHealth = game.ReplicatedStorage.Models.PlayerHealth:Clone()
+		PlayerHealth.Parent = self.Character
+		PlayerHealth.Adornee = self.Character:WaitForChild("Head")
+
+		local Name = PlayerHealth:WaitForChild("Name"):WaitForChild("PlayerName")
+		Name.Text = self.Character.Name
+
+		local Health = PlayerHealth.Health.SizeFrame
+
+		self.Humanoid.HealthChanged:Connect(function(health)
+			local Scale = health / self.Humanoid.MaxHealth
+			local Color = Color3.fromRGB(2, 255, 150):Lerp(Color3.new(1, 0, 0), 1 - Scale)
+			local Tween = TweenService:Create(
+				Health,
+				TweenInfo.new(0.25, Enum.EasingStyle.Cubic),
+				{ Size = UDim2.fromScale(Scale, 1), BackgroundColor3 = Color }
+			)
+
+			Tween:Play()
+		end)
+	end
+
 	self.Player.CharacterAdded:Connect(function(character)
 		self.Character = character
 		self.Humanoid = character:WaitForChild("Humanoid")
+
+		CreatePlayerHealth()
 	end)
+
+	CreatePlayerHealth()
 
 	return self
 end

@@ -192,6 +192,6 @@ local function CreateHumanoidDescription(desc: { [string]: any }): HumanoidDescr
 end
 
 return {
-	profileKey = "DEVELOPMENT_6",
+	profileKey = "DEVELOPMENT_7",
 	profileTemplate = ProfileTemplate,
 }

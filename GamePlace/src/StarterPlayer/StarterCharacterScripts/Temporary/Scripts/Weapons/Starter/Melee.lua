@@ -256,16 +256,14 @@ local Melee = {
 			PlayingAnimation:GetMarkerReachedSignal("end"):Once(function()
 				SFX:Create(RootPart, "Ground-Slam", 10, 80, false)
 				PlayingAnimation:AdjustSpeed(0)
-				
+
 				task.spawn(function()
 					WeaponService:WeaponInput("Ground Slam", Enum.UserInputState.End, {
 						Position = RootPart.CFrame,
 					})
 				end)
-				
 			end)
 
-	
 			task.wait(2)
 
 			PlayingAnimation:Stop(0.3)
@@ -322,10 +320,16 @@ local Melee = {
 
 			SetCooldown("Strong Punch", 2)
 
-			task.spawn(function()
-				WeaponService:WeaponInput("Strong Punch", Enum.UserInputState.End, {
-					Position = RootPart.CFrame,
-				})
+			PlayingAnimation =
+				Animator:LoadAnimation(Animations:WaitForChild("Melee"):WaitForChild("Hit"):WaitForChild("4"))
+			PlayingAnimation:Play()
+			PlayingAnimation:GetMarkerReachedSignal("release"):Connect(function()
+				--> soco soltou
+				task.spawn(function()
+					WeaponService:WeaponInput("Strong Punch", Enum.UserInputState.End, {
+						Position = RootPart.CFrame,
+					}) --> puxa o evento de render
+				end)
 			end)
 
 			task.wait(1)

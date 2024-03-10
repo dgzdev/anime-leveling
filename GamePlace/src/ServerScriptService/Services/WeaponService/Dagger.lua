@@ -14,6 +14,7 @@ local HitboxService
 local PlayerService
 local ProgressionService
 local CombatService
+local SkillService
 
 local function ApplyRagdoll(model: Model, time: number)
 	RagdollService:Ragdoll(model, time)
@@ -90,14 +91,23 @@ local DaggerHitFunction = function(
 			["SFX"] = sfx,
 		})
 
-		Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * kb) * GetModelMass(hitted)
 		local rag = ragdoll or 2
 
-		HitboxService:CreateStun(hitted, 0.75, function()
+		kb = kb or 0
+
+		if kb == 0 then
+			HitboxService:CreateStun(hitted, 0.75, function()
+				if rag > 0 then
+					ApplyRagdoll(hitted, rag)
+				end
+			end)
+		else
+			Humanoid.RootPart.AssemblyLinearVelocity = (Character.PrimaryPart.CFrame.LookVector * kb)
+				* GetModelMass(hitted)
 			if rag > 0 then
 				ApplyRagdoll(hitted, rag)
 			end
-		end)
+		end
 
 		Humanoid:TakeDamage(damage)
 		return false
@@ -156,128 +166,27 @@ Dagger["Venom'sFangs"] = {
 		Dagger.Default.Defense(Character, InputState, p)
 	end,
 
-	["Venom Palm"] = function(
-		Character: Model,
-		InputState: Enum.UserInputState,
-		p: {
-			Position: CFrame,
-			Combo: number,
-			Combos: number,
-		}
-	)
-		local CFramePosition = p.Position
-		local WeaponFolder = Character:FindFirstChild("Weapons")
+	["Venom Palm"] = function(...)
+		local args = table.pack(...)
+		local send = { "VenomPalm", args[1], args[2], args[3], DaggerHitFunction }
 
-		RenderService:RenderForPlayersInArea(CFramePosition.Position, 200, { --> VFX na Render
-			module = "Universal",
-			effect = "VenomPalm",
-			root = Character.PrimaryPart,
-			position = CFramePosition
-		})
-
-		task.spawn(function() -- Para tirar o delay da skill.
-			for i, weapon: Model in ipairs(WeaponFolder:GetChildren()) do --> Hitbox
-				HitboxService:CreateFixedHitbox(CFramePosition,Vector3.new(5,5,5),1, function(hitted: Model)
-					task.spawn(function()
-						DaggerHitFunction(Character, hitted, 2, "DaggerHit", "DaggerHit", 2.5, 1)
-					end)
-				end)
-			end
-		end)
-
-
-
-		--> Teleporta o jogador para trás
-		local Ray = RaycastParams.new()
-		Ray.FilterType = Enum.RaycastFilterType.Exclude
-		Ray.FilterDescendantsInstances = { Character, Workspace.Enemies, Workspace.NPC }
-
-		local Distance = 25
-
-		local RayResult = Workspace:Raycast(CFramePosition.Position, CFramePosition.LookVector * Distance, Ray)
-		if RayResult then
-			Distance = (CFramePosition.Position - RayResult.Position).Magnitude ---distancia q ele deve teleportar
-		end
-
-		Character:PivotTo(Character:GetPivot() * CFrame.new(0, 0, Distance))
-
-
+		SkillService:CallSkill(table.unpack(send))
 	end,
 
+	["LStrike"] = function(...)
+		local args = table.pack(...)
+		local send = { "LStrike", args[1], args[2], args[3], DaggerHitFunction }
 
-	["LStrike"] = function(
-		Character: Model,
-		InputState: Enum.UserInputState,
-		p: {
-			Position: CFrame,
-			Combo: number,
-			Combos: number,
-		}
-	)
-		local CFramePosition = p.Position --> Posicao de onde ele clicou pra soltar o ataque
-
-		local Ray = RaycastParams.new()
-		Ray.FilterType = Enum.RaycastFilterType.Exclude
-		Ray.FilterDescendantsInstances = { Character, Workspace.Enemies, Workspace.NPC }
-
-		local Distance = 45
-
-		local RayResult = Workspace:Raycast(CFramePosition.Position, CFramePosition.LookVector * Distance, Ray)
-		if RayResult then
-			Distance = (CFramePosition.Position - RayResult.Position).Magnitude ---distancia q ele deve teleportar
-		end
-
-		RenderService:RenderForPlayersInArea(CFramePosition.Position, 200, {
-			module = "Lightning",
-			effect = "LStrike",
-			root = Character.PrimaryPart,
-		})
-
-		task.spawn(function()
-			local Ticks = 5
-
-			local Highlight = Instance.new("Highlight")
-			Highlight.Parent = Character
-
-			Highlight.FillColor = Color3.new(0, 0, 0)
-			Highlight.FillTransparency = 0.1
-			Highlight.OutlineTransparency = 0.5
-			Highlight.OutlineColor = Color3.new(1, 1, 1)
-
-			Highlight.Enabled = true
-
-			for i = 1, Ticks do
-				Highlight.Enabled = not Highlight.Enabled
-				task.wait(0.1)
-			end
-
-			Highlight:Destroy()
-		end)
-
-		Character:PivotTo(Character:GetPivot() * CFrame.new(0, 0, -Distance))
-
-		local Size = Vector3.new(5, 5, Distance)
-		HitboxService:CreateFixedHitbox(
-			CFramePosition * CFrame.new(0, 0, -(Distance / 2)),
-			Size,
-			10,
-			function(hitted: Model)
-				--> Encontrou um inimigo
-				for i = 1 , 5, 1 do
-					task.wait(.1)
-					DaggerHitFunction(Character, hitted, 5, "DaggerHit", "DaggerHit", 2, 0)
-				end
-			end
-		)
+		SkillService:CallSkill(table.unpack(send))
 	end,
 }
-
 
 function Dagger.Start(default)
 	Default = default
 
 	RenderService = Knit.GetService("RenderService")
 	RagdollService = Knit.GetService("RagdollService")
+	SkillService = Knit.GetService("SkillService")
 
 	HitboxService = Knit.GetService("HitboxService")
 	HitboxService = Knit.GetService("HitboxService")
