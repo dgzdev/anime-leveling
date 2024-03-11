@@ -21,12 +21,13 @@ return function(
 	Ray.FilterType = Enum.RaycastFilterType.Exclude
 	Ray.FilterDescendantsInstances = { Character, Workspace.Enemies, Workspace.NPC }
 
-	local Distance = 25
+	local Distance = 15
 
 	local RayResult = Workspace:Raycast(CFramePosition.Position, CFramePosition.LookVector * Distance, Ray)
 	if RayResult then
 		Distance = (CFramePosition.Position - RayResult.Position).Magnitude ---distancia q ele deve teleportar
 	end
 
+	warn("Executed")
 	Character:PivotTo(Character:GetPivot() * CFrame.new(0, 0, -Distance)) --> -Distance = frente.
 end

@@ -12,6 +12,8 @@ local InventoryService = Knit.CreateService({
 	Client = {
 		CreateItem = Knit.CreateSignal(),
 		RemoveItem = Knit.CreateSignal(),
+
+		HotbarUpdate = Knit.CreateSignal(),
 	},
 })
 
@@ -19,18 +21,21 @@ local GameData = require(ServerStorage.GameData)
 
 function InventoryService:AddItemToHotbar(Player, itemName, posInHotbar)
 	local Data = PlayerService:GetData(Player)
-	---print(itemName)
 	if not Data.Inventory[itemName] then
-		print("nao tem data")
+		return
+	end
+
+	if table.find(Data.Hotbar, Data.Inventory[itemName].Id) then
 		return
 	end
 
 	if Data.Equiped.Id == Data.Inventory[itemName].Id then
-		print("ja ta equipado")
 		return
 	end
-	
+
 	Data.Hotbar[posInHotbar] = Data.Inventory[itemName].Id
+
+	self.Client.HotbarUpdate:Fire(Player, Data)
 
 	return Data.Hotbar
 end

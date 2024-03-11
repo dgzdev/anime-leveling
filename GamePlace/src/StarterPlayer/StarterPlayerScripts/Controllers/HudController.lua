@@ -148,6 +148,7 @@ end
 
 function Hud:KnitStart()
 	PlayerService = Knit.GetService("PlayerService")
+	local InventoryService = Knit.GetService("InventoryService")
 
 	local Player = Players.LocalPlayer
 	Player.CharacterAdded:Connect(function(character)
@@ -156,6 +157,10 @@ function Hud:KnitStart()
 
 		self:OrganizeHotbar(Hud.Data)
 		self:BindContexts()
+	end)
+
+	InventoryService.HotbarUpdate:Connect(function(profile)
+		self:OrganizeHotbar(profile)
 	end)
 
 	local Data = PlayerService:GetData(Players.LocalPlayer)

@@ -16,17 +16,17 @@ local Humanoid = Character:WaitForChild("Humanoid")
 local RootPart = Character:WaitForChild("HumanoidRootPart")
 local Animator = Humanoid:WaitForChild("Animator")
 
-local anim = Instance.new("Animation")
-anim.AnimationId = "rbxassetid://13448960275"
+-- local anim = Instance.new("Animation")
+-- anim.AnimationId = "rbxassetid://13448960275"
 
-local SlideAnimation = Animator:LoadAnimation(anim)
+-- local SlideAnimation = Animator:LoadAnimation(anim)
 local momentum
 
 function Slide.GetUp(jumped)
 	RunService:UnbindFromRenderStep("BindSlide")
 	local SlideBodyVelocity = RootPart:FindFirstChild("SlideBodyVelocity") :: BodyVelocity
 	if SlideBodyVelocity then
-		SlideAnimation:Stop()
+		-- SlideAnimation:Stop()
 		SlideBodyVelocity:Destroy()
 
 		-- if jumped then
@@ -110,9 +110,9 @@ function Slide.Slide()
 				if not Humanoid:GetAttribute("Slide") then
 					Humanoid:SetAttribute("Slide", true)
 
-					if not SlideAnimation.IsPlaying then
-						SlideAnimation:Play()
-					end
+					-- if not SlideAnimation.IsPlaying then
+					-- 	SlideAnimation:Play()
+					-- end
 				end
 
 				momentum += angle / MOMENTUM_DRAG
@@ -127,9 +127,9 @@ function Slide.Slide()
 						Humanoid:SetAttribute("Slide", true)
 					end
 
-					if not SlideAnimation.IsPlaying then
-						SlideAnimation:Play()
-					end
+					-- if not SlideAnimation.IsPlaying then
+					-- 	SlideAnimation:Play()
+					-- end
 
 					if SlideBodyVelocity then
 						SlideBodyVelocity.Velocity = (RootPart.CFrame.LookVector * momentum)

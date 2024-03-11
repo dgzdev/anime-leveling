@@ -186,6 +186,13 @@ Dagger["Venom'sFangs"] = {
 
 		SkillService:CallSkill(table.unpack(send))
 	end,
+
+	["VenomDash"] = function(...)
+		local args = table.pack(...)
+		local send = { "VenomDash", args[1], args[2], args[3], DaggerHitFunction }
+
+		SkillService:CallSkill(table.unpack(send))
+	end,
 }
 
 function Dagger.Start(default)

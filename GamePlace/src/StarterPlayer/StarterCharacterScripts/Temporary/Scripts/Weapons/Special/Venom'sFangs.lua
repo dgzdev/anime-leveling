@@ -192,6 +192,7 @@ local TestDagger = {
 		end,
 		name = "Venom Palm",
 	},
+
 	[Enum.KeyCode.X] = {
 		callback = function(action, inputstate, inputobject)
 			if inputstate == Enum.UserInputState.Cancel then
@@ -208,19 +209,19 @@ local TestDagger = {
 				return
 			end
 
-			if inputstate == Enum.UserInputState.Begin then
-				if CheckCooldown("Dual Barrage") then
-					return
-				end
+			if CheckCooldown("Dual Barrage") then
+				return
+			end
 
+			if inputstate == Enum.UserInputState.Begin then
 				--> Animação de segurar
 				local Animation: Animation = ReplicatedStorage:WaitForChild("Animations")
-					:FindFirstChild("Dagger")
-					:FindFirstChild("Skills")
-					:FindFirstChild("Combo")
+					:WaitForChild("FlashStrike Hold")
 				PlayingAnimation = Animator:LoadAnimation(Animation)
-				PlayingAnimation.Priority = Enum.AnimationPriority.Action4
-				PlayingAnimation:Play()
+				PlayingAnimation:Play(0.15)
+				PlayingAnimation:GetMarkerReachedSignal("HoldEnd"):Connect(function()
+					PlayingAnimation:AdjustSpeed(0)
+				end)
 
 				task.spawn(function()
 					while true do
@@ -234,14 +235,28 @@ local TestDagger = {
 						task.wait(0.1)
 					end
 				end)
-
+			elseif inputstate == Enum.UserInputState.End then
 				SetCooldown("Dual Barrage", 10) -- > 10 segundos de cooldown
+				if HoldingTime > 0.45 then
+					PlayingAnimation:Stop()
 
-				if HoldingTime > 1 then
+					--> animação de ataque
+					local Animation: Animation = ReplicatedStorage:WaitForChild("Animations")
+						:FindFirstChild("Dagger")
+						:FindFirstChild("Skills")
+						:FindFirstChild("Combo")
+
+					PlayingAnimation = Animator:LoadAnimation(Animation)
+					PlayingAnimation.Priority = Enum.AnimationPriority.Action4
+					PlayingAnimation:Play()
+
 					PlayingAnimation:GetMarkerReachedSignal("teleport"):Connect(function()
-						RootPart.Anchored = false
+						task.spawn(function()
+							WeaponService:WeaponInput("VenomDash", Enum.UserInputState.Begin, {
+								Position = RootPart.CFrame,
+							})
+						end)
 					end)
-
 					HoldingTime = 0
 				end
 			end
