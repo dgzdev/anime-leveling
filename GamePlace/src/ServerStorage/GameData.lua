@@ -467,6 +467,24 @@ return {
 			},
 		},
 	},
+	gameMarkets = {
+		["1"] = {
+			Items = {
+				["a"] = {
+					Price = 1000
+				},
+				["b"] = {
+					Price = 1500,
+					DiscountTotal = .5,
+					DiscountTime = nil
+				}
+			},
+			DiscountItems = {"a"},
+			DiscountTotal = .25,
+			DiscountTime = nil
+		}
+
+	},
 	questPrompts = {
 		["Kill Goblins"] = {
 			Title = "Defeat Goblins!",
