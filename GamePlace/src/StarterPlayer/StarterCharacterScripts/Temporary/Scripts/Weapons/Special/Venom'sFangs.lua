@@ -235,8 +235,10 @@ local TestDagger = {
 						task.wait(0.1)
 					end
 				end)
+				RootPart.Anchored = true
 			elseif inputstate == Enum.UserInputState.End then
 				SetCooldown("Dual Barrage", 10) -- > 10 segundos de cooldown
+				RootPart.Anchored = false
 				if HoldingTime > 0.45 then
 					PlayingAnimation:Stop()
 
