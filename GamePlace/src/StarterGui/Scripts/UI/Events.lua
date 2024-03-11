@@ -131,8 +131,8 @@ Events.Buttons = {
 		local ItemName = SlotInfo:GetAttribute("Name")
 		local ItemId = SlotInfo:GetAttribute("ID")
 		local posInHotbar = Gui:GetAttribute("Slot")
-
-		local response = InventoryService:AddItemToHotbar(Players.LocalPlayer, ItemName, posInHotbar)
+		
+		local response = InventoryService:AddItemToHotbar(ItemName, posInHotbar)
 		print(response)
 		--> clicou no numero do slot pra equipar
 	end,
