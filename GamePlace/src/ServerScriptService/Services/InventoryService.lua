@@ -19,7 +19,7 @@ local GameData = require(ServerStorage.GameData)
 
 function InventoryService:AddItemToHotbar(Player, itemName, posInHotbar)
 	local Data = PlayerService:GetData(Player)
-	print(itemName)
+	---print(itemName)
 	if not Data.Inventory[itemName] then
 		print("nao tem data")
 		return
@@ -29,7 +29,7 @@ function InventoryService:AddItemToHotbar(Player, itemName, posInHotbar)
 		print("ja ta equipado")
 		return
 	end
-
+	
 	Data.Hotbar[posInHotbar] = Data.Inventory[itemName].Id
 
 	return Data.Hotbar
