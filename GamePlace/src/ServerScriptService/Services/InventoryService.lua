@@ -21,13 +21,15 @@ function InventoryService:AddItemToHotbar(Player, itemName, posInHotbar)
 	local Data = PlayerService:GetData(Player)
 
 	if not Data.Inventory[itemName] then
+		print("nao tem data")
 		return
 	end
 
 	if Data.Equiped.Id == Data.Inventory[itemName].Id then
+		print("ja ta equipado")
 		return
 	end
-
+	
 	Data.Hotbar[posInHotbar] = Data.Inventory[itemName].Id
 
 	return Data.Hotbar
