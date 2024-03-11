@@ -12,7 +12,8 @@ Knit.OnStart():await()
 local QuestService = Knit.GetService("QuestService")
 local ProgressionService = Knit.GetService("ProgressionService")
 local SkillTreeService = Knit.GetService("SkillTreeService")
-
+local InventoryService = Knit.GetService("InventoryService")
+local Workspace = game:GetService("Workspace")
 
 local function LockMouse(boolean: boolean)
 	if boolean then
@@ -86,6 +87,55 @@ Events.Buttons = {
 		end
 		--print(PointType)
 	end,
+
+	["ItemClick"] = function(Gui: GuiButton) --> item
+		--[[
+			newItem:SetAttribute("ID", item.Id)
+			newItem:SetAttribute("Name", itemName)
+		]]
+		local ItemName = Gui:GetAttribute("Name")
+		local ItemId = Gui:GetAttribute("ID")
+
+		local Menu_UI = Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("Menu_UI")
+		local InventoryUI = Menu_UI:WaitForChild("Inventory")
+		local Background: Frame = InventoryUI:WaitForChild("Background")
+
+		local SlotInfo = Gui.Parent.Parent:FindFirstChild("SlotInfo")
+		SlotInfo:SetAttribute("ID", ItemId)
+		SlotInfo:SetAttribute("Name", ItemName)
+
+		local Mouse = Players.LocalPlayer:GetMouse()
+		local ViewportSize = Workspace.CurrentCamera.ViewportSize
+
+		SlotInfo.Position = UDim2.fromScale(Mouse.X / ViewportSize.X, Mouse.Y / ViewportSize.Y)
+
+		SlotInfo.Visible = not SlotInfo.Visible
+		SlotInfo.Title.Text = ItemName
+		SlotInfo.Info.Text = "teste"
+
+		SlotInfo:FindFirstChild("Slots", true).Visible = false
+		--> clicou no item do inventario
+		-- a
+	end,
+	["Delete"] = function(Gui: GuiButton) --> Delete
+
+		--> clicou pra deletar item no inventario
+	end,
+	["Equip"] = function(Gui: GuiButton) --> Equip
+		local SlotsFrame = Gui:FindFirstChild("Slots")
+		SlotsFrame.Visible = true
+		--> clicou pra equipar item no inventario
+	end,
+	["EquipSlot"] = function(Gui: GuiButton) --> slotbutton
+		local SlotInfo = Gui:FindFirstAncestor("SlotInfo")
+		local ItemName = SlotInfo:GetAttribute("Name")
+		local ItemId = SlotInfo:GetAttribute("ID")
+		local posInHotbar = Gui:GetAttribute("Slot")
+
+		InventoryService:AddItemToHotbar(Players.LocalPlayer, ItemName, posInHotbar)
+		--> clicou no numero do slot pra equipar
+	end,
+
 	["GetSkillsAvailable"] = function(Gui: GuiButton)
 		local Skills = SkillTreeService:GetSkillsAvailableToUnlock(Players.LocalPlayer)
 		print(Skills)

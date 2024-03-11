@@ -331,8 +331,10 @@ function ClothingService:LoadCharacter(Player, characterData: CharacterData)
 	self:ApplyClothingColors(Player)
 end
 
-function ClothingService:KnitStart()
+function ClothingService:KnitInit()
 	PlayerService = Knit.GetService("PlayerService")
 end
+
+function ClothingService:KnitStart() end
 
 return ClothingService

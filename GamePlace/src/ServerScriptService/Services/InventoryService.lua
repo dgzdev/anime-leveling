@@ -17,8 +17,37 @@ local InventoryService = Knit.CreateService({
 
 local GameData = require(ServerStorage.GameData)
 
+function InventoryService:AddItemToHotbar(Player, itemName, posInHotbar)
+	local Data = PlayerService:GetData(Player)
+
+	if not Data.Inventory[itemName] then
+		return
+	end
+
+	if Data.Equiped.Id == Data.Inventory[itemName].Id then
+		return
+	end
+
+	Data.Hotbar[posInHotbar] = Data.Inventory[itemName].Id
+
+	return Data.Hotbar
+end
+
+function InventoryService:GetPlayerInventory(Player)
+	local Data = PlayerService:GetData(Player)
+	return Data.Inventory
+end
+
+function InventoryService.Client:GetPlayerInventory(player)
+	return self.Server:GetPlayerInventory(player)
+end
+
+function InventoryService.Client:AddItemToHotbar(Player, itemName, posInHotbar)
+	return self.Server:AddItemToHotbar(Player, itemName, posInHotbar)
+end
+
 function InventoryService:AddItem(player: Player, item: string)
-	local Data = PlayerService:GetPlayerData(player)
+	local Data = PlayerService:GetData(player)
 
 	local lastId = 0
 	for id, info in pairs(Data.Inventory) do
@@ -35,7 +64,7 @@ function InventoryService:AddItem(player: Player, item: string)
 end
 
 function InventoryService:RemoveItem(player: Player, item: string)
-	local Data = PlayerService:GetPlayerData(player)
+	local Data = PlayerService:GetData(player)
 
 	local id
 	for _id, info in pairs(Data.Inventory) do
@@ -51,8 +80,13 @@ function InventoryService:RemoveItem(player: Player, item: string)
 	})
 end
 
-InventoryService.Equip = {}
-function InventoryService.Equip:Melee() end
+function InventoryService:GetGameWeapons()
+	return GameData.gameWeapons, GameData.rarity
+end
+
+function InventoryService.Client:GetGameWeapons()
+	return self.Server:GetGameWeapons()
+end
 
 function InventoryService:EquipFromData(player: Player, playerData)
 	local equiped = playerData.Equiped

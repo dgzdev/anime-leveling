@@ -162,10 +162,12 @@ end
 -- Knit
 -- ========================================
 
-function PlayerService:KnitStart()
+function PlayerService:KnitInit()
 	InventoryService = Knit.GetService("InventoryService")
 	ClothingService = Knit.GetService("ClothingService")
 end
+
+function PlayerService:KnitStart() end
 
 game:BindToClose(function()
 	for playerId: number, manager in pairs(Managers) do

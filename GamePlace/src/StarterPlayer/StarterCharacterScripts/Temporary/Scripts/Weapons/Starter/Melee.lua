@@ -125,6 +125,9 @@ local Melee = {
 				DelayTime = 0.3
 			end
 
+			Humanoid:SetAttribute("SlideGetUp", true)
+			Humanoid:SetAttribute("SlideGetUp", false)
+
 			task.spawn(function()
 				WeaponService:WeaponInput("Attack", Enum.UserInputState.End, {
 					Position = RootPart.CFrame,
@@ -174,6 +177,9 @@ local Melee = {
 				if Character:GetAttribute("Stun") then
 					return
 				end
+
+				Humanoid:SetAttribute("SlideGetUp", true)
+				Humanoid:SetAttribute("SlideGetUp", false)
 
 				task.spawn(function()
 					WeaponService:WeaponInput("Defense", Enum.UserInputState.Begin, {
@@ -251,6 +257,9 @@ local Melee = {
 
 			SetCooldown("Ground Slam", 3)
 
+			Humanoid:SetAttribute("SlideGetUp", true)
+			Humanoid:SetAttribute("SlideGetUp", false)
+
 			PlayingAnimation = Animator:LoadAnimation(Animations:WaitForChild("Melee"):WaitForChild("Ground Slam"))
 			PlayingAnimation:Play()
 			PlayingAnimation:GetMarkerReachedSignal("end"):Once(function()
@@ -317,6 +326,9 @@ local Melee = {
 			end
 
 			RootPart.Anchored = true
+
+			Humanoid:SetAttribute("SlideGetUp", true)
+			Humanoid:SetAttribute("SlideGetUp", false)
 
 			SetCooldown("Strong Punch", 2)
 

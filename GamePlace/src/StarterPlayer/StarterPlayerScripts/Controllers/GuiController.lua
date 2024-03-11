@@ -6,6 +6,7 @@ local Knit = require(game.ReplicatedStorage.Packages.Knit)
 local PlayerService
 local ProgressionService
 local QuestService
+local InventoryService
 
 local GuiController = Knit.CreateController({
 	Name = "GuiController",
@@ -112,6 +113,92 @@ function GuiController:BindPlayerHud()
 
 	BindHumanoid()
 	Players.LocalPlayer.CharacterAdded:Connect(BindHumanoid)
+end
+
+function GuiController:BindHotbar()
+	local InventoryUI = Menu_UI:WaitForChild("Inventory")
+	local Background = InventoryUI:WaitForChild("Background")
+	local InventoryFrame = Background:WaitForChild("Inventory")
+
+	local Item = InventoryFrame:WaitForChild("Item")
+
+	for i, v in ipairs(InventoryFrame:GetChildren()) do
+		if v:IsA("TextButton") and v.Name ~= "Item" then
+			v:Destroy()
+		end
+	end
+
+	local PlayerInventory = InventoryService:GetPlayerInventory()
+	local gameWeapons, rarity = InventoryService:GetGameWeapons()
+
+	for itemName: string, item in pairs(PlayerInventory) do
+		local newItem = Item:Clone()
+		newItem.Parent = InventoryFrame
+
+		newItem:SetAttribute("ID", item.Id)
+		newItem:SetAttribute("Name", itemName)
+
+		local itemData = gameWeapons[itemName]
+
+		if not itemData.Rarity then
+			warn("Rarity not found for item", itemName)
+		end
+
+		local rarityColor = rarity[itemData.Rarity or "E"]
+		newItem.BackgroundColor3 = rarityColor
+
+		local RarityOrder = {
+			["E"] = 1,
+			["D"] = 2,
+			["C"] = 3,
+			["B"] = 4,
+			["A"] = 5,
+			["S"] = 6,
+		}
+
+		local Number = 10
+		local Order = RarityOrder[itemData.Rarity or "E"]
+		newItem.Name = tostring(Number - Order)
+
+		local Model = game.ReplicatedStorage.Models:FindFirstChild(itemName, true)
+		if not Model then
+			warn("Model not found for item", itemName)
+		end
+
+		if Model then
+			local Clone = Model:Clone()
+
+			if Clone:IsA("Folder") then
+				local a = Clone:FindFirstChildWhichIsA("Model", true)
+				if a then
+					Clone = a:Clone()
+				end
+				local b = Clone:FindFirstChildWhichIsA("ImageLabel", true)
+				if b then
+					b.Parent = newItem
+				end
+			end
+			if Clone:IsA("ImageLabel") then
+				Clone.Parent = newItem
+			end
+			if Clone:IsA("Model") then
+				print("model")
+				local WorldModel = newItem:FindFirstChild("WorldModel", true)
+				Clone.Parent = WorldModel
+
+				local ViewFrame: ViewportFrame = newItem:FindFirstChild("ViewportFrame", true)
+
+				local Camera = Instance.new("Camera")
+				Camera.Parent = ViewFrame
+				ViewFrame.CurrentCamera = Camera
+				Camera.CFrame = CFrame.new(0, 0, 2)
+
+				Clone:PivotTo(CFrame.new())
+			end
+		end
+
+		newItem.Visible = true
+	end
 end
 
 function GuiController:ConvertQuestData(questData: {
@@ -239,7 +326,8 @@ function GuiController:RenderPoints(points: {
 	end
 
 	local Text = "%u POINTS"
-	PointsValue.Text = Text:format(ProgressionService:GetPointsAvailable(Players.LocalPlayer) or 0)
+	local PTS = ProgressionService:GetPointsAvailable(Players.LocalPlayer) or 0
+	PointsValue.Text = Text:format(PTS)
 end
 
 function GuiController:KnitStart()
@@ -252,10 +340,12 @@ function GuiController:KnitStart()
 	PlayerService = Knit.GetService("PlayerService")
 	ProgressionService = Knit.GetService("ProgressionService")
 	QuestService = Knit.GetService("QuestService")
+	InventoryService = Knit.GetService("InventoryService")
 
 	self:BindPlayerHud()
 	self:BindQuestEvents()
 	self:RenderPoints()
+	self:BindHotbar()
 
 	ProgressionService.NewPoint:Connect(function()
 		self:RenderPoints()

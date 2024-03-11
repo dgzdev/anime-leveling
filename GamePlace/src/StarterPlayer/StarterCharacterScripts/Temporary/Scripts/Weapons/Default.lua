@@ -33,8 +33,6 @@ local Default = {
 				return
 			end
 
-			print("mb1")
-
 			WeaponService:WeaponInput("Attack", inputstate)
 		end,
 		name = "Attack",
@@ -44,8 +42,6 @@ local Default = {
 			if inputstate ~= Enum.UserInputState.Begin then
 				return
 			end
-
-			print("mb2")
 
 			WeaponService:WeaponInput("Defense", inputstate)
 		end,

@@ -20,3 +20,11 @@ for _, Module in ipairs(Modules) do
 end
 
 export type Module = {}
+
+local Player = game.Players.LocalPlayer
+local Character = Player.Character
+local Humanoid: Humanoid = Character:WaitForChild("Humanoid")
+
+Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, false)

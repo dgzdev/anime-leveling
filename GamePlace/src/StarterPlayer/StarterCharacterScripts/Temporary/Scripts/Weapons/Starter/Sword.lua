@@ -122,6 +122,9 @@ local Sword = {
 				DelayTime = 0.3
 			end
 
+			Humanoid:SetAttribute("SlideGetUp", true)
+			Humanoid:SetAttribute("SlideGetUp", false)
+
 			task.spawn(function()
 				WeaponService:WeaponInput("Attack", Enum.UserInputState.End, {
 					Position = RootPart.CFrame,

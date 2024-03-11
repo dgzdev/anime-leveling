@@ -11,6 +11,8 @@ local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
 local Humanoid = Character:WaitForChild("Humanoid")
 local Animator = Humanoid:WaitForChild("Animator")
 
+local Slide
+
 local function GetModelMass(model: Model)
 	local mass = 0
 	for _, part: BasePart in ipairs(model:GetDescendants()) do
@@ -93,6 +95,10 @@ function DashScript:Dash()
 		return
 	end
 
+	if Humanoid:GetAttribute("Slide") then
+		Slide.GetUp()
+	end
+
 	Cooldown = tick() + 1.5
 	local Animation = Instance.new("Animation")
 
@@ -154,7 +160,9 @@ function DashScript:Dash()
 	HumanoidRootPart.AssemblyLinearVelocity = DashVelocity
 end
 
-function DashScript:Init()
+function DashScript:Init(Modules)
+	Slide = Modules.Slide
+
 	ContextActionService:BindAction("Dash", function(action: string, state: Enum.UserInputState, object)
 		if state ~= Enum.UserInputState.Begin then
 			return

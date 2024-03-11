@@ -20,8 +20,11 @@ for _, Module: ModuleScript in ipairs(script:WaitForChild("Scripts"):GetChildren
 		continue
 	end
 
-	spawn(function()
-		local m = require(Module)
+	Modules[Module.Name] = require(Module)
+end
+
+for i, m in pairs(Modules) do
+	task.spawn(function()
 		if m.Init then
 			m:Init(Modules)
 		end

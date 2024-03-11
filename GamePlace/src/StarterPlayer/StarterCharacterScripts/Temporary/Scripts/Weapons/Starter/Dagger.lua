@@ -119,6 +119,9 @@ local Dagger = {
 
 			local DelayTime = 0.1
 
+			Humanoid:SetAttribute("SlideGetUp", true)
+			Humanoid:SetAttribute("SlideGetUp", false)
+
 			task.spawn(function()
 				WeaponService:WeaponInput("Attack", Enum.UserInputState.End, {
 					Position = RootPart.CFrame,

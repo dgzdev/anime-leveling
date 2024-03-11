@@ -126,7 +126,7 @@ local TestDagger = {
 		end,
 		name = "Venom Dash",
 	},
-	[Enum.KeyCode.X] = {
+	[Enum.KeyCode.R] = {
 		callback = function(action, inputstate, inputobject)
 			if inputstate == Enum.UserInputState.Cancel then
 				if PlayingAnimation then
@@ -191,6 +191,62 @@ local TestDagger = {
 			end
 		end,
 		name = "Venom Palm",
+	},
+	[Enum.KeyCode.X] = {
+		callback = function(action, inputstate, inputobject)
+			if inputstate == Enum.UserInputState.Cancel then
+				if PlayingAnimation then
+					PlayingAnimation:Stop(0.15)
+				end
+				RunService:UnbindFromRenderStep("Lockmouse")
+				HoldingTime = 0
+				RootPart.Anchored = false
+				return
+			end
+
+			if Humanoid.Health <= 0 then
+				return
+			end
+
+			if inputstate == Enum.UserInputState.Begin then
+				if CheckCooldown("Dual Barrage") then
+					return
+				end
+
+				--> Animação de segurar
+				local Animation: Animation = ReplicatedStorage:WaitForChild("Animations")
+					:FindFirstChild("Dagger")
+					:FindFirstChild("Skills")
+					:FindFirstChild("Combo")
+				PlayingAnimation = Animator:LoadAnimation(Animation)
+				PlayingAnimation.Priority = Enum.AnimationPriority.Action4
+				PlayingAnimation:Play()
+
+				task.spawn(function()
+					while true do
+						HoldingTime += 0.1
+						if PlayingAnimation then
+							if PlayingAnimation.IsPlaying == false then
+								break
+							end
+						end
+
+						task.wait(0.1)
+					end
+				end)
+
+				SetCooldown("Dual Barrage", 10) -- > 10 segundos de cooldown
+
+				if HoldingTime > 1 then
+					PlayingAnimation:GetMarkerReachedSignal("teleport"):Connect(function()
+						RootPart.Anchored = false
+					end)
+
+					HoldingTime = 0
+				end
+			end
+		end,
+		name = "Dual Barrage",
 	},
 }
 

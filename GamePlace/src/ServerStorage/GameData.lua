@@ -275,10 +275,14 @@ return {
 		["Fists"] = {
 			Type = "Melee",
 			Damage = 5,
+			Rarity = "E",
+			SubRarity = "I", --| "II" | "III" | "IV" | "V"
 		},
 		["Golden Gauntlets"] = {
 			Type = "Melee",
 			Damage = 10,
+			Rarity = "A",
+			SubRarity = "I", --| "II" | "III" | "IV" | "V"
 		},
 		["Starter Sword"] = {
 			Type = "Sword",
@@ -330,6 +334,16 @@ return {
 		},
 	},
 	newbieBadge = 2066631008828576,
+
+	rarity = {
+		["S"] = Color3.fromRGB(162, 72, 247),
+		["A"] = Color3.fromRGB(255, 65, 65),
+		["B"] = Color3.fromRGB(255, 143, 68),
+		["C"] = Color3.fromRGB(85, 221, 255),
+		["D"] = Color3.fromRGB(103, 255, 65),
+		["E"] = Color3.fromRGB(196, 196, 196),
+	},
+
 	gameSkillsTree = {
 		["1"] = {
 			Pendencies = nil,
