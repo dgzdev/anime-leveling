@@ -1,6 +1,7 @@
 local ContextActionService = game:GetService("ContextActionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 local CameraModule = {}
 CameraModule.OTS = require(ReplicatedStorage.Modules.OTS) --> OTS is a module for camera manipulation.
@@ -52,6 +53,88 @@ function CameraModule:CheckCondition(condition: boolean, message: string) --> Ch
 		error(message)
 	end
 end
+
+local function LockOnTarget(target: Model)
+	if not target then
+		return "broke"
+	end
+
+	local Camera = Workspace.CurrentCamera
+
+	local root = character.PrimaryPart
+	if not root then
+		return "broke"
+	end
+
+	if not target:IsDescendantOf(Workspace) then
+		return "broke"
+	end
+
+	local cameraPosition = root.CFrame * CFrame.new(2.5, 2, 7.5)
+	local targetCFrame = CFrame.lookAt(cameraPosition.Position, target:GetPivot().Position, root.CFrame.UpVector)
+	Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.5)
+end
+
+local CurrentCamera = "OTS"
+function CameraModule.ToggleCameras(action: string, inputState: Enum.UserInputState, inputObject: any)
+	if inputState ~= Enum.UserInputState.Begin then
+		return
+	end
+
+	if CurrentCamera == "OTS" then
+		local mouse = player:GetMouse()
+		local hit = mouse.Target
+		if not hit then
+			return
+		end
+
+		if hit:IsDescendantOf(character) then
+			return
+		end
+
+		if hit:IsDescendantOf(Workspace.NPC) then
+			return
+		end
+
+		local model = hit:FindFirstAncestorWhichIsA("Model")
+		if not model then
+			return
+		end
+
+		local hm = model:FindFirstChildWhichIsA("Humanoid")
+		if not hm then
+			return
+		end
+
+		hm.Died:Once(function()
+			CameraModule.ToggleCameras("toggle", Enum.UserInputState.Begin, Enum.KeyCode.CapsLock)
+		end)
+		model.Destroying:Once(function()
+			CameraModule.ToggleCameras("toggle", Enum.UserInputState.Begin, Enum.KeyCode.CapsLock)
+		end)
+
+		workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
+
+		RunService:BindToRenderStep("LockOn", Enum.RenderPriority.Camera.Value, function()
+			local r = LockOnTarget(model)
+			if r == "broke" then
+				CameraModule.ToggleCameras("toggle", Enum.UserInputState.Begin, Enum.KeyCode.CapsLock)
+			end
+		end)
+
+		CurrentCamera = "LOCKON"
+
+		CameraModule.OTS:Disable()
+	elseif CurrentCamera == "LOCKON" then
+		CurrentCamera = "OTS"
+
+		RunService:UnbindFromRenderStep("LockOn")
+
+		CameraModule.OTS:Enable()
+	end
+end
+
+ContextActionService:BindAction("ToggleCameras", CameraModule.ToggleCameras, false, Enum.KeyCode.CapsLock)
 
 CameraModule.EnableCamera = function(self)
 	ContextActionService:BindAction("MouseWheel", function(actionName, inputState, inputObject)
