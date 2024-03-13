@@ -7,9 +7,6 @@ local QuestController = Knit.CreateController({
 local QuestService
 
 local Player = game.Players.LocalPlayer
-local PlayerGUI = Player:WaitForChild("PlayerGui")
-local PromptUI = PlayerGUI:WaitForChild("Utils"):WaitForChild("Prompt")
-local Background = PromptUI:WaitForChild("Background")
 
 local CameraEvent = game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("CAMERA")
 
@@ -24,6 +21,10 @@ local function LockMouse(boolean: boolean)
 end
 
 function QuestController:CreatePrompt(QuestData: { [string]: string })
+	local PlayerGUI = Player:WaitForChild("PlayerGui")
+	local PromptUI = PlayerGUI:WaitForChild("Utils"):WaitForChild("Prompt")
+	local Background = PromptUI:WaitForChild("Background")
+
 	PromptUI.Enabled = true
 	Background.titleBackground.Title.Text = QuestData.Title or ""
 	Background.message.Text = QuestData.Description or ""
@@ -34,10 +35,12 @@ function QuestController.KnitInit()
 end
 
 function QuestController.KnitStart()
-	QuestService.PromptRequest:Connect(function(questPrompt: {})
-		QuestController:CreatePrompt(questPrompt)
-		LockMouse(false)
-	end)
+	coroutine.wrap(function()
+		QuestService.PromptRequest:Connect(function(questPrompt: {})
+			QuestController:CreatePrompt(questPrompt)
+			LockMouse(false)
+		end)
+	end)()
 end
 
 return QuestController

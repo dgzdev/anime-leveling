@@ -51,8 +51,12 @@ local function isPlayerAdmin(player: Player)
 	local response = false
 	local succ, rank = pcall(player.GetRankInGroup, player, GroupId or 0)
 
-	if rank >= 157 then
-		response = true
+	if succ then
+		if rank >= 157 then
+			response = true
+		end
+	else
+		warn("Error getting rank:", rank)
 	end
 
 	return response

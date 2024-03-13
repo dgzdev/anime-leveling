@@ -3,7 +3,13 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
-local CameraModule = {}
+
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
+
+local CameraModule = Knit.CreateController({
+	Name = "CameraController",
+})
+
 CameraModule.OTS = require(ReplicatedStorage.Modules.OTS) --> OTS is a module for camera manipulation.
 
 local CameraEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("CAMERA")
@@ -136,7 +142,7 @@ end
 
 ContextActionService:BindAction("ToggleCameras", CameraModule.ToggleCameras, false, Enum.KeyCode.CapsLock)
 
-CameraModule.EnableCamera = function(self)
+function CameraModule:EnableCamera()
 	ContextActionService:BindAction("MouseWheel", function(actionName, inputState, inputObject)
 		local CameraSettings = self.OTS.CameraSettings
 		local SETTINGS = self.OTS.CameraSettings["DefaultShoulder"]
@@ -159,7 +165,7 @@ CameraModule.EnableCamera = function(self)
 	end
 end
 
-CameraModule.DisableCamera = function(self)
+function CameraModule:DisableCamera()
 	if self.OTS.IsEnabled == true then
 		self.OTS:Disable()
 	end

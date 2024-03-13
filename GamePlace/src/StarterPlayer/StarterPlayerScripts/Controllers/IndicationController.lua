@@ -35,8 +35,9 @@ function Indication:BindToAllNPCS()
 end
 
 function Indication:KnitStart()
-	ContentProvider:PreloadAsync({ Workspace })
-	self:BindToAllNPCS()
+	coroutine.wrap(function()
+		self:BindToAllNPCS()
+	end)()
 end
 
 return Indication

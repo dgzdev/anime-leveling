@@ -181,6 +181,10 @@ local function CreateRenderData(casterHumanoid: Humanoid, module: string, effect
 	return RenderData
 end
 
+function RenderController.KnitInit()
+	RenderService = Knit.GetService("RenderService")
+end
+
 function RenderController.KnitStart()
 	for i, v in ipairs(script:GetChildren()) do
 		if v:IsA("ModuleScript") then
@@ -194,7 +198,6 @@ function RenderController.KnitStart()
 		end
 	end
 
-	RenderService = Knit.GetService("RenderService")
 	RenderService.Render:Connect(RenderController.Render)
 end
 

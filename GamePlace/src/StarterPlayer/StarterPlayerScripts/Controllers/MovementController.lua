@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterPlayer = game:GetService("StarterPlayer")
 local TweenService = game:GetService("TweenService")
 local ContextActionService = game:GetService("ContextActionService")
+local RunService = game:GetService("RunService")
 
 local Player = Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
@@ -18,6 +19,7 @@ local CameraEvent = Events:WaitForChild("CAMERA")
 local Knit = require(ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit"))
 
 local ProgressionService
+local StatusController
 
 local MovementModule = Knit.CreateController({
 	Name = "MovementController",
@@ -95,12 +97,36 @@ function MovementModule:CreateBinds()
 			ef2.Enabled = false
 		end
 	end)
-
+	RunService:BindToRenderStep("Movimentation", 100, function()
+		local HRP = Character.PrimaryPart :: BasePart
+		local Velocity = HRP:GetVelocityAtPosition(HRP.Position)
+		local Stamina = StatusController:GetStamina()
+		if Velocity.Magnitude > 20 then
+			local HumanoidStateType = Humanoid:GetState()
+			if HumanoidStateType == Enum.HumanoidStateType.Running then
+				if Stamina - 1 < 0 then
+					MovementModule:ChangeCharacterState("WALK")
+				else
+					StatusController:WasteStamina(0.1)
+					--print(Stamina)
+				end
+			end
+			--print(HumanoidStateType)
+		end
+		--print(Velocity.Magnitude)
+	end)
 	Humanoid.Running:Connect(function(speed)
+		local Stamina = StatusController:GetStamina()
+		--print(Stamina)
 		if speed < 0.1 then
 			MovementModule:ChangeCharacterState("WALK")
 		end
 		if speed > 16 then
+			--if Stamina - 1 < 0 then
+			--	MovementModule:ChangeCharacterState("WALK")
+			--else
+			--	StatusController:WasteStamina(1)
+			--end
 			ef1.Enabled = true
 			ef2.Enabled = true
 		else
@@ -110,19 +136,24 @@ function MovementModule:CreateBinds()
 	end)
 end
 
-function MovementModule:KnitStart()
+function MovementModule:KnitInit()
 	ProgressionService = Knit.GetService("ProgressionService")
+	StatusController = Knit.GetController("StatusController")
+end
 
-	Player.CharacterAdded:Connect(function(character)
-		Character = character
-		Humanoid = character:WaitForChild("Humanoid")
-		RootPart = character:WaitForChild("HumanoidRootPart")
-		LeftLeg = character:WaitForChild("Left Leg")
-		RightLeg = character:WaitForChild("Right Leg")
-	end)
+function MovementModule:KnitStart()
+	coroutine.wrap(function()
+		Player.CharacterAdded:Connect(function(character)
+			Character = character
+			Humanoid = character:WaitForChild("Humanoid")
+			RootPart = character:WaitForChild("HumanoidRootPart")
+			LeftLeg = character:WaitForChild("Left Leg")
+			RightLeg = character:WaitForChild("Right Leg")
+		end)
 
-	MovementModule:CreateBinds()
-	MovementModule:CreateContextBinder()
+		MovementModule:CreateBinds()
+		MovementModule:CreateContextBinder()
+	end)()
 end
 
 return MovementModule

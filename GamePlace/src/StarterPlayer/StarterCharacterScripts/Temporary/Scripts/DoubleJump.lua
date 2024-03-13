@@ -1,4 +1,9 @@
 local DoubleJump = {}
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
+
+Knit.OnStart():await()
+
+local StatusController = Knit.GetController("StatusController")
 
 local function GetModelMass(model: Model)
 	local mass = 0
@@ -29,6 +34,12 @@ function DoubleJump:Init()
 			if humanoidRootPart and humanoid then
 				if humanoid:GetState() == Enum.HumanoidStateType.Freefall then
 					if jumpUsage >= 1 then
+						local Stamina = StatusController:GetStamina()
+
+						if Stamina - 10 < 0 then
+							return
+						end
+						StatusController:WasteStamina(10)
 						jumpUsage -= 1
 
 						local LookV = humanoid.MoveDirection * 75 * GetModelMass(char)

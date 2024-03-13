@@ -145,7 +145,7 @@ end
 
 function DungeonService.KnitInit()
 	DungeonName = "Company"
-	DungeonService:GenerateLinearDungeon(5, 10)
+	-- DungeonService:GenerateLinearDungeon(5, 10)
 end
 function DungeonService.KnitStart() end
 

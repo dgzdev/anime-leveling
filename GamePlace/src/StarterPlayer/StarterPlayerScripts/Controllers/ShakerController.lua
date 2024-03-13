@@ -23,7 +23,9 @@ function ShakerController:GetPresets(): typeof(CameraShaker.Presets)
 end
 
 function ShakerController:KnitStart()
-	self.Shaker:Start()
+	coroutine.wrap(function()
+		self.Shaker:Start()
+	end)()
 end
 
 return ShakerController

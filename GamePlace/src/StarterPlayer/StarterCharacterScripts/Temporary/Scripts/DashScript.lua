@@ -1,6 +1,12 @@
 local ContextActionService = game:GetService("ContextActionService")
 local DashScript = {}
 
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
+
+Knit.OnStart():await()
+
+local StatusController = Knit.GetController("StatusController")
+
 local Player = game:GetService("Players").LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -167,7 +173,12 @@ function DashScript:Init(Modules)
 		if state ~= Enum.UserInputState.Begin then
 			return
 		end
+		local Stamina = StatusController:GetStamina()
 
+		if Stamina - 10 < 0 then
+			return
+		end
+		StatusController:WasteStamina(10)
 		self:Dash()
 	end, true, Enum.KeyCode.Q)
 end

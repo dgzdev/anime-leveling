@@ -31,11 +31,13 @@ function OnRagdoll(Ragdolled)
 end
 
 function Ragdoll:KnitStart()
-	Player.CharacterAdded:Connect(function(character)
-		OnRagdoll(false)
-	end)
+	coroutine.wrap(function()
+		Player.CharacterAdded:Connect(function(character)
+			OnRagdoll(false)
+		end)
 
-	PlayerEvents.Ragdoll.OnClientEvent:Connect(OnRagdoll)
+		PlayerEvents.Ragdoll.OnClientEvent:Connect(OnRagdoll)
+	end)
 end
 
 return Ragdoll

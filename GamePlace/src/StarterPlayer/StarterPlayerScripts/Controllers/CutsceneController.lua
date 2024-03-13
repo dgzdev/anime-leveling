@@ -27,7 +27,6 @@ local Animations = ReplicatedStorage:WaitForChild("CameraAnimations")
 
 local function AnimateCamera(animation: string)
 	Camera.CameraType = Enum.CameraType.Scriptable
-	Camera.CameraSubject = Workspace:WaitForChild("Portal")
 	local Connections = {}
 
 	task.spawn(function()
@@ -198,7 +197,7 @@ function CutsceneController.Init()
 				return
 			end
 
-			teleport.Parent = Workspace:WaitForChild("Portal"):WaitForChild("01")
+			teleport.Parent = Workspace.City:WaitForChild("JoinPortal"):WaitForChild("01")
 			teleport:Play()
 
 			teleport.Ended:Once(function()
@@ -239,12 +238,14 @@ function CutsceneController.Init()
 	AnimateCamera("Portal Leave")
 end
 
-function CutsceneController:KnitStart()
+function CutsceneController:KnitInit()
 	PlayerEnterService = Knit.GetService("PlayerEnterService")
+end
 
-	task.spawn(function()
+function CutsceneController:KnitStart()
+	coroutine.wrap(function()
 		self:Init()
-	end)
+	end)()
 end
 
 return CutsceneController

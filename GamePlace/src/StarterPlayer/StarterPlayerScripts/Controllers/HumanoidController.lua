@@ -85,17 +85,21 @@ function HumanoidHandler:BindHumanoid(Humanoid: Humanoid)
 	end)
 end
 
-function HumanoidHandler:KnitStart()
+function HumanoidHandler:KnitInit()
 	PlayerService = Knit.GetService("PlayerService")
+end
 
-	Player.CharacterAdded:Connect(function(character)
-		Character = character
-		Humanoid = character:WaitForChild("Humanoid")
-		Animator = Humanoid:WaitForChild("Animator")
+function HumanoidHandler:KnitStart()
+	coroutine.wrap(function()
+		Player.CharacterAdded:Connect(function(character)
+			Character = character
+			Humanoid = character:WaitForChild("Humanoid")
+			Animator = Humanoid:WaitForChild("Animator")
+			self:BindHumanoid(Humanoid)
+		end)
+
 		self:BindHumanoid(Humanoid)
-	end)
-
-	self:BindHumanoid(Humanoid)
+	end)()
 end
 
 return HumanoidHandler

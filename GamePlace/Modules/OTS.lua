@@ -240,7 +240,7 @@ function CLASS:Update()
 		local raycastParams = RaycastParams.new()
 		raycastParams.FilterDescendantsInstances = { character, Workspace.Enemies, Workspace.NPC }
 		raycastParams.CollisionGroup = "Players"
-		raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+		raycastParams.FilterType = Enum.RaycastFilterType.Exclude
 		raycastParams.RespectCanCollide = true
 		local raycastResult = workspace:Raycast(
 			humanoidRootPart.Position,

@@ -5,6 +5,7 @@ local Knit = require(game:GetService("ReplicatedStorage").Packages.Knit)
 local SoundService = game:GetService("SoundService")
 
 local PlayerService
+local InventorySeRVICE
 
 local Hud = Knit.CreateController({
 	Name = "HudController",
@@ -146,10 +147,12 @@ function Hud:BindContexts()
 	ContextActionService:BindAction("EquipSlotItem_4", EquipSlotItem, false, Enum.KeyCode.Four)
 end
 
-function Hud:KnitStart()
+function Hud:KnitInit()
 	PlayerService = Knit.GetService("PlayerService")
-	local InventoryService = Knit.GetService("InventoryService")
+	InventoryService = Knit.GetService("InventoryService")
+end
 
+function Hud:KnitStart()
 	local Player = Players.LocalPlayer
 	Player.CharacterAdded:Connect(function(character)
 		local Data = PlayerService:GetData(Players.LocalPlayer)

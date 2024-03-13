@@ -16,26 +16,26 @@ local Humanoid = Character:WaitForChild("Humanoid")
 local RootPart = Character:WaitForChild("HumanoidRootPart")
 local Animator = Humanoid:WaitForChild("Animator")
 
--- local anim = Instance.new("Animation")
--- anim.AnimationId = "rbxassetid://13448960275"
+local anim = Instance.new("Animation")
+anim.AnimationId = "rbxassetid://16728371797"
 
--- local SlideAnimation = Animator:LoadAnimation(anim)
+local SlideAnimation: AnimationTrack = Animator:LoadAnimation(anim)
 local momentum
 
 function Slide.GetUp(jumped)
 	RunService:UnbindFromRenderStep("BindSlide")
 	local SlideBodyVelocity = RootPart:FindFirstChild("SlideBodyVelocity") :: BodyVelocity
 	if SlideBodyVelocity then
-		-- SlideAnimation:Stop()
+		SlideAnimation:Stop(0.3)
 		SlideBodyVelocity:Destroy()
 
-		-- if jumped then
-		-- 	local _maxMomentum = math.clamp(momentum, 0, 30)
-		-- 	RootPart:ApplyImpulse(
-		-- 		(RootPart.CFrame.LookVector * (_maxMomentum * MOMENTUM_HORIZONTAL_IMPULSE))
-		-- 			+ Vector3.new(0, MOMENTUM_VERTICAL_IMPULSE * _maxMomentum, 0)
-		-- 	)
-		-- end
+		if jumped then
+			local _maxMomentum = math.clamp(momentum, 0, 30)
+			RootPart:ApplyImpulse(
+				(RootPart.CFrame.LookVector * (_maxMomentum * MOMENTUM_HORIZONTAL_IMPULSE))
+					+ Vector3.new(0, MOMENTUM_VERTICAL_IMPULSE * _maxMomentum, 0)
+			)
+		end
 	end
 
 	local SlideBodyGyro = RootPart:FindFirstChild("SlideBodyGyro")
@@ -110,9 +110,9 @@ function Slide.Slide()
 				if not Humanoid:GetAttribute("Slide") then
 					Humanoid:SetAttribute("Slide", true)
 
-					-- if not SlideAnimation.IsPlaying then
-					-- 	SlideAnimation:Play()
-					-- end
+					if not SlideAnimation.IsPlaying then
+						SlideAnimation:Play()
+					end
 				end
 
 				momentum += angle / MOMENTUM_DRAG
@@ -127,9 +127,13 @@ function Slide.Slide()
 						Humanoid:SetAttribute("Slide", true)
 					end
 
-					-- if not SlideAnimation.IsPlaying then
-					-- 	SlideAnimation:Play()
-					-- end
+					if not SlideAnimation.IsPlaying then
+						SlideAnimation:Play(0.15)
+						SlideAnimation:GetMarkerReachedSignal("end"):Once(function()
+							SlideAnimation:AdjustSpeed(0)
+						end)
+						SlideAnimation.Looped = true
+					end
 
 					if SlideBodyVelocity then
 						SlideBodyVelocity.Velocity = (RootPart.CFrame.LookVector * momentum)

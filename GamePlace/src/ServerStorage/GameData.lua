@@ -250,25 +250,30 @@ return {
 			Rank = "E",
 			Id = 6,
 		},
-		["Golden Gauntlets"] = {
+		["TestStaff"] = {
 			AchiveDate = os.time(),
 			Rank = "E",
 			Id = 7,
 		},
-		["Nyon"] = {
+		["Golden Gauntlets"] = {
 			AchiveDate = os.time(),
-			Rank = "S",
+			Rank = "E",
 			Id = 8,
 		},
-		["Mister"] = {
+		["Nyon"] = {
 			AchiveDate = os.time(),
 			Rank = "S",
 			Id = 9,
 		},
+		["Mister"] = {
+			AchiveDate = os.time(),
+			Rank = "S",
+			Id = 10,
+		},
 		["Omnitrix"] = {
 			AchiveData = os.time(),
 			Rank = "S",
-			Id = 10,
+			Id = 11,
 		},
 	},
 	gameWeapons = {
@@ -310,6 +315,12 @@ return {
 		},
 		["Venom's Fangs"] = {
 			Type = "Dagger",
+			Damage = 5,
+			Rarity = "E",
+			SubRarity = "I", -- "II" | "III" | "IV" | "V"
+		},
+		["TestStaff"] = {
+			Type = "Staff",
 			Damage = 5,
 			Rarity = "E",
 			SubRarity = "I", -- "II" | "III" | "IV" | "V"
@@ -471,19 +482,18 @@ return {
 		["1"] = {
 			Items = {
 				["a"] = {
-					Price = 1000
+					Price = 1000,
 				},
 				["b"] = {
 					Price = 1500,
-					DiscountTotal = .5,
-					DiscountTime = nil
-				}
+					DiscountTotal = 0.5,
+					DiscountTime = nil,
+				},
 			},
-			DiscountItems = {"a"},
-			DiscountTotal = .25,
-			DiscountTime = nil
-		}
-
+			DiscountItems = { "a" },
+			DiscountTotal = 0.25,
+			DiscountTime = nil,
+		},
 	},
 	questPrompts = {
 		["Kill Goblins"] = {

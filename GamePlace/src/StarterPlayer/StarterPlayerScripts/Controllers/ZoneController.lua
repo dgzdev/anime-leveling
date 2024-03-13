@@ -52,41 +52,43 @@ end
 local Zones = {}
 
 function ZoneController:KnitStart()
-	local ZoneFolder = game.Workspace:FindFirstChild("Zones")
+	coroutine.wrap(function()
+		local ZoneFolder = game.Workspace:FindFirstChild("Zones")
 
-	for _, Zone: BasePart in ipairs(ZoneFolder:GetChildren()) do
-		if Zones[Zone.Name] then
-			continue
+		for _, Zone: BasePart in ipairs(ZoneFolder:GetChildren()) do
+			if Zones[Zone.Name] then
+				continue
+			end
+
+			local ZoneManager = ZonePlus.new(Zone)
+			Zones[Zone.Name] = ZoneManager
+
+			ZoneManager.localPlayerEntered:Connect(function()
+				self.EnterPlace(Zone.Name, Zone)
+			end)
+
+			ZoneManager.localPlayerExited:Connect(function()
+				self.LeavePlace(Zone.Name, Zone)
+			end)
 		end
 
-		local ZoneManager = ZonePlus.new(Zone)
-		Zones[Zone.Name] = ZoneManager
+		ZoneFolder.ChildAdded:Connect(function(Zone: BasePart)
+			if Zones[Zone.Name] then
+				return
+			end
 
-		ZoneManager.localPlayerEntered:Connect(function()
-			self.EnterPlace(Zone.Name, Zone)
+			local ZoneManager = ZonePlus.new(Zone)
+			Zones[Zone.Name] = ZoneManager
+
+			ZoneManager.localPlayerEntered:Connect(function()
+				self.EnterPlace(Zone.Name, Zone)
+			end)
+
+			ZoneManager.localPlayerExited:Connect(function()
+				self.LeavePlace(Zone.Name, Zone)
+			end)
 		end)
-
-		ZoneManager.localPlayerExited:Connect(function()
-			self.LeavePlace(Zone.Name, Zone)
-		end)
-	end
-
-	ZoneFolder.ChildAdded:Connect(function(Zone: BasePart)
-		if Zones[Zone.Name] then
-			return
-		end
-
-		local ZoneManager = ZonePlus.new(Zone)
-		Zones[Zone.Name] = ZoneManager
-
-		ZoneManager.localPlayerEntered:Connect(function()
-			self.EnterPlace(Zone.Name, Zone)
-		end)
-
-		ZoneManager.localPlayerExited:Connect(function()
-			self.LeavePlace(Zone.Name, Zone)
-		end)
-	end)
+	end)()
 end
 
 return ZoneController

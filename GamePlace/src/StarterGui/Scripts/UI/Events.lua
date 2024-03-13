@@ -9,10 +9,12 @@ local TweenService = game:GetService("TweenService")
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
 Knit.OnStart():await()
 
+local PromptController = Knit.GetController("PromptController")
 local QuestService = Knit.GetService("QuestService")
 local ProgressionService = Knit.GetService("ProgressionService")
 local SkillTreeService = Knit.GetService("SkillTreeService")
 local InventoryService = Knit.GetService("InventoryService")
+local MarketController = Knit.GetController("MarketController")
 local Workspace = game:GetService("Workspace")
 
 local function LockMouse(boolean: boolean)
@@ -117,6 +119,7 @@ Events.Buttons = {
 		--> clicou no item do inventario
 		-- a
 	end,
+
 	["Delete"] = function(Gui: GuiButton) --> Delete
 
 		--> clicou pra deletar item no inventario
@@ -134,6 +137,22 @@ Events.Buttons = {
 
 		local response = InventoryService:AddItemToHotbar(ItemName, posInHotbar)
 		--> clicou no numero do slot pra equipar
+	end,
+
+	["LeftShop"] = function(Gui: GuiButton)
+		print("Left")
+		MarketController.TurnLeft()
+		--> item pra esquerda
+	end,
+	["RightShop"] = function(Gui: GuiButton)
+		--print("Right")
+		MarketController.TurnRight()
+		--> item pra direita
+	end,
+
+	["LeaveShop"] = function(Gui: GuiButton)
+		MarketController.Hide()
+		--> sair da loja
 	end,
 
 	["GetSkillsAvailable"] = function(Gui: GuiButton)

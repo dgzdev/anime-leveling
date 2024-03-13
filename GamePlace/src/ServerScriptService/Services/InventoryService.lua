@@ -26,16 +26,25 @@ function InventoryService:AddItemToHotbar(Player, itemName, posInHotbar)
 	end
 
 	if table.find(Data.Hotbar, Data.Inventory[itemName].Id) then
+		if Data.Hotbar[posInHotbar] then
+			local CurrentPos = table.find(Data.Hotbar, Data.Inventory[itemName].Id)
+			local Target = Data.Hotbar[posInHotbar]
+
+			--print(Data.Hotbar[posInHotbar], Data.Inventory[itemName].Id)
+			Data.Hotbar[CurrentPos] = Data.Hotbar[posInHotbar]
+			Data.Hotbar[posInHotbar] = Data.Inventory[itemName].Id
+			--print(Data.Hotbar)
+			self.Client.HotbarUpdate:Fire(Player, Data)
+			return Data.Hotbar
+		end
 		return
 	end
 
-	if Data.Equiped.Id == Data.Inventory[itemName].Id then
-		return
-	end
+	--if Data.Equiped.Id == Data.Inventory[itemName].Id then
+	--	return
+	--end
 
 	Data.Hotbar[posInHotbar] = Data.Inventory[itemName].Id
-
-	self.Client.HotbarUpdate:Fire(Player, Data)
 
 	return Data.Hotbar
 end

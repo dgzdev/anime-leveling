@@ -330,17 +330,19 @@ function GuiController:RenderPoints(points: {
 	PointsValue.Text = Text:format(PTS)
 end
 
+function GuiController:KnitInit()
+	PlayerService = Knit.GetService("PlayerService")
+	ProgressionService = Knit.GetService("ProgressionService")
+	QuestService = Knit.GetService("QuestService")
+	InventoryService = Knit.GetService("InventoryService")
+end
+
 function GuiController:KnitStart()
 	local camera = Workspace.CurrentCamera
 
 	local plrGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 	local teste = plrGui:WaitForChild("PlayerHud")
 	local frame = teste:WaitForChild("Background")
-
-	PlayerService = Knit.GetService("PlayerService")
-	ProgressionService = Knit.GetService("ProgressionService")
-	QuestService = Knit.GetService("QuestService")
-	InventoryService = Knit.GetService("InventoryService")
 
 	self:BindPlayerHud()
 	self:BindQuestEvents()
