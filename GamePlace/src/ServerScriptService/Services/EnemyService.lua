@@ -108,11 +108,7 @@ function EnemyService:CreateEnemy(
 		self:UpdateHealthHud(Humanoid, healthHud)
 	end)
 
-	for _, bp: BasePart in (model:GetDescendants()) do
-		if bp:IsA("BasePart") then
-			bp.CollisionGroup = "Enemies"
-		end
-	end
+	model.PrimaryPart.CollisionGroup = "Enemies"
 
 	if GameData.gameEnemies[model.Name] then
 		local enemyData = GameData.gameEnemies[model.Name]

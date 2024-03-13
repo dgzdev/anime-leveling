@@ -152,14 +152,14 @@ Staff.Default = {
 		LinearVelocity.Attachment0 = att0
 		LinearVelocity.MaxForce = math.huge
 		LinearVelocity.VelocityConstraintMode = Enum.VelocityConstraintMode.Vector
-		LinearVelocity.VectorVelocity = p.Mouse * 50
+		LinearVelocity.VectorVelocity = p.Mouse * 150
 
 		LinearVelocity.Parent = PrimaryPart
 
 		Skill.Parent = Workspace.TerrainGraph
 
 		local tickTime = 60
-		local skillTicks = 5
+		local skillTicks = 1
 		local totalTicks = tickTime * skillTicks
 		HitboxService:CreateHitboxFromModel(Character, Skill, 1, totalTicks, function(hitted)
 			StaffHitFunction(Character, hitted, 5, "MageM1", "Magic", nil)
@@ -167,16 +167,20 @@ Staff.Default = {
 			return false
 		end)
 
+		local function DestroyParticle()
+			PrimaryPart.Anchored = true
+			for _, obj in Skill:GetDescendants() do
+				if obj:IsA("ParticleEmitter") then
+					obj.Enabled = false
+				end
+			end
+			task.wait(1)
+			Skill:Destroy()
+		end
+
 		local t = task.delay(skillTicks, function()
 			if Skill:IsDescendantOf(Workspace) then
-				PrimaryPart.Anchored = true
-				for _, obj in Skill:GetDescendants() do
-					if obj:IsA("ParticleEmitter") then
-						obj.Enabled = false
-					end
-				end
-				task.wait(1)
-				Skill:Destroy()
+				DestroyParticle()
 			end
 		end)
 	end,

@@ -37,7 +37,7 @@ PromptController.Prompts = {
 		--> open shop
 		print("Opening shop!")
 	end,
-	["EnterDungeon"] = function(prompt: ProximityPrompt, player: Player)
+	["EnterPortal"] = function(prompt: ProximityPrompt, player: Player)
 		--> enter dungeon
 		print("Entering dungeon!")
 	end,

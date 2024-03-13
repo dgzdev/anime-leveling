@@ -2,6 +2,7 @@ local ContextActionService = game:GetService("ContextActionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
@@ -129,12 +130,25 @@ function CameraModule.ToggleCameras(action: string, inputState: Enum.UserInputSt
 		CurrentCamera = "LOCKON"
 
 		CameraModule.OTS:Disable()
+
+		UserInputService.MouseIconEnabled = false
+		UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
+
+		local LockOnHUD = game.ReplicatedStorage.Essentials.LockOnHUD:Clone()
+		LockOnHUD.Parent = model
 	elseif CurrentCamera == "LOCKON" then
 		CurrentCamera = "OTS"
 
 		RunService:UnbindFromRenderStep("LockOn")
 
 		CameraModule.OTS:Enable()
+
+		UserInputService.MouseIconEnabled = true
+		UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
+
+		if Workspace:FindFirstChild("LockOnHUD", true) then
+			Workspace:FindFirstChild("LockOnHUD", true):Destroy()
+		end
 	end
 end
 
@@ -173,15 +187,31 @@ CameraModule:Init()
 
 CameraEvent.Event:Connect(function(action: string, ...)
 	if action == "Enable" then
+		if CurrentCamera == "LOCKON" then
+			CameraModule.ToggleCameras("toggle", Enum.UserInputState.Begin, Enum.KeyCode.CapsLock)
+		end
 		CameraModule:EnableCamera()
 	elseif action == "Disable" then
+		if CurrentCamera == "LOCKON" then
+			CameraModule.ToggleCameras("toggle", Enum.UserInputState.Begin, Enum.KeyCode.CapsLock)
+		end
 		CameraModule:DisableCamera()
 	end
 
 	if action == "Lock" then
-		CameraModule.OTS:SetMouseStep(true)
+		if CurrentCamera == "OTS" then
+			CameraModule.OTS:SetMouseStep(true)
+		elseif CurrentCamera == "LOCKON" then
+			UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
+			UserInputService.MouseIconEnabled = false
+		end
 	elseif action == "Unlock" then
-		CameraModule.OTS:SetMouseStep(false)
+		if CurrentCamera == "OTS" then
+			CameraModule.OTS:SetMouseStep(false)
+		elseif CurrentCamera == "LOCKON" then
+			UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+			UserInputService.MouseIconEnabled = true
+		end
 	end
 
 	if action == "FOV" then
