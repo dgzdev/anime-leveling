@@ -16,16 +16,14 @@ local CameraEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("CAMER
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
 
-if not (game:IsLoaded()) then
-	game.Loaded:Wait()
-end
+-- if not (game:IsLoaded()) then
+-- 	game.Loaded:Wait()
+-- end
 
-if playerGui:FindFirstChild("loadingScreen") then
-	playerGui:FindFirstChild("loadingScreen").Destroying:Wait()
-end
+-- if playerGui:FindFirstChild("loadingScreen") then
+-- 	playerGui:FindFirstChild("loadingScreen").Destroying:Wait()
+-- end
 
 local ScrollLimits = {
 	["Min"] = 2,

@@ -12,12 +12,9 @@ local Camera = Workspace.CurrentCamera
 local PlayerEnterService
 
 local Player = Players.LocalPlayer
-local Character = Player.Character or Player.CharacterAdded:Wait()
+
 local PlayerGui = Player:WaitForChild("PlayerGui")
-local Torso = Character:WaitForChild("Torso")
-local Root = Character:WaitForChild("HumanoidRootPart")
-local Humanoid = Character:WaitForChild("Humanoid")
-local Animator = Humanoid:WaitForChild("Animator")
+
 
 local CameraEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("CAMERA")
 
@@ -26,6 +23,12 @@ local AnimationTrack: AnimationTrack
 local Animations = ReplicatedStorage:WaitForChild("CameraAnimations")
 
 local function AnimateCamera(animation: string)
+	local Character = Player.Character or Player.CharacterAdded:Wait()
+	local Torso = Character:WaitForChild("Torso")
+	local Root = Character:WaitForChild("HumanoidRootPart")
+	local Humanoid = Character:WaitForChild("Humanoid")
+	local Animator = Humanoid:WaitForChild("Animator")
+
 	Camera.CameraType = Enum.CameraType.Scriptable
 	local Connections = {}
 
@@ -161,9 +164,17 @@ local CutsceneController = Knit.CreateController({
 })
 
 function CutsceneController.Init()
+	local Character = Player.Character or Player.CharacterAdded:Wait()
+	local Torso = Character:WaitForChild("Torso")
+	local Root = Character:WaitForChild("HumanoidRootPart")
+	local Humanoid = Character:WaitForChild("Humanoid")
+	local Animator = Humanoid:WaitForChild("Animator")
+
 	Root.Anchored = true
 
-	PlayerEnterService:CutsceneStart(Player)
+	task.spawn(function()
+		PlayerEnterService:CutsceneStart(Player)
+	end)
 
 	local cutscene = PlayerGui:WaitForChild("Cutscene")
 	cutscene.Enabled = true
@@ -244,6 +255,7 @@ end
 
 function CutsceneController:KnitStart()
 	coroutine.wrap(function()
+		print("Init")
 		self:Init()
 	end)()
 end

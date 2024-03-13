@@ -4,6 +4,8 @@ local ServerStorage = game:GetService("ServerStorage")
 
 local InventoryService
 local ClothingService
+local ProgressionService
+
 
 local GameData = require(ServerStorage.GameData)
 
@@ -42,6 +44,7 @@ function PlayerService.OnPlayerJoin(player: Player)
 	Data.Equiped = GameData.profileTemplate.Slots[1].Data.Equiped
 	Data.SkillsTreeUnlocked = GameData.profileTemplate.Slots[1].Data.SkillsTreeUnlocked
 
+	ProgressionService:UpdateLocalStatus(player)
 	player.CharacterAdded:Connect(function(character)
 		ClothingService:LoadCharacter(player, Manager:GetPlayerSlot().Character)
 		PlayerService:EquipWeapon(player, Data.Equiped.Id)
@@ -165,6 +168,7 @@ end
 function PlayerService:KnitInit()
 	InventoryService = Knit.GetService("InventoryService")
 	ClothingService = Knit.GetService("ClothingService")
+	ProgressionService = Knit.GetService("ProgressionService")
 end
 
 function PlayerService:KnitStart() end

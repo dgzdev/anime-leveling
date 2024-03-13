@@ -5,7 +5,7 @@ local Knit = require(game:GetService("ReplicatedStorage").Packages.Knit)
 local SoundService = game:GetService("SoundService")
 
 local PlayerService
-local InventorySeRVICE
+local InventoryService
 
 local Hud = Knit.CreateController({
 	Name = "HudController",
@@ -153,24 +153,26 @@ function Hud:KnitInit()
 end
 
 function Hud:KnitStart()
-	local Player = Players.LocalPlayer
-	Player.CharacterAdded:Connect(function(character)
+	coroutine.wrap(function()
+		local Player = Players.LocalPlayer
+		Player.CharacterAdded:Connect(function(character)
+			local Data = PlayerService:GetData(Players.LocalPlayer)
+			Hud.Data = Data
+	
+			self:OrganizeHotbar(Hud.Data)
+			self:BindContexts()
+		end)
+	
+		InventoryService.HotbarUpdate:Connect(function(profile)
+			self:OrganizeHotbar(profile)
+		end)
+	
 		local Data = PlayerService:GetData(Players.LocalPlayer)
 		Hud.Data = Data
-
+	
 		self:OrganizeHotbar(Hud.Data)
 		self:BindContexts()
-	end)
-
-	InventoryService.HotbarUpdate:Connect(function(profile)
-		self:OrganizeHotbar(profile)
-	end)
-
-	local Data = PlayerService:GetData(Players.LocalPlayer)
-	Hud.Data = Data
-
-	self:OrganizeHotbar(Hud.Data)
-	self:BindContexts()
+	end)()
 end
 
 return Hud

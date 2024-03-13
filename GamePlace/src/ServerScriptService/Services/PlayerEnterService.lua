@@ -25,7 +25,6 @@ end
 function PlayerEnter:CutsceneStart(player)
 	local Character = player.Character or player.CharacterAdded:Wait()
 	local Root = Character.PrimaryPart
-	task.wait(1)
 
 	repeat
 		Root.Anchored = true

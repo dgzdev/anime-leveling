@@ -6,12 +6,7 @@ local ContextActionService = game:GetService("ContextActionService")
 local RunService = game:GetService("RunService")
 
 local Player = Players.LocalPlayer
-local Character = Player.Character or Player.CharacterAdded:Wait()
-local LeftLeg = Character:WaitForChild("Left Leg")
-local RightLeg = Character:WaitForChild("Right Leg")
 
-local Humanoid = Character:WaitForChild("Humanoid")
-local RootPart = Character:WaitForChild("HumanoidRootPart")
 
 local Events = ReplicatedStorage:WaitForChild("Events")
 local CameraEvent = Events:WaitForChild("CAMERA")
@@ -50,6 +45,10 @@ function UpdateRunWalkSpeed()
 end
 
 function MovementModule:ChangeCharacterState(state: CharacterState)
+	local Character = Player.Character or Player.CharacterAdded:Wait()
+	local Humanoid = Character:WaitForChild("Humanoid")
+
+
 	if self.CharacterProperties.CharacterState == state then
 		return
 	end
@@ -66,6 +65,9 @@ function MovementModule:ChangeCharacterState(state: CharacterState)
 end
 
 function MovementModule:CreateContextBinder(): string
+	local Character = Player.Character or Player.CharacterAdded:Wait()
+	local RootPart = Character:WaitForChild("HumanoidRootPart")
+
 	ContextActionService:BindAction(self.ContextName, function(_, state: Enum.UserInputState)
 		if state == Enum.UserInputState.Begin and self.CharacterProperties.CharacterState == "WALK" then
 			if (RootPart:GetVelocityAtPosition(RootPart.CFrame.Position)).Magnitude < 1 then
@@ -82,6 +84,11 @@ end
 export type CharacterState = "RUN" | "WALK"
 
 function MovementModule:CreateBinds()
+	local Character = Player.Character or Player.CharacterAdded:Wait()
+	local LeftLeg = Character:WaitForChild("Left Leg")
+	local RightLeg = Character:WaitForChild("Right Leg")
+	local Humanoid = Character:WaitForChild("Humanoid")
+
 	local EF = ReplicatedStorage:WaitForChild("Models"):WaitForChild("ef")
 	local ef1 = EF:Clone()
 	local ef2 = EF:Clone()
@@ -143,13 +150,7 @@ end
 
 function MovementModule:KnitStart()
 	coroutine.wrap(function()
-		Player.CharacterAdded:Connect(function(character)
-			Character = character
-			Humanoid = character:WaitForChild("Humanoid")
-			RootPart = character:WaitForChild("HumanoidRootPart")
-			LeftLeg = character:WaitForChild("Left Leg")
-			RightLeg = character:WaitForChild("Right Leg")
-		end)
+
 
 		MovementModule:CreateBinds()
 		MovementModule:CreateContextBinder()

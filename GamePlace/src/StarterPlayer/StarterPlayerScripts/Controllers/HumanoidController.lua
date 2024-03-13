@@ -12,10 +12,9 @@ local HumanoidHandler = Knit.CreateController({
 })
 
 local Player = Players.LocalPlayer
-local Character = Player.Character or Player.CharacterAdded:Wait()
-
-local Humanoid = Character:WaitForChild("Humanoid")
-local Animator: Animator = Humanoid:WaitForChild("Animator")
+local Character 
+local Humanoid
+local Animator: Animator
 
 local VFX = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("VFX"))
 
@@ -91,6 +90,10 @@ end
 
 function HumanoidHandler:KnitStart()
 	coroutine.wrap(function()
+		Character = Player.Character or Player.CharacterAdded:Wait()
+		Humanoid = Character:WaitForChild("Humanoid")
+		Animator = Humanoid:WaitForChild("Animator")
+
 		Player.CharacterAdded:Connect(function(character)
 			Character = character
 			Humanoid = character:WaitForChild("Humanoid")

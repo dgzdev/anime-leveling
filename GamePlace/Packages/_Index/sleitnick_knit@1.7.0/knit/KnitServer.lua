@@ -220,6 +220,7 @@ function KnitServer.AddServices(parent: Instance): { Service }
 			continue
 		end
 
+		print("Server Yielded: ", v.Name)
 		table.insert(addedServices, require(v))
 	end
 
@@ -238,6 +239,8 @@ function KnitServer.AddServicesDeep(parent: Instance): { Service }
 			continue
 		end
 
+		
+		print("Server Yielded: ", v.Name)
 		table.insert(addedServices, require(v))
 	end
 

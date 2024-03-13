@@ -18,6 +18,10 @@ function Indication:BindToAllNPCS()
 			continue
 		end
 
+		if not instance.Parent:FindFirstChild("Head") then
+			continue
+		end
+
 		DamageIndication.new(instance.Parent)
 	end
 

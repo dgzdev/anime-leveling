@@ -16,7 +16,7 @@ local FOOTSTEPS: Folder = ReplicatedStorage:WaitForChild("Footsteps")
 
 local SKIN_VECTOR = Vector3.new(0.1, 0, 0.1)
 local DELAY_UPPER = (0.1 * (SPEED_MAXIMUM / 17.5)) * (SPEED_MAXIMUM / SPEED_GATE)
-local CharInfo = Player.Character or Player.CharacterAdded:Wait()
+
 -- Vars --
 
 local CAN_PLAY_SOUND = true
@@ -55,6 +55,7 @@ function GetSelf()
 end
 
 local function FootstepLoop()
+
 	local Character = Player.Character or Player.CharacterAdded:Wait()
 	--print(Character.HumanoidRootPart.AssemblyLinearVelocity.Y)
 	for i, v in pairs(Character:WaitForChild("HumanoidRootPart"):GetChildren()) do

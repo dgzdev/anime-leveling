@@ -338,44 +338,46 @@ function GuiController:KnitInit()
 end
 
 function GuiController:KnitStart()
-	local camera = Workspace.CurrentCamera
+	coroutine.wrap(function()
+		local camera = Workspace.CurrentCamera
 
-	local plrGui = Players.LocalPlayer:WaitForChild("PlayerGui")
-	local teste = plrGui:WaitForChild("PlayerHud")
-	local frame = teste:WaitForChild("Background")
-
-	self:BindPlayerHud()
-	self:BindQuestEvents()
-	self:RenderPoints()
-	self:BindHotbar()
-
-	ProgressionService.NewPoint:Connect(function()
+		local plrGui = Players.LocalPlayer:WaitForChild("PlayerGui")
+		local teste = plrGui:WaitForChild("PlayerHud")
+		local frame = teste:WaitForChild("Background")
+	
+		self:BindPlayerHud()
+		self:BindQuestEvents()
 		self:RenderPoints()
-	end)
-	ProgressionService.PointWasted:Connect(function()
-		self:RenderPoints()
-	end)
-
-	local amt = -0.005
-	local defaultFov = 70
-	local fovScale = 70
-
-	local lastCF = camera.CFrame
-	task.spawn(function()
-		while true do
-			task.wait()
-			local dif = (lastCF.Position - camera.CFrame.Position) * amt
-			local max = 0.1
-
-			frame.Position = UDim2.fromScale(0.5 - math.clamp(dif.X + dif.Z, 0, max), 0.5 - math.clamp(dif.Y, 0, max))
-
-			local fov = camera.FieldOfView
-			local dif2 = ((defaultFov - fov) / fovScale) / 4
-			frame.Size = UDim2.fromScale(1 + dif2, 1 + dif2)
-
-			lastCF = camera.CFrame
-		end
-	end)
+		self:BindHotbar()
+	
+		ProgressionService.NewPoint:Connect(function()
+			self:RenderPoints()
+		end)
+		ProgressionService.PointWasted:Connect(function()
+			self:RenderPoints()
+		end)
+	
+		local amt = -0.005
+		local defaultFov = 70
+		local fovScale = 70
+	
+		local lastCF = camera.CFrame
+		task.spawn(function()
+			while true do
+				task.wait()
+				local dif = (lastCF.Position - camera.CFrame.Position) * amt
+				local max = 0.1
+	
+				frame.Position = UDim2.fromScale(0.5 - math.clamp(dif.X + dif.Z, 0, max), 0.5 - math.clamp(dif.Y, 0, max))
+	
+				local fov = camera.FieldOfView
+				local dif2 = ((defaultFov - fov) / fovScale) / 4
+				frame.Size = UDim2.fromScale(1 + dif2, 1 + dif2)
+	
+				lastCF = camera.CFrame
+			end
+		end)
+	end)()
 end
 
 return GuiController

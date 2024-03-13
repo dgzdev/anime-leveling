@@ -55,6 +55,8 @@ function PromptController:KnitInit()
 		local ProximityPromptService = game:GetService("ProximityPromptService")
 		ProximityPromptService.PromptTriggered:Connect(PromptController.OnPrompt)
 	end)()
+	MarketController = Knit.GetController("MarketController")
+	CameraController = Knit.GetController("CameraController")
 end
 
 return PromptController

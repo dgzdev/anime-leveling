@@ -5,14 +5,16 @@ local TweenService = game:GetService("TweenService")
 local SoundModule = {}
 
 local Player = Players.LocalPlayer
-local Character = Player.Character or Player.CharacterAdded:Wait()
-local Humanoid = Character:WaitForChild("Humanoid")
-local Root = Character:WaitForChild("HumanoidRootPart")
+
 
 local MIN_DISTANCE = 0
 local MAX_DISTANCE = 50
 
 function SoundModule:Start()
+	local Character = Player.Character or Player.CharacterAdded:Wait()
+	local Humanoid = Character:WaitForChild("Humanoid")
+	local Root = Character:WaitForChild("HumanoidRootPart")
+
 	--[[
 	Humanoid.Jumping:Connect(function(active)
 		if active then

@@ -9,13 +9,11 @@ local StarterGui = game:GetService("StarterGui")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Player = Players.LocalPlayer
-local Character = Player.Character or Player.CharacterAdded:Wait()
-local Humanoid = Character:WaitForChild("Humanoid")
 local PlayerEvents = ReplicatedStorage:WaitForChild("Player")
 
 function OnRagdoll(Ragdolled)
-	Character = Player.Character or Player.CharacterAdded:Wait()
-	Humanoid = Character:WaitForChild("Humanoid")
+	local Character = Player.Character or Player.CharacterAdded:Wait()
+	local Humanoid = Character:WaitForChild("Humanoid")
 
 	if not Humanoid then
 		return

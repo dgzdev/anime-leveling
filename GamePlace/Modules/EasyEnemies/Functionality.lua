@@ -1,6 +1,7 @@
 --!strict
 
 --// Services
+local Debris = game:GetService("Debris")
 local Players: Players = game:GetService("Players")
 local CollectionService: CollectionService = game:GetService("CollectionService")
 local TweenService: TweenService = game:GetService("TweenService")
@@ -111,6 +112,7 @@ local function MAKE_ANIMATION(selection, default_animations)
 	if typeof(selection) == "number" or typeof(selection) == "string" then
 		animation = Inst("Animation", workspace)
 		animation.AnimationId = "rbxassetid://" .. id
+		Debris:AddItem(animation, 3)
 	else
 		animation = id
 	end
