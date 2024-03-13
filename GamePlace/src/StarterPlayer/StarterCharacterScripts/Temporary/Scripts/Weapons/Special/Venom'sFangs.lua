@@ -252,14 +252,35 @@ local TestDagger = {
 					PlayingAnimation.Priority = Enum.AnimationPriority.Action4
 					PlayingAnimation:Play()
 
+					comboTicks = 0
+
+					repeat
+					task.spawn(function()
+						WeaponService:WeaponInput("VenomDash", Enum.UserInputState.Begin, {
+							Position = RootPart.CFrame,
+						})
+					end)
+					comboTicks += 1
+					task.wait(.5)
+					until comboTicks >= 10
+
 					PlayingAnimation:GetMarkerReachedSignal("teleport"):Connect(function()
 						task.spawn(function()
 							WeaponService:WeaponInput("VenomDash", Enum.UserInputState.Begin, {
 								Position = RootPart.CFrame,
 							})
 						end)
+
+						comboTicks = 0
+
 					end)
+
 					HoldingTime = 0
+					if PlayingAnimation then
+						PlayingAnimation:Stop(.15)
+					end
+
+
 				end
 			end
 		end,
