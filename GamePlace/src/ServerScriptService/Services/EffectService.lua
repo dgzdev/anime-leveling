@@ -17,10 +17,19 @@ function EffectService:RemoveEffect(Humanoid: Humanoid, EffectName: string)
 	end
 end
 
-function EffectService:GetEffectByType(Humanoid: Humanoid, EffectType: string)
+function EffectService:GetEffectsByType(Humanoid: Humanoid, EffectType: string): {}
 	if not HumanoidsWithEffects[Humanoid] then
 		HumanoidsWithEffects[Humanoid] = {}
 	end
+
+	local effects = {}
+	for effectName, effectData in pairs(HumanoidsWithEffects[Humanoid]) do
+		if effectData.EffectType == EffectType then
+			table.insert(effects, effectData)
+		end
+	end
+
+	return effects
 end
 
 function EffectService:AddEffect(
