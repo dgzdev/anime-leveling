@@ -390,6 +390,26 @@ return {
 			},
 		},
 	},
+	playerEffects = {
+		Buffs = {
+			Damage = {
+				callback = function(Player, Info : table)
+					if not Info then return end
+					if not Info.DamageMultiplier then return end
+					
+					if Info.DamageMultiplier < 1 then 
+						warn("For DamageBuff's callback, Info.DamageMultiplier should be greater than 1")
+						Info.DamageMultiplier = 1
+					end
+
+					local DamageMultiplier = Info.DamageMultiplier or 1.2
+					return DamageMultiplier
+				end,
+				UsersAffected = {}
+			}
+		},
+		Debuffs = {}
+	},
 	gameEnemies = {
 		["Teste"] = {
 			Health = 10000,
