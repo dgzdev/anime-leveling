@@ -6,7 +6,7 @@ local RootPart = Character:WaitForChild("HumanoidRootPart")
 local SoundRemover = {}
 
 function SoundRemover:Init()
-	for _, value: Sound in ipairs(RootPart:GetDescendants()) do
+	for _, value: Sound in (RootPart:GetDescendants()) do
 		if not value:IsA("Sound") then
 			continue
 		end

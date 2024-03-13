@@ -9,7 +9,7 @@ local names = {
 
 local types = {}
 
-for _, name in ipairs(names) do
+for _, name in names do
 	types[name] = import("./" .. name)
 end
 

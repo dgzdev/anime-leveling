@@ -8,15 +8,15 @@ local Instance = import("./Instance")
 
 local baseEnvironment = {}
 
-for key, value in pairs(_G) do
+for key, value in _G do
 	baseEnvironment[key] = value
 end
 
-for key, value in pairs(types) do
+for key, value in types do
 	baseEnvironment[key] = value
 end
 
-for key, lib in pairs(libs) do
+for key, lib in libs do
 	baseEnvironment[key] = lib
 end
 
@@ -30,15 +30,15 @@ baseEnvironment.__LEMUR__ = true
 local function createEnvironment(habitat)
 	local environment = {}
 
-	for key, value in pairs(baseEnvironment) do
+	for key, value in baseEnvironment do
 		environment[key] = value
 	end
 
-	for key, fn in pairs(functions) do
+	for key, fn in functions do
 		environment[key] = fn
 	end
 
-	for key, fnCreator in pairs(taskFunctions) do
+	for key, fnCreator in taskFunctions do
 		environment[key] = fnCreator(habitat.taskScheduler)
 	end
 

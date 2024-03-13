@@ -6,7 +6,6 @@ local InventoryService
 local ClothingService
 local ProgressionService
 
-
 local GameData = require(ServerStorage.GameData)
 
 local PlayerService = Knit.CreateService({
@@ -131,7 +130,7 @@ function PlayerService:EquipWeapon(player: Player, weaponId: number)
 	local Inventory: GameData.Inventory = Slot.Data.Inventory
 
 	local weaponData = {}
-	for weaponName, value in pairs(Inventory) do
+	for weaponName, value in Inventory do
 		if value.Id == weaponId then
 			weaponData = value
 			weaponData.Name = weaponName
@@ -174,7 +173,7 @@ end
 function PlayerService:KnitStart() end
 
 game:BindToClose(function()
-	for playerId: number, manager in pairs(Managers) do
+	for playerId: number, manager in Managers do
 		manager:Release()
 	end
 end)

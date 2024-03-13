@@ -1,16 +1,16 @@
 return {
-	Name = "run-lines";
-	Aliases = {};
-	Description = "Splits input by newlines and runs each line as its own command. This is used by the init-run command.";
-	Group = "DefaultUtil";
+	Name = "run-lines",
+	Aliases = {},
+	Description = "Splits input by newlines and runs each line as its own command. This is used by the init-run command.",
+	Group = "DefaultUtil",
 	Args = {
 		{
-			Type = "string";
-			Name = "Script";
-			Description = "The script to parse.";
-			Default = "";
-		}
-	};
+			Type = "string",
+			Name = "Script",
+			Description = "The script to parse.",
+			Default = "",
+		},
+	},
 
 	ClientRun = function(context, text)
 		if #text == 0 then
@@ -21,7 +21,7 @@ return {
 
 		local commands = text:gsub("\n+", "\n"):split("\n")
 
-		for _, command in ipairs(commands) do
+		for _, command in commands do
 			if command:sub(1, 1) == "#" then
 				continue
 			end
@@ -34,5 +34,5 @@ return {
 		end
 
 		return ""
-	end
+	end,
 }

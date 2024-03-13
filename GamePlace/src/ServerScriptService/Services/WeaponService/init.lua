@@ -61,7 +61,7 @@ function WeaponService:GetOverlapParams(Character)
 	local op = OverlapParams.new()
 	if Character:GetAttribute("Enemy") then
 		local Characters = {}
-		for _, plrs in ipairs(Players:GetPlayers()) do
+		for _, plrs in (Players:GetPlayers()) do
 			table.insert(Characters, plrs.Character)
 		end
 
@@ -76,7 +76,7 @@ function WeaponService:GetOverlapParams(Character)
 end
 
 function WeaponService.KnitInit()
-	for _, weapon in ipairs(script:GetChildren()) do
+	for _, weapon in (script:GetChildren()) do
 		if not weapon:IsA("ModuleScript") then
 			continue
 		end
@@ -86,7 +86,7 @@ end
 function WeaponService.KnitStart()
 	PlayerService = Knit.GetService("PlayerService")
 
-	for _, weapon in pairs(Weapons) do
+	for _, weapon in Weapons do
 		if weapon.Start then
 			weapon.Start(Weapons.Default)
 		end

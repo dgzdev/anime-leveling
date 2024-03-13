@@ -106,7 +106,7 @@ skipButton.Activated:Connect(function(inputObject, clickCount)
 end)
 
 local assets = SoundService:GetDescendants()
-for _, a in ipairs(Workspace:GetDescendants()) do
+for _, a in Workspace:GetDescendants() do
 	if a:IsA("Sound") then
 		table.insert(assets, a)
 	end

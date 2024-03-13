@@ -6,7 +6,7 @@ local names = {
 
 local libs = {}
 
-for _, name in ipairs(names) do
+for _, name in names do
 	libs[name] = import("./" .. name)
 end
 

@@ -15,7 +15,7 @@ StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.EmotesMenu, false)
 StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Health, false)
 StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Captures, false)
 
-for _, Module: ModuleScript in ipairs(script:WaitForChild("Scripts"):GetChildren()) do
+for _, Module: ModuleScript in (script:WaitForChild("Scripts"):GetChildren()) do
 	if not (Module:IsA("ModuleScript")) then
 		continue
 	end
@@ -23,7 +23,7 @@ for _, Module: ModuleScript in ipairs(script:WaitForChild("Scripts"):GetChildren
 	Modules[Module.Name] = require(Module)
 end
 
-for i, m in pairs(Modules) do
+for i, m in Modules do
 	task.spawn(function()
 		if m.Init then
 			m:Init(Modules)

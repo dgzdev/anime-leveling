@@ -15,7 +15,6 @@ local Player = Players.LocalPlayer
 
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
-
 local CameraEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("CAMERA")
 
 local AnimationTrack: AnimationTrack
@@ -79,7 +78,7 @@ local function AnimateCamera(animation: string)
 					end
 				end)
 
-				for _, basepart: BasePart in ipairs(Character:GetDescendants()) do
+				for _, basepart: BasePart in (Character:GetDescendants()) do
 					if basepart:IsA("BasePart") then
 						if table.find(NotChange, basepart.Name) then
 							continue
@@ -98,11 +97,11 @@ local function AnimateCamera(animation: string)
 			end
 
 			if i == 460 then
-				for _, c in ipairs(Connections) do
+				for _, c in Connections do
 					c:Disconnect()
 				end
 
-				for _, basepart: BasePart in ipairs(Character:GetDescendants()) do
+				for _, basepart: BasePart in (Character:GetDescendants()) do
 					if basepart:IsA("BasePart") then
 						basepart.LocalTransparencyModifier = basepart.Transparency
 						Connections[#Connections + 1] = basepart
@@ -153,7 +152,7 @@ local function AnimateCamera(animation: string)
 		local cutscene = PlayerGui:WaitForChild("Cutscene")
 		cutscene.Enabled = false
 
-		for _, c in ipairs(Connections) do
+		for _, c in Connections do
 			c:Disconnect()
 		end
 	end)

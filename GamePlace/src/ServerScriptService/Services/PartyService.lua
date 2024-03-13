@@ -19,8 +19,8 @@ local PARTY_LIMIT = 4
 
 --// Retorna a party do player usando como parâmetro o UserId
 function PartyService:GetPartyByUserId(UserId: number): Party
-	for _, party in pairs(Parties) do
-		for _, member in pairs(party.Members) do
+	for _, party in Parties do
+		for _, member in party.Members do
 			if member.UserId == UserId then
 				return party
 			end
@@ -35,8 +35,8 @@ end
 
 --// Retorna a party que player foi invitado usando como parâmetro o UserId
 function PartyService:GetPartyInvitedFromUserId(UserId: number): Party
-	for _, party in pairs(Parties) do
-		for _, member in pairs(party.InvitedTo) do
+	for _, party in Parties do
+		for _, member in party.InvitedTo do
 			if member.UserId == UserId then
 				return party
 			end
@@ -103,7 +103,7 @@ function PartyService:AcceptInvite(Player: Player): string
 		return "Player is not invited from any party"
 	end
 
-	for index, userId in pairs(PartyInvitedFrom.InvitedTo) do
+	for index, userId in PartyInvitedFrom.InvitedTo do
 		if Player.UserId == userId then
 			table.remove(PartyInvitedFrom.InvitedTo, index)
 		end
@@ -124,7 +124,7 @@ function PartyService:DeclineInvite(Player: Player): string
 		return "Player is not invited from any party"
 	end
 
-	for index, userId in pairs(PartyInvitedFrom.InvitedTo) do
+	for index, userId in PartyInvitedFrom.InvitedTo do
 		if Player.UserId == userId then
 			table.remove(PartyInvitedFrom.InvitedTo, index)
 		end
@@ -154,7 +154,7 @@ function PartyService:RemovePlayerFromParty(Leader: Player, PlayerToRemoveId: nu
 end
 
 function PartyService:RemoveParty(Party: Party): boolean
-	for index, party in pairs(Parties) do
+	for index, party in Parties do
 		if party == Party then
 			table.remove(Parties, index)
 			return true

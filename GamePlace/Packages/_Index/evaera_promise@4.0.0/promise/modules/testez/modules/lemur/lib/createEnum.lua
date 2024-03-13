@@ -33,7 +33,7 @@ local function createEnum(enumName, variantValues)
 
 	local variants = {}
 
-	for variantName, value in pairs(variantValues) do
+	for variantName, value in variantValues do
 		variants[variantName] = createEnumVariant(enum, variantName, value)
 	end
 

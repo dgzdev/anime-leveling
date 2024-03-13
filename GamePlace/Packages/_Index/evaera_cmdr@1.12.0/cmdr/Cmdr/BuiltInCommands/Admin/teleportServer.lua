@@ -1,4 +1,4 @@
-return function (_, fromPlayers, destination)
+return function(_, fromPlayers, destination)
 	local cframe
 
 	if typeof(destination) == "Instance" then
@@ -11,7 +11,7 @@ return function (_, fromPlayers, destination)
 		cframe = CFrame.new(destination)
 	end
 
-	for _, player in ipairs(fromPlayers) do
+	for _, player in fromPlayers do
 		if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
 			player.Character.HumanoidRootPart.CFrame = cframe
 		end

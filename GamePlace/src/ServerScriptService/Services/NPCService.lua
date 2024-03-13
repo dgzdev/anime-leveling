@@ -160,7 +160,7 @@ function NPC:MoveInRadius()
 	end)
 
 	-- Move the NPC along the path
-	for _, Waypoint in pairs(Path:GetWaypoints()) do
+	for _, Waypoint in (Path:GetWaypoints()) do
 		if Waypoint.Action == Enum.PathWaypointAction.Jump then
 			self.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 		end
@@ -200,7 +200,7 @@ function NPC:Prepare()
 	self.Humanoid.WalkSpeed = self.Config.NPC_Speed
 
 	--// Sets the CollisionGroup to "NPC"
-	for _, Object in ipairs(self.Character:GetDescendants()) do
+	for _, Object in self.Character:GetDescendants() do
 		if Object:IsA("BasePart") then
 			Object.CollisionGroup = "NPC"
 		end
@@ -209,7 +209,7 @@ end
 
 function Module.KnitStart()
 	local Folder = Workspace.NPC
-	for _, value in ipairs(Folder:GetChildren()) do
+	for _, value in Folder:GetChildren() do
 		NPC.new(value)
 	end
 

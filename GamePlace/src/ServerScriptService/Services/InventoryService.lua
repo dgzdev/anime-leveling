@@ -66,7 +66,7 @@ function InventoryService:AddItem(player: Player, item: string)
 	local Data = PlayerService:GetData(player)
 
 	local lastId = 0
-	for id, info in pairs(Data.Inventory) do
+	for id, info in Data.Inventory do
 		lastId = info.Id
 	end
 
@@ -83,7 +83,7 @@ function InventoryService:RemoveItem(player: Player, item: string)
 	local Data = PlayerService:GetData(player)
 
 	local id
-	for _id, info in pairs(Data.Inventory) do
+	for _id, info in Data.Inventory do
 		if info.Name == item then
 			Data.Inventory[id] = nil
 			id = _id
@@ -143,7 +143,7 @@ function InventoryService:EquipFromData(player: Player, playerData)
 	local m = game.ReplicatedStorage.Models[WeaponType .. "s"][Equiped]
 	if m then
 		if m.ClassName == "Folder" then
-			for _, basePart: Folder in ipairs(m:GetChildren()) do
+			for _, basePart: Folder in m:GetChildren() do
 				local basePartName = basePart.Name
 				local Model = basePart:GetChildren()[1]
 

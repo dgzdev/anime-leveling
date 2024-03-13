@@ -86,7 +86,7 @@ function EnemyService:CreateEnemy(
 	RagdollService:UnRagdoll(clone)
 
 	Humanoid.Died:Connect(function()
-		for _, value in ipairs(Animator:GetPlayingAnimationTracks()) do
+		for _, value in (Animator:GetPlayingAnimationTracks()) do
 			value:Stop()
 		end
 
@@ -108,7 +108,7 @@ function EnemyService:CreateEnemy(
 		self:UpdateHealthHud(Humanoid, healthHud)
 	end)
 
-	for _, bp: BasePart in ipairs(model:GetDescendants()) do
+	for _, bp: BasePart in (model:GetDescendants()) do
 		if bp:IsA("BasePart") then
 			bp.CollisionGroup = "Enemies"
 		end
@@ -214,7 +214,7 @@ function EnemyService.KnitStart()
 	local Folder: Folder = Workspace.Enemies
 
 	local Enemies = Folder:GetChildren()
-	for _, Enemy in ipairs(Enemies) do
+	for _, Enemy in Enemies do
 		if not EnemyService.Enemies[Enemy] then
 			EnemyService.ChildAdded(Enemy)
 		end

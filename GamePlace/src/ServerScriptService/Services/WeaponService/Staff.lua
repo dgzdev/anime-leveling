@@ -42,7 +42,7 @@ local SFX = require(ReplicatedStorage.Modules.SFX)
 
 local function GetModelMass(model: Model)
 	local mass = 0
-	for _, part: BasePart in ipairs(model:GetDescendants()) do
+	for _, part: BasePart in (model:GetDescendants()) do
 		if part:IsA("BasePart") then
 			if part.Massless then
 				continue

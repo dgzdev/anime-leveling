@@ -61,7 +61,7 @@ local TweenService = game:GetService("TweenService")
 local sleep = Promise.promisify(wait)
 
 local function apply(obj, props)
-	for key, value in pairs(props) do
+	for key, value in (props) do
 		obj[key] = value
 	end
 end

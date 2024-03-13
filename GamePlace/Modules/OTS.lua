@@ -187,7 +187,7 @@ end
 
 function CLASS:LoadCameraSettings()
 	local currentCamera = workspace.CurrentCamera
-	for setting, value in pairs(self.SavedCameraSettings) do
+	for setting, value in self.SavedCameraSettings do
 		currentCamera[setting] = value
 	end
 end

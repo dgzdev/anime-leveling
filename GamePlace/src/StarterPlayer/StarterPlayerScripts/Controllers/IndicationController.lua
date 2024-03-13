@@ -13,7 +13,7 @@ function Indication:BindToAllNPCS()
 	local DamageIndication = require(ReplicatedStorage.Modules.DamageIndication)
 	local Player = Players.LocalPlayer
 
-	for _, instance in ipairs(game.Workspace:GetDescendants()) do
+	for _, instance in (game.Workspace:GetDescendants()) do
 		if not instance:IsA("Humanoid") then
 			continue
 		end

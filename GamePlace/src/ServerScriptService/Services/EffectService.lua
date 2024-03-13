@@ -23,7 +23,7 @@ function EffectService:GetEffectsByType(Humanoid: Humanoid, EffectType: string):
 	end
 
 	local effects = {}
-	for effectName, effectData in pairs(HumanoidsWithEffects[Humanoid]) do
+	for effectName, effectData in HumanoidsWithEffects[Humanoid] do
 		if effectData.EffectType == EffectType then
 			table.insert(effects, effectData)
 		end

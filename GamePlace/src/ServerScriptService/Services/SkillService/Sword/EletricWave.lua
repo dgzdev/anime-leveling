@@ -10,7 +10,7 @@ local SFX = require(ReplicatedStorage.Modules.SFX)
 
 local function GetModelMass(model: Model)
 	local mass = 0
-	for _, part: BasePart in ipairs(model:GetDescendants()) do
+	for _, part: BasePart in (model:GetDescendants()) do
 		if part:IsA("BasePart") then
 			if part.Massless then
 				continue
@@ -51,7 +51,7 @@ return function(Character: Model, InputState: Enum.UserInputState, Data: { Posit
 	)
 	Tween:Play()
 	Tween.Completed:Connect(function(playbackState)
-		for _, p: ParticleEmitter in ipairs(effectPart:GetChildren()) do
+		for _, p: ParticleEmitter in (effectPart:GetChildren()) do
 			if p:IsA("ParticleEmitter") then
 				p.Enabled = false
 			end

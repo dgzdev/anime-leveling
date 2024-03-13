@@ -6,7 +6,7 @@ local names = {
 
 local taskFunctions = {}
 
-for _, name in ipairs(names) do
+for _, name in names do
 	taskFunctions[name] = import("./" .. name)
 end
 

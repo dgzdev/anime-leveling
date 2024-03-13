@@ -121,7 +121,7 @@ end
 function Path.prototype:clone()
 	local components = {}
 
-	for _, component in ipairs(self.components) do
+	for _, component in self.components do
 		table.insert(components, component)
 	end
 
@@ -140,7 +140,7 @@ function Path.prototype:push(input)
 
 	local newComponents = componentsFromPathString(input)
 
-	for _, component in ipairs(newComponents) do
+	for _, component in newComponents do
 		if component == ".." then
 			if #self.components > 0 then
 				table.remove(self.components)
@@ -253,7 +253,7 @@ local function makeImport(rootPath)
 			local currentDirectory = currentPath:pop()
 			local relativeModulePath = currentDirectory:push(modulePath)
 
-			local pathsToTry = {relativeModulePath}
+			local pathsToTry = { relativeModulePath }
 
 			if Path.fromString(modulePath):getExtension() == nil then
 				table.insert(pathsToTry, relativeModulePath:addExtension(".lua"))
@@ -263,14 +263,14 @@ local function makeImport(rootPath)
 			-- TODO: Plug-in point for adding additional paths to try
 
 			-- Have we loaded this module before?
-			for _, path in ipairs(pathsToTry) do
+			for _, path in pathsToTry do
 				if loadedModules[tostring(path)] then
 					return moduleResults[tostring(path)]
 				end
 			end
 
 			-- Let's try to load from these paths!
-			for _, path in ipairs(pathsToTry) do
+			for _, path in pathsToTry do
 				-- Hand-craft an environment for the module we're loading
 				-- The module won't be able to iterate over globals!
 				local env = setmetatable({
@@ -302,12 +302,13 @@ local function makeImport(rootPath)
 
 			local pathsToTryAsStrings = {}
 
-			for _, path in ipairs(pathsToTry) do
+			for _, path in pathsToTry do
 				table.insert(pathsToTryAsStrings, tostring(path))
 			end
 
 			-- We didn't find any modules.
-			local message = string.format("Couldn't import %q from file %s, tried:\n\t%s",
+			local message = string.format(
+				"Couldn't import %q from file %s, tried:\n\t%s",
 				modulePath,
 				tostring(currentPath),
 				table.concat(pathsToTryAsStrings, "\n\t")

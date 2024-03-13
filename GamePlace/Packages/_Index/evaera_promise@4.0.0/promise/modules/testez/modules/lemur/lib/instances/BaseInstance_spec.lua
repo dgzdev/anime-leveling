@@ -24,8 +24,7 @@ describe("instances.BaseInstance", function()
 	it("should error when indexing invalid instances", function()
 		local instance = BaseInstance:new()
 
-		local function nop()
-		end
+		local function nop() end
 
 		assert.has.errors(function()
 			nop(instance.neverWillEXIST)
@@ -126,7 +125,7 @@ describe("instances.BaseInstance", function()
 
 			local child1Seen = false
 			local child2Seen = false
-			for _, child in ipairs(parent:GetChildren()) do
+			for _, child in (parent:GetChildren()) do
 				if child == child1 then
 					child1Seen = true
 				elseif child == child2 then
@@ -161,7 +160,7 @@ describe("instances.BaseInstance", function()
 
 			local child1Seen = false
 			local child2Seen = false
-			for _, child in ipairs(parent:GetDescendants()) do
+			for _, child in (parent:GetDescendants()) do
 				if child == child1 then
 					child1Seen = true
 				elseif child == child2 then
@@ -192,7 +191,7 @@ describe("instances.BaseInstance", function()
 			local child1Seen = false
 			local child2Seen = false
 			local child3Seen = false
-			for _, child in ipairs(parent:GetDescendants()) do
+			for _, child in (parent:GetDescendants()) do
 				if child == child1 then
 					child1Seen = true
 				elseif child == child2 then

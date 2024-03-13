@@ -47,12 +47,12 @@ function ClothingService:WearShirt(Target, ShirtFolder: Folder)
 
 	Target:FindFirstChild("Clothes"):FindFirstChild("Shirt"):ClearAllChildren()
 
-	for i: number, v: BasePart in ipairs(ShirtFolder:GetChildren()) do
+	for i: number, v: BasePart in (ShirtFolder:GetChildren()) do
 		local Clothe: BasePart = v:Clone()
 		if Clothe:IsA("BasePart") then
 			Clothe.Parent = Target:FindFirstChild("Clothes"):FindFirstChild("Shirt")
 
-			for _, Weld: Weld in ipairs(Clothe:GetDescendants()) do
+			for _, Weld: Weld in (Clothe:GetDescendants()) do
 				if Weld:IsA("Weld") then
 					local _find = Target:FindFirstChild(Weld.Name)
 					if _find then
@@ -91,12 +91,12 @@ function ClothingService:WearPants(Target, PantsFolder)
 
 	Target:FindFirstChild("Clothes"):FindFirstChild("Pants"):ClearAllChildren()
 
-	for i: number, v: BasePart in ipairs(PantsFolder:GetChildren()) do
+	for i: number, v: BasePart in (PantsFolder:GetChildren()) do
 		local Clothe: BasePart = v:Clone()
 		if Clothe:IsA("BasePart") then
 			Clothe.Parent = Target:FindFirstChild("Clothes"):FindFirstChild("Pants")
 
-			for _, Weld: Weld in ipairs(Clothe:GetDescendants()) do
+			for _, Weld: Weld in (Clothe:GetDescendants()) do
 				if Weld:IsA("Weld") then
 					local _find = Target:FindFirstChild(Weld.Name)
 					if _find then
@@ -135,12 +135,12 @@ function ClothingService:WearShoes(Target, ShoesFolder)
 
 	Target:FindFirstChild("Clothes"):FindFirstChild("Shoes"):ClearAllChildren()
 
-	for i: number, v: BasePart in ipairs(ShoesFolder:GetChildren()) do
+	for i: number, v: BasePart in (ShoesFolder:GetChildren()) do
 		local Clothe: BasePart = v:Clone()
 		if Clothe:IsA("BasePart") then
 			Clothe.Parent = Target:FindFirstChild("Clothes"):FindFirstChild("Shoes")
 
-			for _, Weld: Weld in ipairs(Clothe:GetDescendants()) do
+			for _, Weld: Weld in (Clothe:GetDescendants()) do
 				if Weld:IsA("Weld") then
 					local _find = Target:FindFirstChild(Weld.Name)
 					if _find then
@@ -173,12 +173,12 @@ function ClothingService:WearHair(Target, HairFolder)
 
 	Target:FindFirstChild("Clothes"):FindFirstChild("Hair"):ClearAllChildren()
 
-	for i: number, v: BasePart in ipairs(HairFolder:GetChildren()) do
+	for i: number, v: BasePart in (HairFolder:GetChildren()) do
 		local Clothe: BasePart = v:Clone()
 		if Clothe:IsA("BasePart") then
 			Clothe.Parent = Target:FindFirstChild("Clothes"):FindFirstChild("Hair")
 
-			for _, Weld: Weld in ipairs(Clothe:GetDescendants()) do
+			for _, Weld: Weld in (Clothe:GetDescendants()) do
 				if Weld:IsA("Weld") then
 					local _find = Target:FindFirstChild(Weld.Name)
 					if _find then
@@ -215,14 +215,14 @@ end
 
 function ClothingService:ApplyClothingColors(Player)
 	local PlayerSlot = PlayerService:GetSlot(Player)
-	for i, v in pairs(PlayerSlot.Character) do
+	for i, v in PlayerSlot.Character do
 		if i == "Colors" then
 			continue
 		end
 		local Character = Player.Character
 		local Clothes = Character:WaitForChild("Clothes")
 		if Clothes:FindFirstChild(i) then
-			for j, k in pairs(Clothes:FindFirstChild(i):GetDescendants()) do
+			for j, k in (Clothes:FindFirstChild(i):GetDescendants()) do
 				if k:IsA("BasePart") and k:GetAttribute("CanColor") then
 					k.Color = Color3.fromHex(v.Color)
 				end

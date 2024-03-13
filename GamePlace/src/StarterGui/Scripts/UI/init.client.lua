@@ -52,7 +52,7 @@ function UI:Init()
 		end
 	end
 
-	for _, Object: GuiButton in ipairs(PlayerGui:GetDescendants()) do
+	for _, Object: GuiButton in (PlayerGui:GetDescendants()) do
 		Apply(Object)
 	end
 	PlayerGui.DescendantAdded:Connect(function(descendant)

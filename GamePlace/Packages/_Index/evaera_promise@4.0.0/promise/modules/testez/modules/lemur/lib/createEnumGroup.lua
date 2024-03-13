@@ -2,7 +2,7 @@ local typeKey = import("./typeKey")
 local typeof = import("./functions/typeof")
 
 local function createEnumGroup(enums)
-	for enumName, enum in pairs(enums) do
+	for enumName, enum in enums do
 		if typeof(enum) ~= "Enum" then
 			error(("Invalid enum in enum group %s"):format(tostring(enumName)), 2)
 		end

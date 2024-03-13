@@ -25,7 +25,7 @@ return function(
 	})
 
 	task.spawn(function() -- Para tirar o delay da skill.
-		for i, weapon: Model in ipairs(WeaponFolder:GetChildren()) do --> Hitbox
+		for i, weapon: Model in (WeaponFolder:GetChildren()) do --> Hitbox
 			HitboxService:CreateFixedHitbox(CFramePosition, Vector3.new(5, 5, 5), 1, function(hitted: Model)
 				task.spawn(function()
 					DaggerHitFunction(Character, hitted, 2, "DaggerHit", "DaggerHit", 2.5, 1)

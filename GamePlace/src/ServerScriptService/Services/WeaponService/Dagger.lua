@@ -24,7 +24,7 @@ local GameData = require(ServerStorage.GameData)
 
 local function GetModelMass(model: Model)
 	local mass = 0
-	for _, part: BasePart in ipairs(model:GetDescendants()) do
+	for _, part: BasePart in (model:GetDescendants()) do
 		if part:IsA("BasePart") then
 			if part.Massless then
 				continue
@@ -129,7 +129,7 @@ Dagger.Default = {
 		Ray.FilterDescendantsInstances = { Workspace.Enemies }
 
 		local WeaponFolder = Character:FindFirstChild("Weapons")
-		for i, weapon: Model in ipairs(WeaponFolder:GetChildren()) do
+		for i, weapon: Model in (WeaponFolder:GetChildren()) do
 			HitboxService:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
 				DaggerHitFunction(Character, hitted, 5, "DaggerHit", "DaggerHit", nil, 0)
 			end)

@@ -321,7 +321,7 @@ return function()
 
 		it("should return string of some option with type", function()
 			local values = { 10, true, false, "test", {}, function() end, coroutine.create(function() end), workspace }
-			for _, value in ipairs(values) do
+			for _, value in values do
 				local expectedString = ("Option<%s>"):format(typeof(value))
 				expect(tostring(Option.Some(value))).to.equal(expectedString)
 			end

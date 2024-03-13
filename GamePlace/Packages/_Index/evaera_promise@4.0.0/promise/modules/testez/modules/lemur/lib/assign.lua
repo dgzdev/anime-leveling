@@ -7,7 +7,7 @@ return function(target, ...)
 		local source = select(i, ...)
 
 		if source ~= nil then
-			for key, value in pairs(source) do
+			for key, value in source do
 				target[key] = value
 			end
 		end

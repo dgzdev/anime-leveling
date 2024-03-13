@@ -6,12 +6,10 @@ Signal.__index = Signal
 Signal.ClassName = "Signal"
 Signal.totalConnections = 0
 
-
-
 -- CONSTRUCTOR
 function Signal.new(createConnectionsChangedSignal)
 	local self = setmetatable({}, Signal)
-	
+
 	if createConnectionsChangedSignal then
 		self.connectionsChanged = Signal.new()
 	end
@@ -24,17 +22,15 @@ function Signal.new(createConnectionsChangedSignal)
 	return self
 end
 
-
-
 -- METHODS
 function Signal:Fire(...)
-	for _, connection in pairs(self.connections) do
+	for _, connection in self.connections do
 		--connection.Handler(...)
 		task.spawn(connection.Handler, ...)
 	end
 	if self.totalWaiting > 0 then
 		local packedArgs = table.pack(...)
-		for waitingId, _ in pairs(self.waiting) do
+		for waitingId, _ in self.waiting do
 			self.waiting[waitingId] = packedArgs
 		end
 	end
@@ -45,7 +41,7 @@ function Signal:Connect(handler)
 	if not (type(handler) == "function") then
 		error(("connect(%s)"):format(typeof(handler)), 2)
 	end
-	
+
 	local signal = self
 	local connectionId = HttpService:GenerateGUID(false)
 	local connection = {}
@@ -78,7 +74,9 @@ function Signal:Wait()
 	local waitingId = HttpService:GenerateGUID(false)
 	self.waiting[waitingId] = true
 	self.totalWaiting += 1
-	repeat heartbeat:Wait() until self.waiting[waitingId] ~= true
+	repeat
+		heartbeat:Wait()
+	until self.waiting[waitingId] ~= true
 	self.totalWaiting -= 1
 	local args = self.waiting[waitingId]
 	self.waiting[waitingId] = nil
@@ -97,14 +95,12 @@ function Signal:Destroy()
 		self.connectionsChanged = nil
 	end
 	self.totalConnections = 0
-	for connectionId, connection in pairs(self.connections) do
+	for connectionId, connection in self.connections do
 		self.connections[connectionId] = nil
 	end
 end
 Signal.destroy = Signal.Destroy
 Signal.Disconnect = Signal.Destroy
 Signal.disconnect = Signal.Destroy
-
-
 
 return Signal

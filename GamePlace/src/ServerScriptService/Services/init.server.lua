@@ -5,7 +5,7 @@ local Knit = require(ReplicatedStorage.Packages.Knit)
 
 local Players = game:GetService("Players")
 
-for _, service in ipairs(ServerScriptService:GetDescendants()) do
+for _, service in (ServerScriptService:GetDescendants()) do
 	if not service:IsA("ModuleScript") then
 		continue
 	end

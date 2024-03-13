@@ -16,26 +16,26 @@ local MarketService = Knit.CreateService({
 	},
 })
 
-
 function MarketService:GetDiscountedItems(Market)
 	local items = {}
-	if not GameData.gameMarkets[Market] then return end
+	if not GameData.gameMarkets[Market] then
+		return
+	end
 
-	for _,itemName in ipairs(GameData.gameMarkets[Market].DiscountItems) do
+	for _, itemName in GameData.gameMarkets[Market].DiscountItems do
 		table.insert(items, itemName)
 	end
 
-	for itemName,itemInfo in pairs(GameData.gameMarkets[Market].Items) do
-		if itemInfo.DiscountTotal then	
-			table.insert(items,itemName)
+	for itemName, itemInfo in GameData.gameMarkets[Market].Items do
+		if itemInfo.DiscountTotal then
+			table.insert(items, itemName)
 		end
 	end
 
 	return items
 end
 
-function MarketService:IsItemDiscounted(Market : string, itemName: string)
-
+function MarketService:IsItemDiscounted(Market: string, itemName: string)
 	if typeof(Market) ~= "string" then
 		local errorMessage = string.format("Market name must be a string, received: %s", typeof(Market))
 		error(errorMessage)
@@ -45,7 +45,7 @@ function MarketService:IsItemDiscounted(Market : string, itemName: string)
 		local errorMessage = string.format("itemName must be a string, received: %s", typeof(itemName))
 		error(errorMessage)
 	end
-	
+
 	if not GameData.gameMarkets[Market] then
 		warn("Market not found: ", Market)
 		return
@@ -60,7 +60,7 @@ function MarketService:IsItemDiscounted(Market : string, itemName: string)
 	end
 end
 
-function MarketService:GetItemPrice(Market : string, itemName)
+function MarketService:GetItemPrice(Market: string, itemName)
 	if not GameData.gameMarkets[Market] then
 		return
 	end
@@ -71,7 +71,7 @@ function MarketService:GetItemPrice(Market : string, itemName)
 			if Discounted then
 				local TotalDiscount = Discounted
 				return Market.Items[itemName].Price - (Market.Items[itemName].Price * TotalDiscount)
-			end	
+			end
 		end
 	else
 		local errorMessage = string.format("itemName must be a string, received: %s", typeof(itemName))

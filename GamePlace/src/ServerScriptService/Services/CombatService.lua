@@ -37,7 +37,7 @@ function CombatService:RegisterNPCEnemyKilledByPlayer(Character: Model, EnemyHum
 			error("Enemy Data not found.")
 		end
 
-		for i, Quest in ipairs(PlayerQuests) do
+		for i, Quest in PlayerQuests do
 			if not Quest then
 				return
 			end

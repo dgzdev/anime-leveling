@@ -164,7 +164,7 @@ IconController.iconAdded:Connect(function(icon)
 	-- When this icon is selected, deselect other icons if necessary
 	icon.selected:Connect(function()
 		local allIcons = IconController.getIcons()
-		for _, otherIcon in pairs(allIcons) do
+		for _, otherIcon in allIcons do
 			if
 				icon.deselectWhenOtherIconSelected
 				and otherIcon ~= icon
@@ -200,7 +200,7 @@ workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(bindCamera)
 function IconController.setGameTheme(theme)
 	IconController.gameTheme = theme
 	local icons = IconController.getIcons()
-	for _, icon in pairs(icons) do
+	for _, icon in icons do
 		icon:setTheme(theme)
 	end
 end
@@ -213,14 +213,14 @@ IconController.setDisplayOrder(10)
 
 function IconController.getIcons()
 	local allIcons = {}
-	for otherIcon, _ in pairs(topbarIcons) do
+	for otherIcon, _ in topbarIcons do
 		table.insert(allIcons, otherIcon)
 	end
 	return allIcons
 end
 
 function IconController.getIcon(name)
-	for otherIcon, _ in pairs(topbarIcons) do
+	for otherIcon, _ in topbarIcons do
 		if otherIcon.name == name then
 			return otherIcon
 		end
@@ -298,18 +298,18 @@ function IconController.updateTopbar()
 		runService.Heartbeat:Wait()
 		topbarUpdating = false
 
-		for alignment, alignmentInfo in pairs(alignmentDetails) do
+		for alignment, alignmentInfo in alignmentDetails do
 			alignmentInfo.records = {}
 		end
 
-		for otherIcon, _ in pairs(topbarIcons) do
+		for otherIcon, _ in topbarIcons do
 			if IconController.canShowIconOnTopbar(otherIcon) then
 				local alignment = otherIcon:get("alignment")
 				table.insert(alignmentDetails[alignment].records, otherIcon)
 			end
 		end
 		local viewportSize = workspace.CurrentCamera.ViewportSize
-		for alignment, alignmentInfo in pairs(alignmentDetails) do
+		for alignment, alignmentInfo in alignmentDetails do
 			local records = alignmentInfo.records
 			if #records > 1 then
 				if alignmentInfo.reverseSort then
@@ -323,19 +323,19 @@ function IconController.updateTopbar()
 				end
 			end
 			local totalIconX = 0
-			for i, otherIcon in pairs(records) do
+			for i, otherIcon in records do
 				local increment = getIncrement(otherIcon, alignment)
 				totalIconX = totalIconX + increment
 			end
 			local offsetX = alignmentInfo.getStartOffset(totalIconX, alignment)
 			local preOffsetX = offsetX
 			local containerX = TopbarPlusGui.TopbarContainer.AbsoluteSize.X
-			for i, otherIcon in pairs(records) do
+			for i, otherIcon in records do
 				local increment, preOffset = getIncrement(otherIcon, alignment)
 				local newAbsoluteX = alignmentInfo.startScale * containerX + preOffsetX + preOffset
 				preOffsetX = preOffsetX + increment
 			end
-			for i, otherIcon in pairs(records) do
+			for i, otherIcon in records do
 				local container = otherIcon.instances.iconContainer
 				local increment, preOffset = getIncrement(otherIcon, alignment)
 				local topPadding = otherIcon.topPadding
@@ -389,7 +389,7 @@ function IconController.updateTopbar()
 			return sizeX
 		end
 
-		for alignment, alignmentInfo in pairs(alignmentDetails) do
+		for alignment, alignmentInfo in alignmentDetails do
 			local overflowIcon = alignmentInfo.overflowIcon
 			if overflowIcon then
 				local alignmentGap = IconController[alignment .. "Gap"]
@@ -476,10 +476,10 @@ function IconController.updateTopbar()
 									local wasSelected = endIcon.isSelected
 									endIcon:deselect()
 									local iconsToConvert = {}
-									for _, dIcon in pairs(endIcon.dropdownIcons) do
+									for _, dIcon in endIcon.dropdownIcons do
 										table.insert(iconsToConvert, dIcon)
 									end
-									for _, dIcon in pairs(endIcon.dropdownIcons) do
+									for _, dIcon in endIcon.dropdownIcons do
 										dIcon:leave()
 									end
 									endIcon:setMenu(iconsToConvert)
@@ -512,7 +512,7 @@ function IconController.updateTopbar()
 							and #oppositeAlignmentInfo.records ~= 1
 						)
 					then
-						for _, overlappedIcon in pairs(overflowIcon.dropdownIcons) do
+						for _, overlappedIcon in overflowIcon.dropdownIcons do
 							local iconOrder = overlappedIcon:get("order")
 							if
 								winningOverlappedIcon == nil
@@ -545,10 +545,10 @@ function IconController.updateTopbar()
 							if winningOverlappedIcon._overflowConvertedToMenu then
 								winningOverlappedIcon._overflowConvertedToMenu = nil
 								local iconsToConvert = {}
-								for _, dIcon in pairs(winningOverlappedIcon.menuIcons) do
+								for _, dIcon in winningOverlappedIcon.menuIcons do
 									table.insert(iconsToConvert, dIcon)
 								end
-								for _, dIcon in pairs(winningOverlappedIcon.menuIcons) do
+								for _, dIcon in winningOverlappedIcon.menuIcons do
 									dIcon:leave()
 								end
 								winningOverlappedIcon:setDropdown(iconsToConvert)
@@ -622,7 +622,7 @@ function IconController.setTopbarEnabled(bool, forceBool)
 				IconController:_updateSelectionGroup()
 				runService.Heartbeat:Wait()
 				local indicatorSizeTrip = 50 --indicator.AbsoluteSize.Y * 2
-				for otherIcon, _ in pairs(topbarIcons) do
+				for otherIcon, _ in topbarIcons do
 					if
 						IconController.canShowIconOnTopbar(otherIcon)
 						and (selectIcon == nil or otherIcon:get("order") < selectIcon:get("order"))
@@ -722,7 +722,7 @@ end
 local localPlayer = players.LocalPlayer
 local iconsToClearOnSpawn = {}
 localPlayer.CharacterAdded:Connect(function()
-	for _, icon in pairs(iconsToClearOnSpawn) do
+	for _, icon in iconsToClearOnSpawn do
 		icon:destroy()
 	end
 	iconsToClearOnSpawn = {}
@@ -746,7 +746,7 @@ function IconController:_updateSelectionGroup(clearAll)
 	elseif IconController.controllerModeEnabled then
 		local icons = IconController.getIcons()
 		local iconContainers = {}
-		for i, otherIcon in pairs(icons) do
+		for i, otherIcon in icons do
 			local featureName = otherIcon.joinedFeatureName
 			if not featureName or otherIcon._parentIcon[otherIcon.joinedFeatureName .. "Open"] == true then
 				table.insert(iconContainers, otherIcon.instances.iconButton)
@@ -811,7 +811,7 @@ function IconController._enableControllerMode(bool)
 		indicator.Visible = false
 		IconController._setControllerSelectedObject(nil)
 	end
-	for icon, _ in pairs(topbarIcons) do
+	for icon, _ in topbarIcons do
 		IconController._enableControllerModeForIcon(icon, bool)
 	end
 end
@@ -866,7 +866,7 @@ function IconController._enableControllerModeForIcon(icon, bool)
 		icon:set("alignment", "mid", "selected", "controllerMode")
 	else
 		local states = { "deselected", "selected", "hovering" }
-		for _, iconState in pairs(states) do
+		for _, iconState in states do
 			local _, previousAlignment = icon:get("alignment", iconState, "controllerMode")
 			if previousAlignment then
 				icon:set("alignment", previousAlignment, iconState)
@@ -1101,7 +1101,7 @@ coroutine.wrap(function()
 	end)
 
 	-- Setup overflow icons
-	for alignment, detail in pairs(alignmentDetails) do
+	for alignment, detail in alignmentDetails do
 		if alignment ~= "mid" then
 			local overflowName = "_overflowIcon-" .. alignment
 			local overflowIcon = Icon.new()
@@ -1257,7 +1257,7 @@ task.spawn(function()
 	end)
 	local function updateAllIcons()
 		local icons = IconController.getIcons()
-		for _, icon in pairs(icons) do
+		for _, icon in icons do
 			icon:_updateAll()
 		end
 	end

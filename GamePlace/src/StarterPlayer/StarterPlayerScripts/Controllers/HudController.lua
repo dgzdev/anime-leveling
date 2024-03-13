@@ -23,8 +23,8 @@ function Hud:OrganizeHotbar(Profile)
 
 	local Inventory = Profile.Inventory
 
-	for HotbarNumber, ItemID in ipairs(hotbar) do
-		for itemName, itemProperties in pairs(Inventory) do
+	for HotbarNumber, ItemID in hotbar do
+		for itemName, itemProperties in Inventory do
 			local isTheItem = itemProperties.Id == ItemID
 			if not isTheItem then
 				continue
@@ -129,7 +129,7 @@ local function EquipSlotItem(action: string, state, input)
 		fr:WaitForChild("Slot4"),
 	}
 
-	for _, slotImage in ipairs(Slots) do
+	for _, slotImage in Slots do
 		if slotImage == Slot then
 			continue
 		end
@@ -158,18 +158,18 @@ function Hud:KnitStart()
 		Player.CharacterAdded:Connect(function(character)
 			local Data = PlayerService:GetData(Players.LocalPlayer)
 			Hud.Data = Data
-	
+
 			self:OrganizeHotbar(Hud.Data)
 			self:BindContexts()
 		end)
-	
+
 		InventoryService.HotbarUpdate:Connect(function(profile)
 			self:OrganizeHotbar(profile)
 		end)
-	
+
 		local Data = PlayerService:GetData(Players.LocalPlayer)
 		Hud.Data = Data
-	
+
 		self:OrganizeHotbar(Hud.Data)
 		self:BindContexts()
 	end)()

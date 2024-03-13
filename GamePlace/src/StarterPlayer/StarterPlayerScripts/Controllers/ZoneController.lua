@@ -55,7 +55,7 @@ function ZoneController:KnitStart()
 	coroutine.wrap(function()
 		local ZoneFolder = game.Workspace:FindFirstChild("Zones")
 
-		for _, Zone: BasePart in ipairs(ZoneFolder:GetChildren()) do
+		for _, Zone: BasePart in (ZoneFolder:GetChildren()) do
 			if Zones[Zone.Name] then
 				continue
 			end

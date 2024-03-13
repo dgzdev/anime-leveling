@@ -69,8 +69,6 @@ function PortalService:GeneratePortal()
 						end
 					end
 
-					print(Rank)
-
 					local Prompt = Instance.new("ProximityPrompt", Portal)
 					Prompt.ObjectText = `Rank: {Rank}`
 					Prompt.HoldDuration = 2
@@ -93,8 +91,6 @@ function PortalService:GeneratePortal()
 		end
 		task.wait()
 	until success == true
-
-	print("[PORTAL] Portal Position:", TruePosition)
 
 	task.spawn(function()
 		task.wait(portalTime)

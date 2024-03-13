@@ -83,7 +83,7 @@ end
 local function CHECK_DUPLICATES(potential_enemies: any, object: Instance)
 	local add_to_table: boolean = false
 
-	for _, enemy in pairs(potential_enemies) do
+	for _, enemy in potential_enemies do
 		if enemy == object then
 			add_to_table = true
 			break
@@ -110,7 +110,7 @@ local function MAKE_ANIMATION(selection, default_animations)
 	local id: any = default_animations[selection]
 
 	if typeof(selection) == "number" or typeof(selection) == "string" then
-		animation = Inst("Animation", workspace)
+		animation = Inst("Animation")
 		animation.AnimationId = "rbxassetid://" .. id
 		Debris:AddItem(animation, 3)
 	else
@@ -253,7 +253,7 @@ function Functionality:FindNearestTarget()
 
 	local closest: Model
 
-	for _, instance in pairs(target_elements) do
+	for _, instance in target_elements do
 		if instance.Parent:FindFirstChild("Humanoid") and instance.Parent.Humanoid.Health ~= 0 then
 			local object: Instance = instance.Parent
 
@@ -263,7 +263,7 @@ function Functionality:FindNearestTarget()
 		end
 	end
 
-	for _, enemy in pairs(potential_enemies) do
+	for _, enemy in potential_enemies do
 		local IS_PLAYER: Instance | boolean = Players:GetPlayerFromCharacter(enemy) or false
 
 		if IS_PLAYER then
@@ -276,7 +276,7 @@ function Functionality:FindNearestTarget()
 		end
 	end
 
-	for index, target in pairs(enemies) do
+	for index, target in enemies do
 		if index == 1 then
 			closest = target
 			continue

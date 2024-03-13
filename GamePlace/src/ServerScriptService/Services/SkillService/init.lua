@@ -14,7 +14,7 @@ function SkillService:CallSkill(SkillName, ...)
 end
 
 function SkillService.KnitStart()
-	for _, skill in ipairs(script:GetDescendants()) do
+	for _, skill in script:GetDescendants() do
 		if not skill:IsA("ModuleScript") then
 			continue
 		end

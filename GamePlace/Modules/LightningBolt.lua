@@ -128,7 +128,7 @@ end
 local offsetAngle = math.cos(math.rad(90))
 
 game:GetService("RunService").Heartbeat:Connect(function()
-	for _, ThisBranch in pairs(ActiveBranches) do
+	for _, ThisBranch in ActiveBranches do
 		if ThisBranch.Enabled == true then
 			ThisBranch.PartsHidden = false
 			local MinOpa, MaxOpa = 1 - ThisBranch.MaxTransparency, 1 - ThisBranch.MinTransparency

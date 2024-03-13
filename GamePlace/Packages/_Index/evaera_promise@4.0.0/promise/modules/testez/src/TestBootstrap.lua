@@ -38,7 +38,7 @@ end
 local function toStringPath(tablePath)
 	local stringPath = ""
 	local first = true
-	for _, element in ipairs(tablePath) do
+	for _, element in tablePath do
 		if first then
 			stringPath = element
 			first = false
@@ -61,7 +61,7 @@ function TestBootstrap:getModulesImpl(root, modules, current)
 		table.insert(modules, {
 			method = method,
 			path = path,
-			pathStringForSorting = pathString:lower()
+			pathStringForSorting = pathString:lower(),
 		})
 	end
 end
@@ -74,7 +74,7 @@ function TestBootstrap:getModules(root)
 
 	self:getModulesImpl(root, modules)
 
-	for _, child in ipairs(root:GetDescendants()) do
+	for _, child in (root:GetDescendants()) do
 		self:getModulesImpl(root, modules, child)
 	end
 
@@ -111,10 +111,10 @@ function TestBootstrap:run(roots, reporter, otherOptions)
 	local startTime = tick()
 
 	local modules = {}
-	for _, subRoot in ipairs(roots) do
+	for _, subRoot in roots do
 		local newModules = self:getModules(subRoot)
 
-		for _, newModule in ipairs(newModules) do
+		for _, newModule in newModules do
 			table.insert(modules, newModule)
 		end
 	end

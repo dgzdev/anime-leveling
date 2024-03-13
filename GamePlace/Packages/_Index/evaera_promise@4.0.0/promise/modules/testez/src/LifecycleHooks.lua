@@ -17,8 +17,8 @@ function LifecycleHooks:getBeforeEachHooks()
 	local key = TestEnum.NodeType.BeforeEach
 	local hooks = {}
 
-	for _, level in ipairs(self._stack) do
-		for _, hook in ipairs(level[key]) do
+	for _, level in self._stack do
+		for _, hook in level[key] do
 			table.insert(hooks, hook)
 		end
 	end
@@ -33,8 +33,8 @@ function LifecycleHooks:getAfterEachHooks()
 	local key = TestEnum.NodeType.AfterEach
 	local hooks = {}
 
-	for _, level in ipairs(self._stack) do
-		for _, hook in ipairs(level[key]) do
+	for _, level in self._stack do
+		for _, hook in level[key] do
 			table.insert(hooks, 1, hook)
 		end
 	end
@@ -77,7 +77,7 @@ end
 function LifecycleHooks:_getHooksOfType(nodes, key)
 	local hooks = {}
 
-	for _, node in ipairs(nodes) do
+	for _, node in nodes do
 		if node.type == key then
 			table.insert(hooks, node.callback)
 		end

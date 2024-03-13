@@ -11,7 +11,8 @@ local DEFAULT_DEBUGGER_RAY_DURATION: number = 0.25
 
 -- Debug Message options
 local DEFAULT_DEBUG_LOGGER_PREFIX: string = "[ Raycast Hitbox V4 ]\n"
-local DEFAULT_MISSING_ATTACHMENTS: string = "No attachments found in object: %s. Can be safely ignored if using SetPoints."
+local DEFAULT_MISSING_ATTACHMENTS: string =
+	"No attachments found in object: %s. Can be safely ignored if using SetPoints."
 local DEFAULT_ATTACH_COUNT_NOTICE: string = "%s attachments found in object: %s."
 
 -- Hitbox values
@@ -22,7 +23,7 @@ local DEFAULT_SIMULATION_TYPE: RBXScriptSignal = game:GetService("RunService").H
 local CollectionService: CollectionService = game:GetService("CollectionService")
 local VisualizerCache = require(script.Parent.VisualizerCache)
 
-local ActiveHitboxes: {[number]: any} = {}
+local ActiveHitboxes: { [number]: any } = {}
 local Solvers: Instance = script.Parent:WaitForChild("Solvers")
 
 local Hitbox = {}
@@ -42,7 +43,7 @@ type Point = {
 	CastMode: number,
 	LastPosition: Vector3?,
 	WorldSpace: Vector3?,
-	Instances: {[number]: Instance | Vector3}
+	Instances: { [number]: Instance | Vector3 },
 }
 
 -- AdornmentData type
@@ -81,10 +82,10 @@ end
 
 --- Searches for attachments for the given instance (if applicable)
 function Hitbox:Recalibrate()
-	local descendants: {[number]: Instance} = self.HitboxObject:GetDescendants()
+	local descendants: { [number]: Instance } = self.HitboxObject:GetDescendants()
 	local attachmentCount: number = 0
 
-	for _, attachment: any in ipairs(descendants) do
+	for _, attachment: any in descendants do
 		if not attachment:IsA("Attachment") or attachment.Name ~= DEFAULT_ATTACHMENT_INSTANCE then
 			continue
 		end
@@ -99,9 +100,14 @@ function Hitbox:Recalibrate()
 	end
 
 	if self.DebugLog then
-		print(string.format("%s%s", DEFAULT_DEBUG_LOGGER_PREFIX,
-			attachmentCount > 0 and string.format(DEFAULT_ATTACH_COUNT_NOTICE, attachmentCount, self.HitboxObject.Name) or
-			string.format(DEFAULT_MISSING_ATTACHMENTS, self.HitboxObject.Name))
+		print(
+			string.format(
+				"%s%s",
+				DEFAULT_DEBUG_LOGGER_PREFIX,
+				attachmentCount > 0
+						and string.format(DEFAULT_ATTACH_COUNT_NOTICE, attachmentCount, self.HitboxObject.Name)
+					or string.format(DEFAULT_MISSING_ATTACHMENTS, self.HitboxObject.Name)
+			)
 		)
 	end
 end
@@ -123,7 +129,10 @@ end
 function Hitbox:UnlinkAttachments(attachment: Attachment)
 	for i = #self.HitboxRaycastPoints, 1, -1 do
 		if #self.HitboxRaycastPoints[i].Instances >= 2 then
-			if self.HitboxRaycastPoints[i].Instances[1] == attachment or self.HitboxRaycastPoints[i].Instances[2] == attachment then
+			if
+				self.HitboxRaycastPoints[i].Instances[1] == attachment
+				or self.HitboxRaycastPoints[i].Instances[2] == attachment
+			then
 				table.remove(self.HitboxRaycastPoints, i)
 			end
 		end
@@ -134,8 +143,8 @@ end
 -- @param object BasePart or Bone, the part you want the points to be locally offset from
 -- @param table of vector3 values that are in local space relative to the basePart or bone
 -- @param optional group string parameter that names the group these points belong to
-function Hitbox:SetPoints(object: BasePart | Bone, vectorPoints: {[number]: Vector3}, group: string?)
-	for _: number, vector: Vector3 in ipairs(vectorPoints) do
+function Hitbox:SetPoints(object: BasePart | Bone, vectorPoints: { [number]: Vector3 }, group: string?)
+	for _: number, vector: Vector3 in vectorPoints do
 		local point: Point = self:_CreatePoint(group, Hitbox.CastModes[object:IsA("Bone") and "Bone" or "Vector3"])
 
 		point.Instances[1] = object
@@ -147,14 +156,14 @@ end
 --- Removes raycast points using only vector3 values. Use the same vector3 table from SetPoints
 -- @param object BasePart or Bone, the original instance you used for SetPoints
 -- @param table of vector values that are in local space relative to the basePart
-function Hitbox:RemovePoints(object: BasePart | Bone, vectorPoints: {[number]: Vector3})
+function Hitbox:RemovePoints(object: BasePart | Bone, vectorPoints: { [number]: Vector3 })
 	for i = #self.HitboxRaycastPoints, 1, -1 do
 		local part = (self.HitboxRaycastPoints[i] :: Point).Instances[1]
 
 		if part == object then
 			local originalVector = (self.HitboxRaycastPoints[i] :: Point).Instances[2]
 
-			for _: number, vector: Vector3 in ipairs(vectorPoints) do
+			for _: number, vector: Vector3 in vectorPoints do
 				if vector == originalVector :: Vector3 then
 					table.remove(self.HitboxRaycastPoints, i)
 					break
@@ -181,7 +190,7 @@ end
 --- Internal function that finds an existing hitbox from a given instance
 -- @param instance object
 function Hitbox:_FindHitbox(object: any)
-	for _: number, hitbox: any in ipairs(ActiveHitboxes) do
+	for _: number, hitbox: any in ActiveHitboxes do
 		if hitbox.HitboxObject == object then
 			return hitbox
 		end
@@ -191,7 +200,9 @@ end
 --- Runs for the very first time whenever a hitbox is created
 --- Do not run this more than once, you may introduce memory leaks if you do so
 function Hitbox:_Init()
-	if not self.HitboxObject then return end
+	if not self.HitboxObject then
+		return
+	end
 
 	local tagConnection: RBXScriptConnection
 
@@ -211,7 +222,7 @@ end
 
 local function Init()
 	--- Reserve table sizing for solver tables
-	local solversCache: {[number]: any} = table.create(#Solvers:GetChildren())
+	local solversCache: { [number]: any } = table.create(#Solvers:GetChildren())
 
 	DEFAULT_SIMULATION_TYPE:Connect(function(step: number)
 		--- Iterate through all the hitboxes
@@ -223,7 +234,7 @@ local function Init()
 				continue
 			end
 
-			for _: number, point: Point in ipairs(ActiveHitboxes[i].HitboxRaycastPoints) do
+			for _: number, point: Point in ActiveHitboxes[i].HitboxRaycastPoints do
 				--- Reset this point if the hitbox is inactive
 				if not ActiveHitboxes[i].HitboxActive then
 					point.LastPosition = nil
@@ -233,7 +244,8 @@ local function Init()
 				--- Calculate rays
 				local castMode: any = solversCache[point.CastMode]
 				local origin: Vector3, direction: Vector3 = castMode:Solve(point)
-				local raycastResult: RaycastResult = workspace:Raycast(origin, direction, ActiveHitboxes[i].RaycastParams)
+				local raycastResult: RaycastResult =
+					workspace:Raycast(origin, direction, ActiveHitboxes[i].RaycastParams)
 
 				--- Draw debug rays
 				if ActiveHitboxes[i].Visualizer then
@@ -310,7 +322,7 @@ local function Init()
 	end)
 
 	--- Require all solvers
-	for castMode: string, enum: number in pairs(Hitbox.CastModes) do
+	for castMode: string, enum: number in Hitbox.CastModes do
 		local moduleScript: Instance? = Solvers:FindFirstChild(castMode)
 
 		if moduleScript then

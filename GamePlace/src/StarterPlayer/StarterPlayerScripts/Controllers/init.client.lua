@@ -11,7 +11,7 @@ local Player = game.Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
 
 local Controllers = {}
-for _, script in ipairs(script:GetDescendants()) do
+for _, script in (script:GetDescendants()) do
 	if not script:IsA("ModuleScript") then
 		continue
 	end
@@ -20,7 +20,7 @@ for _, script in ipairs(script:GetDescendants()) do
 	end
 end
 
-for _, script in ipairs(Character:GetDescendants()) do
+for _, script in (Character:GetDescendants()) do
 	if not script:IsA("ModuleScript") then
 		continue
 	end
@@ -29,7 +29,7 @@ for _, script in ipairs(Character:GetDescendants()) do
 	end
 end
 
-for i, v in ipairs(Controllers) do
+for i, v in Controllers do
 	require(v)
 end
 

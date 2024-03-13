@@ -21,7 +21,7 @@ local Slide
 
 local function GetModelMass(model: Model)
 	local mass = 0
-	for _, part: BasePart in ipairs(model:GetDescendants()) do
+	for _, part: BasePart in (model:GetDescendants()) do
 		if part:IsA("BasePart") then
 			if part.Massless == true then
 				continue
@@ -59,7 +59,7 @@ local walkKeyBinds = {
 local function getWalkDirectionCameraSpace()
 	local walkDir = Vector3.new()
 
-	for keyBindName, keyBind in pairs(walkKeyBinds) do
+	for keyBindName, keyBind in walkKeyBinds do
 		if UserInputService:IsKeyDown(keyBind.Key) then
 			walkDir += Vector3.FromNormalId(keyBind.Direction)
 		end
@@ -136,7 +136,7 @@ function DashScript:Dash()
 	Stripes.Parent = Workspace.Terrain
 
 	if DashDiretionString == "F" or DashDiretionString == "B" then
-		for _, p: ParticleEmitter in ipairs(Stripes:GetChildren()) do
+		for _, p: ParticleEmitter in (Stripes:GetChildren()) do
 			if p:IsA("ParticleEmitter") then
 				p.Orientation = Enum.ParticleOrientation.VelocityParallel
 			end
@@ -149,7 +149,7 @@ function DashScript:Dash()
 	RunService:BindToRenderStep("DashEffects", Enum.RenderPriority.Last.Value, function()
 		Stripes.CFrame = HumanoidRootPart.CFrame
 
-		for _, p: ParticleEmitter in ipairs(Stripes:GetChildren()) do
+		for _, p: ParticleEmitter in (Stripes:GetChildren()) do
 			if p:IsA("ParticleEmitter") then
 				p:Emit(1)
 			end

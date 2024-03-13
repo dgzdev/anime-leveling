@@ -25,7 +25,7 @@ function SkillTreeService:FindSkillInTree(SkillName)
 	local SkillTree = self:GetAllSkills()
 
 	local function FindSpecificSkill(InitialNode): GameData.TreeNode
-		for name, skillInfo: GameData.TreeNode in pairs(InitialNode) do
+		for name, skillInfo: GameData.TreeNode in InitialNode do
 			if skillInfo.Name == SkillName then
 				return skillInfo
 			end
@@ -61,7 +61,7 @@ function SkillTreeService:GetAvailableSkillsToUnlock(Player)
 		if not node then
 			return
 		end
-		for name, skillInfo: GameData.TreeNode in pairs(node) do
+		for name, skillInfo: GameData.TreeNode in node do
 			--print(skillInfo.Name)
 			if skillInfo.Pendencies == nil then
 				table.insert(ToUnlock, skillInfo.Name)
@@ -71,7 +71,7 @@ function SkillTreeService:GetAvailableSkillsToUnlock(Player)
 
 			if typeof(skillInfo.Pendencies) == "table" then
 				local Verification = 0
-				for _, PendencyName in ipairs(skillInfo.Pendencies) do
+				for _, PendencyName in skillInfo.Pendencies do
 					if Verification == #skillInfo.Pendencies then
 						table.insert(ToUnlock, skillInfo.Name)
 						--print(skillInfo.Name, " Inserido aqui")

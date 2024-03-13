@@ -37,7 +37,7 @@ end
 
 function RenderController:GetInstance(module, casterHumanoid, name)
 	RenderController:CheckCache(module, casterHumanoid)
-	for i, v in ipairs(module.Cache[casterHumanoid].Instances) do
+	for i, v in module.Cache[casterHumanoid].Instances do
 		if v.Name == name then
 			return v, i
 		end
@@ -66,7 +66,7 @@ end
 function RenderController:ClearConnections(module, casterHumanoid)
 	task.spawn(function()
 		if module.Cache and module.Cache[casterHumanoid] then
-			for i, v in ipairs(module.Cache[casterHumanoid].Connections) do
+			for i, v in module.Cache[casterHumanoid].Connections do
 				v:Disconnect()
 				module.Cache[casterHumanoid].Connections[i] = nil
 			end
@@ -77,7 +77,7 @@ end
 function RenderController:ClearTasks(module, casterHumanoid)
 	task.spawn(function()
 		if module.Cache and module.Cache[casterHumanoid] then
-			for i, v: thread in ipairs(module.Cache[casterHumanoid].Tasks) do
+			for i, v: thread in module.Cache[casterHumanoid].Tasks do
 				task.cancel(v)
 				module.Cache[casterHumanoid].Tasks[i] = nil
 			end
@@ -96,7 +96,7 @@ end
 function RenderController:ClearNamedTasks(module, casterHumanoid)
 	task.spawn(function()
 		if module.Cache and module.Cache[casterHumanoid] then
-			for i, v: thread in pairs(module.Cache[casterHumanoid].NamedTasks) do
+			for i, v: thread in module.Cache[casterHumanoid].NamedTasks do
 				task.cancel(v)
 				module.Cache[casterHumanoid].NamedTasks[i] = nil
 			end
@@ -107,7 +107,7 @@ end
 function RenderController:ClearInstances(module, casterHumanoid)
 	task.spawn(function()
 		if module.Cache and module.Cache[casterHumanoid] then
-			for i, v in ipairs(module.Cache[casterHumanoid].Instances) do
+			for i, v in module.Cache[casterHumanoid].Instances do
 				v:Destroy()
 				module.Cache[casterHumanoid].Instances[i] = nil
 			end
@@ -123,7 +123,7 @@ end
 
 function RenderController:StopPlayingMatchAnimation(Humanoid: Humanoid, AnimationName: string)
 	local Animator = Humanoid:FindFirstChildWhichIsA("Animator")
-	for i, v: AnimationTrack in ipairs(Animator:GetPlayingAnimationTracks()) do
+	for i, v: AnimationTrack in (Animator:GetPlayingAnimationTracks()) do
 		if v.Name:match(AnimationName) then
 			v:Stop()
 		end
@@ -134,7 +134,7 @@ function RenderController:Emit(particle)
 	particle:Emit(particle:GetAttribute("EmitCount") or 1)
 end
 function RenderController:EmitParticles(parent)
-	for i, v in ipairs(parent:GetDescendants()) do
+	for i, v in (parent:GetDescendants()) do
 		if not v:IsA("ParticleEmitter") then
 			continue
 		end
@@ -186,13 +186,13 @@ function RenderController.KnitInit()
 end
 
 function RenderController.KnitStart()
-	for i, v in ipairs(script:GetChildren()) do
+	for i, v in (script:GetChildren()) do
 		if v:IsA("ModuleScript") then
 			RenderingModules[v.Name] = require(v)
 		end
 	end
 
-	for i, v in pairs(RenderingModules) do
+	for i, v in RenderingModules do
 		if v.Start then
 			v.Start()
 		end

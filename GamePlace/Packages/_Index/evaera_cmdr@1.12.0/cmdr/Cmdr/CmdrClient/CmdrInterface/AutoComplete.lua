@@ -89,7 +89,7 @@ return function(Cmdr)
 		options = options or {}
 
 		-- Remove old options.
-		for _, item in pairs(self.Items) do
+		for _, item in self.Items do
 			if item.gui then
 				item.gui:Destroy()
 			end
@@ -110,7 +110,7 @@ return function(Cmdr)
 
 		Gui.ScrollBarThickness = 0
 
-		for i, item in pairs(self.Items) do
+		for i, item in self.Items do
 			local leftText = item[1]
 			local rightText = item[2]
 
@@ -123,7 +123,6 @@ return function(Cmdr)
 			btn.Suggest.Text = string.sub(rightText, 0, start - 1)
 				.. string.rep(" ", #leftText)
 				.. string.sub(rightText, stop + 1)
-
 
 			btn.Parent = Gui
 			btn.LayoutOrder = i
@@ -190,7 +189,7 @@ return function(Cmdr)
 			self.SelectedItem = #self.Items
 		end
 
-		for i, item in pairs(self.Items) do
+		for i, item in self.Items do
 			item.gui.BackgroundTransparency = i == self.SelectedItem and 0.5 or 1
 		end
 

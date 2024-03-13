@@ -122,7 +122,7 @@ function GuiController:BindHotbar()
 
 	local Item = InventoryFrame:WaitForChild("Item")
 
-	for i, v in ipairs(InventoryFrame:GetChildren()) do
+	for i, v in (InventoryFrame:GetChildren()) do
 		if v:IsA("TextButton") and v.Name ~= "Item" then
 			v:Destroy()
 		end
@@ -131,7 +131,7 @@ function GuiController:BindHotbar()
 	local PlayerInventory = InventoryService:GetPlayerInventory()
 	local gameWeapons, rarity = InventoryService:GetGameWeapons()
 
-	for itemName: string, item in pairs(PlayerInventory) do
+	for itemName: string, item in PlayerInventory do
 		local newItem = Item:Clone()
 		newItem.Parent = InventoryFrame
 
@@ -310,7 +310,7 @@ function GuiController:RenderPoints(points: {
 	local PointsValue: TextLabel = Background:WaitForChild("PointsValue")
 	local PlayerPoints = points or ProgressionService:GetPointsDistribuition(Players.LocalPlayer)
 
-	for pointName: string, value: number in pairs(PlayerPoints) do
+	for pointName: string, value: number in PlayerPoints do
 		local point = PointsGui:FindFirstChild(pointName)
 		if point then
 			local PointsText = point:FindFirstChild("Points", true)
@@ -344,36 +344,37 @@ function GuiController:KnitStart()
 		local plrGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 		local teste = plrGui:WaitForChild("PlayerHud")
 		local frame = teste:WaitForChild("Background")
-	
+
 		self:BindPlayerHud()
 		self:BindQuestEvents()
 		self:RenderPoints()
 		self:BindHotbar()
-	
+
 		ProgressionService.NewPoint:Connect(function()
 			self:RenderPoints()
 		end)
 		ProgressionService.PointWasted:Connect(function()
 			self:RenderPoints()
 		end)
-	
+
 		local amt = -0.005
 		local defaultFov = 70
 		local fovScale = 70
-	
+
 		local lastCF = camera.CFrame
 		task.spawn(function()
 			while true do
 				task.wait()
 				local dif = (lastCF.Position - camera.CFrame.Position) * amt
 				local max = 0.1
-	
-				frame.Position = UDim2.fromScale(0.5 - math.clamp(dif.X + dif.Z, 0, max), 0.5 - math.clamp(dif.Y, 0, max))
-	
+
+				frame.Position =
+					UDim2.fromScale(0.5 - math.clamp(dif.X + dif.Z, 0, max), 0.5 - math.clamp(dif.Y, 0, max))
+
 				local fov = camera.FieldOfView
 				local dif2 = ((defaultFov - fov) / fovScale) / 4
 				frame.Size = UDim2.fromScale(1 + dif2, 1 + dif2)
-	
+
 				lastCF = camera.CFrame
 			end
 		end)

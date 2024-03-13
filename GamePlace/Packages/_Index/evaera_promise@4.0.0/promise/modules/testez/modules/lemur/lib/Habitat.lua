@@ -77,7 +77,7 @@ function Habitat:loadFromFs(path, passedOptions)
 			local init = instance:FindFirstChild("init")
 
 			if init ~= nil then
-				for _, child in ipairs(instance:GetChildren()) do
+				for _, child in (instance:GetChildren()) do
 					if child ~= init then
 						child.Parent = init
 					end

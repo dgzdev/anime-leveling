@@ -22,7 +22,7 @@ end
 function CombatHandler:RemoveAllSlots()
 	local CombatGui = PlayerGui:WaitForChild("PlayerHud")
 	local Background: Frame = CombatGui:WaitForChild("Background"):WaitForChild("CombatGui"):WaitForChild("Slots")
-	for _, value in ipairs(Background:GetChildren()) do
+	for _, value in (Background:GetChildren()) do
 		if value:IsA("Frame") then
 			if value.Name ~= "Example" and value.Name ~= "A" then
 				value:Destroy()
@@ -78,13 +78,13 @@ function CombatHandler:Bind(weaponType: string, weaponName: string)
 	local binds1 = DefaultWeapons[weaponType]
 	local binds2 = SpecialWeapons[weaponName:gsub(" ", "")]
 
-	for _, name in ipairs(bounds) do
+	for _, name in bounds do
 		ContextActionService:UnbindAction(name)
 		bounds[_] = nil
 	end
 
 	if binds1 then
-		for input: Enum.UserInputType, weapon in pairs(binds1) do
+		for input: Enum.UserInputType, weapon in binds1 do
 			if input.Name then
 				local extra = Extra[input] or {}
 				table.insert(extra, input)
@@ -95,7 +95,7 @@ function CombatHandler:Bind(weaponType: string, weaponName: string)
 		end
 	end
 	if binds2 then
-		for input: Enum.KeyCode, weapon in pairs(binds2) do
+		for input: Enum.KeyCode, weapon in binds2 do
 			if input.Name then
 				local extra = Extra[input] or {}
 				table.insert(extra, input)
@@ -123,7 +123,7 @@ task.spawn(function()
 	Knit.OnStart():await()
 
 	-- Starter Weapons
-	for index, weapon in ipairs(script.Parent.Weapons.Starter:GetChildren()) do
+	for index, weapon in (script.Parent.Weapons.Starter:GetChildren()) do
 		if not weapon:IsA("ModuleScript") then
 			continue
 		end
@@ -133,7 +133,7 @@ task.spawn(function()
 	end
 
 	-- SpecialWeapons
-	for index, weapon in ipairs(script.Parent.Weapons.Special:GetChildren()) do
+	for index, weapon in (script.Parent.Weapons.Special:GetChildren()) do
 		if not weapon:IsA("ModuleScript") then
 			continue
 		end
@@ -144,13 +144,13 @@ task.spawn(function()
 
 	local _Modules = {}
 
-	for i, v in ipairs(script.Parent.Weapons:GetDescendants()) do
+	for i, v in (script.Parent.Weapons:GetDescendants()) do
 		if v:IsA("ModuleScript") then
 			_Modules[v.Name] = require(v)
 		end
 	end
 
-	for i, v in pairs(_Modules) do
+	for i, v in _Modules do
 		if v.Start then
 			v.Start()
 		end

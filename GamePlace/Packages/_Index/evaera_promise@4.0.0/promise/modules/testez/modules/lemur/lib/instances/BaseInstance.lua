@@ -53,11 +53,11 @@ BaseInstance.properties.Changed = InstanceProperty.readOnly({
 })
 
 BaseInstance.properties.ChildAdded = InstanceProperty.readOnly({
-	getDefault = Signal.new
+	getDefault = Signal.new,
 })
 
 BaseInstance.properties.ChildRemoved = InstanceProperty.readOnly({
-	getDefault = Signal.new
+	getDefault = Signal.new,
 })
 
 BaseInstance.properties.Parent = InstanceProperty.normal({
@@ -97,7 +97,7 @@ BaseInstance.prototype = {}
 function BaseInstance.prototype:ClearAllChildren()
 	local children = getmetatable(self).instance.children
 
-	for child in pairs(children) do
+	for child in children do
 		child:Destroy()
 	end
 end
@@ -143,7 +143,7 @@ function BaseInstance.prototype:FindFirstChild(name)
 
 	-- Search for existing children
 	-- This is a set stored by child instead of by name, since names are not unique.
-	for child in pairs(children) do
+	for child in children do
 		if child.Name == name then
 			return child
 		end
@@ -157,7 +157,7 @@ function BaseInstance.prototype:FindFirstChildOfClass(className)
 
 	-- Search for existing children
 	-- This is a set stored by child instead of by name, since names are not unique.
-	for child in pairs(children) do
+	for child in children do
 		if child.ClassName == className then
 			return child
 		end
@@ -171,7 +171,7 @@ function BaseInstance.prototype:FindFirstChildWhichIsA(className)
 
 	-- Search for existing children
 	-- This is a set stored by child instead of by name, since names are not unique.
-	for child in pairs(children) do
+	for child in children do
 		if child:IsA(className) then
 			return child
 		end
@@ -184,7 +184,7 @@ function BaseInstance.prototype:GetChildren()
 	local children = getmetatable(self).instance.children
 	local result = {}
 
-	for child in pairs(children) do
+	for child in children do
 		table.insert(result, child)
 	end
 
@@ -199,7 +199,7 @@ function BaseInstance.prototype:GetDescendants()
 	while current do
 		local children = current:GetChildren()
 
-		for _, child in pairs(children) do
+		for _, child in children do
 			descendants[#descendants + 1] = child
 			stack[#stack + 1] = child
 		end
@@ -282,7 +282,7 @@ end
 function BaseInstance.prototype:_DisconnectAllChangedListeners()
 	local propertySignals = getmetatable(self).instance.propertySignals
 
-	for _, signal in pairs(propertySignals) do
+	for _, signal in propertySignals do
 		signal:_DisconnectAllListeners()
 	end
 
@@ -294,7 +294,7 @@ function BaseInstance.prototype:_PropagateAncestryChanged(instance, parent)
 
 	local children = getmetatable(self).instance.children
 
-	for child in pairs(children) do
+	for child in children do
 		child:_PropagateAncestryChanged(instance, parent)
 	end
 end
@@ -360,7 +360,7 @@ function BaseInstance:new(...)
 	getmetatable(instance).instance = internalInstance
 	getmetatable(instance).class = self
 
-	for key, property in pairs(self.properties) do
+	for key, property in self.properties do
 		internalInstance.properties[key] = property.getDefault(instance)
 	end
 
@@ -369,8 +369,7 @@ function BaseInstance:new(...)
 	return instance
 end
 
-function BaseInstance:init(instance, ...)
-end
+function BaseInstance:init(instance, ...) end
 
 --[[
 	Create a new instance class with the given name.

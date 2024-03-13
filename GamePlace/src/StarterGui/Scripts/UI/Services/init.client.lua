@@ -7,7 +7,7 @@ Knit.OnStart():await()
 
 local services = script:GetChildren()
 
-for _, value in ipairs(services) do
+for _, value in services do
 	if not value:IsA("ModuleScript") then
 		continue
 	end

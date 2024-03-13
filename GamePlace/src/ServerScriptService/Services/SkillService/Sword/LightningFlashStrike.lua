@@ -27,7 +27,7 @@ return function(
 	op.FilterDescendantsInstances = { workspace:WaitForChild("Enemies") }
 
 	local WeaponFolder = Character:FindFirstChild("Weapons")
-	for i, weapon: Model in ipairs(WeaponFolder:GetChildren()) do
+	for i, weapon: Model in (WeaponFolder:GetChildren()) do
 		HitboxService:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
 			SwordHitFunction(Character, hitted, 5, "LightningSwordHit", "SwordHit", nil, 0)
 		end, op)

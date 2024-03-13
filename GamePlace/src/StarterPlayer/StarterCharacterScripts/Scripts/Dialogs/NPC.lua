@@ -27,7 +27,7 @@ function NPC.OnTrigger(properties: { Title: string, Dialogs: { string }, NPC: Mo
 		BackgroundTransparency = 0,
 	}):Play()
 
-	for _, object in ipairs(Background:GetDescendants()) do
+	for _, object in (Background:GetDescendants()) do
 		if object:IsA("TextLabel") then
 			object.TextTransparency = 1
 			TweenService:Create(object, TweenInfo.new(1.5, Enum.EasingStyle.Exponential), {
@@ -42,7 +42,7 @@ function NPC.OnTrigger(properties: { Title: string, Dialogs: { string }, NPC: Mo
 	end
 	Camera:EnableMouse()
 
-	for _, Dialog in ipairs(properties.Dialogs) do
+	for _, Dialog in properties.Dialogs do
 		Title.Text = Name
 		Text.Text = Dialog
 

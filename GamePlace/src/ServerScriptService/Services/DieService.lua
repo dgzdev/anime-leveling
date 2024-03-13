@@ -22,7 +22,7 @@ function DieService:BindEffects()
 		bound[hum] = c
 	end
 
-	for _, obj in ipairs(game:GetDescendants()) do
+	for _, obj in (game:GetDescendants()) do
 		if obj:IsA("Humanoid") then
 			bind(obj)
 		end

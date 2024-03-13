@@ -17,7 +17,7 @@ local Enemies = game.Workspace:FindFirstChild("Enemies")
 function HitboxService:GetHumanoidsInTable(tabela)
 	local Characters = {}
 
-	for i, v in ipairs(tabela) do
+	for i, v in tabela do
 		local Character = v.Parent
 		if table.find(Characters, Character) then
 			continue
@@ -138,7 +138,7 @@ function HitboxService:CreateHitboxFromModel(
 	task.spawn(function()
 		for i = 0, CheckTicks or 16, 1 do
 			local Hitbox = HitboxService:GetCharactersInBoxArea(model:GetPivot(), size, Params)
-			for i, char in pairs(Hitbox) do
+			for i, char in Hitbox do
 				if char == Character then
 					continue
 				end
@@ -183,7 +183,7 @@ function HitboxService:CreateHitbox(
 				Params
 			)
 
-			for i, char in ipairs(Hitbox) do
+			for i, char in Hitbox do
 				if char == Character then
 					continue
 				end
@@ -218,7 +218,7 @@ function HitboxService:CreateFixedHitbox(
 	for i = 0, Ticks, 1 do
 		local CharactersInside = HitboxService:GetCharactersInBoxArea(Position, Size, Params)
 
-		for _, char in ipairs(CharactersInside) do
+		for _, char in CharactersInside do
 			if table.find(Hitted, char) then
 				continue
 			end
@@ -265,7 +265,7 @@ function HitboxService:CreatePartHitbox(
 	for i = 0, Ticks, 1 do
 		local CharactersInside = HitboxService:GetCharactersInPart(Hitbox, Params)
 
-		for _, char in ipairs(CharactersInside) do
+		for _, char in CharactersInside do
 			if char == Character then
 				continue
 			end

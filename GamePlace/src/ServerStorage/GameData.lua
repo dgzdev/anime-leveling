@@ -210,7 +210,7 @@ local ProfileTemplate: ProfileData = {
 local function CreateHumanoidDescription(desc: { [string]: any }): HumanoidDescription
 	local hd = Instance.new("HumanoidDescription")
 
-	for index, value in pairs(desc) do
+	for index, value in desc do
 		hd[index] = value
 	end
 	return hd

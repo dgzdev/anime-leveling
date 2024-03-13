@@ -32,11 +32,11 @@ if DEPS ~= nil then
 	if DEPS.kind == "rotriever" then
 		local packages = habitat:loadFromFs(DEPS.packagesPath)
 
-		for _, dir in ipairs(packages:GetChildren()) do
+		for _, dir in (packages:GetChildren()) do
 			dir.Parent = ReplicatedStorage
 		end
 	elseif DEPS.kind == "git-submodules" then
-		for _, dep in ipairs(DEPS.modules) do
+		for _, dep in DEPS.modules do
 			local container = habitat:loadFromFs(dep[1])
 			container.Name = dep[2]
 			container.Parent = ReplicatedStorage

@@ -2,8 +2,6 @@ local CollectiveWorldModel = {}
 local worldModel
 local runService = game:GetService("RunService")
 
-
-
 -- FUNCTIONS
 function CollectiveWorldModel.setupWorldModel(zone)
 	if worldModel then
@@ -16,14 +14,12 @@ function CollectiveWorldModel.setupWorldModel(zone)
 	return worldModel
 end
 
-
-
 -- METHODS
 function CollectiveWorldModel:_getCombinedResults(methodName, ...)
 	local results = workspace[methodName](workspace, ...)
 	if worldModel then
 		local additionalResults = worldModel[methodName](worldModel, ...)
-		for _, result in pairs(additionalResults) do
+		for _, result in additionalResults do
 			table.insert(results, result)
 		end
 	end
@@ -41,7 +37,5 @@ end
 function CollectiveWorldModel:GetPartsInPart(part, overlapParams)
 	return self:_getCombinedResults("GetPartsInPart", part, overlapParams)
 end
-
-
 
 return CollectiveWorldModel

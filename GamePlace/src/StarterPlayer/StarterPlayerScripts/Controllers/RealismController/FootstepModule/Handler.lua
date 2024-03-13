@@ -55,10 +55,9 @@ function GetSelf()
 end
 
 local function FootstepLoop()
-
 	local Character = Player.Character or Player.CharacterAdded:Wait()
 	--print(Character.HumanoidRootPart.AssemblyLinearVelocity.Y)
-	for i, v in pairs(Character:WaitForChild("HumanoidRootPart"):GetChildren()) do
+	for i, v in (Character:WaitForChild("HumanoidRootPart"):GetChildren()) do
 		if v:IsA("Sound") and not v:GetAttribute("Ignore") then
 			--v:Destroy()
 		end

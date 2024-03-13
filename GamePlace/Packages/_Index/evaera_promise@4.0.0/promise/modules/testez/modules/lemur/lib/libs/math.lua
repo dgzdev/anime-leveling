@@ -1,6 +1,6 @@
 local rbxMath = {}
 
-for key, value in pairs(math) do
+for key, value in math do
 	rbxMath[key] = value
 end
 

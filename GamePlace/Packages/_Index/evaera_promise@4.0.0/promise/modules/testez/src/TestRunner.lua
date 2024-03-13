@@ -14,7 +14,7 @@ local LifecycleHooks = require(script.Parent.LifecycleHooks)
 local RUNNING_GLOBAL = "__TESTEZ_RUNNING_TEST__"
 
 local TestRunner = {
-	environment = {}
+	environment = {},
 }
 
 function TestRunner.environment.expect(...)
@@ -57,7 +57,7 @@ function TestRunner.runPlanNode(session, planNode, lifecycleHooks)
 
 		local testEnvironment = getfenv(callback)
 
-		for key, value in pairs(TestRunner.environment) do
+		for key, value in TestRunner.environment do
 			testEnvironment[key] = value
 		end
 
@@ -72,14 +72,11 @@ function TestRunner.runPlanNode(session, planNode, lifecycleHooks)
 
 		local context = session:getContext()
 
-		local nodeSuccess, nodeResult = xpcall(
-			function()
-				callback(context)
-			end,
-			function(message)
-				return messagePrefix .. message .. "\n" .. debug.traceback()
-			end
-		)
+		local nodeSuccess, nodeResult = xpcall(function()
+			callback(context)
+		end, function(message)
+			return messagePrefix .. message .. "\n" .. debug.traceback()
+		end)
 
 		-- If a node threw an error, we prefer to use that message over
 		-- one created by fail() if it was set.
@@ -97,7 +94,7 @@ function TestRunner.runPlanNode(session, planNode, lifecycleHooks)
 		-- Errors can be set either via `error` propagating upwards or
 		-- by a test calling fail([message]).
 
-		for _, hook in ipairs(lifecycleHooks:getBeforeEachHooks()) do
+		for _, hook in (lifecycleHooks:getBeforeEachHooks()) do
 			local success, errorMessage = runCallback(hook, "beforeEach hook: ")
 			if not success then
 				return false, errorMessage
@@ -111,7 +108,7 @@ function TestRunner.runPlanNode(session, planNode, lifecycleHooks)
 			end
 		end
 
-		for _, hook in ipairs(lifecycleHooks:getAfterEachHooks()) do
+		for _, hook in (lifecycleHooks:getAfterEachHooks()) do
 			local success, errorMessage = runCallback(hook, "afterEach hook: ")
 			if not success then
 				return false, errorMessage
@@ -124,7 +121,7 @@ function TestRunner.runPlanNode(session, planNode, lifecycleHooks)
 	lifecycleHooks:pushHooksFrom(planNode)
 
 	local halt = false
-	for _, hook in ipairs(lifecycleHooks:getBeforeAllHooks()) do
+	for _, hook in (lifecycleHooks:getBeforeAllHooks()) do
 		local success, errorMessage = runCallback(hook, "beforeAll hook: ")
 		if not success then
 			session:addDummyError("beforeAll", errorMessage)
@@ -133,7 +130,7 @@ function TestRunner.runPlanNode(session, planNode, lifecycleHooks)
 	end
 
 	if not halt then
-		for _, childPlanNode in ipairs(planNode.children) do
+		for _, childPlanNode in planNode.children do
 			session:pushNode(childPlanNode)
 
 			if childPlanNode.type == TestEnum.NodeType.It then
@@ -164,7 +161,7 @@ function TestRunner.runPlanNode(session, planNode, lifecycleHooks)
 		end
 	end
 
-	for _, hook in ipairs(lifecycleHooks:getAfterAllHooks()) do
+	for _, hook in (lifecycleHooks:getAfterAllHooks()) do
 		local success, errorMessage = runCallback(hook, "afterAll hook: ")
 		if not success then
 			session:addDummyError("afterAll", errorMessage)

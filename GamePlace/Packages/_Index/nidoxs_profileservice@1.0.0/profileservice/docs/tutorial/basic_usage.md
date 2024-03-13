@@ -80,7 +80,7 @@ end
 ----- Initialize -----
 
 -- In case Players have joined the server earlier than this script ran:
-for _, player in ipairs(Players:GetPlayers()) do
+for _, player in (Players:GetPlayers()) do
 	task.spawn(PlayerAdded, player)
 end
 

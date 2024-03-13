@@ -15,10 +15,7 @@ local ProfileService = require(game.ServerScriptService.ProfileService)
 
 local Players = game:GetService("Players")
 
-local GameProfileStore = ProfileService.GetProfileStore(
-	"PlayerData",
-	ProfileTemplate
-)
+local GameProfileStore = ProfileService.GetProfileStore("PlayerData", ProfileTemplate)
 
 local Profiles = {} -- [player] = profile
 
@@ -36,8 +33,13 @@ end
 
 local function DoSomethingWithALoadedProfile(player, profile)
 	profile.Data.LogInTimes = profile.Data.LogInTimes + 1
-	print(player.Name .. " has logged in " .. tostring(profile.Data.LogInTimes)
-		.. " time" .. ((profile.Data.LogInTimes > 1) and "s" or ""))
+	print(
+		player.Name
+			.. " has logged in "
+			.. tostring(profile.Data.LogInTimes)
+			.. " time"
+			.. ((profile.Data.LogInTimes > 1) and "s" or "")
+	)
 	GiveCash(profile, 100)
 	print(player.Name .. " owns " .. tostring(profile.Data.Cash) .. " now!")
 end
@@ -70,7 +72,7 @@ end
 ----- Initialize -----
 
 -- In case Players have joined the server earlier than this script ran:
-for _, player in ipairs(Players:GetPlayers()) do
+for _, player in (Players:GetPlayers()) do
 	task.spawn(PlayerAdded, player)
 end
 

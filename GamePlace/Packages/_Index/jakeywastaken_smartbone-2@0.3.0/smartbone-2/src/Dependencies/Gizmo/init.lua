@@ -79,7 +79,7 @@ end
 
 local function deepCopy(original)
 	local copy = {}
-	for k, v in pairs(original) do
+	for k, v in original do
 		if type(v) == "table" then
 			v = deepCopy(v)
 		end
@@ -312,7 +312,15 @@ type ILine = {
 		self: ILine,
 		Transform: CFrame,
 		Length: number
-	) -> { Transform: CFrame, Length: number, Color3: Color3, AlwaysOnTop: boolean, Transparency: number, Enabled: boolean, Destroy: boolean },
+	) -> {
+		Transform: CFrame,
+		Length: number,
+		Color3: Color3,
+		AlwaysOnTop: boolean,
+		Transparency: number,
+		Enabled: boolean,
+		Destroy: boolean,
+	},
 }
 
 type IVolumeCone = {
@@ -340,7 +348,15 @@ type IVolumeBox = {
 		self: IVolumeBox,
 		Transform: CFrame,
 		Size: Vector3
-	) -> { Transform: CFrame, Size: Vector3, Color3: Color3, AlwaysOnTop: boolean, Transparency: number, Enabled: boolean, Destroy: boolean },
+	) -> {
+		Transform: CFrame,
+		Size: Vector3,
+		Color3: Color3,
+		AlwaysOnTop: boolean,
+		Transparency: number,
+		Enabled: boolean,
+		Destroy: boolean,
+	},
 }
 
 type IVolumeSphere = {
@@ -349,11 +365,26 @@ type IVolumeSphere = {
 		self: IVolumeSphere,
 		Transform: CFrame,
 		Radius: number
-	) -> { Transform: CFrame, Radius: number, Color3: Color3, AlwaysOnTop: boolean, Transparency: number, Enabled: boolean, Destroy: boolean },
+	) -> {
+		Transform: CFrame,
+		Radius: number,
+		Color3: Color3,
+		AlwaysOnTop: boolean,
+		Transparency: number,
+		Enabled: boolean,
+		Destroy: boolean,
+	},
 }
 
 type IVolumeCylinder = {
-	Draw: (self: IVolumeCylinder, Transform: CFrame, Radius: number, Length: number, InnerRadius: number?, Angle: number?) -> (),
+	Draw: (
+		self: IVolumeCylinder,
+		Transform: CFrame,
+		Radius: number,
+		Length: number,
+		InnerRadius: number?,
+		Angle: number?
+	) -> (),
 	Create: (
 		self: IVolumeCylinder,
 		Transform: CFrame,
@@ -376,7 +407,15 @@ type IVolumeCylinder = {
 }
 
 type IVolumeArrow = {
-	Draw: (self: IVolumeArrow, Origin: Vector3, End: Vector3, CylinderRadius: number, ConeRadius: number, Length: number, UseCylinder: boolean?) -> (),
+	Draw: (
+		self: IVolumeArrow,
+		Origin: Vector3,
+		End: Vector3,
+		CylinderRadius: number,
+		ConeRadius: number,
+		Length: number,
+		UseCylinder: boolean?
+	) -> (),
 	Create: (
 		self: IVolumeArrow,
 		Origin: Vector3,
@@ -584,7 +623,8 @@ function Ceive.Init()
 					continue
 				end
 
-				local TweenAlpha = TweenService:GetValue(Alpha, Tween.TweenInfo.EasingStyle, Tween.TweenInfo.EasingDirection)
+				local TweenAlpha =
+					TweenService:GetValue(Alpha, Tween.TweenInfo.EasingStyle, Tween.TweenInfo.EasingDirection)
 				local PropertyValue = LerpProperty(v, Tween.Goal[k], TweenAlpha)
 
 				Tween.p_Properties[k] = PropertyValue

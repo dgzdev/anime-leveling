@@ -46,7 +46,7 @@ function VFX:_ApplyParticle(
 	end
 
 	if v then
-		for _, p: ParticleEmitter in ipairs(particle:GetDescendants()) do
+		for _, p: ParticleEmitter in particle:GetDescendants() do
 			task.spawn(function()
 				if p:IsA("ParticleEmitter") then
 					p.Acceleration = v
@@ -57,7 +57,7 @@ function VFX:_ApplyParticle(
 
 	particle.Parent = Workspace.VFXs
 
-	for _, pe: ParticleEmitter in ipairs(particle:GetDescendants()) do
+	for _, pe: ParticleEmitter in particle:GetDescendants() do
 		if pe:IsA("ParticleEmitter") then
 			task.spawn(function()
 				local c = pe:GetAttribute("EmitCount") or 1
@@ -97,7 +97,7 @@ function VFX:_CreateInfinite(target: Model | BasePart, action: string)
 	end
 
 	local pls = {}
-	for _, p in ipairs(block:GetChildren()) do
+	for _, p in block:GetChildren() do
 		p = p:Clone()
 		pls[#pls + 1] = p
 		p.Parent = target
@@ -124,7 +124,7 @@ function VFX:CreateParticle(position: CFrame, action: string, time: number?)
 	particle.CanCollide = false
 	particle.Anchored = true
 
-	for _, pe: ParticleEmitter in ipairs(particle:GetDescendants()) do
+	for _, pe: ParticleEmitter in particle:GetDescendants() do
 		if pe:IsA("ParticleEmitter") then
 			local c = pe:GetAttribute("EmitCount") or 1
 			local emitDelay = pe:GetAttribute("EmitDelay") or 0.1

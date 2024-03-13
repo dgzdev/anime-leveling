@@ -29,7 +29,7 @@ end
 local function getWalkDirectionCameraSpace()
 	local walkDir = Vector3.new()
 
-	for keyBindName, keyBind in pairs(walkKeyBinds) do
+	for keyBindName, keyBind in walkKeyBinds do
 		if InputS:IsKeyDown(keyBind.Key) then
 			walkDir += Vector3.FromNormalId(keyBind.Direction)
 		end

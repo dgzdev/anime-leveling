@@ -5,7 +5,7 @@ local TestEnum = require(script.Parent.Parent.TestEnum)
 local TeamCityReporter = {}
 
 local function teamCityEscape(str)
-	str = string.gsub(str, "([]|'[])","|%1")
+	str = string.gsub(str, "([]|'[])", "|%1")
 	str = string.gsub(str, "\r", "|r")
 	str = string.gsub(str, "\n", "|n")
 	return str
@@ -28,8 +28,11 @@ local function teamCityLeaveCase(caseName)
 end
 
 local function teamCityFailCase(caseName, errorMessage)
-	return string.format("##teamcity[testFailed name='%s' message='%s']",
-		teamCityEscape(caseName), teamCityEscape(errorMessage))
+	return string.format(
+		"##teamcity[testFailed name='%s' message='%s']",
+		teamCityEscape(caseName),
+		teamCityEscape(errorMessage)
+	)
 end
 
 local function reportNode(node, buffer, level)
@@ -40,14 +43,14 @@ local function reportNode(node, buffer, level)
 	end
 	if node.planNode.type == TestEnum.NodeType.Describe then
 		table.insert(buffer, teamCityEnterSuite(node.planNode.phrase))
-		for _, child in ipairs(node.children) do
+		for _, child in node.children do
 			reportNode(child, buffer, level + 1)
 		end
 		table.insert(buffer, teamCityLeaveSuite(node.planNode.phrase))
 	else
 		table.insert(buffer, teamCityEnterCase(node.planNode.phrase))
 		if node.status == TestEnum.TestStatus.Failure then
-			table.insert(buffer, teamCityFailCase(node.planNode.phrase, table.concat(node.errors,"\n")))
+			table.insert(buffer, teamCityFailCase(node.planNode.phrase, table.concat(node.errors, "\n")))
 		end
 		table.insert(buffer, teamCityLeaveCase(node.planNode.phrase))
 	end
@@ -56,7 +59,7 @@ end
 local function reportRoot(node)
 	local buffer = {}
 
-	for _, child in ipairs(node.children) do
+	for _, child in node.children do
 		reportNode(child, buffer, 0)
 	end
 
@@ -73,11 +76,7 @@ function TeamCityReporter.report(results)
 	local resultBuffer = {
 		"Test results:",
 		report(results),
-		("%d passed, %d failed, %d skipped"):format(
-			results.successCount,
-			results.failureCount,
-			results.skippedCount
-		)
+		("%d passed, %d failed, %d skipped"):format(results.successCount, results.failureCount, results.skippedCount),
 	}
 
 	print(table.concat(resultBuffer, "\n"))
@@ -90,7 +89,7 @@ function TeamCityReporter.report(results)
 		print("Errors reported by tests:")
 		print("")
 
-		for _, message in ipairs(results.errors) do
+		for _, message in results.errors do
 			TestService:Error(message)
 
 			-- Insert a blank line after each error

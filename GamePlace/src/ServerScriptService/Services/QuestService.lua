@@ -42,7 +42,7 @@ end
 function QuestService:GetPlayerQuest(Player, questName)
 	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
 
-	for i, v in pairs(PlayerData.Quests) do
+	for i, v in PlayerData.Quests do
 		if v.questName == questName then
 			return i
 		end
@@ -55,7 +55,7 @@ function QuestService:FinishQuest(Player, questName, QuestData)
 
 	table.remove(PlayerData.Quests, IndexQuest)
 
-	for RewardName, RewardAmount in pairs(QuestData.Rewards) do
+	for RewardName, RewardAmount in QuestData.Rewards do
 		--print(RewardName, RewardAmount)
 		if RewardName == "Experience" then
 			ProgressionService:AddExp(Player, RewardAmount)

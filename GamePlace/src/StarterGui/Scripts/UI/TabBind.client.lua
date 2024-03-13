@@ -86,7 +86,7 @@ ContextActionService:BindAction("Menu_Tab", function(action, state)
 	local PlayerGui = Player:WaitForChild("PlayerGui")
 
 	local Menu_UI = PlayerGui:WaitForChild("Menu_UI")
-	for index, value: ScreenGui in ipairs(Menu_UI:GetChildren()) do
+	for index, value: ScreenGui in (Menu_UI:GetChildren()) do
 		if value.Enabled then
 			local Background: Frame = value:WaitForChild("Background")
 

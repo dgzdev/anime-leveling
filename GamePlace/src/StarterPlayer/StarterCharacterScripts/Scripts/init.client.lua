@@ -15,7 +15,7 @@ ModuleManager.EnableModule = function(self, Module: ModuleScript)
 	end)
 end
 
-for _, Module in ipairs(Modules) do
+for _, Module in Modules do
 	ModuleManager:EnableModule(Module)
 end
 
