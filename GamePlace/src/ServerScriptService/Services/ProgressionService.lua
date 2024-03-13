@@ -18,12 +18,7 @@ local ProgressionService = Knit.CreateService({
 	},
 })
 
-ProgressionService.LocalStatus = {
-	["Inteligence"] = 0,
-	["Strength"] = 0,
-	["Agility"] = 0,
-	["Endurance"] = 0,
-}
+ProgressionService.LocalStatus = {}
 
 function ProgressionService:GetCurrentLevel(Player)
 	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
@@ -34,9 +29,10 @@ function ProgressionService:UpdateLocalStatus(Player)
 	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
 
 	for i, v in PlayerData.Points do
-		if self.LocalStatus[i] then
-			self.LocalStatus[i] = v
+		if not self.LocalStatus[Player.Name] then
+			self.LocalStatus[Player.Name] = {}
 		end
+		self.LocalStatus[Player.Name][i] = v
 	end
 end
 

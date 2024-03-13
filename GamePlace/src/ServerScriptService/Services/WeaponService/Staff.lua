@@ -18,8 +18,12 @@ local SkillService
 
 local GameData = require(ServerStorage.GameData)
 
-local function CalculateDamage(BaseDamage)
-	local LocalStatus = ProgressionService.LocalStatus
+local function CalculateDamage(BaseDamage,Player)
+	if not Player then
+		return 10
+	end
+	local LocalStatus = ProgressionService.LocalStatus[Player.Name]
+
 
 	if not BaseDamage then
 		return
@@ -29,7 +33,6 @@ local function CalculateDamage(BaseDamage)
 		warn("Couldn't find any local status with this name")
 		return
 	end
-
 	return math.floor(math.sqrt((10 * BaseDamage) * ((LocalStatus.Strength + 1) * 0.3)))
 end
 
@@ -68,6 +71,7 @@ local StaffHitFunction = function(
 	-- ! ja venho
 
 	local data = PlayerService:GetData(Character)
+	local Player = game.Players:GetPlayerFromCharacter(Character)
 	if not data then
 		return
 	end
@@ -80,7 +84,7 @@ local StaffHitFunction = function(
 
 	dmg = dmg or 1
 
-	local damage = CalculateDamage(weaponData.Damage * dmg)
+	local damage = CalculateDamage(weaponData.Damage * dmg, Player) or 10
 	local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
 	if Humanoid then
 		if Humanoid:GetAttribute("Died") then

@@ -1,4 +1,5 @@
 local Debris = game:GetService("Debris")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 local Workspace = game:GetService("Workspace")
@@ -35,8 +36,12 @@ local function GetModelMass(model: Model)
 	return mass + 1
 end
 
-local function CalculateDamage(BaseDamage)
-	local LocalStatus = ProgressionService.LocalStatus
+local function CalculateDamage(BaseDamage,Player)
+	if not Player then
+		return 10
+	end
+	local LocalStatus = ProgressionService.LocalStatus[Player.Name]
+
 
 	if not BaseDamage then
 		return
@@ -57,8 +62,9 @@ local DaggerHitFunction = function(
 	sfx: string,
 	dmg: number?,
 	ragdoll: number?
-)
+)	
 	local data = PlayerService:GetData(Character)
+	local Player = Players:GetPlayerFromCharacter(Character)
 	if not data then
 		return
 	end
@@ -70,8 +76,8 @@ local DaggerHitFunction = function(
 	end
 
 	dmg = dmg or 1
-
-	local damage = CalculateDamage(weaponData.Damage * dmg)
+	
+	local damage = CalculateDamage(weaponData.Damage * dmg,Player) or 10
 	local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
 	if Humanoid then
 		if Humanoid:GetAttribute("Died") then
