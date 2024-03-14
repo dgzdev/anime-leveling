@@ -226,7 +226,7 @@ function PortalService:GeneratePortal()
 
 	task.spawn(function()
 		task.wait(portalTime)
-		self:ClearEnemies()
+		pt:ClearEnemies()
 		Portal:Destroy()
 		self:GeneratePortal()
 	end)
