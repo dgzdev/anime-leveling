@@ -50,9 +50,12 @@ function EnemyService:CreateEnemy(
 		inteligence: number,
 	}?
 )
+	RagdollService = Knit.GetService("RagdollService")
 	local Data = ReplicatedStorage.Models.Utils.EnemyData:Clone()
 	Data.Parent = model
 	Data.Name = "Data"
+
+	model.Parent = Workspace.Enemies
 
 	local EnemyData = require(Data)
 
@@ -92,15 +95,6 @@ function EnemyService:CreateEnemy(
 
 		task.wait(1)
 		model:Destroy()
-
-		task.wait(5)
-
-		local c = clone:Clone()
-
-		c:FindFirstChild(Data.Name):Destroy()
-		c:FindFirstChild(healthHud.Name):Destroy()
-
-		c.Parent = Workspace.Enemies
 	end)
 
 	self:UpdateHealthHud(Humanoid, healthHud)
@@ -203,7 +197,7 @@ function EnemyService.ChildRemoving(child: Instance)
 	end
 end
 
-function EnemyService.KnitStart()
+function EnemyService:KnitInit()
 	WeaponService = Knit.GetService("WeaponService")
 	RagdollService = Knit.GetService("RagdollService")
 

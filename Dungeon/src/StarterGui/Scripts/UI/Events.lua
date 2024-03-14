@@ -12,9 +12,7 @@ Knit.OnStart():await()
 local PromptController = Knit.GetController("PromptController")
 local QuestService = Knit.GetService("QuestService")
 local ProgressionService = Knit.GetService("ProgressionService")
-local SkillTreeService = Knit.GetService("SkillTreeService")
 local InventoryService = Knit.GetService("InventoryService")
-local MarketController = Knit.GetController("MarketController")
 local Workspace = game:GetService("Workspace")
 
 local function LockMouse(boolean: boolean)
@@ -137,27 +135,6 @@ Events.Buttons = {
 
 		local response = InventoryService:AddItemToHotbar(ItemName, posInHotbar)
 		--> clicou no numero do slot pra equipar
-	end,
-
-	["LeftShop"] = function(Gui: GuiButton)
-		print("Left")
-		MarketController.TurnLeft()
-		--> item pra esquerda
-	end,
-	["RightShop"] = function(Gui: GuiButton)
-		--print("Right")
-		MarketController.TurnRight()
-		--> item pra direita
-	end,
-
-	["LeaveShop"] = function(Gui: GuiButton)
-		MarketController.Hide()
-		--> sair da loja
-	end,
-
-	["GetSkillsAvailable"] = function(Gui: GuiButton)
-		local Skills = SkillTreeService:GetSkillsAvailableToUnlock(Players.LocalPlayer)
-		print(Skills)
 	end,
 	["Close"] = function(Gui: GuiButton)
 		Gui:FindFirstAncestorWhichIsA("ScreenGui").Enabled = false

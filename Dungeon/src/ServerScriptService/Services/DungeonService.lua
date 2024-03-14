@@ -5,10 +5,12 @@ local DungeonService = Knit.CreateService({
 	Name = "DungeonService",
 })
 
+
+local EnemyService
 local DungeonAssets = ReplicatedStorage.Models.Dungeon
 local DungeonFolder = game.Workspace:FindFirstChild("Dungeon")
 local DungeonName = ""
-
+local PastRooms = {}
 local function GetDungeonAssets()
 	return DungeonAssets[DungeonName]
 end
@@ -23,8 +25,11 @@ end
 
 function DungeonService:CanPlace(AnchorDoor, Room)
 	local Params = OverlapParams.new()
-	Params.FilterDescendantsInstances = { Room, AnchorDoor.Parent }
+	Params.FilterDescendantsInstances = {Room, AnchorDoor.Parent}
 	Params.FilterType = Enum.RaycastFilterType.Exclude
+	Params.CollisionGroup = "ROOM"
+	Params.RespectCanCollide = true
+
 	local _cframe, _size = Room:GetBoundingBox()
 	local size = _size - Vector3.new(2, 0, 2)
 	local size = Vector3.new(math.round(size.X), math.round(size.Y), math.round(size.Z))
@@ -45,6 +50,12 @@ end
 function DungeonService:GetRandomDoor(Room)
 	local Doors = Room.Doors:GetChildren()
 	return Doors[math.random(1, #Doors)]
+end
+
+function DungeonService:GetRoomDecoration(RoomName: string)
+	local DungeonAssets = GetDungeonAssets()
+	print(RoomName)
+	return DungeonAssets.Decorations:FindFirstChild(RoomName, true)
 end
 
 function DungeonService:PlaceBossRoom(BossRoom, LastRoom)
@@ -83,9 +94,10 @@ function DungeonService:PlaceBossRoom(BossRoom, LastRoom)
 end
 
 function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: number)
-	local ROOMS_AMOUNT = 15
+	local ROOMS_AMOUNT = 30
 
 	local StartRoom = GetDungeonAssets().Start
+
 	StartRoom:PivotTo(CFrame.new(0, 400, 0))
 	StartRoom.Parent = DungeonFolder
 
@@ -97,6 +109,7 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 	local roomIndex = 1
 	while roomIndex <= ROOMS_AMOUNT do
 		local Room = DungeonService:GetRandomRoom()
+		print(LastRoom, Room)
 		local AnchorDoor: BasePart = DungeonService:GetRandomDoor(LastRoom)
 		local RoomRandomDoor: BasePart = DungeonService:GetRandomDoor(Room)
 
@@ -104,7 +117,9 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 		Room.Name = roomIndex
 
 		Room:PivotTo(AnchorDoor:GetPivot() * CFrame.Angles(0, math.rad(180), 0))
+
 		if not DungeonService:CanPlace(AnchorDoor, Room) then
+			print(tries)
 			Room:Destroy()
 			tries -= 1
 
@@ -134,7 +149,30 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 
 		roomIndex += 1
 		Room.Parent = DungeonFolder
+
+
+		--for i,v in pairs(Room:GetDescendants()) do
+		--	table.insert(PastRooms, v)
+		--end
+
 		LastRoom = Room
+
+		if LastRoom == StartRoom or roomIndex == ROOMS_AMOUNT then
+			continue
+		else
+			local Spawns = Room:WaitForChild("EnemySpawn"):GetChildren()
+			local EnemyWillSpawn = math.random(1,#Spawns)
+			local TargetPart = Spawns[EnemyWillSpawn]
+			local EnemyRig = ReplicatedStorage.Essentials:WaitForChild("RIG"):Clone()
+
+			local ang = math.random(-360, 360)
+
+			EnemyRig:PivotTo(TargetPart:GetPivot() * CFrame.new(0,1.5,0) * CFrame.Angles(0,math.rad(ang), 0))
+
+			EnemyRig.Name = "Goblin"
+			EnemyService:CreateEnemy(EnemyRig, {})
+		end
+
 		task.wait()
 	end
 
@@ -145,8 +183,13 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 end
 
 function DungeonService.KnitInit()
-	DungeonName = "Company"
-	DungeonService:GenerateLinearDungeon(5, 10)
+	task.spawn(function()
+		EnemyService = Knit.GetService("EnemyService")
+
+		DungeonName = "Company"
+		DungeonService:GenerateLinearDungeon(5, 10)
+	end)
+
 end
 function DungeonService.KnitStart() end
 

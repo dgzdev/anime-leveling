@@ -38,9 +38,7 @@ function CameraModule:Init()
 	-- ? Check if the OTS module is loaded.
 	self:CheckCondition(self.OTS ~= nil, "[CameraModule] OTS is nil, this is a problem.")
 
-	if ReplicatedStorage:GetAttribute("FirstTimeAnimationEnd") then
-		self:EnableCamera()
-	end
+	self:EnableCamera()
 
 	player.CharacterAdded:Connect(function()
 		humanoid = character:WaitForChild("Humanoid")

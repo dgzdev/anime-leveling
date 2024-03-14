@@ -11,6 +11,7 @@ local step = 0.05
 local initialTime = math.random(360, 1020)
 
 function DayService:KnitStart()
+	--[[
 	task.spawn(function()
 		Lighting:SetMinutesAfterMidnight(initialTime)
 		while true do
@@ -18,6 +19,9 @@ function DayService:KnitStart()
 			Lighting:SetMinutesAfterMidnight(Lighting:GetMinutesAfterMidnight() + step)
 		end
 	end)
+
+	]]
+
 end
 
 return DayService
