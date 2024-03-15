@@ -173,6 +173,7 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 			if not Room:FindFirstChild("EnemySpawn") then
 				continue
 			end
+			local Progress = roomIndex/ROOMS_AMOUNT
 			local Spawns = Room:WaitForChild("EnemySpawn"):GetChildren()
 			local EnemyRoomAmount = math.random(1, #Spawns)
 			for i = 1, EnemyRoomAmount, 1 do
@@ -184,7 +185,14 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 
 				EnemyRig:PivotTo(TargetPart:GetPivot() * CFrame.new(0, 1.5, 0) * CFrame.Angles(0, math.rad(ang), 0))
 
-				EnemyRig.Name = "Goblin"
+				if Progress >= .7 then
+					EnemyRig.Name = "Troll"
+				elseif Progress >= .45 then
+					EnemyRig.Name = "Orc"
+				else
+					EnemyRig.Name = "Goblin"
+				end
+				
 				EnemyService:CreateEnemy(EnemyRig, { damage = roomIndex * GameData.dungeonsData.RankSettings[RANK].damageMultiplierPerRoom, health = roomIndex * GameData.dungeonsData.RankSettings[RANK].healthMultiplierPerRoom })
 			end
 		end
