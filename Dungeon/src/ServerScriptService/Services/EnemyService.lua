@@ -48,6 +48,7 @@ function EnemyService:CreateEnemy(
 	props: {
 		damage: number,
 		inteligence: number,
+		health: number,
 	}?
 )
 	RagdollService = Knit.GetService("RagdollService")
@@ -66,14 +67,14 @@ function EnemyService:CreateEnemy(
 
 	]]
 
-	local Damage = EnemyData.Info.Damage
-
+	local Damage = math.floor(props.damage) + EnemyData.Info.Damage
+	--print(Damage)
 	local RespawnTime = 10
 	local Inteligence = props.inteligence or 10
 	local Humanoid = model:FindFirstChildWhichIsA("Humanoid")
 
-	Humanoid.MaxHealth = EnemyData.Info.Health
-	Humanoid.Health = EnemyData.Info.Health
+	Humanoid.MaxHealth = math.floor(props.health) + EnemyData.Info.Health
+	Humanoid.Health = math.floor(props.health) + EnemyData.Info.Health
 	Humanoid.AutoRotate = true
 
 	local Root = Humanoid.RootPart
@@ -111,12 +112,13 @@ function EnemyService:CreateEnemy(
 			Humanoid:ApplyDescription(enemyData.HumanoidDescription)
 		end
 
-		Damage = enemyData.Damage
+		Damage = math.floor(props.damage) + EnemyData.Info.Damage
 		Inteligence = enemyData.Inteligence
 	end
 
 	model:SetAttribute("Enemy", true)
 	model:SetAttribute("Died", false)
+	model:SetAttribute("Damage", Damage)
 
 	task.spawn(function()
 		while true do

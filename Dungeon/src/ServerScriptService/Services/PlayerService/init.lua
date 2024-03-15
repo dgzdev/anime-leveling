@@ -1,10 +1,12 @@
 local Players = game:GetService("Players")
 local Knit = require(game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("Knit"))
 local ServerStorage = game:GetService("ServerStorage")
+local TeleportService = game:GetService("TeleportService")
 
 local InventoryService
 local ClothingService
 local ProgressionService
+local DungeonService
 
 local GameData = require(ServerStorage.GameData)
 
@@ -22,6 +24,9 @@ local Managers: { [number]: typeof(PlayerManager) | nil } = {}
 -- ========================================
 
 function PlayerService.OnPlayerJoin(player: Player)
+	local Rank = TeleportService:GetTeleportSetting("Rank") or "E"
+	DungeonService:GenerateDungeonFromRank(Rank)
+
 	local Manager = PlayerManager.new(player)
 	Manager:LoadProfile()
 
@@ -175,6 +180,7 @@ function PlayerService:KnitInit()
 	InventoryService = Knit.GetService("InventoryService")
 	ClothingService = Knit.GetService("ClothingService")
 	ProgressionService = Knit.GetService("ProgressionService")
+	DungeonService = Knit.GetService("DungeonService")
 end
 
 function PlayerService:KnitStart() end

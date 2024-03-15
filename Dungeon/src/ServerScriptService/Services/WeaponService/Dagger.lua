@@ -208,6 +208,8 @@ Dagger["Venom'sFangs"] = {
 	end,
 }
 
+Dagger.Dagger2 = Dagger.Default
+
 function Dagger.Start(default)
 	Default = default
 

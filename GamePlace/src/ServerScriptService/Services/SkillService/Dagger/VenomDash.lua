@@ -22,14 +22,9 @@ return function(
 
 	warn("Executed")
 	local Size = Vector3.new(10, 10, Distance)
-	HitboxService:CreateFixedHitbox(
-		CFramePosition * CFrame.new(0, 0, -(Distance / 2)),
-		Size,
-		10,
-		function(hitted: Model)
-			task.spawn(function()
-				DaggerHitFunction(Character, hitted, 5, "DaggerHit", "DaggerHit", 2.5, 0)
-			end)
-		end
-	)
+	HitboxService:CreateFixedHitbox(CFramePosition * CFrame.new(0, 0, -(Distance / 2)), Size, 2, function(hitted: Model)
+		task.spawn(function()
+			DaggerHitFunction(Character, hitted, 5, "DaggerHit", "DaggerHit", 2.5, 0)
+		end)
+	end)
 end

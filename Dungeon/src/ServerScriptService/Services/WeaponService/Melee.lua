@@ -15,6 +15,7 @@ local ProgressionService
 local PlayerService
 local WeaponService
 local SkillService
+local EnemyService
 
 local GameData = require(ServerStorage.GameData)
 
@@ -31,12 +32,11 @@ local function GetModelMass(model: Model)
 	return mass + 1
 end
 
-local function CalculateDamage(BaseDamage,Player)
+local function CalculateDamage(BaseDamage, Player)
 	if not Player then
 		return 10
 	end
 	local LocalStatus = ProgressionService.LocalStatus[Player.Name]
-
 
 	if not BaseDamage then
 		return
@@ -86,11 +86,15 @@ local MeleeHitFunction = function(
 		})
 		return
 	end
-
+	print(dmg)
 	dmg = dmg or 1
-
-	local damage = CalculateDamage(weaponData.Damage * dmg, Player) or 10
-
+	local damage
+	if not Players:GetPlayerFromCharacter(Character) then
+		damage = dmg
+	else
+		damage = CalculateDamage(weaponData.Damage * dmg, Player) or 10
+	end
+	--print(damage)
 	local Humanoid = hitted:FindFirstChildWhichIsA("Humanoid")
 	if Humanoid then
 		if Humanoid:GetAttribute("Died") then
@@ -145,6 +149,12 @@ Melee.Default = {
 		local op = WeaponService:GetOverlapParams(Character)
 
 		HitboxService:CreateHitbox(Character, Vector3.new(2, 5, 2), 25, function(hitted: Model)
+			if not Players:GetPlayerFromCharacter(Character) then
+				if Character:GetAttribute("Damage") then
+					MeleeHitFunction(Character, hitted, 0, "CombatHit", "Melee", Character:GetAttribute("Damage"), 0)
+					return
+				end
+			end
 			MeleeHitFunction(Character, hitted, 0, "CombatHit", "Melee", nil, 0)
 		end, op)
 	end,
@@ -255,6 +265,7 @@ function Melee.Start(default)
 	RagdollService = Knit.GetService("RagdollService")
 	ProgressionService = Knit.GetService("ProgressionService")
 	PlayerService = Knit.GetService("PlayerService")
+	EnemyService = Knit.GetService("EnemyService")
 end
 
 return Melee

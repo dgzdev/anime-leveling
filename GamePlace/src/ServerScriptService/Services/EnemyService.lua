@@ -85,7 +85,7 @@ function EnemyService:CreateEnemy(
 
 	RagdollService:UnRagdoll(clone)
 
-	Humanoid.Died:Connect(function()
+	local connection = Humanoid.Died:Connect(function()
 		for _, value in (Animator:GetPlayingAnimationTracks()) do
 			value:Stop()
 		end
@@ -101,6 +101,10 @@ function EnemyService:CreateEnemy(
 		c:FindFirstChild(healthHud.Name):Destroy()
 
 		c.Parent = Workspace.Enemies
+	end)
+
+	model.Destroying:Connect(function()
+		connection:Disconnect()
 	end)
 
 	self:UpdateHealthHud(Humanoid, healthHud)

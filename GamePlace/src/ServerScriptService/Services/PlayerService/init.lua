@@ -39,8 +39,6 @@ function PlayerService.OnPlayerJoin(player: Player)
 	local Data = Manager:GetData()
 
 	Data.Inventory = GameData.defaultInventory
-	Data.Hotbar = GameData.profileTemplate.Slots[1].Data.Hotbar
-	Data.Equiped = GameData.profileTemplate.Slots[1].Data.Equiped
 	Data.SkillsTreeUnlocked = GameData.profileTemplate.Slots[1].Data.SkillsTreeUnlocked
 
 	local Character = player.Character or player.CharacterAdded:Wait()

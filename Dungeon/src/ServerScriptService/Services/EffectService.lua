@@ -8,13 +8,13 @@ local EffectService = Knit.CreateService({
 local HumanoidsWithEffects = {}
 
 function EffectService:SumEffectValue(base: number, value: number, operation: string): number
-    if operation == "int" then
-        return value
-    elseif operation == "%" then
-        return (base * value) / 100
-    elseif operation == "*" then
-        return base * value
-    end
+	if operation == "int" then
+		return value
+	elseif operation == "%" then
+		return (base * value) / 100
+	elseif operation == "*" then
+		return base * value
+	end
 end
 
 function EffectService:HasEffect(Humanoid: Humanoid, EffectName: string)
@@ -43,33 +43,19 @@ end
 
 function EffectService:UpdateHumanoidEffects(Humanoid: Humanoid, EffectType: string)
 	local EffectTypes = {
-		Health = function()
-			
-		end,
+		Health = function() end,
 
-		HealthRegeneration = function()
-			
-		end,
+		HealthRegeneration = function() end,
 
-		Mana = function()
-			
-		end,
+		Mana = function() end,
 
-		ManaRegeneration = function()
-			
-		end,
+		ManaRegeneration = function() end,
 
-		Damage = function()
-			
-		end,
+		Damage = function() end,
 
-		SpellDamage = function()
-			
-		end,
+		SpellDamage = function() end,
 
-		Agility = function()
-			
-		end,
+		Agility = function() end,
 	}
 
 	if EffectTypes[EffectType] then
@@ -95,7 +81,7 @@ function EffectService:GetEffectTotalByType(Humanoid: Humanoid, EffectType: stri
 	local Total = 0
 
 	for _, effect: EffectDataType in pairs(Effects) do
-	     Total += EffectService:SumEffectValue(Base, effect.Value, effect.ValueType)
+		Total += EffectService:SumEffectValue(Base, effect.Value, effect.ValueType)
 	end
 
 	return Total
@@ -109,7 +95,6 @@ function EffectService:AddEffect(
 	ValueType: string,
 	Duration: number?
 )
-
 	local Effect: EffectDataType = {
 		EffectName = EffectName,
 		EffectType = EffectType,
@@ -131,11 +116,11 @@ function EffectService:AddEffect(
 end
 
 export type EffectDataType = {
-	EffectName: string;
-	EffectType: string;
-	Amount: number;
-	ValueType: string;
-	Duration: number?;
+	EffectName: string,
+	EffectType: string,
+	Amount: number,
+	ValueType: string,
+	Duration: number?,
 }
 
 return EffectService

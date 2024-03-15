@@ -67,9 +67,10 @@ function WeaponService:GetOverlapParams(Character)
 
 		op.FilterType = Enum.RaycastFilterType.Include
 		op.FilterDescendantsInstances = Characters
+		op.CollisionGroup = "EnemieHitbox"
 	else
 		op.FilterType = Enum.RaycastFilterType.Include
-		op.FilterDescendantsInstances = { workspace:WaitForChild("Enemies") }
+		op.CollisionGroup = "PlayerHitbox"
 	end
 
 	return op

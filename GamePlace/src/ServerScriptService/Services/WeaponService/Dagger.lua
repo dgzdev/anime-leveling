@@ -200,13 +200,14 @@ Dagger["Venom'sFangs"] = {
 	end,
 
 	["DualBarrage"] = function(...)
-		print(...)
 		local args = table.pack(...)
 		local send = { "DualBarrage", args[1], args[2], args[3], DaggerHitFunction }
 
 		SkillService:CallSkill(table.unpack(send))
 	end,
 }
+
+Dagger.Dagger2 = Dagger.Default
 
 function Dagger.Start(default)
 	Default = default

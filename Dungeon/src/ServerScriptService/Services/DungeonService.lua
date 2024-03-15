@@ -5,11 +5,14 @@ local DungeonService = Knit.CreateService({
 	Name = "DungeonService",
 })
 
-
 local EnemyService
+
 local DungeonAssets = ReplicatedStorage.Models.Dungeon
 local DungeonFolder = game.Workspace:FindFirstChild("Dungeon")
-local DungeonName = ""
+
+local DungeonName = "Company"
+local DungeonGenerated = false
+
 local PastRooms = {}
 local function GetDungeonAssets()
 	return DungeonAssets[DungeonName]
@@ -25,7 +28,7 @@ end
 
 function DungeonService:CanPlace(AnchorDoor, Room)
 	local Params = OverlapParams.new()
-	Params.FilterDescendantsInstances = {Room, AnchorDoor.Parent}
+	Params.FilterDescendantsInstances = { Room, AnchorDoor.Parent }
 	Params.FilterType = Enum.RaycastFilterType.Exclude
 	Params.CollisionGroup = "ROOM"
 	Params.RespectCanCollide = true
@@ -94,7 +97,11 @@ function DungeonService:PlaceBossRoom(BossRoom, LastRoom)
 end
 
 function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: number)
-	local ROOMS_AMOUNT = 30
+	if DungeonGenerated then
+		return
+	end
+	DungeonGenerated = true
+	local ROOMS_AMOUNT = math.random(MIN_ROOMS, MAX_ROOMS)
 
 	local StartRoom = GetDungeonAssets().Start
 
@@ -109,7 +116,7 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 	local roomIndex = 1
 	while roomIndex <= ROOMS_AMOUNT do
 		local Room = DungeonService:GetRandomRoom()
-		print(LastRoom, Room)
+		--print(LastRoom, Room)
 		local AnchorDoor: BasePart = DungeonService:GetRandomDoor(LastRoom)
 		local RoomRandomDoor: BasePart = DungeonService:GetRandomDoor(Room)
 
@@ -119,7 +126,7 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 		Room:PivotTo(AnchorDoor:GetPivot() * CFrame.Angles(0, math.rad(180), 0))
 
 		if not DungeonService:CanPlace(AnchorDoor, Room) then
-			print(tries)
+			--print(tries)
 			Room:Destroy()
 			tries -= 1
 
@@ -150,27 +157,33 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 		roomIndex += 1
 		Room.Parent = DungeonFolder
 
-
 		--for i,v in pairs(Room:GetDescendants()) do
 		--	table.insert(PastRooms, v)
 		--end
 
 		LastRoom = Room
 
-		if LastRoom == StartRoom or roomIndex == ROOMS_AMOUNT then
+		if roomIndex == 1 or roomIndex == ROOMS_AMOUNT then
 			continue
 		else
+			--print(roomIndex * 1.25)
+			if not Room:FindFirstChild("EnemySpawn") then
+				continue
+			end
 			local Spawns = Room:WaitForChild("EnemySpawn"):GetChildren()
-			local EnemyWillSpawn = math.random(1,#Spawns)
-			local TargetPart = Spawns[EnemyWillSpawn]
-			local EnemyRig = ReplicatedStorage.Essentials:WaitForChild("RIG"):Clone()
+			local EnemyRoomAmount = math.random(1, #Spawns)
+			for i = 1, EnemyRoomAmount, 1 do
+				local EnemyWillSpawn = math.random(1, #Spawns)
+				local TargetPart = Spawns[EnemyWillSpawn]
+				local EnemyRig = ReplicatedStorage.Essentials:WaitForChild("RIG"):Clone()
 
-			local ang = math.random(-360, 360)
+				local ang = math.random(-360, 360)
 
-			EnemyRig:PivotTo(TargetPart:GetPivot() * CFrame.new(0,1.5,0) * CFrame.Angles(0,math.rad(ang), 0))
+				EnemyRig:PivotTo(TargetPart:GetPivot() * CFrame.new(0, 1.5, 0) * CFrame.Angles(0, math.rad(ang), 0))
 
-			EnemyRig.Name = "Goblin"
-			EnemyService:CreateEnemy(EnemyRig, {})
+				EnemyRig.Name = "Goblin"
+				EnemyService:CreateEnemy(EnemyRig, { damage = roomIndex * 1.25, health = roomIndex * 1.05 })
+			end
 		end
 
 		task.wait()
@@ -182,14 +195,27 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 	DungeonService:PlaceBossRoom(BossRoom, LastRoom)
 end
 
+function DungeonService:GenerateDungeonFromRank(rank: string)
+	local Rooms = {
+		["E"] = 30,
+		["D"] = 40,
+		["C"] = 50,
+		["B"] = 60,
+		["A"] = 70,
+		["S"] = 80,
+	}
+	print(rank, Rooms[rank])
+	local RoomAmount = Rooms[rank]
+	self:GenerateLinearDungeon(RoomAmount - 10, RoomAmount)
+	DungeonGenerated = true
+end
+
 function DungeonService.KnitInit()
 	task.spawn(function()
 		EnemyService = Knit.GetService("EnemyService")
 
 		DungeonName = "Company"
-		DungeonService:GenerateLinearDungeon(5, 10)
 	end)
-
 end
 function DungeonService.KnitStart() end
 

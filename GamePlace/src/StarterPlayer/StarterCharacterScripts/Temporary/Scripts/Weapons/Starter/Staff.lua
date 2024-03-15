@@ -107,7 +107,7 @@ local Sword = {
 				return
 			end
 
-			local Combos = Animations:WaitForChild("Sword"):WaitForChild("Hit"):GetChildren()
+			local Combos = Animations:WaitForChild("Staff"):WaitForChild("Hit"):GetChildren()
 			table.sort(Combos, function(a, b)
 				return a.Name < b.Name
 			end)
@@ -141,19 +141,21 @@ local Sword = {
 				return warn("No dmg point")
 			end
 
-			task.spawn(function()
-				WeaponService:WeaponInput("LSpell", Enum.UserInputState.End, {
-					Position = RootPart.CFrame,
+			PlayingAnimation:GetMarkerReachedSignal("release"):Once(function()
+				task.spawn(function()
+					WeaponService:WeaponInput("LSpell", Enum.UserInputState.End, {
+						Position = RootPart.CFrame,
 
-					Mouse = Players.LocalPlayer:GetMouse().UnitRay.Direction,
-					From = DmgPoint.WorldCFrame,
+						Mouse = Players.LocalPlayer:GetMouse().UnitRay.Direction,
+						From = DmgPoint.WorldCFrame,
 
-					Combo = _G.Combo,
-					Combos = #Combos,
-				})
+						Combo = _G.Combo,
+						Combos = #Combos,
+					})
+				end)
 			end)
 
-			PlayingAnimation:Play(DelayTime)
+			PlayingAnimation:Play(DelayTime, 1, 2)
 
 			_G.Combo += 1
 
@@ -215,8 +217,7 @@ local Sword = {
 
 			SFX:Create(RootPart, "Slash", 0, 60, false)
 
-			PlayingAnimation = Animator:LoadAnimation(game.ReplicatedStorage.Animations.Sword.Hit["1"])
-			PlayingAnimation:Play(0.15)
+			PlayingAnimation = Animator:LoadAnimation(game.ReplicatedStorage.Animations.Staff.Hit["1"])
 
 			Humanoid:SetAttribute("SlideGetUp", true)
 			Humanoid:SetAttribute("SlideGetUp", false)
@@ -231,14 +232,18 @@ local Sword = {
 				return warn("No dmg point")
 			end
 
-			task.spawn(function()
-				WeaponService:WeaponInput("HSpell", Enum.UserInputState.End, {
-					Position = RootPart.CFrame,
+			PlayingAnimation:GetMarkerReachedSignal("release"):Once(function()
+				task.spawn(function()
+					WeaponService:WeaponInput("HSpell", Enum.UserInputState.End, {
+						Position = RootPart.CFrame,
 
-					Mouse = Players.LocalPlayer:GetMouse().UnitRay.Direction,
-					From = DmgPoint.WorldCFrame,
-				})
+						Mouse = Players.LocalPlayer:GetMouse().UnitRay.Direction,
+						From = DmgPoint.WorldCFrame,
+					})
+				end)
 			end)
+
+			PlayingAnimation:Play(0.15, 1, 2)
 		end,
 		name = "Heavy Spell",
 	},

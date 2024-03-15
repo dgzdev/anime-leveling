@@ -18,12 +18,11 @@ local SkillService
 
 local GameData = require(ServerStorage.GameData)
 
-local function CalculateDamage(BaseDamage,Player)
+local function CalculateDamage(BaseDamage, Player)
 	if not Player then
 		return 10
 	end
 	local LocalStatus = ProgressionService.LocalStatus[Player.Name]
-
 
 	if not BaseDamage then
 		return
@@ -157,6 +156,7 @@ Staff.Default = {
 		LinearVelocity.MaxForce = math.huge
 		LinearVelocity.VelocityConstraintMode = Enum.VelocityConstraintMode.Vector
 		LinearVelocity.VectorVelocity = p.Mouse * 150
+		print(LinearVelocity.VectorVelocity)
 
 		LinearVelocity.Parent = PrimaryPart
 
@@ -218,7 +218,8 @@ Staff.Default = {
 		LinearVelocity.Attachment0 = att0
 		LinearVelocity.MaxForce = math.huge
 		LinearVelocity.VelocityConstraintMode = Enum.VelocityConstraintMode.Vector
-		LinearVelocity.VectorVelocity = p.Mouse * 50
+		LinearVelocity.VectorVelocity = p.Mouse * 150
+		print(LinearVelocity.VectorVelocity)
 
 		LinearVelocity.Parent = PrimaryPart
 
@@ -241,7 +242,7 @@ Staff.Default = {
 						obj.Enabled = false
 					end
 				end
-				task.wait(1)
+				task.wait(100)
 				Skill:Destroy()
 			end
 		end)

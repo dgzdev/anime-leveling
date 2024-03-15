@@ -110,87 +110,25 @@ local ProfileTemplate: ProfileData = {
 				["Level"] = 1,
 
 				["Experience"] = 0,
-				["Mana"] = 50,
 
 				["Gold"] = 0,
 
 				["Equiped"] = {
-					["Weapon"] = "Golden Gauntlets",
-					["Id"] = 7,
+					["Weapon"] = "Fists",
+					["Id"] = 1,
 				},
 				["Quests"] = {},
-				["Hotbar"] = { 7, 10, 9, 6 },
+				["Hotbar"] = { 1 },
 				["Inventory"] = {
 					["Fists"] = {
 						AchiveDate = os.time(),
 						Rank = "E",
 						Id = 1,
 					},
-					["Starter Sword"] = {
-						AchiveDate = os.time(),
-						Rank = "E",
-						Id = 2,
-					},
-					["Iron Starter Sword"] = {
-						AchiveDate = os.time(),
-						Rank = "E",
-						Id = 3,
-					},
-					["Luxury Sword"] = {
-						AchiveDate = os.time(),
-						Rank = "D",
-						Id = 4,
-					},
-					["Maou's Sword"] = {
-						AchiveDate = os.time(),
-						Rank = "S",
-						Id = 5,
-					},
-					["Venom's Fangs"] = {
-						AchiveDate = os.time(),
-						Rank = "E",
-						Id = 6,
-					},
-					["Golden Gauntlets"] = {
-						AchiveDate = os.time(),
-						Rank = "E",
-						Id = 7,
-					},
-					["Nyon"] = {
-						AchiveDate = os.time(),
-						Rank = "S",
-						Id = 8,
-					},
-					["Mister"] = {
-						AchiveDate = os.time(),
-						Rank = "S",
-						Id = 9,
-					},
-					["Omnitrix"] = {
-						AchiveData = os.time(),
-						Rank = "S",
-						Id = 10,
-					},
 				},
 				["SkillsTreeUnlocked"] = { ["1"] = true },
-				["Skills"] = {
-					["Inteligence"] = {
-						["AchiveDate"] = os.time(),
-						["Level"] = 1,
-					},
-					["Strength"] = {
-						["AchiveDate"] = os.time(),
-						["Level"] = 1,
-					},
-					["Agility"] = {
-						["AchiveDate"] = os.time(),
-						["Level"] = 1,
-					},
-					["Endurance"] = {
-						["AchiveDate"] = os.time(),
-						["Level"] = 1,
-					},
-				},
+				["Skills"] = {},
+
 				["PointsAvailable"] = 0,
 				["Points"] = {
 					["Inteligence"] = 0,
@@ -275,6 +213,11 @@ return {
 			Rank = "S",
 			Id = 11,
 		},
+		["Dagger2"] = {
+			AchiveData = os.time(),
+			Rank = "S",
+			Id = 12,
+		},
 	},
 	gameWeapons = {
 		["Fists"] = {
@@ -343,6 +286,12 @@ return {
 			Rarity = "S",
 			SubRarity = "I", -- "II" | "III" | "IV" | "V"
 		},
+		["Dagger2"] = {
+			Type = "Dagger",
+			Damage = 3 ^ 10,
+			Rarity = "S",
+			SubRarity = "I", -- "II" | "III" | "IV" | "V"
+		},
 	},
 	newbieBadge = 2066631008828576,
 
@@ -393,11 +342,15 @@ return {
 	playerEffects = {
 		Buffs = {
 			Damage = {
-				callback = function(Player, Info : table)
-					if not Info then return end
-					if not Info.DamageMultiplier then return end
-					
-					if Info.DamageMultiplier < 1 then 
+				callback = function(Player, Info: table)
+					if not Info then
+						return
+					end
+					if not Info.DamageMultiplier then
+						return
+					end
+
+					if Info.DamageMultiplier < 1 then
 						warn("For DamageBuff's callback, Info.DamageMultiplier should be greater than 1")
 						Info.DamageMultiplier = 1
 					end
@@ -405,10 +358,10 @@ return {
 					local DamageMultiplier = Info.DamageMultiplier or 1.2
 					return DamageMultiplier
 				end,
-				UsersAffected = {}
-			}
+				UsersAffected = {},
+			},
 		},
-		Debuffs = {}
+		Debuffs = {},
 	},
 	gameEnemies = {
 		["Teste"] = {

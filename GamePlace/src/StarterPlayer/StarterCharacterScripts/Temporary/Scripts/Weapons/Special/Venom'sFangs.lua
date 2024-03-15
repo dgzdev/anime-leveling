@@ -237,10 +237,11 @@ local TestDagger = {
 				end)
 				RootPart.Anchored = true
 			elseif inputstate == Enum.UserInputState.End then
-				SetCooldown("Dual Barrage", 10) -- > 10 segundos de cooldown
 				RootPart.Anchored = false
+
 				if HoldingTime > 0.45 then
-					PlayingAnimation:Stop()
+					PlayingAnimation:Stop(0)
+					SetCooldown("Dual Barrage", 10) -- > 10 segundos de cooldown
 
 					--> animação de ataque
 					local Animation: Animation = ReplicatedStorage:WaitForChild("Animations")
@@ -249,25 +250,9 @@ local TestDagger = {
 						:FindFirstChild("Combo")
 
 					PlayingAnimation = Animator:LoadAnimation(Animation)
-					PlayingAnimation.Priority = Enum.AnimationPriority.Action4
 					PlayingAnimation:Play()
 
-					comboTicks = 0
-
-					for _i = 1, 5, 1 do
-						task.wait(0.3)
-						print(comboTicks)
-
-						task.spawn(function()
-							WeaponService:WeaponInput("DualBarrage", Enum.UserInputState.Begin, {
-								Position = RootPart.CFrame,
-							})
-						end)
-						comboTicks += 1
-					end
-
 					PlayingAnimation:GetMarkerReachedSignal("teleport"):Connect(function()
-						print("teleport event")
 						task.spawn(function()
 							WeaponService:WeaponInput("VenomDash", Enum.UserInputState.Begin, {
 								Position = RootPart.CFrame,
@@ -276,8 +261,21 @@ local TestDagger = {
 					end)
 
 					comboTicks = 0
-					print(comboTicks)
-					HoldingTime = 0
+
+					task.spawn(function()
+						for _i = 1, 5, 1 do
+							task.wait(0.3)
+
+							task.spawn(function()
+								WeaponService:WeaponInput("DualBarrage", Enum.UserInputState.Begin, {
+									Position = RootPart.CFrame,
+								})
+							end)
+
+							comboTicks += 1
+						end
+					end)
+				else
 					if PlayingAnimation then
 						PlayingAnimation:Stop(0.15)
 					end
