@@ -156,7 +156,7 @@ Staff.Default = {
 		LinearVelocity.MaxForce = math.huge
 		LinearVelocity.VelocityConstraintMode = Enum.VelocityConstraintMode.Vector
 		LinearVelocity.VectorVelocity = p.Mouse * 150
-		print(LinearVelocity.VectorVelocity)
+		LinearVelocity.Enabled = true
 
 		LinearVelocity.Parent = PrimaryPart
 
@@ -219,7 +219,7 @@ Staff.Default = {
 		LinearVelocity.MaxForce = math.huge
 		LinearVelocity.VelocityConstraintMode = Enum.VelocityConstraintMode.Vector
 		LinearVelocity.VectorVelocity = p.Mouse * 150
-		print(LinearVelocity.VectorVelocity)
+		LinearVelocity.Enabled = true
 
 		LinearVelocity.Parent = PrimaryPart
 
@@ -242,7 +242,7 @@ Staff.Default = {
 						obj.Enabled = false
 					end
 				end
-				task.wait(100)
+				task.wait(1)
 				Skill:Destroy()
 			end
 		end)

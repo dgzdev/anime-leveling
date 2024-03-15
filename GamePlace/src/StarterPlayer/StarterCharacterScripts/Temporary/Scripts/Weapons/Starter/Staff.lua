@@ -141,21 +141,19 @@ local Sword = {
 				return warn("No dmg point")
 			end
 
-			PlayingAnimation:GetMarkerReachedSignal("release"):Once(function()
-				task.spawn(function()
-					WeaponService:WeaponInput("LSpell", Enum.UserInputState.End, {
-						Position = RootPart.CFrame,
+			task.spawn(function()
+				WeaponService:WeaponInput("LSpell", Enum.UserInputState.End, {
+					Position = RootPart.CFrame,
 
-						Mouse = Players.LocalPlayer:GetMouse().UnitRay.Direction,
-						From = DmgPoint.WorldCFrame,
+					Mouse = Players.LocalPlayer:GetMouse().UnitRay.Direction,
+					From = DmgPoint.WorldCFrame,
 
-						Combo = _G.Combo,
-						Combos = #Combos,
-					})
-				end)
+					Combo = _G.Combo,
+					Combos = #Combos,
+				})
 			end)
 
-			PlayingAnimation:Play(DelayTime, 1, 2)
+			PlayingAnimation:Play(DelayTime, 1, 1)
 
 			_G.Combo += 1
 
@@ -218,6 +216,7 @@ local Sword = {
 			SFX:Create(RootPart, "Slash", 0, 60, false)
 
 			PlayingAnimation = Animator:LoadAnimation(game.ReplicatedStorage.Animations.Staff.Hit["1"])
+			PlayingAnimation:Play(0.15, 1, 1)
 
 			Humanoid:SetAttribute("SlideGetUp", true)
 			Humanoid:SetAttribute("SlideGetUp", false)
@@ -232,18 +231,14 @@ local Sword = {
 				return warn("No dmg point")
 			end
 
-			PlayingAnimation:GetMarkerReachedSignal("release"):Once(function()
-				task.spawn(function()
-					WeaponService:WeaponInput("HSpell", Enum.UserInputState.End, {
-						Position = RootPart.CFrame,
+			task.spawn(function()
+				WeaponService:WeaponInput("HSpell", Enum.UserInputState.End, {
+					Position = RootPart.CFrame,
 
-						Mouse = Players.LocalPlayer:GetMouse().UnitRay.Direction,
-						From = DmgPoint.WorldCFrame,
-					})
-				end)
+					Mouse = Players.LocalPlayer:GetMouse().UnitRay.Direction,
+					From = DmgPoint.WorldCFrame,
+				})
 			end)
-
-			PlayingAnimation:Play(0.15, 1, 2)
 		end,
 		name = "Heavy Spell",
 	},
