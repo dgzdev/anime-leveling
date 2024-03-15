@@ -1,12 +1,15 @@
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerStorage = game:GetService("ServerStorage")
 local DungeonService = Knit.CreateService({
 	Name = "DungeonService",
 })
 
 local EnemyService
 
+
+local GameData = require(ServerStorage.GameData)
 local DungeonAssets = ReplicatedStorage.Models.Dungeon
 local DungeonFolder = game.Workspace:FindFirstChild("Dungeon")
 
@@ -96,7 +99,7 @@ function DungeonService:PlaceBossRoom(BossRoom, LastRoom)
 	BossRoom.Parent = DungeonFolder
 end
 
-function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: number)
+function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: number, RANK: string)
 	if DungeonGenerated then
 		return
 	end
@@ -163,10 +166,10 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 
 		LastRoom = Room
 
-		if roomIndex == 1 or roomIndex == ROOMS_AMOUNT then
+		if roomIndex == "Start" then
 			continue
 		else
-			--print(roomIndex * 1.25)
+			--=print(roomIndex * GameData.dungeonsData.RankSettings[RANK].damageMultiplierPerRoom)
 			if not Room:FindFirstChild("EnemySpawn") then
 				continue
 			end
@@ -182,7 +185,7 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 				EnemyRig:PivotTo(TargetPart:GetPivot() * CFrame.new(0, 1.5, 0) * CFrame.Angles(0, math.rad(ang), 0))
 
 				EnemyRig.Name = "Goblin"
-				EnemyService:CreateEnemy(EnemyRig, { damage = roomIndex * 1.25, health = roomIndex * 1.05 })
+				EnemyService:CreateEnemy(EnemyRig, { damage = roomIndex * GameData.dungeonsData.RankSettings[RANK].damageMultiplierPerRoom, health = roomIndex * GameData.dungeonsData.RankSettings[RANK].healthMultiplierPerRoom })
 			end
 		end
 
@@ -204,9 +207,8 @@ function DungeonService:GenerateDungeonFromRank(rank: string)
 		["A"] = 70,
 		["S"] = 80,
 	}
-	print(rank, Rooms[rank])
 	local RoomAmount = Rooms[rank]
-	self:GenerateLinearDungeon(RoomAmount - 10, RoomAmount)
+	self:GenerateLinearDungeon(RoomAmount - 10, RoomAmount, rank)
 	DungeonGenerated = true
 end
 

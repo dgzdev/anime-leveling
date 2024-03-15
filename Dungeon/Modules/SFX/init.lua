@@ -13,6 +13,9 @@ function Sounds:GetRandomFrom(folder: Folder): Sound
 end
 
 function Sounds:_Apply(target: Model, action: string)
+	if not target then
+		return
+	end
 	if not target:IsDescendantOf(game.Workspace) then
 		return
 	end

@@ -29,6 +29,10 @@ function WeaponService:WeaponInput(
 
 	local EquippedItemName = PlayerData.Equiped.Weapon
 	local itemData = GameData.gameWeapons[EquippedItemName]
+	if not itemData then
+		return
+	end
+
 	local NoSpaceName = EquippedItemName:gsub(" ", "")
 	local WeaponType = Weapons[itemData.Type]
 

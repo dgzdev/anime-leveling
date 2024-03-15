@@ -19,12 +19,48 @@ return function(
 	local Ray = RaycastParams.new()
 	Ray.FilterType = Enum.RaycastFilterType.Exclude
 	Ray.FilterDescendantsInstances = { Character, Workspace.Enemies, Workspace.NPC }
+	Ray.RespectCanCollide = false
+	Ray.IgnoreWater = false
 
 	local Distance = 45
+	local Pos
 
-	local RayResult = Workspace:Raycast(CFramePosition.Position, CFramePosition.LookVector * Distance, Ray)
+	local debugPart = Instance.new("Part")
+	debugPart.Parent = Workspace
+	debugPart.Anchored = true
+	debugPart.Transparency = 0
+	debugPart.Color = Color3.new(0,1,0)
+	debugPart.CanCollide = false
+	debugPart.Size = Vector3.new(1, 1, 1)
+	debugPart.Name = "Origin"
+	debugPart.CFrame = CFramePosition * CFrame.new(0,0,2.5)
+
+	local debugPart3 = Instance.new("Part")
+	debugPart3.Parent = Workspace
+	debugPart3.Anchored = true
+	debugPart3.Transparency = 0
+	debugPart3.Color = Color3.new(0,0,1)
+	debugPart3.CanCollide = false
+	debugPart3.Name = "Default"
+	debugPart3.Size = Vector3.new(1, 1, 1)
+	debugPart3.CFrame = CFramePosition * CFrame.new(0,0,-Distance)
+
+	local RayResult = Workspace:Raycast((CFramePosition * CFrame.new(0,0,2.5)).Position, CFramePosition.LookVector * Distance, Ray)
 	if RayResult then
-		Distance = (CFramePosition.Position - RayResult.Position).Magnitude ---distancia q ele deve teleportar
+		Distance = math.floor((CFramePosition.Position - RayResult.Position).Magnitude) ---distancia q ele deve teleportar
+		Pos = RayResult.Position
+
+		local debugPart2 = Instance.new("Part")
+		debugPart2.Parent = Workspace
+		debugPart2.Anchored = true
+		debugPart2.Transparency = 0
+		debugPart2.Color = Color3.new(1,0,0)
+		debugPart2.CanCollide = false
+		debugPart2.Name = "Result"
+		debugPart2.Size = Vector3.new(1, 1, 1)
+		debugPart2.Position = RayResult.Position
+
+		print(Distance, RayResult.Instance.Parent)
 	end
 
 	RenderService:RenderForPlayersInArea(CFramePosition.Position, 200, {
@@ -55,7 +91,15 @@ return function(
 		Highlight:Destroy()
 	end)
 
-	Character:PivotTo(Character:GetPivot() * CFrame.new(0, 0, -Distance))
+	if Distance > 6.5 then
+		if Pos then
+			Character:PivotTo(CFrame.new(Pos))
+		else
+			Character:PivotTo(CFramePosition * CFrame.new(0, 0, -Distance))
+		end
+	end
+
+
 
 	local Size = Vector3.new(5, 5, Distance)
 	HitboxService:CreateFixedHitbox(

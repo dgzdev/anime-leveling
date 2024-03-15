@@ -276,6 +276,16 @@ return {
 			Id = 11,
 		},
 	},
+	dungeonsData = {
+		RankSettings = {
+			["B"] = {
+				damageMultiplierPerRoom  = 1.25,
+				healthMultiplierPerRoom = 1.05,
+				BaseEnemyHealthMultiplier = 3,
+				BaseEnemyDamageMultiplier = 3
+			}
+		}
+	},
 	gameWeapons = {
 		["Fists"] = {
 			Type = "Melee",
@@ -396,8 +406,8 @@ return {
 				callback = function(Player, Info : table)
 					if not Info then return end
 					if not Info.DamageMultiplier then return end
-					
-					if Info.DamageMultiplier < 1 then 
+
+					if Info.DamageMultiplier < 1 then
 						warn("For DamageBuff's callback, Info.DamageMultiplier should be greater than 1")
 						Info.DamageMultiplier = 1
 					end
@@ -411,18 +421,6 @@ return {
 		Debuffs = {}
 	},
 	gameEnemies = {
-		["Teste"] = {
-			Health = 10000,
-			Damage = 1,
-			Speed = 1,
-			Inteligence = 1,
-			Experience = 100,
-			AttackType = "Melee",
-			Gold = 100,
-			Drops = {
-				["Iron Starter Sword"] = 15,
-			},
-		},
 		["Goblin"] = {
 			Health = 50,
 			Damage = 5,

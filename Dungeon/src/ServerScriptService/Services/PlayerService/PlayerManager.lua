@@ -110,7 +110,7 @@ function PlayerManager:LoadProfile()
 
 		return Profile
 	else
-		return error("Error while loading profile.")
+		return self.Player:Kick("Error while loading profile.")
 	end
 end
 
