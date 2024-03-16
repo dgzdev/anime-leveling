@@ -1,0 +1,9 @@
+[package]
+name = "aspecky/topbarplus"
+version = "2.9.3"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+authors = ["ForeverHD"]
+description = "ForeverHD's TopbarPlus"
+
+[dependencies]

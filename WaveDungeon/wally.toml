@@ -1,0 +1,13 @@
+[package]
+name = "joao/gameplace"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[dependencies]
+Knit = "sleitnick/knit@^1.7"
+cmdr = "evaera/cmdr@1.12.0"
+janitor = "howmanysmall/janitor@1.15.7"
+profileservice = "nidoxs/profileservice@1.0.0"
+smartbone-2 = "jakeywastaken/smartbone-2@^0.3.0"
+topbarplus = "aspecky/topbarplus@2.9.3"

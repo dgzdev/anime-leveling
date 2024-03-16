@@ -49,6 +49,7 @@ function RaidService:QueryControl(
 	bool: BoolValue
 ) --> Começa a contar a partir do momento que tem 5 players
 	local textlabel: TextLabel = zoneBillboard:FindFirstChild("TextLabel")
+
 	local thread = task.spawn(function()
 		for i = time, 1, -1 do
 			if bool.Value == true then
