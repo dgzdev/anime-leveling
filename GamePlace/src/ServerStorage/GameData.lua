@@ -218,6 +218,11 @@ return {
 			Rank = "S",
 			Id = 12,
 		},
+		["test1"] = {
+			AchiveData = os.time(),
+			Rank = "S",
+			Id = 13,
+		},
 	},
 	gameWeapons = {
 		["Fists"] = {
@@ -288,6 +293,12 @@ return {
 		},
 		["Dagger2"] = {
 			Type = "Dagger",
+			Damage = 3 ^ 10,
+			Rarity = "S",
+			SubRarity = "I", -- "II" | "III" | "IV" | "V"
+		},
+		["test1"] = {
+			Type = "Transform",
 			Damage = 3 ^ 10,
 			Rarity = "S",
 			SubRarity = "I", -- "II" | "III" | "IV" | "V"
@@ -438,6 +449,24 @@ return {
 				LeftLegColor = Color3.fromRGB(61, 36, 75),
 				RightLegColor = Color3.fromRGB(61, 36, 75),
 			}),
+			Gold = 30,
+		},
+		["Wolf"] = {
+			Health = 150,
+
+			Range = 10,
+			View = 40,
+
+			Speed = 9,
+
+			Damage = 15,
+
+			Experience = 30,
+
+			Inteligence = 3,
+
+			AttackType = "Melee",
+
 			Gold = 30,
 		},
 	},

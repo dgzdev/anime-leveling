@@ -114,8 +114,10 @@ local TestDagger = {
 				})
 			end)
 
-			local Animation =
-				ReplicatedStorage:WaitForChild("Animations"):WaitForChild("Sword"):WaitForChild("Hit"):WaitForChild("2")
+			local Animation = ReplicatedStorage:WaitForChild("Animations")
+				:WaitForChild("Dagger")
+				:WaitForChild("Hit")
+				:WaitForChild("2")
 			if PlayingAnimation then
 				PlayingAnimation:Stop()
 			end
@@ -185,6 +187,18 @@ local TestDagger = {
 
 					SetCooldown("Venom Palm", 3)
 					SFX:Create(RootPart, "Death")
+
+					local Animation = ReplicatedStorage:WaitForChild("Animations")
+						:WaitForChild("Dagger")
+						:WaitForChild("Hit")
+						:WaitForChild("2")
+					if PlayingAnimation then
+						PlayingAnimation:Stop()
+					end
+
+					PlayingAnimation = Animator:LoadAnimation(Animation)
+					PlayingAnimation:AdjustSpeed(0.25)
+					PlayingAnimation:Play(0.15)
 				end
 
 				HoldingTime = 0

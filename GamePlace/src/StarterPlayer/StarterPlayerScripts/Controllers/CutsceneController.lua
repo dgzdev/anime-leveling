@@ -103,11 +103,11 @@ local function AnimateCamera(animation: string)
 
 				for _, basepart: BasePart in (Character:GetDescendants()) do
 					if basepart:IsA("BasePart") then
-						basepart.LocalTransparencyModifier = basepart.Transparency
+						basepart.LocalTransparencyModifier = 0
 						Connections[#Connections + 1] = basepart
 							:GetPropertyChangedSignal("LocalTransparencyModifier")
 							:Connect(function()
-								basepart.LocalTransparencyModifier = basepart.Transparency
+								basepart.LocalTransparencyModifier = 0
 							end)
 					end
 				end

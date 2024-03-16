@@ -37,7 +37,7 @@ type e_settings =
 local settings_test: e_settings = {
 	health = 1,
 	damage = 1,
-	wander = false,
+	wander = true,
 
 	attack_range = 20,
 	attack_radius = 5,
@@ -56,7 +56,7 @@ local settings_test: e_settings = {
 local default_settings: e_settings = {
 	health = 100,
 	damage = 5,
-	wander = false,
+	wander = true,
 
 	attack_range = 20,
 	attack_radius = 5,

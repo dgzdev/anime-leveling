@@ -140,6 +140,18 @@ function InventoryService:EquipFromData(player: Player, playerData)
 
 	player.Character:FindFirstChild("Weapons"):ClearAllChildren()
 
+	local names = { "weaponSupport", "HumanoidRootPart", "RightHand", "LeftHand", "HeadSubject", "RootPart" }
+	for _, bp: BasePart in player.Character:GetDescendants() do
+		if table.find(names, bp.Name) then
+			print("continue")
+			continue
+		end
+		if bp:IsA("BasePart") then
+			print("set transparency")
+			bp.Transparency = 0
+		end
+	end
+
 	local m = game.ReplicatedStorage.Models[WeaponType .. "s"][Equiped]
 	if m then
 		if m.ClassName == "Folder" then
@@ -156,6 +168,30 @@ function InventoryService:EquipFromData(player: Player, playerData)
 
 					local ModelClone = Model:Clone()
 					ModelClone.Parent = player.Character:FindFirstChild("Weapons")
+
+					if ModelClone:GetAttribute("Hide") == true then
+						local p: BasePart = player.Character:FindFirstChild(ModelClone.Name)
+						if p then
+							if p:IsA("BasePart") then
+								p.Transparency = 1
+							end
+						end
+
+						local cloth = player.Character:WaitForChild("Clothes"):FindFirstChild(ModelClone.Name, true)
+						if cloth then
+							if cloth:IsA("BasePart") then
+								print("hide cloth")
+								cloth.Transparency = 1
+
+								for _, value: BasePart in cloth:GetDescendants() do
+									if value:IsA("BasePart") then
+										value.Transparency = 1
+									end
+								end
+							end
+						end
+					end
+
 					ModelClone.Name = "Weapon"
 
 					local Motor6D = Instance.new("Motor6D")

@@ -92,15 +92,6 @@ function EnemyService:CreateEnemy(
 
 		task.wait(1)
 		model:Destroy()
-
-		task.wait(5)
-
-		local c = clone:Clone()
-
-		c:FindFirstChild(Data.Name):Destroy()
-		c:FindFirstChild(healthHud.Name):Destroy()
-
-		c.Parent = Workspace.Enemies
 	end)
 
 	model.Destroying:Connect(function()
@@ -118,7 +109,9 @@ function EnemyService:CreateEnemy(
 		local enemyData = GameData.gameEnemies[model.Name]
 
 		if enemyData.HumanoidDescription then
-			Humanoid:ApplyDescription(enemyData.HumanoidDescription)
+			pcall(function()
+				Humanoid:ApplyDescription(enemyData.HumanoidDescription)
+			end)
 		end
 
 		Damage = enemyData.Damage

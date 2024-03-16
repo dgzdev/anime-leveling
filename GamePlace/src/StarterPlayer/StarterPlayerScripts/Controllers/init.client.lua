@@ -38,7 +38,7 @@ Knit.Start({ ServicePromises = false }):catch(warn)
 local SmartBone = require(game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("smartbone-2"))
 
 task.spawn(function()
-	SmartBone.Start() -- Start the runtime
+	-- SmartBone.Start() -- Start the runtime
 end)
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")

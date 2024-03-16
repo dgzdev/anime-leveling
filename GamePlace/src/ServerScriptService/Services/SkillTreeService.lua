@@ -7,6 +7,7 @@ local Knit = require(ReplicatedStorage.Packages.Knit)
 local GameData = require(ServerStorage.GameData)
 
 local PlayerService
+local RaidService
 
 local SkillTreeService = Knit.CreateService({
 	Name = "SkillTreeService",
@@ -110,8 +111,9 @@ function SkillTreeService.Client:GetSkillsAvailableToUnlock(Player)
 	return self.Server:GetAvailableSkillsToUnlock(Player)
 end
 
-function SkillTreeService.KnitStart()
+function SkillTreeService.KnitInit()
 	PlayerService = Knit.GetService("PlayerService")
+	RaidService = Knit.GetService("RaidService")
 end
 
 return SkillTreeService
