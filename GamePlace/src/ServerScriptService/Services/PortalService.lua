@@ -90,7 +90,6 @@ function PortalService:HasPortalClose(Position: Vector3, Radius: number)
 end
 
 function PortalService:Teleport(player: Player)
-	print(self)
 	if not player.Character:IsDescendantOf(Workspace) then
 		return false
 	end
@@ -98,15 +97,13 @@ function PortalService:Teleport(player: Player)
 	if RunService:IsStudio() then
 		return true
 	else
-		local accessID = TeleportService:ReserveServer(16737150851)
-
-		local teleportData = {
-			placeId = game.PlaceId,
-			jobId = game.JobId,
+		local TeleportOptions = Instance.new("TeleportOptions")
+		TeleportOptions.ShouldReserveServer = true
+		TeleportOptions:SetTeleportData({
 			Rank = self.Rank,
-		}
+		})
 
-		TeleportService:TeleportToPrivateServer(16737150851, accessID, { player }, "", teleportData)
+		TeleportService:TeleportAsync(16737150851, { player }, TeleportOptions)
 	end
 
 	if player.Character then
