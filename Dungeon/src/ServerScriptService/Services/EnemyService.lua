@@ -67,7 +67,7 @@ function EnemyService:CreateEnemy(
 
 	local Damage = math.floor(props.damage)
 		+ (GameData.gameEnemies[model.Name].Damage * GameData.dungeonsData.RankSettings.B.BaseEnemyDamageMultiplier)
-	print(Damage)
+	--print(Damage)
 	local RespawnTime = 10
 	local Inteligence = props.inteligence or 10
 	local Humanoid = model:FindFirstChildWhichIsA("Humanoid")
@@ -108,9 +108,10 @@ function EnemyService:CreateEnemy(
 
 	if GameData.gameEnemies[model.Name] then
 		local enemyData = GameData.gameEnemies[model.Name]
-
 		if enemyData.HumanoidDescription then
-			Humanoid:ApplyDescription(enemyData.HumanoidDescription)
+			pcall(function()
+				Humanoid:ApplyDescription(enemyData.HumanoidDescription)
+			end)
 		end
 
 		Damage = math.floor(props.damage)

@@ -178,7 +178,22 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 			local RandomEnemyType = math.random(1, ProgressToHundreds)
 			local Spawns = Room:WaitForChild("EnemySpawn"):GetChildren()
 			local EnemyRoomAmount = math.random(1, #Spawns)
-			for i = 1, EnemyRoomAmount, 1 do
+			local colorA = Color3.new(0,0,1)
+			local colorB = Color3.new(1,0,0)
+
+			local final = colorA:Lerp(colorB, Progress)
+
+			--print(final)
+
+			--print(WillSpawnCrystal, (Progress + .4) * roomIndex)
+
+
+			for i = 1, EnemyRoomAmount, 1 do	
+				local WillSpawnCrystal = math.random(roomIndex * .5,100 * Progress)
+
+				if WillSpawnCrystal > (Progress + 1) * roomIndex then
+					print(WillSpawnCrystal, (Progress + 1) * roomIndex, roomIndex)
+				end
 				local EnemyWillSpawn = math.random(1, #Spawns)
 				local TargetPart = Spawns[EnemyWillSpawn]
 				local EnemyRig = ReplicatedStorage.Essentials:WaitForChild("RIG"):Clone()
@@ -200,7 +215,7 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 					health = roomIndex * GameData.dungeonsData.RankSettings[RANK].healthMultiplierPerRoom,
 				})
 				MobsAmount += 1
-				print(math.floor((ProgressToHundreds * MobsAmount) / 100), roomIndex)
+				--print(math.floor((ProgressToHundreds * MobsAmount) / 100), roomIndex)
 			end
 		end
 
