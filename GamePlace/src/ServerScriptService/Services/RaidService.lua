@@ -13,14 +13,14 @@ local Zone = require(game.ReplicatedStorage.Modules.Zone)
 local Areas = {
 	["Zone1"] = {
 		Time = 20,
-		Limit = 5,
-		Minimum = 5,
+		Limit = 4,
+		Minimum = 4,
 	},
 
 	["Zone2"] = {
 		Time = 15,
 		Limit = 5,
-		Minimum = 2,
+		Minimum = 5,
 	},
 
 	["Zone3"] = {
@@ -71,8 +71,9 @@ function RaidService:QueryControl(
 end
 
 function RaidService:TeleportToPlace(players: Players)
-	local reserved = TeleportService:ReserveServer(16737150851)
-	TeleportService:TeleportToPrivateServer(16737150851, reserved, players)
+	local reserved = TeleportService:ReserveServer(16760466880)
+	print(players)
+	TeleportService:TeleportToPrivateServer(16760466880, reserved, players)
 end
 
 function RaidService:Init()
@@ -82,7 +83,7 @@ function RaidService:Init()
 			local billboard = ReplicatedStorage.Models.UI.RaidBillboard:Clone()
 			billboard.Parent = z
 			billboard.TextLabel.Text = "0" .. "/" .. Areas[z.Name].Limit
-
+			billboard.Require.Text = "MINIMUM: " .. Areas[z.Name].Minimum 
 			local shouldBreak = Instance.new("BoolValue")
 			zonemanager.playerEntered:Connect(function(player: Player)
 				local playersArray = zonemanager:getPlayers()
@@ -96,6 +97,7 @@ function RaidService:Init()
 				if #playersArray <= Areas[z.Name].Limit and #playersArray >= Areas[z.Name].Minimum then
 					shouldBreak.Value = false
 					RaidService:QueryControl(playersArray, true, Areas[z.Name].Time, billboard, shouldBreak)
+					print("teleporting? countdown test", playersArray)
 				end
 
 				billboard.TextLabel.Text = #playersArray .. "/" .. Areas[z.Name].Limit

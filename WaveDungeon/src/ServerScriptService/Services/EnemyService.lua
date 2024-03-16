@@ -88,7 +88,7 @@ function EnemyService:CreateEnemy(
 	local clone = model:Clone()
 	clone.Parent = ServerStorage:WaitForChild("Enemies")
 
-	RagdollService:UnRagdoll(clone)
+	--RagdollService:UnRagdoll(clone)
 
 	Humanoid.Died:Connect(function()
 		for _, value in (Animator:GetPlayingAnimationTracks()) do
