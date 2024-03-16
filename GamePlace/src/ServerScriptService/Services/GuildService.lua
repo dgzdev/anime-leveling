@@ -10,7 +10,7 @@ local GuildService = Knit.CreateService({
 })
 
 local PlayerService
-local GuildDataStores = DataStoreService:GetDataStore("Guilds - teste - 1")
+local GuildDataStores = DataStoreService:GetGlobalDataStore("Guilds - teste - 1")
 
 local GuildsCache = {}
 

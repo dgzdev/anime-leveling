@@ -577,7 +577,8 @@ function Class:SolveTransform(BoneTree, Delta: number) -- Parallel safe
 			ParentBone.CalculatedWorldCFrame = BoneParent.WorldCFrame:Lerp(CFrame.new(ParentBone.Position) * Rotation, alpha)
 		end
 
-		SB_ASSERT_CB(not IsNaN(ParentBone.CalculatedWorldCFrame.Position), warn, "If you see this report this as a bug, (NaN Calc world cframe)")
+		ParentBone.CalculatedWorldCFrame = CFrame.new(ParentBone.Position) * Rotation
+		return
 	end
 	debug.profileend()
 end
