@@ -8,7 +8,6 @@ local DungeonService = Knit.CreateService({
 
 local EnemyService
 
-
 local GameData = require(ServerStorage.GameData)
 local DungeonAssets = ReplicatedStorage.Models.Dungeon
 local DungeonFolder = game.Workspace:FindFirstChild("Dungeon")
@@ -115,7 +114,7 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 
 	local tries = 20
 	local lastRoomTested = 0
-
+	local MobsAmount = 0
 	local roomIndex = 1
 	while roomIndex <= ROOMS_AMOUNT do
 		local Room = DungeonService:GetRandomRoom()
@@ -169,11 +168,14 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 		if roomIndex == "Start" then
 			continue
 		else
+			--print(roomIndex)
 			--=print(roomIndex * GameData.dungeonsData.RankSettings[RANK].damageMultiplierPerRoom)
 			if not Room:FindFirstChild("EnemySpawn") then
 				continue
 			end
-			local Progress = roomIndex/ROOMS_AMOUNT
+			local Progress = roomIndex / ROOMS_AMOUNT
+			local ProgressToHundreds = Progress * 100
+			local RandomEnemyType = math.random(1, ProgressToHundreds)
 			local Spawns = Room:WaitForChild("EnemySpawn"):GetChildren()
 			local EnemyRoomAmount = math.random(1, #Spawns)
 			for i = 1, EnemyRoomAmount, 1 do
@@ -185,15 +187,20 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 
 				EnemyRig:PivotTo(TargetPart:GetPivot() * CFrame.new(0, 1.5, 0) * CFrame.Angles(0, math.rad(ang), 0))
 
-				if Progress >= .7 then
+				if math.floor((ProgressToHundreds * MobsAmount) / 100) >= 140 then
 					EnemyRig.Name = "Troll"
-				elseif Progress >= .45 then
+				elseif math.floor((ProgressToHundreds * MobsAmount) / 100) >= 80 then
 					EnemyRig.Name = "Orc"
 				else
 					EnemyRig.Name = "Goblin"
 				end
-				
-				EnemyService:CreateEnemy(EnemyRig, { damage = roomIndex * GameData.dungeonsData.RankSettings[RANK].damageMultiplierPerRoom, health = roomIndex * GameData.dungeonsData.RankSettings[RANK].healthMultiplierPerRoom })
+
+				EnemyService:CreateEnemy(EnemyRig, {
+					damage = roomIndex * GameData.dungeonsData.RankSettings[RANK].damageMultiplierPerRoom,
+					health = roomIndex * GameData.dungeonsData.RankSettings[RANK].healthMultiplierPerRoom,
+				})
+				MobsAmount += 1
+				print(math.floor((ProgressToHundreds * MobsAmount) / 100), roomIndex)
 			end
 		end
 

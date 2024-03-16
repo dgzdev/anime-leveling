@@ -56,8 +56,6 @@ function EnemyService:CreateEnemy(
 	Data.Parent = model
 	Data.Name = "Data"
 
-	model.Parent = Workspace.Enemies
-
 	local EnemyData = require(Data)
 
 	--[[
@@ -67,14 +65,17 @@ function EnemyService:CreateEnemy(
 
 	]]
 
-	local Damage = math.floor(props.damage) + (GameData.gameEnemies[model.Name].Damage * GameData.dungeonsData.RankSettings.B.BaseEnemyDamageMultiplier)
+	local Damage = math.floor(props.damage)
+		+ (GameData.gameEnemies[model.Name].Damage * GameData.dungeonsData.RankSettings.B.BaseEnemyDamageMultiplier)
 	print(Damage)
 	local RespawnTime = 10
 	local Inteligence = props.inteligence or 10
 	local Humanoid = model:FindFirstChildWhichIsA("Humanoid")
 
-	Humanoid.MaxHealth = math.floor(props.health) + (GameData.gameEnemies[model.Name].Health * GameData.dungeonsData.RankSettings.B.BaseEnemyHealthMultiplier)
-	Humanoid.Health = math.floor(props.health) + (GameData.gameEnemies[model.Name].Health * GameData.dungeonsData.RankSettings.B.BaseEnemyHealthMultiplier)
+	Humanoid.MaxHealth = math.floor(props.health)
+		+ (GameData.gameEnemies[model.Name].Health * GameData.dungeonsData.RankSettings.B.BaseEnemyHealthMultiplier)
+	Humanoid.Health = math.floor(props.health)
+		+ (GameData.gameEnemies[model.Name].Health * GameData.dungeonsData.RankSettings.B.BaseEnemyHealthMultiplier)
 	Humanoid.AutoRotate = true
 
 	local Root = Humanoid.RootPart
@@ -112,7 +113,8 @@ function EnemyService:CreateEnemy(
 			Humanoid:ApplyDescription(enemyData.HumanoidDescription)
 		end
 
-		Damage = math.floor(props.damage) + (GameData.gameEnemies[model.Name].Damage * GameData.dungeonsData.RankSettings.B.BaseEnemyDamageMultiplier)
+		Damage = math.floor(props.damage)
+			+ (GameData.gameEnemies[model.Name].Damage * GameData.dungeonsData.RankSettings.B.BaseEnemyDamageMultiplier)
 		Inteligence = enemyData.Inteligence
 	end
 
@@ -178,6 +180,9 @@ function EnemyService:CreateEnemy(
 			end,
 		},
 	})
+
+	model.Parent = Workspace.Enemies
+
 	self.en = eN
 	return eN
 end
