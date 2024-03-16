@@ -85,6 +85,11 @@ function PlayerManager:GetData()
 	return data
 end
 
+function PlayerManager:GetWholeData()
+	local data: GameData.SlotData = self.Profile.Data
+	return data
+end
+
 function PlayerManager:GetPlayerSlot()
 	local CurrentSlot = self.Profile.Data["Selected_Slot"]
 	local Slot: GameData.PlayerSlot = self.Profile.Data["Slots"][CurrentSlot]

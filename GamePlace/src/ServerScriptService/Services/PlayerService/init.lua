@@ -99,6 +99,19 @@ function PlayerService:GetData(player: Player | Model): GameData.SlotData
 	return Manager:GetData()
 end
 
+function PlayerService:GetWholeData(player: Player)
+	local Manager = Managers[player.UserId]
+
+	if not Manager then
+		repeat
+			Manager = Managers[player.UserId]
+			task.wait(1)
+		until Manager
+	end
+
+	return Manager:GetData()
+end
+
 function PlayerService:GetSlot(player: Player)
 	local Manager = Managers[player.UserId]
 	if not Manager then

@@ -109,7 +109,6 @@ function ProgressionService:AddExp(Player, Amount)
 
 		local Points = PlayerData.PointsAvailable or 0
 		PlayerData.PointsAvailable = Points + 1
-		print(PlayerData.PointsAvailable)
 
 		self:AddExp(Player, Amount - ExpToNextLevel)
 		self.Client.LevelUp:Fire(Player, PlayerData.Level)

@@ -107,7 +107,6 @@ function SkillTreeService:GetAvailableSkillsToUnlock(Player)
 end
 
 function SkillTreeService.Client:GetSkillsAvailableToUnlock(Player)
-	print(Player)
 	return self.Server:GetAvailableSkillsToUnlock(Player)
 end
 

@@ -166,7 +166,7 @@ function GuiController:BindHotbar()
 		end
 
 		if Model then
-			local Clone = Model:Clone()
+			local Clone: Model = Model:Clone()
 
 			if Clone:IsA("Folder") then
 				local a = Clone:FindFirstChildWhichIsA("Model", true)
@@ -182,7 +182,6 @@ function GuiController:BindHotbar()
 				Clone.Parent = newItem
 			end
 			if Clone:IsA("Model") then
-				print("model")
 				local WorldModel = newItem:FindFirstChild("WorldModel", true)
 				Clone.Parent = WorldModel
 
@@ -191,9 +190,17 @@ function GuiController:BindHotbar()
 				local Camera = Instance.new("Camera")
 				Camera.Parent = ViewFrame
 				ViewFrame.CurrentCamera = Camera
-				Camera.CFrame = CFrame.new(0, 0, 2)
 
-				Clone:PivotTo(CFrame.new())
+				local Size = Clone:GetExtentsSize().Magnitude
+
+				Camera.FieldOfView = 80
+				Camera.CameraSubject = Clone
+				Camera.CameraType = Enum.CameraType.Scriptable
+
+				Clone:PivotTo(CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(90), math.rad(90), 0))
+
+				Camera.CFrame = CFrame.new(Clone:GetBoundingBox().Position + Vector3.new(0, 0, 2 + (Size / 4)))
+				Camera.Focus = Camera.CFrame
 			end
 		end
 

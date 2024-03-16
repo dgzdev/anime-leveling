@@ -157,7 +157,6 @@ Events.Buttons = {
 
 	["GetSkillsAvailable"] = function(Gui: GuiButton)
 		local Skills = SkillTreeService:GetSkillsAvailableToUnlock(Players.LocalPlayer)
-		print(Skills)
 	end,
 	["Close"] = function(Gui: GuiButton)
 		Gui:FindFirstAncestorWhichIsA("ScreenGui").Enabled = false

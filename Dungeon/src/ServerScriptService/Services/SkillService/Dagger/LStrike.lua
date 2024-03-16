@@ -49,27 +49,6 @@ return function(
 		position = CFramePosition,
 	})
 
-	task.spawn(function()
-		local Ticks = 5
-
-		local Highlight = Instance.new("Highlight")
-		Highlight.Parent = Character
-
-		Highlight.FillColor = Color3.new(0, 0, 0)
-		Highlight.FillTransparency = 0.1
-		Highlight.OutlineTransparency = 0.5
-		Highlight.OutlineColor = Color3.new(1, 1, 1)
-
-		Highlight.Enabled = true
-
-		for i = 1, Ticks do
-			Highlight.Enabled = not Highlight.Enabled
-			task.wait(0.1)
-		end
-
-		Highlight:Destroy()
-	end)
-
 	if Distance > 6.5 then
 		if Pos then
 			Character:PivotTo(CFrame.new(Pos))

@@ -107,7 +107,7 @@ local Sword = {
 				return
 			end
 
-			local Combos = Animations:WaitForChild("Sword"):WaitForChild("Hit"):GetChildren()
+			local Combos = Animations:WaitForChild("Staff"):WaitForChild("Hit"):GetChildren()
 			table.sort(Combos, function(a, b)
 				return a.Name < b.Name
 			end)
@@ -153,7 +153,7 @@ local Sword = {
 				})
 			end)
 
-			PlayingAnimation:Play(DelayTime)
+			PlayingAnimation:Play(DelayTime, 1, 2)
 
 			_G.Combo += 1
 
@@ -215,8 +215,8 @@ local Sword = {
 
 			SFX:Create(RootPart, "Slash", 0, 60, false)
 
-			PlayingAnimation = Animator:LoadAnimation(game.ReplicatedStorage.Animations.Sword.Hit["1"])
-			PlayingAnimation:Play(0.15)
+			PlayingAnimation = Animator:LoadAnimation(game.ReplicatedStorage.Animations.Staff.Hit["1"])
+			PlayingAnimation:Play(0.15, 1, 2)
 
 			Humanoid:SetAttribute("SlideGetUp", true)
 			Humanoid:SetAttribute("SlideGetUp", false)

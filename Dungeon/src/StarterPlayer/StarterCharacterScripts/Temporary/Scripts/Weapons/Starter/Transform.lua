@@ -37,17 +37,11 @@ local function SetCooldown(name: string, cooldown: number)
 		task.spawn(function()
 			local btn = Frame:FindFirstChild("Button", true)
 			btn.BackgroundColor3 = Color3.fromRGB(241, 127, 129)
-
-			local anim = TweenService:Create(
-				btn,
-				TweenInfo.new(cooldown, Enum.EasingStyle.Linear),
-				{ BackgroundColor3 = Color3.new(0.9, 0.9, 0.9) }
-			)
-
+			local anim =
+				TweenService:Create(btn, TweenInfo.new(cooldown), { BackgroundColor3 = Color3.new(0.9, 0.9, 0.9) })
 			anim:Play()
+			anim.Completed:Wait()
 		end)
-	else
-		warn("Failed to find frame with name:", name)
 	end
 end
 
@@ -83,7 +77,7 @@ local Sword = {
 				end
 			end
 
-			if CheckCooldown("Light Spell") then
+			if CheckCooldown("Slash") then
 				return
 			end
 
@@ -107,7 +101,7 @@ local Sword = {
 				return
 			end
 
-			local Combos = Animations:WaitForChild("Staff"):WaitForChild("Hit"):GetChildren()
+			local Combos = Animations:WaitForChild("Sword"):WaitForChild("Hit"):GetChildren()
 			table.sort(Combos, function(a, b)
 				return a.Name < b.Name
 			end)
@@ -121,7 +115,7 @@ local Sword = {
 			SFX:Create(RootPart, "Slash", 0, 60, false)
 
 			PlayingAnimation = Animator:LoadAnimation(ComboAnimation)
-			SetCooldown("Light Spell", PlayingAnimation.Length)
+			SetCooldown("Slash", PlayingAnimation.Length)
 
 			local DelayTime = 0.15
 			if _G.Combo == 1 then
@@ -131,29 +125,15 @@ local Sword = {
 			Humanoid:SetAttribute("SlideGetUp", true)
 			Humanoid:SetAttribute("SlideGetUp", false)
 
-			local WeaponsFolder = Character:FindFirstChild("Weapons", true)
-			if not WeaponsFolder then
-				return warn("No weapons folder")
-			end
-
-			local DmgPoint: Attachment = WeaponsFolder:FindFirstChild("DmgPoint", true)
-			if not DmgPoint then
-				return warn("No dmg point")
-			end
-
 			task.spawn(function()
-				WeaponService:WeaponInput("LSpell", Enum.UserInputState.End, {
+				WeaponService:WeaponInput("Attack", Enum.UserInputState.End, {
 					Position = RootPart.CFrame,
-
-					Mouse = Players.LocalPlayer:GetMouse().UnitRay.Direction,
-					From = DmgPoint.WorldCFrame,
-
 					Combo = _G.Combo,
 					Combos = #Combos,
 				})
 			end)
 
-			PlayingAnimation:Play(DelayTime, 1, 2)
+			PlayingAnimation:Play(DelayTime)
 
 			_G.Combo += 1
 
@@ -161,7 +141,7 @@ local Sword = {
 				_G.Combo = 1
 			end
 		end,
-		name = "Light Spell",
+		name = "Slash",
 	},
 	[Enum.UserInputType.MouseButton2] = {
 		callback = function(action, inputstate, inputobject)
@@ -177,70 +157,15 @@ local Sword = {
 				return
 			end
 
-			if PlayingAnimation then
-				if PlayingAnimation.IsPlaying then
-					return
-				end
-			end
-
-			if CheckCooldown("Heavy Spell") then
-				return
-			end
-
-			if Humanoid.WalkSpeed == 0 then
-				return
-			end
-
-			if RootPart.Anchored then
-				return
-			end
-
-			if Humanoid:GetState() ~= Enum.HumanoidStateType.Running then
-				return
-			end
-
-			if Humanoid.Health <= 0 then
+			if CheckCooldown("Defense") then
 				return
 			end
 
 			if Character:GetAttribute("Stun") then
 				return
 			end
-
-			SetCooldown("Heavy Spell", 4)
-
-			if PlayingAnimation then
-				PlayingAnimation:Stop()
-			end
-
-			SFX:Create(RootPart, "Slash", 0, 60, false)
-
-			PlayingAnimation = Animator:LoadAnimation(game.ReplicatedStorage.Animations.Staff.Hit["1"])
-			PlayingAnimation:Play(0.15, 1, 2)
-
-			Humanoid:SetAttribute("SlideGetUp", true)
-			Humanoid:SetAttribute("SlideGetUp", false)
-
-			local WeaponsFolder = Character:FindFirstChild("Weapons", true)
-			if not WeaponsFolder then
-				return warn("No weapons folder")
-			end
-
-			local DmgPoint: Attachment = WeaponsFolder:FindFirstChild("DmgPoint", true)
-			if not DmgPoint then
-				return warn("No dmg point")
-			end
-
-			task.spawn(function()
-				WeaponService:WeaponInput("HSpell", Enum.UserInputState.End, {
-					Position = RootPart.CFrame,
-
-					Mouse = Players.LocalPlayer:GetMouse().UnitRay.Direction,
-					From = DmgPoint.WorldCFrame,
-				})
-			end)
 		end,
-		name = "Heavy Spell",
+		name = "Defense",
 	},
 }
 

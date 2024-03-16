@@ -4,6 +4,7 @@ export type SubRank = "I" | "II" | "III" | "IV" | "V"
 export type World = "World 1" | "World 2"
 export type WeaponType = "Sword" | "Bow" | "Staff"
 export type ProfileData = {
+	Guild: string?,
 	Slots: {
 		[number]: PlayerSlot | string,
 	},

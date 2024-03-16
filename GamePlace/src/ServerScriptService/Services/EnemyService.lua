@@ -90,6 +90,8 @@ function EnemyService:CreateEnemy(
 			value:Stop()
 		end
 
+		Humanoid.RootPart.Anchored = true
+
 		task.wait(1)
 		model:Destroy()
 	end)

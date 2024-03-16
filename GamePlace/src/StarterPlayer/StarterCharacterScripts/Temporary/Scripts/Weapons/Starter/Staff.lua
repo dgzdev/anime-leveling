@@ -153,7 +153,7 @@ local Sword = {
 				})
 			end)
 
-			PlayingAnimation:Play(DelayTime, 1, 1)
+			PlayingAnimation:Play(DelayTime, 1, 2)
 
 			_G.Combo += 1
 
@@ -216,7 +216,7 @@ local Sword = {
 			SFX:Create(RootPart, "Slash", 0, 60, false)
 
 			PlayingAnimation = Animator:LoadAnimation(game.ReplicatedStorage.Animations.Staff.Hit["1"])
-			PlayingAnimation:Play(0.15, 1, 1)
+			PlayingAnimation:Play(0.15, 1, 2)
 
 			Humanoid:SetAttribute("SlideGetUp", true)
 			Humanoid:SetAttribute("SlideGetUp", false)

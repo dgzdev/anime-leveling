@@ -143,11 +143,9 @@ function InventoryService:EquipFromData(player: Player, playerData)
 	local names = { "weaponSupport", "HumanoidRootPart", "RightHand", "LeftHand", "HeadSubject", "RootPart" }
 	for _, bp: BasePart in player.Character:GetDescendants() do
 		if table.find(names, bp.Name) then
-			print("continue")
 			continue
 		end
 		if bp:IsA("BasePart") then
-			print("set transparency")
 			bp.Transparency = 0
 		end
 	end
@@ -180,7 +178,6 @@ function InventoryService:EquipFromData(player: Player, playerData)
 						local cloth = player.Character:WaitForChild("Clothes"):FindFirstChild(ModelClone.Name, true)
 						if cloth then
 							if cloth:IsA("BasePart") then
-								print("hide cloth")
 								cloth.Transparency = 1
 
 								for _, value: BasePart in cloth:GetDescendants() do

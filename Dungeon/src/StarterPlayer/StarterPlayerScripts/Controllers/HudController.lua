@@ -68,7 +68,8 @@ function Hud:OrganizeHotbar(Profile)
 				Camera.FieldOfView = 80
 				Camera.CameraSubject = itemClone
 				Camera.CameraType = Enum.CameraType.Scriptable
-				Camera.CFrame = CFrame.new(0, 1.4, (Size / 2) + 1)
+
+				Camera.CFrame = CFrame.new(itemClone:GetBoundingBox().Position + Vector3.new(0, 0, 2.35 + (Size / 4)))
 				Camera.Focus = Camera.CFrame
 			end
 			if HaveImage then

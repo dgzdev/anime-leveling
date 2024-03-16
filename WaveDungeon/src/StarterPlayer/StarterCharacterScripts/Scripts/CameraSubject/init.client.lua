@@ -19,9 +19,6 @@ HeadSubject.Anchored = true
 HeadSubject.CanCollide = false
 HeadSubject.Transparency = 1
 HeadSubject.Massless = true
-HeadSubject.CanTouch = false
-HeadSubject.CanQuery = false
-HeadSubject.CollisionGroup = "Players"
 HeadSubject.Name = "HeadSubject"
 HeadSubject.Parent = character
 
