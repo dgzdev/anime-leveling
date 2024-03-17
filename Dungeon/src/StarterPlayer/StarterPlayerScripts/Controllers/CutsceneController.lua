@@ -103,11 +103,11 @@ local function AnimateCamera(animation: string)
 
 				for _, basepart: BasePart in (Character:GetDescendants()) do
 					if basepart:IsA("BasePart") then
-						basepart.LocalTransparencyModifier = 0
+						basepart.LocalTransparencyModifier = basepart.Transparency
 						Connections[#Connections + 1] = basepart
 							:GetPropertyChangedSignal("LocalTransparencyModifier")
 							:Connect(function()
-								basepart.LocalTransparencyModifier = 0
+								basepart.LocalTransparencyModifier = basepart.Transparency
 							end)
 					end
 				end
@@ -163,89 +163,16 @@ local CutsceneController = Knit.CreateController({
 })
 
 function CutsceneController.Init()
-	local Character = Player.Character or Player.CharacterAdded:Wait()
-	local Torso = Character:WaitForChild("Torso")
-	local Root = Character:WaitForChild("HumanoidRootPart")
-	local Humanoid = Character:WaitForChild("Humanoid")
-	local Animator = Humanoid:WaitForChild("Animator")
-
-	Root.Anchored = true
-
-	task.spawn(function()
-		PlayerEnterService:CutsceneStart(Player)
-	end)
-
-	local cutscene = PlayerGui:WaitForChild("Cutscene")
-	cutscene.Enabled = true
-
-	local PlayerHud = PlayerGui:WaitForChild("PlayerHud")
-	PlayerHud.Enabled = false
-
-	local Animation = ReplicatedStorage:WaitForChild("Animations"):WaitForChild("Portal")
-	AnimationTrack = Animator:LoadAnimation(Animation)
-	AnimationTrack:Play(0)
-	AnimationTrack:AdjustSpeed(0)
-
-	local frames = ReplicatedStorage:WaitForChild("CameraAnimations")
-		:WaitForChild("Portal Leave")
-		:WaitForChild("Frames")
-		:WaitForChild("0")
-	Camera.CFrame = frames.Value
-
-	if not game:GetAttribute("Loaded") then
-		game:GetAttributeChangedSignal("Loaded"):Wait()
+	if PlayerGui:FindFirstChild("loadingScreen") then
+		PlayerGui:FindFirstChild("loadingScreen").Destroying:Wait()
 	end
 
-	AnimationTrack.Looped = false
+	ReplicatedStorage:SetAttribute("FirstTimeAnimationEnd", true)
+	CameraEvent:Fire("Enable")
 
-	AnimationTrack.KeyframeReached:Connect(function(keyframeName)
-		if keyframeName == "leave" then
-			local teleport = SoundService:WaitForChild("Join"):WaitForChild("teleport")
-			teleport:Clone()
-
-			if teleport.Playing then
-				return
-			end
-
-			teleport.Parent = Workspace.City:WaitForChild("JoinPortal"):WaitForChild("01")
-			teleport:Play()
-
-			teleport.Ended:Once(function()
-				teleport:Destroy()
-			end)
-		end
-
-		if keyframeName == "look" then
-			local swing = SoundService:WaitForChild("Join"):WaitForChild("Swing")
-			if swing.Playing then
-				return
-			end
-			swing:Play()
-		end
-
-		if keyframeName == "levantando" then
-			local levantando = SoundService:WaitForChild("Join"):WaitForChild("getup")
-			if levantando.Playing then
-				return
-			end
-			levantando:Play()
-		end
-
-		if keyframeName == "hit" then
-			local hit = SoundService:WaitForChild("Join"):WaitForChild("hit1")
-			if hit.Playing then
-				return
-			end
-			hit:Play()
-		end
-		if keyframeName == "end" then
-			AnimationTrack:AdjustSpeed(0)
-		end
-	end)
-
-	AnimationTrack:AdjustSpeed(1)
-	task.wait()
-	AnimateCamera("Portal Leave")
+	local Character = Player.Character or Player.CharacterAdded:Wait()
+	local Root = Character:WaitForChild("HumanoidRootPart")
+	Root.Anchored = false
 end
 
 function CutsceneController:KnitInit()
