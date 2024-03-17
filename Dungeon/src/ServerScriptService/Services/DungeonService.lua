@@ -2,6 +2,7 @@ local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
+local Workspace = game:GetService("Workspace")
 local DungeonService = Knit.CreateService({
 	Name = "DungeonService",
 })
@@ -59,7 +60,6 @@ end
 
 function DungeonService:GetRoomDecoration(RoomName: string)
 	local DungeonAssets = GetDungeonAssets()
-	print(RoomName)
 	return DungeonAssets.Decorations:FindFirstChild(RoomName, true)
 end
 
@@ -178,8 +178,8 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 			local RandomEnemyType = math.random(1, ProgressToHundreds)
 			local Spawns = Room:WaitForChild("EnemySpawn"):GetChildren()
 			local EnemyRoomAmount = math.random(1, #Spawns)
-			local colorA = Color3.new(0,0,1)
-			local colorB = Color3.new(1,0,0)
+			local colorA = Color3.new(0, 0, 1)
+			local colorB = Color3.new(1, 0, 0)
 
 			local final = colorA:Lerp(colorB, Progress)
 
@@ -187,35 +187,44 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 
 			--print(WillSpawnCrystal, (Progress + .4) * roomIndex)
 
+			if roomIndex > 1 then
+				for i = 1, EnemyRoomAmount, 1 do
+					local WillSpawnCrystal = math.random(roomIndex * 0.5, 100 * Progress)
 
-			for i = 1, EnemyRoomAmount, 1 do	
-				local WillSpawnCrystal = math.random(roomIndex * .5,100 * Progress)
+					if WillSpawnCrystal > (Progress + 1) * roomIndex then
+						--  print(WillSpawnCrystal, (Progress + 1) * roomIndex, roomIndex)
+					end
+					local EnemyWillSpawn = math.random(1, #Spawns)
+					local TargetPart = Spawns[EnemyWillSpawn]
+					local EnemyRig = ReplicatedStorage.Essentials:WaitForChild("RIG"):Clone()
 
-				if WillSpawnCrystal > (Progress + 1) * roomIndex then
-					print(WillSpawnCrystal, (Progress + 1) * roomIndex, roomIndex)
+					local ang = math.random(-360, 360)
+
+					if math.floor((ProgressToHundreds * MobsAmount) / 100) >= 140 then
+						EnemyRig.Name = "Troll"
+					elseif math.floor((ProgressToHundreds * MobsAmount) / 100) >= 80 then
+						EnemyRig.Name = "Orc"
+					else
+						EnemyRig.Name = "Goblin"
+					end
+					EnemyRig.PrimaryPart.Anchored = true
+					EnemyRig:PivotTo(TargetPart:GetPivot() * CFrame.new(0, 1.5, 0) * CFrame.Angles(0, math.rad(ang), 0))
+					task.wait()
+					EnemyService:CreateEnemy(EnemyRig, {
+						damage = roomIndex * GameData.dungeonsData.RankSettings[RANK].damageMultiplierPerRoom,
+						health = roomIndex * GameData.dungeonsData.RankSettings[RANK].healthMultiplierPerRoom,
+					})
+
+					MobsAmount += 1
+
+					task.delay(2, function()
+						EnemyRig:PivotTo(
+							TargetPart:GetPivot() * CFrame.new(0, 1.5, 0) * CFrame.Angles(0, math.rad(ang), 0)
+						)
+						task.wait()
+						EnemyRig.PrimaryPart.Anchored = false
+					end)
 				end
-				local EnemyWillSpawn = math.random(1, #Spawns)
-				local TargetPart = Spawns[EnemyWillSpawn]
-				local EnemyRig = ReplicatedStorage.Essentials:WaitForChild("RIG"):Clone()
-
-				local ang = math.random(-360, 360)
-
-				EnemyRig:PivotTo(TargetPart:GetPivot() * CFrame.new(0, 1.5, 0) * CFrame.Angles(0, math.rad(ang), 0))
-
-				if math.floor((ProgressToHundreds * MobsAmount) / 100) >= 140 then
-					EnemyRig.Name = "Troll"
-				elseif math.floor((ProgressToHundreds * MobsAmount) / 100) >= 80 then
-					EnemyRig.Name = "Orc"
-				else
-					EnemyRig.Name = "Goblin"
-				end
-
-				EnemyService:CreateEnemy(EnemyRig, {
-					damage = roomIndex * GameData.dungeonsData.RankSettings[RANK].damageMultiplierPerRoom,
-					health = roomIndex * GameData.dungeonsData.RankSettings[RANK].healthMultiplierPerRoom,
-				})
-				MobsAmount += 1
-				--print(math.floor((ProgressToHundreds * MobsAmount) / 100), roomIndex)
 			end
 		end
 

@@ -14,13 +14,13 @@ return function(Character: Model, InputState: Enum.UserInputState, Data: { Posit
 	local WeaponFolder = Character:FindFirstChild("Weapons")
 	local alreadyHitted = false
 	for i, weapon: Model in (WeaponFolder:GetChildren()) do
-		HitboxService:CreateHitbox(Character, Size, 16, function(hitted: Model | BasePart)
+		HitboxService:CreateHitbox(Character, Size, 3, function(hitted: Model | BasePart)
 			if alreadyHitted then
 				return "break"
 			end
 
 			alreadyHitted = true
-			SwordHitFunction(Character, hitted, 30, "LightningSwordHit", "SwordHit", 2, 2)
+			SwordHitFunction(Character, hitted, 30, "LightningSwordHit", "SwordHit", 3, 2)
 
 			if hitted:IsA("Accessory") then
 				hitted = hitted.Parent

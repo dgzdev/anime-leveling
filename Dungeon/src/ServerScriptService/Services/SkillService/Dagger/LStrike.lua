@@ -58,16 +58,11 @@ return function(
 	end
 
 	local Size = Vector3.new(5, 5, Distance)
-	HitboxService:CreateFixedHitbox(
-		CFramePosition * CFrame.new(0, 0, -(Distance / 2)),
-		Size,
-		10,
-		function(hitted: Model)
-			--> Encontrou um inimigo
-			for i = 1, 5, 1 do
-				task.wait(0.1)
-				DaggerHitFunction(Character, hitted, 5, "DaggerHit", "DaggerHit", 2, 0)
-			end
+	HitboxService:CreateFixedHitbox(CFramePosition * CFrame.new(0, 0, -(Distance / 2)), Size, 2, function(hitted: Model)
+		--> Encontrou um inimigo
+		for i = 1, 3, 1 do
+			task.wait(0.1)
+			DaggerHitFunction(Character, hitted, 5, "DaggerHit", "DaggerHit", 2, 0)
 		end
-	)
+	end)
 end

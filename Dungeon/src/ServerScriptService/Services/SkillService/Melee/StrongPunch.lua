@@ -22,7 +22,7 @@ return function(
 
 	task.spawn(function()
 		HitboxService:CreateHitbox(Character, Vector3.new(6, 5, 10), 2, function(hitted)
-			MeleeHitFunction(Character, hitted, 15, "CombatHit", "Melee", nil, 3)
+			MeleeHitFunction(Character, hitted, 15, "CombatHit", "Melee", 3, 3)
 		end, op)
 	end)
 end

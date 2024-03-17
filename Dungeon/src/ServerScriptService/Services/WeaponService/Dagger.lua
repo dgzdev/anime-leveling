@@ -135,7 +135,7 @@ Dagger.Default = {
 
 		local WeaponFolder = Character:FindFirstChild("Weapons")
 		for i, weapon: Model in (WeaponFolder:GetChildren()) do
-			HitboxService:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
+			HitboxService:CreateHitboxFromModel(Character, weapon, 1, 30, function(hitted: Model)
 				DaggerHitFunction(Character, hitted, 5, "DaggerHit", "DaggerHit", nil, 0)
 			end)
 		end

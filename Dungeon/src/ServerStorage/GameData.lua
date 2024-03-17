@@ -278,13 +278,43 @@ return {
 	},
 	dungeonsData = {
 		RankSettings = {
-			["B"] = {
-				damageMultiplierPerRoom  = 1.25,
+			["E"] = {
+				damageMultiplierPerRoom = 1.10,
+				healthMultiplierPerRoom = 1.05,
+				BaseEnemyHealthMultiplier = 1.75,
+				BaseEnemyDamageMultiplier = 1.75,
+			},
+			["D"] = {
+				damageMultiplierPerRoom = 1.25,
 				healthMultiplierPerRoom = 1.05,
 				BaseEnemyHealthMultiplier = 3,
-				BaseEnemyDamageMultiplier = 3
-			}
-		}
+				BaseEnemyDamageMultiplier = 3,
+			},
+			["C"] = {
+				damageMultiplierPerRoom = 1.25,
+				healthMultiplierPerRoom = 1.05,
+				BaseEnemyHealthMultiplier = 3,
+				BaseEnemyDamageMultiplier = 3,
+			},
+			["B"] = {
+				damageMultiplierPerRoom = 1.25,
+				healthMultiplierPerRoom = 1.05,
+				BaseEnemyHealthMultiplier = 3,
+				BaseEnemyDamageMultiplier = 3,
+			},
+			["A"] = {
+				damageMultiplierPerRoom = 1.25,
+				healthMultiplierPerRoom = 1.05,
+				BaseEnemyHealthMultiplier = 3,
+				BaseEnemyDamageMultiplier = 3,
+			},
+			["S"] = {
+				damageMultiplierPerRoom = 1.25,
+				healthMultiplierPerRoom = 1.05,
+				BaseEnemyHealthMultiplier = 3,
+				BaseEnemyDamageMultiplier = 3,
+			},
+		},
 	},
 	gameWeapons = {
 		["Fists"] = {
@@ -403,9 +433,13 @@ return {
 	playerEffects = {
 		Buffs = {
 			Damage = {
-				callback = function(Player, Info : table)
-					if not Info then return end
-					if not Info.DamageMultiplier then return end
+				callback = function(Player, Info: table)
+					if not Info then
+						return
+					end
+					if not Info.DamageMultiplier then
+						return
+					end
 
 					if Info.DamageMultiplier < 1 then
 						warn("For DamageBuff's callback, Info.DamageMultiplier should be greater than 1")
@@ -415,10 +449,10 @@ return {
 					local DamageMultiplier = Info.DamageMultiplier or 1.2
 					return DamageMultiplier
 				end,
-				UsersAffected = {}
-			}
+				UsersAffected = {},
+			},
 		},
-		Debuffs = {}
+		Debuffs = {},
 	},
 	gameEnemies = {
 		["Goblin"] = {

@@ -26,7 +26,7 @@ local Managers: { [number]: typeof(PlayerManager) | nil } = {}
 function PlayerService.OnPlayerJoin(player: Player)
 	task.spawn(function()
 		local joinData = player:GetJoinData()
-		local teleportData = joinData.TeleportData
+		local teleportData = joinData.TeleportData or {}
 		local rank = teleportData.Rank or "E"
 		DungeonService:GenerateDungeonFromRank(rank)
 	end)

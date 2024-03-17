@@ -13,6 +13,6 @@ return function(Character, InputState, p, MeleeHitFunction)
 	})
 
 	HitboxService:CreateHitbox(Character, Vector3.new(25, 5, 25), 3, function(hitted)
-		MeleeHitFunction(Character, hitted, 0, "CombatHit", "Melee", nil, 3)
+		MeleeHitFunction(Character, hitted, 0, "CombatHit", "Melee", 2, 3)
 	end, op)
 end

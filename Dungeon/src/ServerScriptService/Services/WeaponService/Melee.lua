@@ -148,7 +148,7 @@ Melee.Default = {
 	)
 		local op = WeaponService:GetOverlapParams(Character)
 
-		HitboxService:CreateHitbox(Character, Vector3.new(2, 5, 2), 25, function(hitted: Model)
+		HitboxService:CreateHitbox(Character, Vector3.new(2, 5, 2), 4, function(hitted: Model)
 			if not Players:GetPlayerFromCharacter(Character) then
 				if Character:GetAttribute("Damage") then
 					MeleeHitFunction(Character, hitted, 0, "CombatHit", "Melee", Character:GetAttribute("Damage"), 0)

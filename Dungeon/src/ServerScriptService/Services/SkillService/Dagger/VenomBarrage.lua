@@ -28,6 +28,5 @@ return function(
 		Distance = (CFramePosition.Position - RayResult.Position).Magnitude ---distancia q ele deve teleportar
 	end
 
-	warn("Executed")
 	Character:PivotTo(Character:GetPivot() * CFrame.new(0, 0, -Distance)) --> -Distance = frente.
 end

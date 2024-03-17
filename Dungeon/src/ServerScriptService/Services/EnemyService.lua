@@ -109,7 +109,11 @@ function EnemyService:CreateEnemy(
 	if GameData.gameEnemies[model.Name] then
 		local enemyData = GameData.gameEnemies[model.Name]
 		if enemyData.HumanoidDescription then
-			pcall(function()
+			task.spawn(function()
+				task.wait(3)
+				if not model:IsDescendantOf(Workspace) then
+					return
+				end
 				Humanoid:ApplyDescription(enemyData.HumanoidDescription)
 			end)
 		end

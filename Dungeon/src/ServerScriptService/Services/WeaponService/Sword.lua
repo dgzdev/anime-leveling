@@ -18,7 +18,7 @@ local SkillService
 
 local GameData = require(ServerStorage.GameData)
 
-local function CalculateDamage(BaseDamage,Player)
+local function CalculateDamage(BaseDamage, Player)
 	if not Player then
 		return 10
 	end
@@ -142,7 +142,7 @@ Sword.Default = {
 
 		local WeaponFolder = Character:FindFirstChild("Weapons")
 		for i, weapon: Model in (WeaponFolder:GetChildren()) do
-			HitboxService:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
+			HitboxService:CreateHitboxFromModel(Character, weapon, 1, 30, function(hitted: Model)
 				SwordHitFunction(Character, hitted, 5, "SwordHit", "SwordHit", nil, 0)
 			end)
 		end
@@ -254,7 +254,7 @@ Sword["Maou'sSword"] = {
 
 		local WeaponFolder = Character:FindFirstChild("Weapons")
 		for i, weapon: Model in (WeaponFolder:GetChildren()) do
-			HitboxService:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
+			HitboxService:CreateHitboxFromModel(Character, weapon, 1, 30, function(hitted: Model)
 				SwordHitFunction(Character, hitted, 5, "LightningSwordHit", "SwordHit", nil, 0)
 			end)
 		end
