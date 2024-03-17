@@ -254,6 +254,7 @@ end
 
 function CutsceneController:KnitStart()
 	coroutine.wrap(function()
+		print("Init")
 		self:Init()
 	end)()
 end
