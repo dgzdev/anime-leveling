@@ -1,8 +1,9 @@
 local Debris = game:GetService("Debris")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 local Workspace = game:GetService("Workspace")
-local Sword = {}
+local Dagger = {}
 
 local Knit = require(ReplicatedStorage.Packages.Knit)
 
@@ -11,12 +12,29 @@ local Default
 local RenderService
 local RagdollService
 local HitboxService
-local CombatService
 local PlayerService
 local ProgressionService
+local CombatService
 local SkillService
 
+local function ApplyRagdoll(model: Model, time: number)
+	RagdollService:Ragdoll(model, time)
+end
+
 local GameData = require(ServerStorage.GameData)
+
+local function GetModelMass(model: Model)
+	local mass = 0
+	for _, part: BasePart in (model:GetDescendants()) do
+		if part:IsA("BasePart") then
+			if part.Massless then
+				continue
+			end
+			mass += part:GetMass()
+		end
+	end
+	return mass + 1
+end
 
 local function CalculateDamage(BaseDamage, Player)
 	if not Player then
@@ -35,27 +53,7 @@ local function CalculateDamage(BaseDamage, Player)
 	return math.floor(math.sqrt((10 * BaseDamage) * ((LocalStatus.Strength + 1) * 0.3)))
 end
 
-local function ApplyRagdoll(model: Model, time: number)
-	RagdollService:Ragdoll(model, time)
-end
-
-local VFX = require(ReplicatedStorage.Modules.VFX)
-local SFX = require(ReplicatedStorage.Modules.SFX)
-
-local function GetModelMass(model: Model)
-	local mass = 0
-	for _, part: BasePart in (model:GetDescendants()) do
-		if part:IsA("BasePart") then
-			if part.Massless then
-				continue
-			end
-			mass += part:GetMass()
-		end
-	end
-	return mass + 1
-end
-
-local SwordHitFunction = function(
+local DaggerHitFunction = function(
 	Character: Model,
 	hitted: Model,
 	kb: number,
@@ -64,13 +62,8 @@ local SwordHitFunction = function(
 	dmg: number?,
 	ragdoll: number?
 )
-	---eu vou fazer um calculo com o parametro de dano base
-	--> infelizmente, ta tudo separado e cada tipo de arma tem uma funcao dessa
-	--> o ideal seria q ele pegasse o dano base da arma q ele ta usando, somasse com os pontos gastos e multiplicasse pelo tipo de ataque
-	-- ! ja venho
-
 	local data = PlayerService:GetData(Character)
-	local Player = game.Players:GetPlayerFromCharacter(Character)
+	local Player = Players:GetPlayerFromCharacter(Character)
 	if not data then
 		return
 	end
@@ -126,7 +119,7 @@ local SwordHitFunction = function(
 	end
 end
 
-Sword.Default = {
+Dagger.Default = {
 	Attack = function(
 		Character: Model,
 		InputState: Enum.UserInputState,
@@ -143,7 +136,7 @@ Sword.Default = {
 		local WeaponFolder = Character:FindFirstChild("Weapons")
 		for i, weapon: Model in (WeaponFolder:GetChildren()) do
 			HitboxService:CreateHitboxFromModel(Character, weapon, 1, 32, function(hitted: Model)
-				SwordHitFunction(Character, hitted, 5, "SwordHit", "SwordHit", nil, 0)
+				DaggerHitFunction(Character, hitted, 5, "DaggerHit", "DaggerHit", nil, 0)
 			end)
 		end
 	end,
@@ -151,16 +144,72 @@ Sword.Default = {
 	Defense = function(...)
 		print("Defense")
 	end,
+}
 
-	FlashStrike = function(...)
+Dagger["Venom'sFangs"] = {
+	Attack = function(
+		Character: Model,
+		InputState: Enum.UserInputState,
+		p: {
+			Position: CFrame,
+			Combo: number,
+			Combos: number,
+		}
+	)
+		Dagger.Default.Attack(Character, InputState, p)
+	end,
+
+	Defense = function(
+		Character: Model,
+		InputState: Enum.UserInputState,
+		p: {
+			Position: CFrame,
+			Combo: number,
+			Combos: number,
+		}
+	)
+		Dagger.Default.Defense(Character, InputState, p)
+	end,
+
+	["Venom Palm"] = function(...)
 		local args = table.pack(...)
-		local send = { "FlashStrike", args[1], args[2], args[3], SwordHitFunction }
+		local send = { "VenomPalm", args[1], args[2], args[3], DaggerHitFunction }
+
+		SkillService:CallSkill(table.unpack(send))
+	end,
+
+	["LStrike"] = function(...)
+		local args = table.pack(...)
+		local send = { "LStrike", args[1], args[2], args[3], DaggerHitFunction }
+
+		SkillService:CallSkill(table.unpack(send))
+	end,
+
+	["VenomBarrage"] = function(...)
+		local args = table.pack(...)
+		local send = { "VenomBarrage", args[1], args[2], args[3], DaggerHitFunction }
+
+		SkillService:CallSkill(table.unpack(send))
+	end,
+
+	["VenomDash"] = function(...)
+		local args = table.pack(...)
+		local send = { "VenomDash", args[1], args[2], args[3], DaggerHitFunction }
+
+		SkillService:CallSkill(table.unpack(send))
+	end,
+
+	["DualBarrage"] = function(...)
+		local args = table.pack(...)
+		local send = { "DualBarrage", args[1], args[2], args[3], DaggerHitFunction }
 
 		SkillService:CallSkill(table.unpack(send))
 	end,
 }
 
-function Sword.Start(default)
+Dagger.Dagger2 = Dagger.Default
+
+function Dagger.Start(default)
 	Default = default
 
 	RenderService = Knit.GetService("RenderService")
@@ -168,11 +217,11 @@ function Sword.Start(default)
 	SkillService = Knit.GetService("SkillService")
 
 	HitboxService = Knit.GetService("HitboxService")
+	HitboxService = Knit.GetService("HitboxService")
 
-	ProgressionService = Knit.GetService("ProgressionService")
 	CombatService = Knit.GetService("CombatService")
-
+	ProgressionService = Knit.GetService("ProgressionService")
 	PlayerService = Knit.GetService("PlayerService")
 end
 
-return Sword
+return Dagger
