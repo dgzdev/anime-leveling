@@ -1,4 +1,3 @@
--- Lightning Strike
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 local WeaponService
@@ -114,8 +113,10 @@ local TestDagger = {
 				})
 			end)
 
-			local Animation =
-				ReplicatedStorage:WaitForChild("Animations"):WaitForChild("Sword"):WaitForChild("Hit"):WaitForChild("2")
+			local Animation = ReplicatedStorage:WaitForChild("Animations")
+				:WaitForChild("Dagger")
+				:WaitForChild("Hit")
+				:WaitForChild("2")
 			if PlayingAnimation then
 				PlayingAnimation:Stop()
 			end
@@ -142,11 +143,11 @@ local TestDagger = {
 				return
 			end
 
-			if inputstate == Enum.UserInputState.Begin then
-				if CheckCooldown("Venom Palm") then
-					return
-				end
+			if CheckCooldown("Venom Palm") then
+				return
+			end
 
+			if inputstate == Enum.UserInputState.Begin then
 				--> Animação de segurar
 				local Animation: Animation = ReplicatedStorage:WaitForChild("Animations")
 					:WaitForChild("FlashStrike Hold")
@@ -177,14 +178,27 @@ local TestDagger = {
 				RootPart.Anchored = false
 
 				if HoldingTime > 0.45 then
+					SetCooldown("Venom Palm", 3)
+
 					task.spawn(function()
 						WeaponService:WeaponInput("Venom Palm", Enum.UserInputState.End, {
 							Position = RootPart.CFrame,
 						})
 					end)
 
-					SetCooldown("Venom Palm", 3)
 					SFX:Create(RootPart, "Death")
+
+					local Animation = ReplicatedStorage:WaitForChild("Animations")
+						:WaitForChild("Dagger")
+						:WaitForChild("Hit")
+						:WaitForChild("2")
+					if PlayingAnimation then
+						PlayingAnimation:Stop()
+					end
+
+					PlayingAnimation = Animator:LoadAnimation(Animation)
+					PlayingAnimation:AdjustSpeed(0.25)
+					PlayingAnimation:Play(0.15)
 				end
 
 				HoldingTime = 0
@@ -237,10 +251,11 @@ local TestDagger = {
 				end)
 				RootPart.Anchored = true
 			elseif inputstate == Enum.UserInputState.End then
-				SetCooldown("Dual Barrage", 10) -- > 10 segundos de cooldown
 				RootPart.Anchored = false
+
 				if HoldingTime > 0.45 then
-					PlayingAnimation:Stop()
+					PlayingAnimation:Stop(0)
+					SetCooldown("Dual Barrage", 10) -- > 10 segundos de cooldown
 
 					--> animação de ataque
 					local Animation: Animation = ReplicatedStorage:WaitForChild("Animations")
@@ -249,25 +264,9 @@ local TestDagger = {
 						:FindFirstChild("Combo")
 
 					PlayingAnimation = Animator:LoadAnimation(Animation)
-					PlayingAnimation.Priority = Enum.AnimationPriority.Action4
 					PlayingAnimation:Play()
 
-					comboTicks = 0
-
-					for _i = 1, 5, 1 do
-						task.wait(0.3)
-						print(comboTicks)
-
-						task.spawn(function()
-							WeaponService:WeaponInput("DualBarrage", Enum.UserInputState.Begin, {
-								Position = RootPart.CFrame,
-							})
-						end)
-						comboTicks += 1
-					end
-
 					PlayingAnimation:GetMarkerReachedSignal("teleport"):Connect(function()
-						print("teleport event")
 						task.spawn(function()
 							WeaponService:WeaponInput("VenomDash", Enum.UserInputState.Begin, {
 								Position = RootPart.CFrame,
@@ -276,8 +275,21 @@ local TestDagger = {
 					end)
 
 					comboTicks = 0
-					print(comboTicks)
-					HoldingTime = 0
+
+					task.spawn(function()
+						for _i = 1, 5, 1 do
+							task.wait(0.3)
+
+							task.spawn(function()
+								WeaponService:WeaponInput("DualBarrage", Enum.UserInputState.Begin, {
+									Position = RootPart.CFrame,
+								})
+							end)
+
+							comboTicks += 1
+						end
+					end)
+				else
 					if PlayingAnimation then
 						PlayingAnimation:Stop(0.15)
 					end

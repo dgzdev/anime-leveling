@@ -87,7 +87,7 @@ return function(
 			--> Encontrou um inimigo
 			for i = 1, 5, 1 do
 				task.wait(0.1)
-				DaggerHitFunction(Character, hitted, 5, "DaggerHit", "DaggerHit", 2, 0)
+				DaggerHitFunction(Character, hitted, 1, "DaggerHit", "DaggerHit", 2, 0)
 			end
 		end
 	)

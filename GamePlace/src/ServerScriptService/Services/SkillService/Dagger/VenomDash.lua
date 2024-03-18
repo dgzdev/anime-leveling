@@ -27,4 +27,13 @@ return function(
 			DaggerHitFunction(Character, hitted, 5, "DaggerHit", "DaggerHit", 2.5, 0)
 		end)
 	end)
+
+	
+	RenderService:RenderForPlayersInArea(p.Position.Position, 150,{
+		module = "Universal",
+		effect = "VenomDash",
+		root = Character.PrimaryPart,
+		position = CFramePosition,
+	})
+
 end

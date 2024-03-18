@@ -14,7 +14,21 @@ return function(
 	},
 	DaggerHitFunction
 )
-	if InputState == Enum.UserInputState.Begin then
-		print("antes do dash")
+	local CFramePosition = p.Position --> Posicao de onde ele clicou pra soltar o ataque
+
+
+
+	for i = 1, 5, 1 do
+
+	task.spawn(function()
+		
+		HitboxService:CreateHitbox(Character, Vector3.new(5, 5, 5), 1, function(hitted: Model)
+			DaggerHitFunction(Character, hitted, 2, "DaggerHit", "DaggerHit", nil, 1) --> puxa dano
+		end)
+	end)
+	
+	
+	task.wait(.5)
+
 	end
 end

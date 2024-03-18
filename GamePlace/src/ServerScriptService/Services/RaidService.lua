@@ -11,22 +11,25 @@ local RaidService = Knit.CreateService({
 local Zone = require(game.ReplicatedStorage.Modules.Zone)
 
 local Areas = {
-	["Zone1"] = {
+	["Zone1"] = { --> Medium
 		Time = 20,
 		Limit = 4,
-		Minimum = 4,
+		Minimum = 1,
+		Difficulty = "A",
 	},
 
-	["Zone2"] = {
+	["Zone2"] = { --> Hard asf
 		Time = 15,
 		Limit = 5,
-		Minimum = 5,
+		Minimum = 1,
+		Difficulty = "S",
 	},
 
-	["Zone3"] = {
+	["Zone3"] = { --> Solo Raid (easy)
 		Time = 10,
 		Limit = 1,
 		Minimum = 1,
+		Difficulty = "E",
 	},
 }
 
@@ -42,12 +45,13 @@ local Areas = {
 local ZonesFolder: Folder = game.Workspace:FindFirstChild("Raids")
 
 function RaidService:QueryControl(
-	players: Players,
+	zone,
 	signal: boolean,
 	time: number,
 	zoneBillboard: BillboardGui,
-	bool: BoolValue
-) --> Começa a contar a partir do momento que tem 5 players
+	bool: BoolValue,
+	Difficulty: string
+) --> ComeÃ§a a contar a partir do momento que tem 5 players
 	local textlabel: TextLabel = zoneBillboard:FindFirstChild("TextLabel")
 
 	local thread = task.spawn(function()
@@ -61,7 +65,8 @@ function RaidService:QueryControl(
 		end
 		textlabel.Text = "Loading dungeon..."
 
-		RaidService:TeleportToPlace(players)
+		local players = zone:getPlayers()
+		RaidService:TeleportToPlace(players, Difficulty)
 	end)
 	bool:GetPropertyChangedSignal("Value"):Once(function()
 		if bool.Value == true then
@@ -70,10 +75,15 @@ function RaidService:QueryControl(
 	end)
 end
 
-function RaidService:TeleportToPlace(players: Players)
-	local reserved = TeleportService:ReserveServer(16760466880)
-	print(players)
-	TeleportService:TeleportToPrivateServer(16760466880, reserved, players)
+function RaidService:TeleportToPlace(players: Players, Difficulty: string)
+	local TeleportData = {
+		waveRank = Difficulty,
+	}
+	local TeleportOptions = Instance.new("TeleportOptions")
+	TeleportOptions.ShouldReserveServer = true
+	TeleportOptions:SetTeleportData(TeleportData)
+
+	TeleportService:TeleportAsync(16760466880, players, TeleportOptions)
 end
 
 function RaidService:Init()
@@ -83,7 +93,8 @@ function RaidService:Init()
 			local billboard = ReplicatedStorage.Models.UI.RaidBillboard:Clone()
 			billboard.Parent = z
 			billboard.TextLabel.Text = "0" .. "/" .. Areas[z.Name].Limit
-			billboard.Require.Text = "MINIMUM: " .. Areas[z.Name].Minimum 
+			billboard.Require.Text = "MINIMUM: " .. Areas[z.Name].Minimum
+
 			local shouldBreak = Instance.new("BoolValue")
 			zonemanager.playerEntered:Connect(function(player: Player)
 				local playersArray = zonemanager:getPlayers()
@@ -96,25 +107,31 @@ function RaidService:Init()
 
 				if #playersArray <= Areas[z.Name].Limit and #playersArray >= Areas[z.Name].Minimum then
 					shouldBreak.Value = false
-					RaidService:QueryControl(playersArray, true, Areas[z.Name].Time, billboard, shouldBreak)
-					print("teleporting? countdown test", playersArray)
+					RaidService:QueryControl(
+						zonemanager,
+						true,
+						Areas[z.Name].Time,
+						billboard,
+						shouldBreak,
+						Areas[z.Name].Difficulty
+					)
 				end
 
 				billboard.TextLabel.Text = #playersArray .. "/" .. Areas[z.Name].Limit
-				print(playersArray)
 			end)
 
 			zonemanager.playerExited:Connect(function(player: Player)
 				local playersArray = zonemanager:getPlayers()
 
 				if #playersArray < Areas[z.Name].Minimum then
-					shouldBreak.Value = true
+				shouldBreak.Value = true
+
+
 				end
 
 				task.wait(1)
 
 				billboard.TextLabel.Text = #playersArray .. "/" .. Areas[z.Name].Limit
-				print(playersArray)
 			end)
 		end
 	end)

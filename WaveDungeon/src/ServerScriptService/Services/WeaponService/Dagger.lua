@@ -200,7 +200,6 @@ Dagger["Venom'sFangs"] = {
 	end,
 
 	["DualBarrage"] = function(...)
-		print(...)
 		local args = table.pack(...)
 		local send = { "DualBarrage", args[1], args[2], args[3], DaggerHitFunction }
 
