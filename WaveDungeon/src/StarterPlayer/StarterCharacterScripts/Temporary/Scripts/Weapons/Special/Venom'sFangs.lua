@@ -1,4 +1,3 @@
--- Lightning Strike
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 local WeaponService
@@ -144,11 +143,11 @@ local TestDagger = {
 				return
 			end
 
-			if inputstate == Enum.UserInputState.Begin then
-				if CheckCooldown("Venom Palm") then
-					return
-				end
+			if CheckCooldown("Venom Palm") then
+				return
+			end
 
+			if inputstate == Enum.UserInputState.Begin then
 				--> Animação de segurar
 				local Animation: Animation = ReplicatedStorage:WaitForChild("Animations")
 					:WaitForChild("FlashStrike Hold")
@@ -179,13 +178,14 @@ local TestDagger = {
 				RootPart.Anchored = false
 
 				if HoldingTime > 0.45 then
+					SetCooldown("Venom Palm", 3)
+
 					task.spawn(function()
 						WeaponService:WeaponInput("Venom Palm", Enum.UserInputState.End, {
 							Position = RootPart.CFrame,
 						})
 					end)
 
-					SetCooldown("Venom Palm", 3)
 					SFX:Create(RootPart, "Death")
 
 					local Animation = ReplicatedStorage:WaitForChild("Animations")

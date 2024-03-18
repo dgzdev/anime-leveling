@@ -12,23 +12,31 @@ local Zone = require(game.ReplicatedStorage.Modules.Zone)
 
 local Areas = {
 	["Zone1"] = { --> Medium
+	["Zone1"] = { --> Medium
 		Time = 20,
 		Limit = 4,
+		Minimum = 1,
+		Difficulty = "A",
 		Minimum = 1,
 		Difficulty = "A",
 	},
 
 	["Zone2"] = { --> Hard asf
+	["Zone2"] = { --> Hard asf
 		Time = 15,
 		Limit = 5,
+		Minimum = 1,
+		Difficulty = "S",
 		Minimum = 1,
 		Difficulty = "S",
 	},
 
 	["Zone3"] = { --> Solo Raid (easy)
+	["Zone3"] = { --> Solo Raid (easy)
 		Time = 10,
 		Limit = 1,
 		Minimum = 1,
+		Difficulty = "E",
 		Difficulty = "E",
 	},
 }
@@ -67,6 +75,8 @@ function RaidService:QueryControl(
 
 		local players = zone:getPlayers()
 		RaidService:TeleportToPlace(players, Difficulty)
+		local players = zone:getPlayers()
+		RaidService:TeleportToPlace(players, Difficulty)
 	end)
 	bool:GetPropertyChangedSignal("Value"):Once(function()
 		if bool.Value == true then
@@ -75,6 +85,15 @@ function RaidService:QueryControl(
 	end)
 end
 
+function RaidService:TeleportToPlace(players: Players, Difficulty: string)
+	local TeleportData = {
+		waveRank = Difficulty,
+	}
+	local TeleportOptions = Instance.new("TeleportOptions")
+	TeleportOptions.ShouldReserveServer = true
+	TeleportOptions:SetTeleportData(TeleportData)
+
+	TeleportService:TeleportAsync(16760466880, players, TeleportOptions)
 function RaidService:TeleportToPlace(players: Players, Difficulty: string)
 	local TeleportData = {
 		waveRank = Difficulty,
@@ -95,6 +114,8 @@ function RaidService:Init()
 			billboard.TextLabel.Text = "0" .. "/" .. Areas[z.Name].Limit
 			billboard.Require.Text = "MINIMUM: " .. Areas[z.Name].Minimum
 
+			billboard.Require.Text = "MINIMUM: " .. Areas[z.Name].Minimum
+
 			local shouldBreak = Instance.new("BoolValue")
 			zonemanager.playerEntered:Connect(function(player: Player)
 				local playersArray = zonemanager:getPlayers()
@@ -107,6 +128,14 @@ function RaidService:Init()
 
 				if #playersArray <= Areas[z.Name].Limit and #playersArray >= Areas[z.Name].Minimum then
 					shouldBreak.Value = false
+					RaidService:QueryControl(
+						zonemanager,
+						true,
+						Areas[z.Name].Time,
+						billboard,
+						shouldBreak,
+						Areas[z.Name].Difficulty
+					)
 					RaidService:QueryControl(
 						zonemanager,
 						true,

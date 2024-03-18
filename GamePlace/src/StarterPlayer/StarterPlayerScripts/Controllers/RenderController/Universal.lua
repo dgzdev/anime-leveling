@@ -11,6 +11,32 @@ local Knit = require(game.ReplicatedStorage.Packages.Knit)
 local ShakerController = Knit.GetController("ShakerController")
 
 
+function Universal.VenomDash(RenderData: {root: BasePart, position: CFrame})
+	local Root = RenderData.root
+
+	VFX:CreateParticle(RenderData.position * CFrame.new(0,0,-15), "VenomDash", 3)
+	ShakerController:Shake(ShakerController.Presets.Bump)
+end
+
+function Universal.VenomSlashes(RenderData: {root: BasePart, position: CFrame})
+	local Root = RenderData.root
+
+	--> Define os valores mínimos e máximos
+	local min = -60
+	local max = 60
+
+	--> Gera um número aleatório entre 0 e 1
+	local random = math.random()
+
+	--> Se o número aleatório for menor ou igual a 0.5, retorna o valor mínimo, caso contrário, retorna o valor máximo
+	local absoluteRandom = (random <= 0.5) and min or max
+	
+	VFX:ApplyParticle(Root.Parent,"BlueSlash1",.2,CFrame.Angles(-36,absoluteRandom,0),false)
+	ShakerController:Shake(ShakerController.Presets.Bump)
+end
+
+
+
 function Universal.VenomPalm(RenderData: {root: BasePart, position: CFrame})
 	local Root = RenderData.root
 

@@ -256,7 +256,7 @@ local TestDagger = {
 
 				if HoldingTime > 0.45 then
 					PlayingAnimation:Stop(0)
-					SetCooldown("Dual Barrage", 10) -- > 10 segundos de cooldown
+					SetCooldown("Dual Barrage", 3) -- > 10 segundos de cooldown
 
 					--> animação de ataque
 					local Animation: Animation = ReplicatedStorage:WaitForChild("Animations")
@@ -269,6 +269,7 @@ local TestDagger = {
 
 					PlayingAnimation:GetMarkerReachedSignal("teleport"):Connect(function()
 						task.spawn(function()
+							task.wait(.3)
 							WeaponService:WeaponInput("VenomDash", Enum.UserInputState.Begin, {
 								Position = RootPart.CFrame,
 							})
@@ -289,6 +290,8 @@ local TestDagger = {
 
 							comboTicks += 1
 						end
+
+
 					end)
 				else
 					if PlayingAnimation then

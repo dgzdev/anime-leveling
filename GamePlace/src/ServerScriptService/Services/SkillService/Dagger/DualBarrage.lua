@@ -16,10 +16,18 @@ return function(
 )
 	local CFramePosition = p.Position --> Posicao de onde ele clicou pra soltar o ataque
 
+
+
 	for i = 1, 4, 1 do
-		HitboxService:CreateHitbox(Character, Vector3.new(5, 5, 5), 10, function(hitted: Model)
+
+	task.spawn(function()
+		
+		HitboxService:CreateHitbox(Character, Vector3.new(5, 5, 5), 1, function(hitted: Model)
 			DaggerHitFunction(Character, hitted, 2, "DaggerHit", "DaggerHit", nil, 1) --> puxa dano
 		end)
-		task.wait(0.25)
+	end)
+	
+	task.wait(0.10)
+
 	end
 end

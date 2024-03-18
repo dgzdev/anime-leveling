@@ -13,7 +13,7 @@ local WeaponService
 local RagdollService
 
 local HealthHud: BillboardGui = ReplicatedStorage.Models.HealthHud
-
+local IndicatorHud: BillboardGui = ReplicatedStorage.Models.Indicator
 local EnemyService = Knit.CreateService({
 	Name = "EnemyService",
 })
@@ -84,11 +84,14 @@ function EnemyService:CreateEnemy(
 	local healthHud = HealthHud:Clone()
 	healthHud.Parent = model
 	healthHud.Adornee = model:FindFirstChild("Head")
+	local indicatorH = IndicatorHud:Clone()
+	indicatorH.Parent = model
+	indicatorH.Adornee = model:FindFirstChild("Head")
 
 	local clone = model:Clone()
 	clone.Parent = ServerStorage:WaitForChild("Enemies")
 
-	--RagdollService:UnRagdoll(clone)
+	RagdollService:UnRagdoll(clone)
 
 	Humanoid.Died:Connect(function()
 		for _, value in (Animator:GetPlayingAnimationTracks()) do

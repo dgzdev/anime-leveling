@@ -3,6 +3,7 @@ local HitboxService = Knit.GetService("HitboxService")
 local DebugService = Knit.GetService("DebugService")
 local WeaponService = Knit.GetService("WeaponService")
 local RenderService = Knit.GetService("RenderService")
+local DebugService = Knit.GetService("DebugService")
 local Workspace = game:GetService("Workspace")
 
 return function(
@@ -23,8 +24,13 @@ return function(
 		{ Character, Workspace.Enemies, Workspace.NPC, game.Workspace:FindFirstChild("Debug") }
 	Ray.RespectCanCollide = false
 	Ray.IgnoreWater = false
+	Ray.FilterDescendantsInstances =
+		{ Character, Workspace.Enemies, Workspace.NPC, game.Workspace:FindFirstChild("Debug") }
+	Ray.RespectCanCollide = false
+	Ray.IgnoreWater = false
 
 	local Distance = 45
+	local Pos
 	local Pos
 
 	local RayResult =
@@ -37,7 +43,19 @@ return function(
 			RayResult
 		)
 	end
+	local RayResult =
+		Workspace:Raycast((CFramePosition * CFrame.new(0, 0, 2.5)).Position, CFramePosition.LookVector * Distance, Ray)
+
+	if DebugService.Activated then
+		DebugService:CreatePathBetweenTwoPoints(
+			CFramePosition * CFrame.new(0, 0, 2.5),
+			CFramePosition * CFrame.new(0, 0, -Distance),
+			RayResult
+		)
+	end
 	if RayResult then
+		Distance = math.floor((CFramePosition.Position - RayResult.Position).Magnitude) ---distancia q ele deve teleportar
+		Pos = RayResult.Position
 		Distance = math.floor((CFramePosition.Position - RayResult.Position).Magnitude) ---distancia q ele deve teleportar
 		Pos = RayResult.Position
 	end
@@ -66,7 +84,7 @@ return function(
 			--> Encontrou um inimigo
 			for i = 1, 5, 1 do
 				task.wait(0.1)
-				DaggerHitFunction(Character, hitted, 5, "DaggerHit", "DaggerHit", 2, 0)
+				DaggerHitFunction(Character, hitted, 1, "DaggerHit", "DaggerHit", 2, 0)
 			end
 		end
 	)
