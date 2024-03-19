@@ -12,31 +12,21 @@ local Zone = require(game.ReplicatedStorage.Modules.Zone)
 
 local Areas = {
 	["Zone1"] = { --> Medium
-	["Zone1"] = { --> Medium
 		Time = 20,
 		Limit = 4,
 		Minimum = 1,
 		Difficulty = "A",
-		Minimum = 1,
-		Difficulty = "A",
 	},
-
-	["Zone2"] = { --> Hard asf
 	["Zone2"] = { --> Hard asf
 		Time = 15,
 		Limit = 5,
 		Minimum = 1,
 		Difficulty = "S",
-		Minimum = 1,
-		Difficulty = "S",
 	},
-
-	["Zone3"] = { --> Solo Raid (easy)
 	["Zone3"] = { --> Solo Raid (easy)
 		Time = 10,
 		Limit = 1,
 		Minimum = 1,
-		Difficulty = "E",
 		Difficulty = "E",
 	},
 }
@@ -85,15 +75,6 @@ function RaidService:QueryControl(
 	end)
 end
 
-function RaidService:TeleportToPlace(players: Players, Difficulty: string)
-	local TeleportData = {
-		waveRank = Difficulty,
-	}
-	local TeleportOptions = Instance.new("TeleportOptions")
-	TeleportOptions.ShouldReserveServer = true
-	TeleportOptions:SetTeleportData(TeleportData)
-
-	TeleportService:TeleportAsync(16760466880, players, TeleportOptions)
 function RaidService:TeleportToPlace(players: Players, Difficulty: string)
 	local TeleportData = {
 		waveRank = Difficulty,
