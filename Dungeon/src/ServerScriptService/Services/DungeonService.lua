@@ -26,10 +26,13 @@ function DungeonService:GetRandomRoom()
 
 	local Rooms = DungeonAssets.Rooms:GetChildren()
 	local Room = Rooms[math.random(1, #Rooms)]
+	--print(Room)
 	return Room:Clone()
 end
 
-function DungeonService:CanPlace(AnchorDoor, Room)
+function DungeonService:CanPlace(AnchorDoor, Room, RoomLastName : string?)
+
+
 	local Params = OverlapParams.new()
 	Params.FilterDescendantsInstances = { Room, AnchorDoor.Parent }
 	Params.FilterType = Enum.RaycastFilterType.Exclude
@@ -41,8 +44,12 @@ function DungeonService:CanPlace(AnchorDoor, Room)
 	local size = Vector3.new(math.round(size.X), math.round(size.Y), math.round(size.Z))
 	local Hitbox = game.Workspace:GetPartBoundsInBox(_cframe, size, Params)
 
+	--print(Hitbox)
 	if #Hitbox > 0 then
-		return false
+		if RoomLastName then 
+			--print(RoomLastName)
+		end
+		return false	
 	end
 
 	return true
@@ -118,52 +125,50 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 	local roomIndex = 1
 	while roomIndex <= ROOMS_AMOUNT do
 		local Room = DungeonService:GetRandomRoom()
-		--print(LastRoom, Room)
+		local RoomLastName
+		print(LastRoom)
 		local AnchorDoor: BasePart = DungeonService:GetRandomDoor(LastRoom)
 		local RoomRandomDoor: BasePart = DungeonService:GetRandomDoor(Room)
 
+		--print(Room.Name, RoomRandomDoor)
 		Room.PrimaryPart = RoomRandomDoor
+		RoomLastName = Room.Name
 		Room.Name = roomIndex
 
 		Room:PivotTo(AnchorDoor:GetPivot() * CFrame.Angles(0, math.rad(180), 0))
 
-		if not DungeonService:CanPlace(AnchorDoor, Room) then
-			--print(tries)
-			Room:Destroy()
-			tries -= 1
-
-			if tries <= 0 then
-				if lastRoomTested == 0 then
-					lastRoomTested = #DungeonFolder:GetChildren()
-				end
-
-				lastRoomTested -= 1
-				LastRoom = DungeonFolder:GetChildren()[lastRoomTested]
-				tries = 20
+	if not DungeonService:CanPlace(AnchorDoor, Room, RoomLastName) then
+		--print(RoomLastName)
+		Room:Destroy()
+		--print(tries)
+		tries -= 1
+		if tries <= 0 then
+			if lastRoomTested == 0 then
+				lastRoomTested = #DungeonFolder:GetChildren()
 			end
-
-			continue
+			lastRoomTested -= 1
+			LastRoom = DungeonFolder:GetChildren()[lastRoomTested]
+			print(DungeonFolder:GetChildren()[lastRoomTested], lastRoomTested)
+			tries = 20
 		end
-
-		local door1 = RoomRandomDoor:FindFirstChild("Door")
-		local door2 = AnchorDoor:FindFirstChild("Door")
-		if door1 then
-			door1:Destroy()
-		end
-		if door2 then
-			door2:Destroy()
-		end
-
-		tries = 20
-
-		roomIndex += 1
-		Room.Parent = DungeonFolder
-
-		--for i,v in pairs(Room:GetDescendants()) do
-		--	table.insert(PastRooms, v)
-		--end
-
-		LastRoom = Room
+		
+		continue
+	end
+	local door1 = RoomRandomDoor:FindFirstChild("Door")
+	local door2 = AnchorDoor:FindFirstChild("Door")
+	if door1 then
+		door1:Destroy()
+	end
+	if door2 then
+		door2:Destroy()
+	end
+	tries = 20
+	roomIndex += 1
+	Room.Parent = DungeonFolder
+	--for i,v in pairs(Room:GetDescendants()) do
+	--	table.insert(PastRooms, v)
+	--end
+	LastRoom = Room
 
 		if roomIndex == "Start" then
 			continue
