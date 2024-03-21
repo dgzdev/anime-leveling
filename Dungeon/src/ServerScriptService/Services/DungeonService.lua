@@ -2,6 +2,7 @@ local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
+
 local Workspace = game:GetService("Workspace")
 local DungeonService = Knit.CreateService({
 	Name = "DungeonService",
@@ -105,10 +106,39 @@ function DungeonService:PlaceBossRoom(BossRoom, LastRoom)
 	BossRoom.Parent = DungeonFolder
 end
 
-function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: number, RANK: string)
+function DungeonService:ClearRoom(Room)	
+	if not Room:FindFirstChild("Limits") then return end
+	for i,v in pairs(Room:FindFirstChild("Limits"):GetChildren()) do
+		local Params = OverlapParams.new()
+		Params.FilterDescendantsInstances = { Room }
+		Params.FilterType = Enum.RaycastFilterType.Exclude
+		Params.RespectCanCollide = true
+
+		local Hitbox = game.Workspace:GetPartBoundsInBox(v.CFrame, v.Size, Params)
+
+		if Hitbox then
+			print(Hitbox)
+
+			for i,v in pairs(Hitbox) do
+				if v and v.Name == "Door" then
+					if not v:FindFirstAncestor("Doors") and not v:FindFirstAncestorWhichIsA("ObjectValue") then continue end
+					local Room = v:FindFirstAncestor("Doors").Parent or v:FindFirstAncestorWhichIsA("ObjectValue").Value
+					Room:Destroy()
+					print("destrui um")
+				end
+			end
+			--if table.find(Hitbox, "Door") then
+			--	print("achei")
+			--end
+		end
+	end
+end
+
+function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: number, RANK: string, GenerateSubRooms : boolean?)
 	if DungeonGenerated then
 		return
 	end
+
 	DungeonGenerated = true
 	local ROOMS_AMOUNT = math.random(MIN_ROOMS, MAX_ROOMS)
 
@@ -125,43 +155,20 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 	local MobsAmount = 0
 	local roomIndex = 1
 	while roomIndex <= ROOMS_AMOUNT do
+		--print(LastRoom)
 		local Room = DungeonService:GetRandomRoom()
-		local secondaryRoom = DungeonService:GetRandomRoom()
-		local AnchorSecondaryDoor
 
+		--print("here")
 		--task.spawn(function()
-		while AnchorSecondaryDoor == nil and not table.find(DoorsUsed, AnchorSecondaryDoor) do
-			if #LastRoom.Doors:GetChildren() <= 1 then
-				print(#LastRoom.Doors:GetChildren(), roomIndex)
-				break
-			end
-			AnchorSecondaryDoor = DungeonService:GetRandomDoor(LastRoom)
-			table.insert(DoorsUsed, AnchorSecondaryDoor)
-		end
-		if AnchorSecondaryDoor then
-			local SecondaryRoomRandomDoor = DungeonService:GetRandomDoor(secondaryRoom)
-			secondaryRoom.PrimaryPart = SecondaryRoomRandomDoor
-			secondaryRoom.Name = roomIndex .. "." .. SecondaryRoomRandomDoor.Name
-
-			secondaryRoom:PivotTo(AnchorSecondaryDoor:GetPivot() * CFrame.Angles(0, math.rad(180), 0))
-
-			if not DungeonService:CanPlace(AnchorSecondaryDoor, secondaryRoom, true) then
-				secondaryRoom:Destroy()
-			end
-		else
-			--print(AnchorSecondaryDoor, LastRoom)
-			secondaryRoom:Destroy()
-		end
 		--end)
 
 		local RoomLastName
-		--print(LastRoom)
+		--print(LastRoom, roomIndex)
 		local AnchorDoor: BasePart = DungeonService:GetRandomDoor(LastRoom)
 		local RoomRandomDoor: BasePart = DungeonService:GetRandomDoor(Room)
 
 		--print(Room.Name, RoomRandomDoor)
 		Room.PrimaryPart = RoomRandomDoor
-		RoomLastName = Room.Name
 		Room.Name = roomIndex
 
 		Room:PivotTo(AnchorDoor:GetPivot() * CFrame.Angles(0, math.rad(180), 0))
@@ -176,7 +183,13 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 					lastRoomTested = #DungeonFolder:GetChildren()
 				end
 				lastRoomTested -= 1
+				if not DungeonFolder:GetChildren()[lastRoomTested] then
+					tries = 20 
+					task.wait()
+					continue
+				end
 				LastRoom = DungeonFolder:GetChildren()[lastRoomTested]
+				--print(LastRoom)
 				--print(DungeonFolder:GetChildren()[lastRoomTested], lastRoomTested)
 				tries = 20
 			end
@@ -193,6 +206,7 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 		if door2 then
 			door2:Destroy()
 		end
+
 		tries = 20
 		roomIndex += 1
 		Room.Parent = DungeonFolder
@@ -200,7 +214,7 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 		--	table.insert(PastRooms, v)
 		--end
 		LastRoom = Room
-
+		--print(LastRoom, Room)
 		if roomIndex == "Start" then
 			continue
 		else
@@ -266,11 +280,76 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 
 		task.wait()
 	end
+	for RoomName, Room in pairs(DungeonFolder:GetChildren()) do
+		--print(RoomName)
+		local Amount  = 1
+		if Room ~= "Start"  and GenerateSubRooms then
+			if not DungeonFolder:FindFirstChild(RoomName) then 
+				continue
+			end
+
+			Room = DungeonFolder[RoomName]
+
+			local DoorsAmount = Room.Doors:GetChildren()
+
+		for i = 1, #DoorsAmount, 1 do
+			task.wait()
+			local DungeonTemplates = GetDungeonAssets().Rooms
+			for RoomTypeName,RoomModel in pairs(DungeonTemplates:GetChildren()) do
+				task.wait()
+				local secondaryRoom = RoomModel:Clone()
+				local AnchorSecondaryDoor
+				while AnchorSecondaryDoor == nil and not table.find(DoorsUsed, AnchorSecondaryDoor) do
+					if #LastRoom.Doors:GetChildren() <= 1 then
+						--print(#LastRoom.Doors:GetChildren(), roomIndex)
+						break
+					end
+					AnchorSecondaryDoor = DungeonService:GetRandomDoor(Room)
+				end
+				if AnchorSecondaryDoor then
+					local SecondaryRoomRandomDoor = DungeonService:GetRandomDoor(secondaryRoom)
+					secondaryRoom.PrimaryPart = SecondaryRoomRandomDoor
+					secondaryRoom.Name = Room.Name .. "." .. SecondaryRoomRandomDoor.Name
+				
+					secondaryRoom:PivotTo(AnchorSecondaryDoor:GetPivot() * CFrame.Angles(0, math.rad(180), 0))
+				
+					if not DungeonService:CanPlace(AnchorSecondaryDoor, secondaryRoom) then
+						secondaryRoom:Destroy()
+						
+					else
+						table.insert(DoorsUsed, AnchorSecondaryDoor)
+						secondaryRoom.Parent = DungeonFolder
+						local door1 = SecondaryRoomRandomDoor:FindFirstChild("Door")
+						local door2 = AnchorSecondaryDoor:FindFirstChild("Door")
+						if door1 then
+							door1:Destroy()
+						end
+						if door2 then
+							door2:Destroy()
+						end
+					end
+					continue
+				else
+					--print(AnchorSecondaryDoor, LastRoom)
+					secondaryRoom:Destroy()
+					continue
+				end
+			end
+		end
+		end
+		Amount += 1
+	end
+
+	for i,v in pairs(DungeonFolder:GetChildren()) do
+		self:ClearRoom(v)
+	end
 
 	local BossRoom = GetDungeonAssets().Boss:Clone()
 	BossRoom.PrimaryPart = BossRoom.Doors["1"]
 
 	DungeonService:PlaceBossRoom(BossRoom, LastRoom)
+
+	self:ClearRoom(BossRoom)
 end
 
 function DungeonService:GenerateDungeonFromRank(rank: string)
@@ -283,7 +362,7 @@ function DungeonService:GenerateDungeonFromRank(rank: string)
 		["S"] = 80,
 	}
 	local RoomAmount = Rooms[rank]
-	self:GenerateLinearDungeon(RoomAmount - 10, RoomAmount, rank)
+	self:GenerateLinearDungeon(RoomAmount - 10, RoomAmount, rank, true)
 	DungeonGenerated = true
 end
 
