@@ -1,6 +1,17 @@
 {
     "recommendations": [
         "danielayecodesense.roblox-lsp-plus-knit",
-        "evaera.vscode-rojo"
+        "evaera.vscode-rojo",
+        "ms-vsliveshare.vsliveshare",
+        "nightrains.robloxlsp",
+        "lixvbnet.styluafork",
+        "britesnow.vscode-toggle-quotes",
+        "duuhfool.knit-framework-support",
+        "wws.kfv",
+        "usernamehw.errorlens",
+        "kamikillerto.vscode-colorize",
+        "aaron-bond.better-comments",
+        "dzhavat.bracket-pair-toggler",
+        "hexcede.roblox-vanilla-icons",
     ],
 }
