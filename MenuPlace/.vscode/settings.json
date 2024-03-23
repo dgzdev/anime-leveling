@@ -1,8 +1,13 @@
 {
-    "robloxLsp.typeChecking.mode": "Disabled",
+    "files.autoSave": "onFocusChange",
     "editor.smoothScrolling": true,
     "editor.cursorSmoothCaretAnimation": "on",
-    "editor.cursorBlinking": "smooth",
-    "files.autoSave": "onFocusChange",
-    
+    "editor.minimap.enabled": false,
+    "editor.renderWhitespace": "trailing",
+    "editor.renderLineHighlight": "gutter",
+    "editor.rulers": [
+        80,
+        120
+    ],
+    "editor.defaultFormatter": "lixvbnet.styluafork",
 }
