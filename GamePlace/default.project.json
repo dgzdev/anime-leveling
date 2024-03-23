@@ -6,7 +6,7 @@
         "ServerScriptService": {
             "$className": "ServerScriptService",
             "$ignoreUnknownInstances": true,
-            "$path": "src/ServerScriptService"
+            "$path": "Game/ServerScriptService"
         },
         "SoundService": {
             "$properties": {
@@ -16,17 +16,17 @@
         "ServerStorage": {
             "$className": "ServerStorage",
             "$ignoreUnknownInstances": true,
-            "$path": "src/ServerStorage"
+            "$path": "Game/ServerStorage"
         },
         "StarterGui": {
             "$className": "StarterGui",
             "$ignoreUnknownInstances": true,
-            "$path": "src/StarterGui"
+            "$path": "Game/StarterGui"
         },
         "StarterPack": {
             "$className": "StarterPack",
             "$ignoreUnknownInstances": true,
-            "$path": "src/StarterPack"
+            "$path": "Game/StarterPack"
         },
         "StarterPlayer": {
             "$className": "StarterPlayer",
@@ -34,14 +34,14 @@
                 "$className": "StarterCharacterScripts",
                 "$ignoreUnknownInstances": true,
                 "Client": {
-                    "$path": "src/StarterPlayer/StarterCharacterScripts"
+                    "$path": "Game/StarterPlayer/StarterCharacterScripts"
                 }
             },
             "StarterPlayerScripts": {
                 "$className": "StarterPlayerScripts",
                 "$ignoreUnknownInstances": true,
                 "Client": {
-                    "$path": "src/StarterPlayer/StarterPlayerScripts"
+                    "$path": "Game/StarterPlayer/StarterPlayerScripts"
                 }
             },
             "$ignoreUnknownInstances": true
@@ -49,7 +49,7 @@
         "Workspace": {
             "$className": "Workspace",
             "$ignoreUnknownInstances": true,
-            "$path": "src/Workspace",
+            "$path": "Game/Workspace",
             "$properties": {
                 "HumanoidOnlySetCollisionsOnStateChange": "Enabled",
                 "InterpolationThrottling": "Enabled",
@@ -65,7 +65,7 @@
         "ReplicatedStorage": {
             "$className": "ReplicatedStorage",
             "$ignoreUnknownInstances": true,
-            "$path": "src/ReplicatedStorage",
+            "$path": "Game/ReplicatedStorage",
             "Modules": {
                 "$className": "Folder",
                 "$ignoreUnknownInstances": true,
@@ -80,7 +80,7 @@
         "ReplicatedFirst": {
             "$className": "ReplicatedFirst",
             "$ignoreUnknownInstances": true,
-            "$path": "src/ReplicatedFirst"
+            "$path": "Game/ReplicatedFirst"
         }
     }
 }
