@@ -68,7 +68,7 @@ function CLASS.new()
 		CameraSettings = {
 			DefaultShoulder = {
 				FieldOfView = 70,
-				Offset = Vector3.new(3, 0, 8),
+				Offset = Vector3.new(0, 3, 18),
 				Sensitivity = 10,
 				LerpSpeed = 0.5,
 			},
@@ -216,7 +216,7 @@ function CLASS:Update()
 	----
 
 	local character = LOCAL_PLAYER.Character
-	local humanoidRootPart = (character ~= nil) and (character:FindFirstChild("HeadSubject"))
+	local humanoidRootPart = (character ~= nil) and (character:FindFirstChild("Torso"))
 	if humanoidRootPart ~= nil then
 		--// Lerp field of view //--
 		currentCamera.FieldOfView =
@@ -347,15 +347,5 @@ end
 CLASS.__index = CLASS
 
 local singleton = CLASS.new()
-
-USER_INPUT_SERVICE.InputBegan:Connect(function(inputObject, gameProcessedEvent)
-	if (gameProcessedEvent == false) and (singleton.IsEnabled == true) then
-		if inputObject.KeyCode == Enum.KeyCode.LeftControl then
-			if singleton.IsEnabled == true then
-				singleton:SetMouseStep(not singleton.IsMouseSteppedIn)
-			end
-		end
-	end
-end)
 
 return singleton

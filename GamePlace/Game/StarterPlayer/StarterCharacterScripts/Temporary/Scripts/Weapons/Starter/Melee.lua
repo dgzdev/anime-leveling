@@ -146,7 +146,7 @@ local Melee = {
 		end,
 		name = "Punch",
 	},
-	[Enum.UserInputType.MouseButton2] = {
+	[Enum.KeyCode.F] = {
 		callback = function(action, inputstate, inputobject)
 			if inputstate == Enum.UserInputState.Cancel then
 				if PlayingAnimation then

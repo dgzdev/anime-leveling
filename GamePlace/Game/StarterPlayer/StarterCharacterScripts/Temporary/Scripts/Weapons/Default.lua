@@ -37,7 +37,7 @@ local Default = {
 		end,
 		name = "Attack",
 	},
-	[Enum.UserInputType.MouseButton2] = {
+	[Enum.KeyCode.F] = {
 		callback = function(action, inputstate, inputobject)
 			if inputstate ~= Enum.UserInputState.Begin then
 				return

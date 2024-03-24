@@ -30,19 +30,9 @@ function GuiController:BindPlayerHud()
 	local PlayerStatus = frame:WaitForChild("PlayerStatus")
 
 	local healthPR: ImageLabel = PlayerStatus:WaitForChild("healthBG"):WaitForChild("healthPR")
-	local expPR: ImageLabel = PlayerStatus:WaitForChild("expBG"):WaitForChild("expPR")
-	local manaPR: ImageLabel = PlayerStatus:WaitForChild("manaBG"):WaitForChild("manaPR")
-	local levelBG: ImageLabel = PlayerStatus:WaitForChild("levelBG")
-
 	local Gradient: UIGradient = healthPR:WaitForChild("UIGradient")
-	local expGradient: UIGradient = expPR:WaitForChild("UIGradient")
-	local manaGradient: UIGradient = manaPR:WaitForChild("UIGradient")
 
 	local healthValue: TextLabel = healthPR:WaitForChild("healthValue")
-
-	local levelValue: TextLabel = levelBG:WaitForChild("levelValue")
-	local manaValue: TextLabel = manaPR:WaitForChild("manaValue")
-	local expValue: TextLabel = expPR:WaitForChild("expValue")
 
 	local function transformInString(number: number): string
 		return tostring(math.floor(number))
@@ -55,31 +45,20 @@ function GuiController:BindPlayerHud()
 
 	local percentage = math.floor(tonumber(PlayerExperience / PlayerExperienceNeed) * 100)
 
-	levelValue.Text = transformInString(PlayerLevel)
-	healthValue.Text = transformInString(Humanoid.Health)
-
-	manaValue.Text = transformInString(PlayerMana)
-	expValue.Text = transformInString(percentage) .. "%"
-
-	expGradient.Offset = Vector2.new(percentage / 100, 0)
+	healthValue.Text = transformInString((Humanoid.Health / Humanoid.MaxHealth) * 100) .. "%"
 
 	local LevelUp = ProgressionService.LevelUp
 	local ExpChanged = ProgressionService.ExpChanged
 
 	LevelUp:Connect(function(level: number)
 		PlayerLevel = level
-		levelValue.Text = transformInString(PlayerLevel)
 	end)
+
 	ExpChanged:Connect(function(exp: number, max: number)
 		PlayerExperience = exp
 		PlayerExperienceNeed = max
 
 		percentage = math.floor(tonumber(PlayerExperience / PlayerExperienceNeed) * 100)
-
-		expValue.Text = transformInString(percentage) .. "%"
-		TweenService:Create(expGradient, TweenInfo.new(0.75, Enum.EasingStyle.Cubic), {
-			Offset = Vector2.new(percentage / 100, 0),
-		}):Play()
 	end)
 
 	local function BindHumanoid()
@@ -87,7 +66,7 @@ function GuiController:BindPlayerHud()
 		Humanoid = Character:WaitForChild("Humanoid")
 
 		local function Update()
-			healthValue.Text = transformInString(Humanoid.Health)
+			healthValue.Text = transformInString((Humanoid.Health / Humanoid.MaxHealth) * 100) .. "%"
 
 			local health, maxHealth = Humanoid.Health, Humanoid.MaxHealth
 			local healthPercent = health / maxHealth

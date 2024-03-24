@@ -39,6 +39,7 @@ function PlayerManager.new(player: Player)
 		local PlayerHealth = game.ReplicatedStorage.Models.PlayerHealth:Clone()
 		PlayerHealth.Parent = self.Character
 		PlayerHealth.Adornee = self.Character:WaitForChild("Head")
+		PlayerHealth.PlayerToHideFrom = player
 
 		local Name = PlayerHealth:WaitForChild("Name"):WaitForChild("PlayerName")
 		Name.Text = self.Character.Name
