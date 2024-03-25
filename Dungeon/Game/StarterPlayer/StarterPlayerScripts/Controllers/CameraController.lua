@@ -32,23 +32,25 @@ local ScrollLimits = {
 }
 
 function CameraModule:Init()
-	character = player.Character or player.CharacterAdded:Wait()
-	humanoid = character:WaitForChild("Humanoid")
-
-	-- ? Check if the OTS module is loaded.
-	self:CheckCondition(self.OTS ~= nil, "[CameraModule] OTS is nil, this is a problem.")
-
-	self:EnableCamera()
-
-	player.CharacterAdded:Connect(function()
-		humanoid = character:WaitForChild("Humanoid")
+	task.spawn(function()
 		character = player.Character or player.CharacterAdded:Wait()
-		self:EnableCamera()
-	end)
+		humanoid = character:WaitForChild("Humanoid")
 
-	humanoid.Died:Once(function()
-		CameraModule.OTS:SetMouseStep(false)
-		self:DisableCamera()
+		-- ? Check if the OTS module is loaded.
+		self:CheckCondition(self.OTS ~= nil, "[CameraModule] OTS is nil, this is a problem.")
+
+		self:EnableCamera()
+
+		player.CharacterAdded:Connect(function()
+			humanoid = character:WaitForChild("Humanoid")
+			character = player.Character or player.CharacterAdded:Wait()
+			self:EnableCamera()
+		end)
+
+		humanoid.Died:Once(function()
+			CameraModule.OTS:SetMouseStep(false)
+			self:DisableCamera()
+		end)
 	end)
 end
 function CameraModule:CheckCondition(condition: boolean, message: string) --> Check if a condition is true, if not, throw an error.

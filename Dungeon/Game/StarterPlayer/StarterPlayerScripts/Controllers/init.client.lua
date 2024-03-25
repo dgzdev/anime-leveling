@@ -5,8 +5,6 @@ if not game:IsLoaded() then
 	game.Loaded:Wait()
 end
 
-ContentProvider:PreloadAsync(script:GetDescendants())
-
 local Player = game.Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
 
