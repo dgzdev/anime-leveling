@@ -205,6 +205,11 @@ function InventoryService:EquipFromData(player: Player, playerData)
 		end
 	end
 
+	-- adicionar a tool no character
+	-- pegar o eventos no client de tool equipped,unequipped e activated
+	-- dependendo do item é só deixar o model dentro da tool, como por exemplo uma poção
+	-- criar o tool service, que vai receber os inputs de tools, da pra separar por tipos, como consumiveis, materiais, ferramentas, etc
+
 	player:SetAttribute("WeaponType", WeaponType)
 	player:SetAttribute("Equiped", Equiped)
 

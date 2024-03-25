@@ -31,39 +31,55 @@ function CameraModule.GetLockCFrame()
 	)
 end
 
-function CameraModule.LockCharacter(name: string | "MOUSE_LOCKIN")
+function CameraModule.LockCharacter(name: string | "MOUSE_LOCKIN", lock: boolean?)
 	local Lock: AlignOrientation = RootPart:WaitForChild("BodyLock")
-	name = name or "MOUSE_LOCKIN"
-	RunService:BindToRenderStep(name, Enum.RenderPriority.Camera.Value, function(delta: number)
-		Lock.CFrame = CameraModule.GetLockCFrame()
-	end)
+
+	local function Enable()
+		name = name or "MOUSE_LOCKIN"
+		Lock.Enabled = true
+		RunService:BindToRenderStep(name, Enum.RenderPriority.Camera.Value, function(delta: number)
+			Lock.CFrame = CameraModule.GetLockCFrame()
+		end)
+	end
+
+	local function Disable()
+		Lock.Enabled = false
+		RunService:UnbindFromRenderStep(name)
+	end
+
+	if lock then
+		Lock.Enabled = lock
+		if lock == true then
+			Enable()
+		elseif lock == false then
+			Disable()
+		end
+	else
+		if Lock.Enabled == false then
+			Enable()
+		elseif Lock.Enabled == true then
+			Disable()
+		end
+	end
+
 	return name
 end
 
-function CameraModule:ToggleMouseLock()
+function CameraModule:ToggleMouseLock(boolean: boolean?)
 	local Lock: AlignOrientation = RootPart:WaitForChild("BodyLock")
 
-	if OTS.IsMouseSteppedIn then
-		-- Unlock the mouse
-		OTS:SetMouseStep(false)
-
-		RunService:UnbindFromRenderStep("MOUSE_LOCKIN")
-		Lock.Enabled = false
-		Humanoid.AutoRotate = false
-		Camera.CameraSubject = Torso
-	elseif OTS.IsMouseSteppedIn == false then
-		-- Lock the mouse
-
-		OTS:SetMouseStep(true)
-
-		CameraModule.LockCharacter()
-		Lock.Enabled = true
-		Humanoid.AutoRotate = false
-	end
+	OTS:SetMouseStep(boolean or not OTS.IsMouseSteppedIn)
 end
 
 function CameraModule:KnitInit()
 	task.spawn(function()
+		Player.CharacterAdded:Connect(function()
+			Character = Player.Character
+			Humanoid = Character:WaitForChild("Humanoid")
+			RootPart = Character.PrimaryPart
+			Torso = Character:WaitForChild("Head")
+		end)
+
 		Camera.CameraSubject = Torso
 
 		if playerGui:FindFirstChild("loadingScreen") then
@@ -73,6 +89,35 @@ function CameraModule:KnitInit()
 		if not ReplicatedStorage:GetAttribute("FirstTimeAnimationEnd") then
 			ReplicatedStorage:GetAttributeChangedSignal("FirstTimeAnimationEnd"):Wait()
 		end
+
+		local limits = { 8, 32 }
+
+		UserInputService.InputChanged:Connect(function(input, gameProcessed)
+			if input.UserInputType == Enum.UserInputType.MouseWheel then
+				local UP = input.Position.Z < 0
+				if UP then
+					for i, v in OTS.CameraSettings do
+						v.Offset = Vector3.new(v.Offset.X, v.Offset.Y, math.clamp(v.Offset.Z + 1, limits[1], limits[2]))
+					end
+				else
+					for i, v in OTS.CameraSettings do
+						v.Offset = Vector3.new(v.Offset.X, v.Offset.Y, math.clamp(v.Offset.Z - 1, limits[1], limits[2]))
+					end
+				end
+			end
+		end)
+
+		ContextActionService:BindActionAtPriority(
+			"LockMouse",
+			function(actionName: string, inputState: Enum.UserInputState, inputObject: InputObject)
+				if inputState == Enum.UserInputState.Begin then
+					CameraModule.LockCharacter("MOUSE_LOCKIN")
+				end
+			end,
+			false,
+			100,
+			Enum.KeyCode.LeftAlt
+		)
 
 		OTS:Enable()
 	end)
@@ -109,7 +154,7 @@ CameraEvent.Event:Connect(function(action: string, ...)
 		end
 
 		]]
-		CameraModule:ToggleMouseLock()
+		CameraModule:ToggleMouseLock(true)
 	elseif action == "Unlock" then
 		--[[
 		if CurrentCamera == "OTS" then
@@ -119,7 +164,7 @@ CameraEvent.Event:Connect(function(action: string, ...)
 			UserInputService.MouseIconEnabled = true
 		end
 		]]
-		CameraModule:ToggleMouseLock()
+		CameraModule:ToggleMouseLock(false)
 	end
 
 	if action == "FOV" then

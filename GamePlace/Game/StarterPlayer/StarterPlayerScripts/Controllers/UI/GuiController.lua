@@ -29,10 +29,14 @@ function GuiController:BindPlayerHud()
 
 	local PlayerStatus = frame:WaitForChild("PlayerStatus")
 
-	local healthPR: ImageLabel = PlayerStatus:WaitForChild("healthBG"):WaitForChild("healthPR")
-	local Gradient: UIGradient = healthPR:WaitForChild("UIGradient")
+	local healthPR: Frame = PlayerStatus:WaitForChild("healthBG"):WaitForChild("FrameValue")
+	local healthValue: TextLabel = PlayerStatus:WaitForChild("healthBG"):WaitForChild("ValueText")
 
-	local healthValue: TextLabel = healthPR:WaitForChild("healthValue")
+	local expPR: Frame = PlayerStatus:WaitForChild("expBG"):WaitForChild("FrameValue")
+	local expValue: TextLabel = PlayerStatus:WaitForChild("expBG"):WaitForChild("ValueText")
+
+	local LevelContainer: Frame = PlayerStatus:WaitForChild("LevelContainer")
+	local LevelValue: TextLabel = LevelContainer:WaitForChild("ValueText")
 
 	local function transformInString(number: number): string
 		return tostring(math.floor(number))
@@ -50,8 +54,14 @@ function GuiController:BindPlayerHud()
 	local LevelUp = ProgressionService.LevelUp
 	local ExpChanged = ProgressionService.ExpChanged
 
+	expPR.Size = UDim2.fromScale(percentage / 100, 1)
+	expValue.Text = transformInString(percentage) .. "%"
+
+	LevelValue.Text = transformInString(PlayerLevel)
+
 	LevelUp:Connect(function(level: number)
 		PlayerLevel = level
+		LevelValue.Text = transformInString(PlayerLevel)
 	end)
 
 	ExpChanged:Connect(function(exp: number, max: number)
@@ -59,6 +69,11 @@ function GuiController:BindPlayerHud()
 		PlayerExperienceNeed = max
 
 		percentage = math.floor(tonumber(PlayerExperience / PlayerExperienceNeed) * 100)
+
+		TweenService:Create(expPR, TweenInfo.new(0.75, Enum.EasingStyle.Cubic), {
+			Size = UDim2.fromScale(percentage / 100, 1),
+		}):Play()
+		expValue.Text = transformInString(percentage) .. "%"
 	end)
 
 	local function BindHumanoid()
@@ -76,11 +91,11 @@ function GuiController:BindPlayerHud()
 
 			local lerpColor = colorB:Lerp(colorA, healthPercent)
 
-			TweenService:Create(Gradient, TweenInfo.new(0.75, Enum.EasingStyle.Cubic), {
-				Offset = Vector2.new(healthPercent, 0),
+			TweenService:Create(healthPR, TweenInfo.new(0.75, Enum.EasingStyle.Cubic), {
+				Size = UDim2.fromScale(healthPercent, 1),
 			}):Play()
 			TweenService:Create(healthPR, TweenInfo.new(0.75, Enum.EasingStyle.Cubic), {
-				ImageColor3 = lerpColor,
+				BackgroundColor3 = lerpColor,
 			}):Play()
 		end
 

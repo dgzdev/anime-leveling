@@ -6,13 +6,14 @@ local Knit = require(ReplicatedStorage.Packages.Knit)
 local CameraEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("CAMERA")
 
 local PlayerService
+local CameraController
 
 local HumanoidHandler = Knit.CreateController({
 	Name = "HumanoidHandler",
 })
 
 local Player = Players.LocalPlayer
-local Character 
+local Character
 local Humanoid
 local Animator: Animator
 
@@ -86,6 +87,7 @@ end
 
 function HumanoidHandler:KnitInit()
 	PlayerService = Knit.GetService("PlayerService")
+	CameraController = Knit.GetController("CameraController")
 end
 
 function HumanoidHandler:KnitStart()
@@ -94,12 +96,20 @@ function HumanoidHandler:KnitStart()
 		Humanoid = Character:WaitForChild("Humanoid")
 		Animator = Humanoid:WaitForChild("Animator")
 
+		local function UnlockMouse()
+			CameraController:ToggleMouseLock(false)
+		end
+
 		Player.CharacterAdded:Connect(function(character)
 			Character = character
 			Humanoid = character:WaitForChild("Humanoid")
 			Animator = Humanoid:WaitForChild("Animator")
 			self:BindHumanoid(Humanoid)
+
+			Humanoid.Died:Once(UnlockMouse)
 		end)
+
+		Humanoid.Died:Once(UnlockMouse)
 
 		self:BindHumanoid(Humanoid)
 	end)()

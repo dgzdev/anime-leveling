@@ -44,7 +44,7 @@ local function Heartbeat()
 			Angle2 = 0
 		end
 
-		local TiltGoal = { C0 = ORIGINAL_C0 * CFrame.Angles(Angle1, -Angle2, 0) }
+		local TiltGoal = { C0 = ORIGINAL_C0 * CFrame.Angles(0, -Angle2, 0) }
 		local TiltTween = TweenService:Create(RootJoint, TweenInfo.new(0.2), TiltGoal)
 
 		TiltTween:Play()

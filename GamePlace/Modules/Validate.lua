@@ -178,24 +178,20 @@ end
 ]]
 function Validate:CanAttack(Humanoid: Humanoid): boolean
 	assert(typeof(Humanoid) == "Instance" and Humanoid:IsA("Humanoid"), "[VALIDATE] Humanoid must be a Humanoid")
-	local canAttack = true
 
 	if Validate.Cooldowns:IsInCooldown(Humanoid) then
-		canAttack = false
-		return canAttack
+		return false
 	end
 
 	if Humanoid:GetAttribute("Stun") then
-		canAttack = false
-		return canAttack
+		return false
 	end
 
 	if Humanoid.RootPart.Anchored then
-		canAttack = false
-		return canAttack
+		return false
 	end
 
-	return canAttack
+	return true
 end
 
 return Validate

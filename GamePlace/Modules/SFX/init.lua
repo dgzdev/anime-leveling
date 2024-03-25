@@ -32,10 +32,6 @@ function Sounds:_Apply(target: Model, action: string)
 	local sound = self:GetRandomFrom(newFolder):Clone()
 	sound:SetAttribute("Ignore", true)
 
-	sound.RollOffMaxDistance = 60
-	sound.RollOffMinDistance = 0
-	sound.RollOffMode = Enum.RollOffMode.Linear
-
 	sound.Parent = Root
 
 	task.wait()

@@ -5,6 +5,8 @@ Knit.OnStart():await()
 
 local StatusController = Knit.GetController("StatusController")
 
+local SFX = require(game.ReplicatedStorage.Modules.SFX)
+
 local function GetModelMass(model: Model)
 	local mass = 0
 	for _, part: BasePart in (model:GetDescendants()) do
@@ -47,6 +49,7 @@ function DoubleJump:Init()
 						humanoidRootPart.AssemblyLinearVelocity = LookV + Vector3.new(0, 60, 0)
 
 						humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+						SFX:Apply(char.HumanoidRootPart, "Jump")
 						humanoid.StateChanged:Connect(function(old, new)
 							if new == Enum.HumanoidStateType.Landed then
 								jumpUsage = 1

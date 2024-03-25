@@ -68,7 +68,7 @@ function CLASS.new()
 		CameraSettings = {
 			DefaultShoulder = {
 				FieldOfView = 70,
-				Offset = Vector3.new(0, 3, 18),
+				Offset = Vector3.new(0, 3, 19),
 				Sensitivity = 10,
 				LerpSpeed = 0.5,
 			},
