@@ -86,6 +86,8 @@ function CameraModule:KnitInit()
 			playerGui:FindFirstChild("loadingScreen").Destroying:Wait()
 		end
 
+		print("finsihed")
+
 		local limits = { 8, 32 }
 
 		UserInputService.InputChanged:Connect(function(input, gameProcessed)

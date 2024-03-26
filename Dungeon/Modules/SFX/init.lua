@@ -13,9 +13,6 @@ function Sounds:GetRandomFrom(folder: Folder): Sound
 end
 
 function Sounds:_Apply(target: Model, action: string)
-	if not target then
-		return
-	end
 	if not target:IsDescendantOf(game.Workspace) then
 		return
 	end
@@ -34,10 +31,6 @@ function Sounds:_Apply(target: Model, action: string)
 
 	local sound = self:GetRandomFrom(newFolder):Clone()
 	sound:SetAttribute("Ignore", true)
-
-	sound.RollOffMaxDistance = 60
-	sound.RollOffMinDistance = 0
-	sound.RollOffMode = Enum.RollOffMode.Linear
 
 	sound.Parent = Root
 

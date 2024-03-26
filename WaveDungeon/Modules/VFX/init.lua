@@ -13,9 +13,6 @@ function VFX:_ApplyParticle(
 	doNotWeld: boolean?,
 	v: Vector3?
 )
-	if not target then
-		return
-	end
 	local Root
 
 	if not target:IsDescendantOf(Workspace) then
