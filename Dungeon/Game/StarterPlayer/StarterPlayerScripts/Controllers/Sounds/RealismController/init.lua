@@ -15,7 +15,7 @@ function Realism:SetMouseIcon(icon: number)
 end
 
 function Realism:KnitStart()
-	Realism:SetMouseIcon(16552514299)
+	Realism:SetMouseIcon(16856168951)
 
 	SoundHandler:Start()
 	FootstepsHandler:Start()
