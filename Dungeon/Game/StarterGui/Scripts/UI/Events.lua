@@ -9,7 +9,6 @@ local TweenService = game:GetService("TweenService")
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
 Knit.OnStart():await()
 
-local PromptController = Knit.GetController("PromptController")
 local QuestService = Knit.GetService("QuestService")
 local ProgressionService = Knit.GetService("ProgressionService")
 local InventoryService = Knit.GetService("InventoryService")
