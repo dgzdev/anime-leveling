@@ -86,10 +86,6 @@ function CameraModule:KnitInit()
 			playerGui:FindFirstChild("loadingScreen").Destroying:Wait()
 		end
 
-		if not ReplicatedStorage:GetAttribute("FirstTimeAnimationEnd") then
-			ReplicatedStorage:GetAttributeChangedSignal("FirstTimeAnimationEnd"):Wait()
-		end
-
 		local limits = { 8, 32 }
 
 		UserInputService.InputChanged:Connect(function(input, gameProcessed)
