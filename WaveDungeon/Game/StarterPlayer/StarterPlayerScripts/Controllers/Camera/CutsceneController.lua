@@ -139,7 +139,6 @@ local function AnimateCamera(animation: string)
 		Root.CFrame = Torso.CFrame
 		task.wait()
 		AnimationTrack:Stop()
-		CameraEvent:Fire("Enable")
 		task.wait()
 		Humanoid:ChangeState(Enum.HumanoidStateType.Running)
 

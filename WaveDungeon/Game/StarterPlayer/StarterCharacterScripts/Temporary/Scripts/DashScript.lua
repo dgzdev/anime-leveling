@@ -7,6 +7,7 @@ Knit.OnStart():await()
 
 local StatusController = Knit.GetController("StatusController")
 
+local Debris = game:GetService("Debris")
 local Player = game:GetService("Players").LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -14,8 +15,11 @@ local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 local Character = Player.Character or Player.CharacterAdded:Wait()
 local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+local LockMouse: AlignOrientation = HumanoidRootPart:WaitForChild("BodyLock")
 local Humanoid = Character:WaitForChild("Humanoid")
 local Animator = Humanoid:WaitForChild("Animator")
+
+local SFX = require(ReplicatedStorage.Modules.SFX)
 
 local Slide
 
@@ -42,11 +46,29 @@ end
 
 local VFX = require(game.ReplicatedStorage.Modules.VFX)
 
+local function CreateAnimationWithID(id: string)
+	local a = Instance.new("Animation")
+	a.AnimationId = `rbxassetid://{id}`
+	return a
+end
+
 local DashAnimations = {
-	["F"] = "16526303689",
-	["B"] = "16526306820",
-	["L"] = "16526295276",
-	["R"] = "16526290641",
+	["F"] = {
+		speed = 1,
+		anim = CreateAnimationWithID("16526303689"),
+	},
+	["B"] = {
+		speed = 1,
+		anim = CreateAnimationWithID("16526306820"),
+	},
+	["L"] = {
+		speed = 1.5,
+		anim = CreateAnimationWithID("16526295276"),
+	},
+	["R"] = {
+		speed = 1.5,
+		anim = CreateAnimationWithID("16526290641"),
+	},
 }
 
 local walkKeyBinds = {
@@ -89,10 +111,6 @@ function DashScript:Dash()
 		return
 	end
 
-	if Humanoid:GetState() ~= Enum.HumanoidStateType.Running then
-		return
-	end
-
 	if DashDirection.Magnitude == 0 then
 		return
 	end
@@ -106,64 +124,77 @@ function DashScript:Dash()
 	end
 
 	Cooldown = tick() + 1.5
-	local Animation = Instance.new("Animation")
 
-	local WalkDirWorld = getWalkDirectionCameraSpace()
+	local Stripes = ReplicatedStorage:WaitForChild("VFX"):WaitForChild("Stripes"):Clone()
+	Stripes.Parent = Workspace.Terrain
 
-	local DashDiretionString = ""
-	if WalkDirWorld.X > 0 then
-		DashDiretionString = "R"
-	elseif WalkDirWorld.X < 0 then
-		DashDiretionString = "L"
-	elseif WalkDirWorld.Z > 0 then
-		DashDiretionString = "B"
-	elseif WalkDirWorld.Z < 0 then
-		DashDiretionString = "F"
+	task.spawn(function()
+		for i = 1, 10, 1 do
+			for _, p: ParticleEmitter in (Stripes:GetChildren()) do
+				if p:IsA("ParticleEmitter") then
+					task.wait()
+					p:Emit(10)
+				end
+			end
+			task.wait(0.1)
+			Stripes.CFrame = HumanoidRootPart.CFrame
+		end
+	end)
+
+	local Animation
+	local Direction
+
+	if LockMouse.Enabled then
+		local WalkDirWorld = getWalkDirectionCameraSpace()
+
+		local DashDiretionString = ""
+		if WalkDirWorld.X > 0 then
+			DashDiretionString = "R"
+		elseif WalkDirWorld.X < 0 then
+			DashDiretionString = "L"
+		elseif WalkDirWorld.Z > 0 then
+			DashDiretionString = "B"
+		elseif WalkDirWorld.Z < 0 then
+			DashDiretionString = "F"
+		end
+
+		if not DashDiretionString then
+			return
+		end
+
+		local id = DashAnimations[DashDiretionString or "F"] or DashAnimations.F
+		Direction = id
+		Animation = id.anim
+
+		if DashDiretionString == "F" or DashDiretionString == "B" then
+			for _, p: ParticleEmitter in (Stripes:GetChildren()) do
+				if p:IsA("ParticleEmitter") then
+					p.Orientation = Enum.ParticleOrientation.VelocityParallel
+				end
+			end
+		end
+	else
+		Direction = DashAnimations.F
+		Animation = DashAnimations.F.anim
 	end
 
-	if not DashDiretionString then
-		return
-	end
-
-	local id = DashAnimations[DashDiretionString or "F"] or DashAnimations.F
-	Animation.AnimationId = `rbxassetid://{id or DashAnimations.F}`
-	local AnimationTrack = Animator:LoadAnimation(Animation)
+	local AnimationTrack: AnimationTrack = Animator:LoadAnimation(Animation)
 
 	VFX:ApplyParticle(Character, "Smoke")
 
-	local Stripes = ReplicatedStorage:WaitForChild("VFX"):WaitForChild("Stripes"):Clone()
-
-	Stripes.Parent = Workspace.Terrain
-
-	if DashDiretionString == "F" or DashDiretionString == "B" then
-		for _, p: ParticleEmitter in (Stripes:GetChildren()) do
-			if p:IsA("ParticleEmitter") then
-				p.Orientation = Enum.ParticleOrientation.VelocityParallel
-			end
-		end
-	end
-
 	task.wait()
 	AnimationTrack:Play()
-	AnimationTrack:AdjustSpeed(1)
-	RunService:BindToRenderStep("DashEffects", Enum.RenderPriority.Last.Value, function()
-		Stripes.CFrame = HumanoidRootPart.CFrame
+	SFX:Apply(Character, "Dash")
 
-		for _, p: ParticleEmitter in (Stripes:GetChildren()) do
-			if p:IsA("ParticleEmitter") then
-				p:Emit(1)
-			end
-		end
-
-		if not AnimationTrack.IsPlaying then
-			Stripes:Destroy()
-			RunService:UnbindFromRenderStep("DashEffects")
-		end
-	end)
+	AnimationTrack:AdjustSpeed(Direction.speed)
 
 	local mass = GetModelMass(Character)
 	local DashVelocity = DashDirection * 100 * mass
 	HumanoidRootPart.AssemblyLinearVelocity = DashVelocity
+
+	AnimationTrack.Ended:Wait()
+
+	Debris:AddItem(Stripes, 1)
 end
 
 function DashScript:Init(Modules)

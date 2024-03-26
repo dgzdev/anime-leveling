@@ -24,7 +24,7 @@ local Animations = ReplicatedStorage:WaitForChild("Animations")
 local PlayingAnimation: AnimationTrack
 
 local Cooldowns = {
-	["FlashStrike"] = 0,
+	["Slash"] = 0,
 }
 
 local SFX = require(ReplicatedStorage.Modules.SFX)
@@ -56,7 +56,7 @@ end
 
 _G.Combo = 1
 
-local Sword = {
+local Dagger = {
 	[Enum.UserInputType.MouseButton1] = {
 		callback = function(action, inputstate, inputobject)
 			if inputstate == Enum.UserInputState.Cancel then
@@ -101,7 +101,7 @@ local Sword = {
 				return
 			end
 
-			local Combos = Animations:WaitForChild("Sword"):WaitForChild("Hit"):GetChildren()
+			local Combos = Animations:WaitForChild("Dagger"):WaitForChild("Hit"):GetChildren()
 			table.sort(Combos, function(a, b)
 				return a.Name < b.Name
 			end)
@@ -112,15 +112,12 @@ local Sword = {
 				PlayingAnimation:Stop()
 			end
 
-			SFX:Create(RootPart, "Slash", 0, 60, false)
+			SFX:Create(RootPart, "Dagger", 0, 60, false)
 
 			PlayingAnimation = Animator:LoadAnimation(ComboAnimation)
 			SetCooldown("Slash", PlayingAnimation.Length)
 
-			local DelayTime = 0.15
-			if _G.Combo == 1 then
-				DelayTime = 0.3
-			end
+			local DelayTime = 0.1
 
 			Humanoid:SetAttribute("SlideGetUp", true)
 			Humanoid:SetAttribute("SlideGetUp", false)
@@ -133,7 +130,7 @@ local Sword = {
 				})
 			end)
 
-			PlayingAnimation:Play(DelayTime)
+			PlayingAnimation:Play(DelayTime, 1, 1)
 
 			_G.Combo += 1
 
@@ -143,7 +140,7 @@ local Sword = {
 		end,
 		name = "Slash",
 	},
-	[Enum.UserInputType.MouseButton2] = {
+	[Enum.KeyCode.F] = {
 		callback = function(action, inputstate, inputobject)
 			if inputstate == Enum.UserInputState.Cancel then
 				if PlayingAnimation then
@@ -169,8 +166,8 @@ local Sword = {
 	},
 }
 
-function Sword.Start()
+function Dagger.Start()
 	WeaponService = Knit.GetService("WeaponService")
 end
 
-return Sword
+return Dagger

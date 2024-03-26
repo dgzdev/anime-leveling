@@ -144,11 +144,11 @@ local TestDagger = {
 				return
 			end
 
-			if inputstate == Enum.UserInputState.Begin then
-				if CheckCooldown("Venom Palm") then
-					return
-				end
+			if CheckCooldown("Venom Palm") then
+				return
+			end
 
+			if inputstate == Enum.UserInputState.Begin then
 				--> Animação de segurar
 				local Animation: Animation = ReplicatedStorage:WaitForChild("Animations")
 					:WaitForChild("FlashStrike Hold")
@@ -179,13 +179,14 @@ local TestDagger = {
 				RootPart.Anchored = false
 
 				if HoldingTime > 0.45 then
+					SetCooldown("Venom Palm", 3)
+
 					task.spawn(function()
 						WeaponService:WeaponInput("Venom Palm", Enum.UserInputState.End, {
 							Position = RootPart.CFrame,
 						})
 					end)
 
-					SetCooldown("Venom Palm", 3)
 					SFX:Create(RootPart, "Death")
 
 					local Animation = ReplicatedStorage:WaitForChild("Animations")
@@ -255,7 +256,7 @@ local TestDagger = {
 
 				if HoldingTime > 0.45 then
 					PlayingAnimation:Stop(0)
-					SetCooldown("Dual Barrage", 10) -- > 10 segundos de cooldown
+					SetCooldown("Dual Barrage", 3) -- > 10 segundos de cooldown
 
 					--> animação de ataque
 					local Animation: Animation = ReplicatedStorage:WaitForChild("Animations")
@@ -268,6 +269,7 @@ local TestDagger = {
 
 					PlayingAnimation:GetMarkerReachedSignal("teleport"):Connect(function()
 						task.spawn(function()
+							task.wait(.3)
 							WeaponService:WeaponInput("VenomDash", Enum.UserInputState.Begin, {
 								Position = RootPart.CFrame,
 							})
@@ -288,6 +290,8 @@ local TestDagger = {
 
 							comboTicks += 1
 						end
+
+
 					end)
 				else
 					if PlayingAnimation then

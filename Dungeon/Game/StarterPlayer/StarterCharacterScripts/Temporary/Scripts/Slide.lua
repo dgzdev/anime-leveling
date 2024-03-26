@@ -67,6 +67,10 @@ function Slide.Slide()
 		return
 	end
 
+	if RootPart:GetVelocityAtPosition(RootPart.Position).Magnitude <= 8 then
+		return
+	end
+
 	momentum = math.clamp(RootPart.AssemblyLinearVelocity.Magnitude * MOMENTUM_START_MULTIPLIER, 0, MOMENTUM_START_MAX)
 
 	local SlideBodyVelocity = Instance.new("BodyVelocity")

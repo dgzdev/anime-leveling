@@ -16,10 +16,6 @@ function StatusController:ReloadStamina()
 end
 
 function StatusController:WasteStamina(amount: number): boolean
-	if StatusController.Stamina < amount then
-		return false
-	end
-	StatusController.Stamina = StatusController.Stamina - amount
 	return true
 end
 

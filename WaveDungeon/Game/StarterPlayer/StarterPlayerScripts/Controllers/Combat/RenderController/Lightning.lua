@@ -171,25 +171,6 @@ function LightningModule.LStrike(RenderData: { root: BasePart, position: CFrame 
 
 	SFX:Create(Root, "YamatoSwing")
 
-	local A1, A2 = {}, Root:FindFirstChildWhichIsA("Attachment")
-
-	A1.WorldPosition, A1.WorldAxis = Root.CFrame.Position, Vector3.new()
-
-	for i = 1, 5, 1 do
-		task.wait(0.1)
-		local NewBolt = LightningBolt.new(A1, A2, 120)
-		NewBolt.Color = Color3.new(0, 0, 0)
-		NewBolt.CurveSize0, NewBolt.CurveSize1 = 1, 2
-		NewBolt.PulseSpeed = 6
-		NewBolt.AnimationSpeed = 10
-		NewBolt.ColorOffsetSpeed = 6
-		NewBolt.PulseLength = 0.5
-		NewBolt.FadeLength = 0.25
-		NewBolt.MaxRadius = 1
-
-		LightningSparks.new(NewBolt)
-	end
-
 	VFX:ApplyParticle(Root.Parent, "Fell")
 	ShakerController:Shake(ShakerController.Presets.Bump)
 end

@@ -29,20 +29,14 @@ function GuiController:BindPlayerHud()
 
 	local PlayerStatus = frame:WaitForChild("PlayerStatus")
 
-	local healthPR: ImageLabel = PlayerStatus:WaitForChild("healthBG"):WaitForChild("healthPR")
-	local expPR: ImageLabel = PlayerStatus:WaitForChild("expBG"):WaitForChild("expPR")
-	local manaPR: ImageLabel = PlayerStatus:WaitForChild("manaBG"):WaitForChild("manaPR")
-	local levelBG: ImageLabel = PlayerStatus:WaitForChild("levelBG")
+	local healthPR: Frame = PlayerStatus:WaitForChild("healthBG"):WaitForChild("FrameValue")
+	local healthValue: TextLabel = PlayerStatus:WaitForChild("healthBG"):WaitForChild("ValueText")
 
-	local Gradient: UIGradient = healthPR:WaitForChild("UIGradient")
-	local expGradient: UIGradient = expPR:WaitForChild("UIGradient")
-	local manaGradient: UIGradient = manaPR:WaitForChild("UIGradient")
+	local expPR: Frame = PlayerStatus:WaitForChild("expBG"):WaitForChild("FrameValue")
+	local expValue: TextLabel = PlayerStatus:WaitForChild("expBG"):WaitForChild("ValueText")
 
-	local healthValue: TextLabel = healthPR:WaitForChild("healthValue")
-
-	local levelValue: TextLabel = levelBG:WaitForChild("levelValue")
-	local manaValue: TextLabel = manaPR:WaitForChild("manaValue")
-	local expValue: TextLabel = expPR:WaitForChild("expValue")
+	local LevelContainer: Frame = PlayerStatus:WaitForChild("LevelContainer")
+	local LevelValue: TextLabel = LevelContainer:WaitForChild("ValueText")
 
 	local function transformInString(number: number): string
 		return tostring(math.floor(number))
@@ -55,31 +49,31 @@ function GuiController:BindPlayerHud()
 
 	local percentage = math.floor(tonumber(PlayerExperience / PlayerExperienceNeed) * 100)
 
-	levelValue.Text = transformInString(PlayerLevel)
-	healthValue.Text = transformInString(Humanoid.Health)
-
-	manaValue.Text = transformInString(PlayerMana)
-	expValue.Text = transformInString(percentage) .. "%"
-
-	expGradient.Offset = Vector2.new(percentage / 100, 0)
+	healthValue.Text = transformInString((Humanoid.Health / Humanoid.MaxHealth) * 100) .. "%"
 
 	local LevelUp = ProgressionService.LevelUp
 	local ExpChanged = ProgressionService.ExpChanged
 
+	expPR.Size = UDim2.fromScale(percentage / 100, 1)
+	expValue.Text = transformInString(percentage) .. "%"
+
+	LevelValue.Text = transformInString(PlayerLevel)
+
 	LevelUp:Connect(function(level: number)
 		PlayerLevel = level
-		levelValue.Text = transformInString(PlayerLevel)
+		LevelValue.Text = transformInString(PlayerLevel)
 	end)
+
 	ExpChanged:Connect(function(exp: number, max: number)
 		PlayerExperience = exp
 		PlayerExperienceNeed = max
 
 		percentage = math.floor(tonumber(PlayerExperience / PlayerExperienceNeed) * 100)
 
-		expValue.Text = transformInString(percentage) .. "%"
-		TweenService:Create(expGradient, TweenInfo.new(0.75, Enum.EasingStyle.Cubic), {
-			Offset = Vector2.new(percentage / 100, 0),
+		TweenService:Create(expPR, TweenInfo.new(0.75, Enum.EasingStyle.Cubic), {
+			Size = UDim2.fromScale(percentage / 100, 1),
 		}):Play()
+		expValue.Text = transformInString(percentage) .. "%"
 	end)
 
 	local function BindHumanoid()
@@ -87,7 +81,7 @@ function GuiController:BindPlayerHud()
 		Humanoid = Character:WaitForChild("Humanoid")
 
 		local function Update()
-			healthValue.Text = transformInString(Humanoid.Health)
+			healthValue.Text = transformInString((Humanoid.Health / Humanoid.MaxHealth) * 100) .. "%"
 
 			local health, maxHealth = Humanoid.Health, Humanoid.MaxHealth
 			local healthPercent = health / maxHealth
@@ -97,11 +91,11 @@ function GuiController:BindPlayerHud()
 
 			local lerpColor = colorB:Lerp(colorA, healthPercent)
 
-			TweenService:Create(Gradient, TweenInfo.new(0.75, Enum.EasingStyle.Cubic), {
-				Offset = Vector2.new(healthPercent, 0),
+			TweenService:Create(healthPR, TweenInfo.new(0.75, Enum.EasingStyle.Cubic), {
+				Size = UDim2.fromScale(healthPercent, 1),
 			}):Play()
 			TweenService:Create(healthPR, TweenInfo.new(0.75, Enum.EasingStyle.Cubic), {
-				ImageColor3 = lerpColor,
+				BackgroundColor3 = lerpColor,
 			}):Play()
 		end
 
