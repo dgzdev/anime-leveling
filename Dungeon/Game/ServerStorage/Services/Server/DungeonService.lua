@@ -170,7 +170,6 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 	local MobsAmount = 0
 	local roomIndex = 1
 	while roomIndex <= ROOMS_AMOUNT do
-		--print(LastRoom)
 		local Room = DungeonService:GetRandomRoom()
 
 		--print("here")
