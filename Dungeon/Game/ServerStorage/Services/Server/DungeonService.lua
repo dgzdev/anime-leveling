@@ -33,6 +33,43 @@ function DungeonService:GetRandomRoom()
 	return Room:Clone()
 end
 
+function DungeonService:Can_Place(AnchorDoor, Room : Model, showLogs: boolean?)
+	local Params = OverlapParams.new()
+	local LimitsFolder = Room:FindFirstChild("Limits")
+	Params.FilterDescendantsInstances = { Room, AnchorDoor.Parent }
+	Params.FilterType = Enum.RaycastFilterType.Exclude
+	Params.CollisionGroup = "ROOM"
+	Params.RespectCanCollide = true
+	local Hitbox = {}
+	
+	for i,v : BasePart in pairs(LimitsFolder:GetChildren()) do
+		local c, s = v.CFrame, v.Size
+		local H = game.Workspace:GetPartBoundsInBox(c,s, Params)
+		if #H > 1 then
+			for j,k in pairs(H) do
+				table.insert(Hitbox)
+			end
+		end
+	end
+
+
+
+	--local _cframe, _size = Room:GetBoundingBox()
+	--local size = _size - Vector3.new(0, 0, 0)
+	--local size = Vector3.new(math.round(size.X), math.round(size.Y), math.round(size.Z))
+	--local Hitbox = game.Workspace:GetPartBoundsInBox(_cframe, size, Params)
+
+	--print(Hitbox)
+	if #Hitbox > 0 then
+		if showLogs then
+			print(Room,Hitbox)
+		end
+		return false
+	end
+
+	return true
+end
+
 function DungeonService:CanPlace(AnchorDoor, Room, showLogs: boolean?)
 	local Params = OverlapParams.new()
 	Params.FilterDescendantsInstances = { Room, AnchorDoor.Parent }
@@ -80,7 +117,7 @@ function DungeonService:PlaceBossRoom(BossRoom, LastRoom)
 		AnchorDoor = DungeonService:GetRandomDoor(LastRoom)
 		BossRoom:PivotTo(AnchorDoor:GetPivot() * CFrame.Angles(0, math.rad(180), 0))
 
-		if not DungeonService:CanPlace(AnchorDoor, BossRoom) then
+		if not DungeonService:Can_Place(AnchorDoor, BossRoom) then
 			if tries <= 0 then
 				tries = 20
 				lastRoomTested -= 1
@@ -191,12 +228,12 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 			task.wait()
 			AnchorDoor = v
 			Room:PivotTo(AnchorDoor:GetPivot() * CFrame.Angles(0, math.rad(180), 0))
-			if DungeonService:CanPlace(AnchorDoor, Room, false) then
+			if DungeonService:Can_Place(AnchorDoor, Room, false) then
 				LastRoom = Room
 				break
 			end
 		end
-		if not DungeonService:CanPlace(AnchorDoor,Room) then
+		if not DungeonService:Can_Place(AnchorDoor,Room) then
 			print(Room)
 			DungeonFolder:ClearAllChildren()
 			self:GenerateLinearDungeon(MIN_ROOMS, MAX_ROOMS, RANK, GenerateSubRooms)
@@ -348,7 +385,7 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 
 					secondaryRoom:PivotTo(AnchorSecondaryDoor:GetPivot() * CFrame.Angles(0, math.rad(180), 0))
 
-					if not DungeonService:CanPlace(AnchorSecondaryDoor, secondaryRoom) then
+					if not DungeonService:Can_Place(AnchorSecondaryDoor, secondaryRoom) then
 						secondaryRoom:Destroy()
 
 					else
