@@ -7,6 +7,7 @@ local PlayerGui = game.Players.LocalPlayer.PlayerGui
 
 local CameraController
 
+print("a")
 local MarketController = Knit.CreateController({
 	Name = "MarketController",
 })
