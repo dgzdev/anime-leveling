@@ -45,9 +45,10 @@ function DungeonService:Can_Place(AnchorDoor, Room : Model, showLogs: boolean?)
 	for i,v : BasePart in pairs(LimitsFolder:GetChildren()) do
 		local c, s = v.CFrame, v.Size
 		local H = game.Workspace:GetPartBoundsInBox(c,s, Params)
+		print(v.Parent.Parent.Name,H)
 		if #H > 1 then
 			for j,k in pairs(H) do
-				table.insert(Hitbox)
+				table.insert(Hitbox,k)
 			end
 		end
 	end
@@ -231,15 +232,18 @@ function DungeonService:GenerateLinearDungeon(MIN_ROOMS: number, MAX_ROOMS: numb
 			if DungeonService:Can_Place(AnchorDoor, Room, false) then
 				LastRoom = Room
 				break
+			else
+				if i == LastRoom.Doors:GetChildren() then
+					DungeonFolder:ClearAllChildren()
+					self:GenerateLinearDungeon(MIN_ROOMS, MAX_ROOMS, RANK, GenerateSubRooms)
+					return
+				end
+				continue
 			end
 		end
-		if not DungeonService:Can_Place(AnchorDoor,Room) then
-			print(Room)
-			DungeonFolder:ClearAllChildren()
-			self:GenerateLinearDungeon(MIN_ROOMS, MAX_ROOMS, RANK, GenerateSubRooms)
-			DungeonGenerated = false
-			return
-		end
+		--if not DungeonService:Can_Place(AnchorDoor,Room, true) then
+		--	
+		--end
 		--if not DungeonService:CanPlace(AnchorDoor, Room, false) then
 		--	--print(RoomLastName)
 --
