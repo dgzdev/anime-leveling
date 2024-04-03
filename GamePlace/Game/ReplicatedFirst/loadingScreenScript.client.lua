@@ -5,6 +5,8 @@ local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
+--teste
+
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
