@@ -1,4 +1,6 @@
 local Path = {}
+Path.InPath = false
+
 local PathfindingService = game:GetService("PathfindingService")
 
 local Target: BasePart = nil
@@ -21,20 +23,23 @@ local loop = function(thread: () -> any, ...)
 end
 
 function Path.LeaveFollowing()
+	task.synchronize()
 	Target = nil
 
 	local AlignOrientation = From.RootPart:FindFirstChildWhichIsA("AlignOrientation", true)
 	if AlignOrientation then
 		AlignOrientation.Enabled = false
 	end
+	task.desynchronize()
 end
 
 function Path.StartFollowing(from: Humanoid, target: BasePart)
 	local AlignOrientation = from.RootPart:FindFirstChildWhichIsA("AlignOrientation", true)
 	if AlignOrientation then
+		task.synchronize()
 		AlignOrientation.Enabled = true
 	end
-
+	task.desynchronize()
 	Align = AlignOrientation
 
 	Target = target
@@ -53,15 +58,22 @@ do
 		--> AlignOrientation
 
 		Align.LookAtPosition = Target.Position
-
+		Path.InPath = true
+		
 		task.spawn(function()
+			if (From.RootPart.Position - Target.Position).Magnitude > 20 then
+				Path.LeaveFollowing()
+				Path.InPath = false
+				return
+			end
+
 			local p = PathfindingService:CreatePath()
 			p:ComputeAsync(From.RootPart.Position, Target.Position)
 			local waypoints = p:GetWaypoints()
-
+			
 			for i, v in waypoints do
 				From:MoveTo(v.Position)
-				From.MoveToFinished:Wait()
+				--From.MoveToFinished:Wait()
 			end
 		end)
 
