@@ -1,9 +1,12 @@
 local Path = {}
 local PathfindingService = game:GetService("PathfindingService")
-local Target: BasePart = nil
-local Task: thread = nil
 
-local defaultDelay = 0.25
+local Target: BasePart = nil
+local From: Humanoid = nil
+local Task: thread = nil
+local Align: AlignOrientation = nil
+
+local defaultDelay = 0
 
 local loop = function(thread: () -> any, ...)
 	return task.spawn(function(...)
@@ -19,33 +22,48 @@ end
 
 function Path.LeaveFollowing()
 	Target = nil
-	if Task then
-		task.cancel(Task)
-		Task = nil
+
+	local AlignOrientation = From.RootPart:FindFirstChildWhichIsA("AlignOrientation", true)
+	if AlignOrientation then
+		AlignOrientation.Enabled = false
 	end
 end
 
 function Path.StartFollowing(from: Humanoid, target: BasePart)
+	local AlignOrientation = from.RootPart:FindFirstChildWhichIsA("AlignOrientation", true)
+	if AlignOrientation then
+		AlignOrientation.Enabled = true
+	end
+
+	Align = AlignOrientation
+
 	Target = target
+	From = from
+end
 
-	Task = loop(function()
+do
+	loop(function()
 		if not Target then
-			return true
+			return
 		end
-
-		--> seguir o target: basepart
 
 		task.synchronize()
 
-		local Path = PathfindingService:CreatePath()
-		Path:ComputeAsync(from.RootPart.Position, target.Position)
-		local waypoints = Path:GetWaypoints()
-		--> cria o path
+		--> Se setar o CFrame da RootPart, o personagem fica todo travado
+		--> AlignOrientation
 
-		for i, v in pairs(waypoints) do
-			from:MoveTo(v.Position)
-			from.MoveToFinished:Wait()
-		end
+		Align.LookAtPosition = Target.Position
+
+		task.spawn(function()
+			local p = PathfindingService:CreatePath()
+			p:ComputeAsync(From.RootPart.Position, Target.Position)
+			local waypoints = p:GetWaypoints()
+
+			for i, v in waypoints do
+				From:MoveTo(v.Position)
+				From.MoveToFinished:Wait()
+			end
+		end)
 
 		task.desynchronize()
 	end)

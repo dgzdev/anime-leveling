@@ -6,7 +6,16 @@ local Finder = require(script.Finder)
 do --> começa a buscar o humanoid
 	if script.Parent:IsA("Actor") then
 		local NPC: Model = script:FindFirstAncestorOfClass("Model")
+
 		local Humanoid: Humanoid = NPC:FindFirstChildWhichIsA("Humanoid", true)
+
+		local AlignOrientation = Instance.new("AlignOrientation", Humanoid.RootPart)
+		AlignOrientation.AlignType = Enum.AlignType.PrimaryAxisLookAt
+		AlignOrientation.Mode = Enum.OrientationAlignmentMode.OneAttachment
+		AlignOrientation.Attachment0 = Humanoid.RootPart:FindFirstChild("Align", true)
+		AlignOrientation.Responsiveness = 45
+
+		AlignOrientation.Enabled = false
 
 		task.spawn(function()
 			while true do
