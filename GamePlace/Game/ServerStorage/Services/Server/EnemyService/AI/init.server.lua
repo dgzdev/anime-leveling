@@ -17,14 +17,12 @@ do --> começa a buscar o humanoid
 
 		AlignOrientation.Enabled = false
 
-		task.spawn(function()
 			RunService.Heartbeat:ConnectParallel(function()
 				local closest = Finder.GetClosestHumanoid(Humanoid, true, 15)
 				if not closest then
-					task.wait(0.45)
 					return
 				end
-
+				debug.profilebegin("ENEMY_STARTED")
 				task.desynchronize()
 
 				local isOnLook = Finder.IsOnDot(Humanoid, closest)
@@ -35,7 +33,8 @@ do --> começa a buscar o humanoid
 				else
 					Path.LeaveFollowing()
 				end
-
+		
+				debug.profileend()
 				task.wait()
 			end)
 			--while true do
@@ -54,7 +53,6 @@ do --> começa a buscar o humanoid
 			--	end
 --
 			--	task.wait()
-			--end
-		end)
+			--en
 	end
 end

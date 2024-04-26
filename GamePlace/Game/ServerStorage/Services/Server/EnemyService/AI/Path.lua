@@ -25,7 +25,7 @@ end
 function Path.LeaveFollowing()
 	task.synchronize()
 	Target = nil
-
+	if not From then return end
 	local AlignOrientation = From.RootPart:FindFirstChildWhichIsA("AlignOrientation", true)
 	if AlignOrientation then
 		AlignOrientation.Enabled = false
@@ -61,7 +61,7 @@ do
 		Path.InPath = true
 		
 		task.spawn(function()
-			if (From.RootPart.Position - Target.Position).Magnitude > 20 then
+			if (From.RootPart.Position - Target.Position).Magnitude > 50 then
 				Path.LeaveFollowing()
 				Path.InPath = false
 				return
@@ -70,8 +70,15 @@ do
 			local p = PathfindingService:CreatePath()
 			p:ComputeAsync(From.RootPart.Position, Target.Position)
 			local waypoints = p:GetWaypoints()
-			
-			for i, v in waypoints do
+			table.remove(waypoints, #waypoints)
+			table.remove(waypoints, #waypoints - 1)
+			table.remove(waypoints, #waypoints - 2)
+			table.remove(waypoints, #waypoints - 3)
+			--for i = 0, 10, 1 do
+			--	if i < #waypoints then table.remove(waypoints, #waypoints - i) end
+			--end
+
+			for i, v in pairs(waypoints) do
 				From:MoveTo(v.Position)
 				--From.MoveToFinished:Wait()
 			end
