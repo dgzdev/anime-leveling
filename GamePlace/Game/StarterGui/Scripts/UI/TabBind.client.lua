@@ -31,49 +31,20 @@ local function toggleTabGui(TabGui: ScreenGui)
 		return
 	end
 
-	local Background: Frame = TabGui:WaitForChild("Background")
-	local Blur = Lighting:FindFirstChildWhichIsA("BlurEffect") or Instance.new("BlurEffect")
-	Blur.Parent = Lighting
+	TabGui:WaitForChild("Inventory").Enabled = not TabGui:WaitForChild("Inventory").Enabled
+	for _, a in TabGui:WaitForChild("Hotbar"):GetDescendants() do
+		if not a:IsA("TextButton") then
+			continue
+		end
 
-	CanToggle = false
-	if TabGui.Enabled == true then
-		local OriginalPosition = Background.Position
-		local anim =
-			TweenService:Create(Background, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut), {
-				Position = UDim2.fromScale(0.5, 1 + Background.Size.Y.Scale / 2),
-			})
-		TweenService:Create(Blur, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut), {
-			Size = 0,
-		}):Play()
-		anim:Play()
-		anim.Completed:Wait()
+		print(a.Name)
 
-		Background.Position = UDim2.fromScale(0.5, 0.5)
-
-		TabGui.Enabled = false
-		CanToggle = true
-		Blur.Enabled = false
-
-		LockMouse(true)
-	elseif TabGui.Enabled == false then
-		local OriginalPosition = UDim2.fromScale(0.5, 0.5)
-		Background.Position = UDim2.fromScale(0.5, 1 + Background.Size.Y.Scale / 2)
-		Blur.Size = 0
-		Blur.Enabled = true
-
-		TabGui.Enabled = true
-		LockMouse(false)
-
-		local anim =
-			TweenService:Create(Background, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut), {
-				Position = OriginalPosition,
-			})
-		TweenService:Create(Blur, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut), {
-			Size = 24,
-		}):Play()
-		anim:Play()
-		anim.Completed:Wait()
-		CanToggle = true
+		local slotContainer = a:FindFirstChild("SlotContainer", true)
+		if slotContainer then
+			if #slotContainer:GetChildren() == 1 then
+				a.Visible = TabGui:WaitForChild("Inventory").Enabled
+			end
+		end
 	end
 end
 
@@ -82,37 +53,7 @@ ContextActionService:BindAction("Menu_Tab", function(action, state)
 		return
 	end
 
-	local Player = Players.LocalPlayer
-	local PlayerGui = Player:WaitForChild("PlayerGui")
-
-	local Menu_UI = PlayerGui:WaitForChild("Menu_UI")
-	for index, value: ScreenGui in (Menu_UI:GetChildren()) do
-		if value.Enabled then
-			local Background: Frame = value:WaitForChild("Background")
-
-			local Blur = Lighting:FindFirstChildWhichIsA("BlurEffect") or Instance.new("BlurEffect")
-			Blur.Parent = Lighting
-
-			local a = TweenService:Create(
-				Background,
-				TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut),
-				{
-					Position = UDim2.fromScale(0.5, 1 + Background.Size.Y.Scale / 2),
-				}
-			)
-			TweenService:Create(Blur, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut), {
-				Size = 0,
-			}):Play()
-			a:Play()
-			a.Completed:Wait()
-			value.Enabled = false
-			LockMouse(true)
-
-			return
-		end
-	end
-
-	local TabGui = PlayerGui:WaitForChild("TabGui")
+	local TabGui = PlayerGui:WaitForChild("Inventory")
 
 	toggleTabGui(TabGui)
 end, false, Enum.KeyCode.Tab)

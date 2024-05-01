@@ -1,5 +1,6 @@
 local Player = game.Players.LocalPlayer
 local Character = Player.Character
+local ContextActionService = game:GetService("ContextActionService")
 local Players = game:GetService("Players")
 local StarterGui = game:GetService("StarterGui")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -13,23 +14,27 @@ local HotbarController = Knit.CreateController({
 	Name = "HotbarController",
 })
 
+local HotbarService
+local PlayerService
+
 local Events = {}
 
 function HotbarController.EquipHotbarItem() end
+function HotbarController.FireServer(...)
+	HotbarService:OnFireServer(...)
+end
 
 function HotbarController:BindButton(Template: TextButton)
 	Events[#Events + 1] = Template.Activated:Connect(function()
 		local Tool = Template.Tool.Value :: Tool
 		if Tool:IsDescendantOf(Character) then
 			Tool.Parent = Player.Backpack
-			Tool.Enabled = false
 		else
 			if Character:FindFirstChildWhichIsA("Tool", true) then
 				Character:FindFirstChildWhichIsA("Tool", true).Parent = Player.Backpack
 			end
 
 			Tool.Parent = Character
-			Tool.Enabled = true
 		end
 	end)
 
@@ -63,6 +68,7 @@ function HotbarController:BindButton(Template: TextButton)
 
 					local nearestSlot = HotbarController:GetNearestSlot(x, y)
 					if not nearestSlot then --> Arrastou pra fora de slot
+						ContextActionService:UnbindAction(`HotbarSlot_{Clone.Tool.Value:GetAttribute("Hotbar")}`)
 						Clone.Tool.Value:SetAttribute("Hotbar", nil)
 
 						Clone.Parent = InventoryFrame
@@ -71,43 +77,83 @@ function HotbarController:BindButton(Template: TextButton)
 						if nearestSlot:FindFirstChildWhichIsA("TextButton") then
 							local before = nearestSlot:FindFirstChildWhichIsA("TextButton")
 
+							ContextActionService:UnbindAction(`HotbarSlot_{before.Tool.Value:GetAttribute("Hotbar")}`)
 							before.Tool.Value:SetAttribute("Hotbar", nil)
 							before.Parent = InventoryFrame
+						end
+
+						local beforeSlot = Clone.Tool.Value:GetAttribute("Hotbar") :: number
+						if beforeSlot then
+							ContextActionService:UnbindAction(`HotbarSlot_{beforeSlot}`)
 						end
 
 						Clone.Tool.Value:SetAttribute("Hotbar", tonumber(nearestSlot.Parent.Name))
 
 						Clone.Parent = nearestSlot
+						nearestSlot:FindFirstAncestorWhichIsA("TextButton").Visible = true
+
+						local tool = Clone.Tool.Value :: Tool
+
+						local Numbers = {
+							[1] = Enum.KeyCode.One,
+							[2] = Enum.KeyCode.Two,
+							[3] = Enum.KeyCode.Three,
+							[4] = Enum.KeyCode.Four,
+							[5] = Enum.KeyCode.Five,
+							[6] = Enum.KeyCode.Six,
+							[7] = Enum.KeyCode.Seven,
+							[8] = Enum.KeyCode.Eight,
+							[9] = Enum.KeyCode.Nine,
+						}
+
+						local isOnHotbar = tool:GetAttribute("Hotbar") :: number --> 1 - 9
+						if isOnHotbar then
+							ContextActionService:UnbindAction(`HotbarSlot_{isOnHotbar}`)
+							ContextActionService:BindAction(
+								`HotbarSlot_{isOnHotbar}`,
+								function(action, inputState, object)
+									if not (inputState == Enum.UserInputState.Begin) then
+										return Enum.ContextActionResult.Pass
+									end
+
+									if tool:IsDescendantOf(Character) then
+										tool.Parent = Player.Backpack
+									else
+										if Character:FindFirstChildWhichIsA("Tool", true) then
+											Character:FindFirstChildWhichIsA("Tool", true).Parent = Player.Backpack
+										end
+
+										tool.Parent = Character
+									end
+								end,
+								false,
+								Numbers[isOnHotbar]
+							)
+						end
 
 						return
 					end
 				end
 			end)
 
-			task.delay(0.5, function()
-				if isHolding then
-					local Draggable: ScreenGui = Player.PlayerGui:FindFirstChild("Draggable", true)
-					if not Draggable then
-						return error("Draggable ScreenGui not found")
-					end
+			local Draggable: ScreenGui = Player.PlayerGui:FindFirstChild("Draggable", true)
+			if not Draggable then
+				return error("Draggable ScreenGui not found")
+			end
 
-					Clone.Parent = Draggable
-					Clone.AnchorPoint = Vector2.new(0.5, 0.5)
-					Clone.Size = UDim2.fromOffset(75, 75)
-				end
-			end)
+			Clone.Parent = Draggable
+			Clone.AnchorPoint = Vector2.new(0.5, 0.5)
+			Clone.Size = UDim2.fromOffset(75, 75)
 		end)
 
 		task.spawn(function()
 			while isHolding == true do
-				if duration > 0.5 then
-					local x
-					local y
-					local v2 = UserInputService:GetMouseLocation()
-					x, y = v2.X, v2.Y
+				local x
+				local y
+				local v2 = UserInputService:GetMouseLocation()
+				x, y = v2.X, v2.Y
 
-					Clone.Position = UDim2.new(0, x, 0, y)
-				end
+				Clone.Position = UDim2.new(0, x, 0, y)
 
 				duration += 0.01
 				task.wait()
@@ -160,29 +206,41 @@ function HotbarController.OnBackpackRemoved(tool: Tool)
 	end
 end
 
-task.spawn(function()
-	--[[
-	UserInputService.InputChanged:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseMovement then
-			local x
-			local y
-			local v2 = UserInputService:GetMouseLocation()
-			x, y = v2.X, v2.Y
-
-			local nearestSlot = HotbarController:GetNearestSlot(x, y)
-			if not nearestSlot then
-				return
-			end
-
-			print(nearestSlot.Parent.Name)
-		end
-	end)
-	]]
-end)
-
 function HotbarController.OnBackpackAdded(tool: Tool)
 	local HotbarFrame = Player.PlayerGui.Inventory.Hotbar.Background
 	local InventoryFrame = Player.PlayerGui.Inventory.Inventory.Background.ScrollingFrame.Equipments.InventoryTemplate
+
+	local Numbers = {
+		[1] = Enum.KeyCode.One,
+		[2] = Enum.KeyCode.Two,
+		[3] = Enum.KeyCode.Three,
+		[4] = Enum.KeyCode.Four,
+		[5] = Enum.KeyCode.Five,
+		[6] = Enum.KeyCode.Six,
+		[7] = Enum.KeyCode.Seven,
+		[8] = Enum.KeyCode.Eight,
+		[9] = Enum.KeyCode.Nine,
+	}
+
+	local isOnHotbar = tool:GetAttribute("Hotbar") :: number --> 1 - 9
+	if isOnHotbar then
+		ContextActionService:UnbindAction(`HotbarSlot_{isOnHotbar}`)
+		ContextActionService:BindAction(`HotbarSlot_{isOnHotbar}`, function(action, inputState, object)
+			if not (inputState == Enum.UserInputState.Begin) then
+				return Enum.ContextActionResult.Pass
+			end
+
+			if tool:IsDescendantOf(Character) then
+				tool.Parent = Player.Backpack
+			else
+				if Character:FindFirstChildWhichIsA("Tool", true) then
+					Character:FindFirstChildWhichIsA("Tool", true).Parent = Player.Backpack
+				end
+
+				tool.Parent = Character
+			end
+		end, false, Numbers[isOnHotbar])
+	end
 
 	if Events[tool] then
 		return
@@ -190,32 +248,24 @@ function HotbarController.OnBackpackAdded(tool: Tool)
 
 	Events[tool] = {}
 
-	Events[tool][#Events[tool] + 1] = tool.Activated:Connect(function()
-		print(`{tool.Name} activated`)
-	end)
-	Events[tool][#Events[tool] + 1] = tool.Equipped:Connect(function()
-		print(`{tool.Name} equipped`)
-	end)
-	Events[tool][#Events[tool] + 1] = tool.Unequipped:Connect(function()
-		print(`{tool.Name} unequipped`)
-	end)
-
-	local isOnHotbar = tool:GetAttribute("Hotbar") :: number --> 1 - 9
+	local UITemplate
 
 	if isOnHotbar then
 		local Slot = Player.PlayerGui.Inventory.Hotbar.Background[tostring(isOnHotbar)]
 		local i = (#HotbarFrame:GetChildren() - 2) + 1
 
-		local UITemplate = ReplicatedStorage.Models.UI.SlotItem:Clone() :: TextButton
+		UITemplate = ReplicatedStorage.Models.UI.SlotItem:Clone() :: TextButton
 		UITemplate.Tool.Value = tool
 		UITemplate.Parent = Slot.SlotContainer
 		UITemplate.itemName.Text = tool.Name
+
+		Slot.Visible = true
 
 		HotbarController:BindButton(UITemplate)
 	elseif not isOnHotbar then
 		local i = (#InventoryFrame:GetChildren() - 1) + 1
 
-		local UITemplate = ReplicatedStorage.Models.UI.InventorySlot:Clone()
+		UITemplate = ReplicatedStorage.Models.UI.InventorySlot:Clone()
 		UITemplate.Tool.Value = tool
 
 		UITemplate.Parent = InventoryFrame
@@ -224,10 +274,32 @@ function HotbarController.OnBackpackAdded(tool: Tool)
 
 		HotbarController:BindButton(UITemplate)
 	end
+
+	Events[tool][#Events[tool] + 1] = tool.Activated:Connect(function()
+		print(`{tool.Name} activated`)
+	end)
+	Events[tool][#Events[tool] + 1] = tool.Equipped:Connect(function()
+		print(`{tool.Name} equipped`)
+
+		local isActivated = UITemplate:FindFirstChild("IsActivated") :: UIStroke
+		if isActivated then
+			isActivated.Enabled = true
+		end
+	end)
+	Events[tool][#Events[tool] + 1] = tool.Unequipped:Connect(function()
+		print(`{tool.Name} unequipped`)
+
+		local isActivated = UITemplate:FindFirstChild("IsActivated") :: UIStroke
+		if isActivated then
+			isActivated.Enabled = false
+		end
+	end)
 end
 
 function HotbarController:RenderHotbar()
 	local InventoryFrame = Player.PlayerGui.Inventory.Inventory.Background.ScrollingFrame.Equipments.InventoryTemplate
+
+	HotbarService:RenderItems(Player)
 
 	for i, v in pairs(InventoryFrame:GetChildren()) do
 		if v:IsA("TextButton") then
@@ -245,6 +317,12 @@ function HotbarController:RenderHotbar()
 end
 
 function HotbarController:KnitStart()
+	HotbarService = Knit.GetService("HotbarService")
+	PlayerService = Knit.GetService("PlayerService")
+
+	local PlayerData = PlayerService:GetData(Player)
+	print(PlayerData)
+
 	HotbarController.LoadContainers()
 	self:RenderHotbar()
 end

@@ -78,7 +78,7 @@ function MovementModule:CreateContextBinder(): string
 				if taps == 0 then
 					taps += 1
 				else
-					if tick() - lastTap < 0.7 then
+					if tick() - lastTap < 0.25 then
 						taps = math.clamp(taps + 1, 0, 2)
 					end
 
@@ -97,7 +97,7 @@ function MovementModule:CreateContextBinder(): string
 			return
 		end
 
-		if tick() - lastTap > 0.7 then
+		if tick() - lastTap > 0.25 then
 			taps = 0
 		end
 	end)
@@ -135,7 +135,6 @@ function MovementModule:CreateBinds()
 					end
 				end
 				if keysDown == 0 then
-					print("no keys")
 					MovementModule:ChangeCharacterState("WALK")
 				end
 			end
