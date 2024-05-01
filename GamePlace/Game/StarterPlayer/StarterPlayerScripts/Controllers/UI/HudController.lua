@@ -12,6 +12,7 @@ local Hud = Knit.CreateController({
 })
 
 function Hud:OrganizeHotbar(Profile)
+	--[[
 	local Player = Players.LocalPlayer
 	local PlayerGui = Player:WaitForChild("PlayerGui")
 	local HotbarGui = PlayerGui:WaitForChild("PlayerHud"):WaitForChild("Background")
@@ -79,6 +80,7 @@ function Hud:OrganizeHotbar(Profile)
 			end
 		end
 	end
+	]]
 end
 
 local function PlayErrorSound()
@@ -98,7 +100,8 @@ local function PlayEquipSound()
 end
 
 local function EquipSlotItem(action: string, state, input)
-	local Player = Players.LocalPlayer
+	--[[
+local Player = Players.LocalPlayer
 	local PlayerGui = Player:WaitForChild("PlayerGui")
 	local HotbarGui = PlayerGui:WaitForChild("PlayerHud"):WaitForChild("Background")
 
@@ -139,13 +142,16 @@ local function EquipSlotItem(action: string, state, input)
 
 	Slot:SetAttribute("Active", true)
 	PlayEquipSound()
+	]]
 end
 
 function Hud:BindContexts()
+	--[[
 	ContextActionService:BindAction("EquipSlotItem_1", EquipSlotItem, false, Enum.KeyCode.One)
 	ContextActionService:BindAction("EquipSlotItem_2", EquipSlotItem, false, Enum.KeyCode.Two)
 	ContextActionService:BindAction("EquipSlotItem_3", EquipSlotItem, false, Enum.KeyCode.Three)
 	ContextActionService:BindAction("EquipSlotItem_4", EquipSlotItem, false, Enum.KeyCode.Four)
+	]]
 end
 
 function Hud:KnitInit()
@@ -155,6 +161,7 @@ end
 
 function Hud:KnitStart()
 	coroutine.wrap(function()
+		--[[
 		local Player = Players.LocalPlayer
 		Player.CharacterAdded:Connect(function(character)
 			local Data = PlayerService:GetData(Players.LocalPlayer)
@@ -173,6 +180,7 @@ function Hud:KnitStart()
 
 		self:OrganizeHotbar(Hud.Data)
 		self:BindContexts()
+		]]
 	end)()
 end
 

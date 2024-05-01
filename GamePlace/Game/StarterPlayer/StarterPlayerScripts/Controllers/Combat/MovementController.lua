@@ -4,6 +4,7 @@ local StarterPlayer = game:GetService("StarterPlayer")
 local TweenService = game:GetService("TweenService")
 local ContextActionService = game:GetService("ContextActionService")
 local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 
 local Player = Players.LocalPlayer
 
@@ -62,21 +63,44 @@ function MovementModule:ChangeCharacterState(state: CharacterState)
 	CameraEvent:Fire("FOV", Movement.FOV)
 end
 
-function MovementModule:CreateContextBinder(): string
-	ContextActionService:BindAction(self.ContextName, function(_, state: Enum.UserInputState)
-		local Character = Player.Character or Player.CharacterAdded:Wait()
-		local RootPart = Character:WaitForChild("HumanoidRootPart")
+local taps = 0
+local lastTap = tick()
+local keys = { Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D }
 
-		if state == Enum.UserInputState.Begin and self.CharacterProperties.CharacterState == "WALK" then
-			if (RootPart:GetVelocityAtPosition(RootPart.CFrame.Position)).Magnitude < 1 then
+function MovementModule:CreateContextBinder(): string
+	UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+		if gameProcessedEvent then
+			return
+		end
+
+		for _, k in keys do
+			if input.KeyCode == k then
+				if taps == 0 then
+					taps += 1
+				else
+					if tick() - lastTap < 0.7 then
+						taps = math.clamp(taps + 1, 0, 2)
+					end
+
+					if taps == 2 then
+						MovementModule:ChangeCharacterState("RUN")
+					end
+				end
+				lastTap = tick()
 				return
 			end
-			self:ChangeCharacterState("RUN")
-		elseif state == Enum.UserInputState.Begin and self.CharacterProperties.CharacterState == "RUN" then
-			self:ChangeCharacterState("WALK")
 		end
-	end, false, table.unpack(self.MovementKeys))
-	return self.ContextName
+	end)
+
+	UserInputService.InputEnded:Connect(function(input, gameProcessedEvent)
+		if gameProcessedEvent then
+			return
+		end
+
+		if tick() - lastTap > 0.7 then
+			taps = 0
+		end
+	end)
 end
 
 export type CharacterState = "RUN" | "WALK"
@@ -103,9 +127,17 @@ function MovementModule:CreateBinds()
 		ef2.Enabled = false
 
 		Humanoid.Running:Connect(function(speed)
-			local Stamina = StatusController:GetStamina()
 			if speed < 0.1 then
-				MovementModule:ChangeCharacterState("WALK")
+				local keysDown = 0
+				for _, key in ipairs(keys) do
+					if UserInputService:IsKeyDown(key) then
+						keysDown += 1
+					end
+				end
+				if keysDown == 0 then
+					print("no keys")
+					MovementModule:ChangeCharacterState("WALK")
+				end
 			end
 			if speed > 16 then
 				ef1.Enabled = true
@@ -126,29 +158,6 @@ function MovementModule:CreateBinds()
 
 	CharacterAdded()
 	Player.CharacterAdded:Connect(CharacterAdded)
-
-	task.spawn(function()
-		while true do
-			local HRP = Character.PrimaryPart :: BasePart
-			local Velocity = HRP:GetVelocityAtPosition(HRP.Position)
-			local Stamina = StatusController:GetStamina()
-
-			if Humanoid.Health <= 0 then
-				StatusController:ReloadStamina()
-			end
-			if Velocity.Magnitude > 20 then
-				local HumanoidStateType = Humanoid:GetState()
-				if HumanoidStateType == Enum.HumanoidStateType.Running then
-					if Stamina - 1 < 0 then
-						MovementModule:ChangeCharacterState("WALK")
-					else
-						StatusController:WasteStamina(0.1)
-					end
-				end
-			end
-			task.wait(1 / 60)
-		end
-	end)
 end
 
 function MovementModule:KnitInit()

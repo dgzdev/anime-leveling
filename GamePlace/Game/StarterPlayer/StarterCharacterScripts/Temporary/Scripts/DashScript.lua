@@ -125,22 +125,6 @@ function DashScript:Dash()
 
 	Cooldown = tick() + 1.5
 
-	local Stripes = ReplicatedStorage:WaitForChild("VFX"):WaitForChild("Stripes"):Clone()
-	Stripes.Parent = Workspace.Terrain
-
-	task.spawn(function()
-		for i = 1, 10, 1 do
-			for _, p: ParticleEmitter in (Stripes:GetChildren()) do
-				if p:IsA("ParticleEmitter") then
-					task.wait()
-					p:Emit(10)
-				end
-			end
-			task.wait(0.1)
-			Stripes.CFrame = HumanoidRootPart.CFrame
-		end
-	end)
-
 	local Animation
 	local Direction
 
@@ -165,22 +149,12 @@ function DashScript:Dash()
 		local id = DashAnimations[DashDiretionString or "F"] or DashAnimations.F
 		Direction = id
 		Animation = id.anim
-
-		if DashDiretionString == "F" or DashDiretionString == "B" then
-			for _, p: ParticleEmitter in (Stripes:GetChildren()) do
-				if p:IsA("ParticleEmitter") then
-					p.Orientation = Enum.ParticleOrientation.VelocityParallel
-				end
-			end
-		end
 	else
 		Direction = DashAnimations.F
 		Animation = DashAnimations.F.anim
 	end
 
 	local AnimationTrack: AnimationTrack = Animator:LoadAnimation(Animation)
-
-	VFX:ApplyParticle(Character, "Smoke")
 
 	task.wait()
 	AnimationTrack:Play()
@@ -193,8 +167,6 @@ function DashScript:Dash()
 	HumanoidRootPart.AssemblyLinearVelocity = DashVelocity
 
 	AnimationTrack.Ended:Wait()
-
-	Debris:AddItem(Stripes, 1)
 end
 
 function DashScript:Init(Modules)

@@ -154,6 +154,9 @@ local function AnimateCamera(animation: string)
 		for _, c in Connections do
 			c:Disconnect()
 		end
+
+		Workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+		Workspace.City.JoinPortal:Destroy()
 	end)
 end
 
