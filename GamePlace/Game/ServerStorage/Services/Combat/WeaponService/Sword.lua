@@ -18,7 +18,7 @@ local SkillService
 
 local GameData = require(ServerStorage.GameData)
 
-local function CalculateDamage(BaseDamage,Player)
+local function CalculateDamage(BaseDamage, Player)
 	if not Player then
 		return 10
 	end

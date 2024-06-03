@@ -1,5 +1,5 @@
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
-local ToolsFolder = game.ReplicatedStorage.Models.Tools
+local ToolsFolder: Folder = game.ReplicatedStorage.Models.Tools
 
 local HotbarService = Knit.CreateService({
 	Name = "HotbarService",
@@ -7,29 +7,38 @@ local HotbarService = Knit.CreateService({
 })
 
 local PlayerService
-
-HotbarService.Events = {
-	["Equip"] = function(player: Player) end,
-	["Unequip"] = function(player: Player) end,
-	["Activate"] = function(player: Player) end,
-}
+local EquipService
 
 function HotbarService:OnFireServer(player: Player, event: string, ...)
 	if HotbarService.Events[event] then
-		HotbarService.Events[event](player, ...)
+		return HotbarService.Events[event](player, ...)
 	end
+end
+
+function HotbarService.Client:OnFireServer(...)
+	return self.Server:OnFireServer(...)
 end
 
 function HotbarService:RenderItems(Player: Player)
 	local PlayerData = PlayerService:GetData(Player)
 	for i, v in pairs(PlayerData.Inventory) do
-		if not ToolsFolder[i] then
+		if not ToolsFolder:FindFirstChild(i) then
 			continue
 		end
 		local ToolClone = ToolsFolder[i]:Clone() :: Tool
 		ToolClone.RequiresHandle = false
 		ToolClone.Enabled = true
 		ToolClone.Parent = Player.Backpack
+
+		ToolClone:SetAttribute("Id", v.Id)
+		ToolClone:SetAttribute("Name", i)
+		ToolClone:SetAttribute("Type", "Weapon")
+		ToolClone:SetAttribute("Grip", ToolClone.Grip)
+
+		if PlayerData.Equiped.Id == v.Id then
+			ToolClone.Name = "Weapon"
+			ToolClone:SetAttribute("Equiped", true)
+		end
 
 		if table.find(PlayerData.Hotbar, v.Id) then
 			local index = table.find(PlayerData.Hotbar, v.Id)
@@ -43,6 +52,7 @@ end
 
 function HotbarService:KnitStart()
 	PlayerService = Knit.GetService("PlayerService")
+	EquipService = Knit.GetService("EquipService")
 end
 
 return HotbarService

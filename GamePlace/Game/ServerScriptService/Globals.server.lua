@@ -22,7 +22,7 @@ do --> ### Carrega as variaveis globais do servidor.
 	end
 
 	if globals.Debug then
-		warn("[GLOBALS] Debug is enabled.")
+		--warn("[GLOBALS] Debug is enabled.")
 	end
 end
 

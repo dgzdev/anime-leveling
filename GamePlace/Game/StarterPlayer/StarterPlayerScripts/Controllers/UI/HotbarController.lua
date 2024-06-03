@@ -27,14 +27,10 @@ end
 function HotbarController:BindButton(Template: TextButton)
 	Events[#Events + 1] = Template.Activated:Connect(function()
 		local Tool = Template.Tool.Value :: Tool
-		if Tool:IsDescendantOf(Character) then
-			Tool.Parent = Player.Backpack
-		else
-			if Character:FindFirstChildWhichIsA("Tool", true) then
-				Character:FindFirstChildWhichIsA("Tool", true).Parent = Player.Backpack
-			end
-
+		if not Tool:IsDescendantOf(Character) then
 			Tool.Parent = Character
+		else
+			Tool.Parent = Player.Backpack
 		end
 	end)
 
@@ -116,14 +112,10 @@ function HotbarController:BindButton(Template: TextButton)
 										return Enum.ContextActionResult.Pass
 									end
 
-									if tool:IsDescendantOf(Character) then
-										tool.Parent = Player.Backpack
-									else
-										if Character:FindFirstChildWhichIsA("Tool", true) then
-											Character:FindFirstChildWhichIsA("Tool", true).Parent = Player.Backpack
-										end
-
+									if not tool:IsDescendantOf(Character) then
 										tool.Parent = Character
+									else
+										tool.Parent = Player.Backpack
 									end
 								end,
 								false,
@@ -230,13 +222,7 @@ function HotbarController.OnBackpackAdded(tool: Tool)
 				return Enum.ContextActionResult.Pass
 			end
 
-			if tool:IsDescendantOf(Character) then
-				tool.Parent = Player.Backpack
-			else
-				if Character:FindFirstChildWhichIsA("Tool", true) then
-					Character:FindFirstChildWhichIsA("Tool", true).Parent = Player.Backpack
-				end
-
+			if not tool:IsDescendantOf(Character) then
 				tool.Parent = Character
 			end
 		end, false, Numbers[isOnHotbar])
@@ -259,6 +245,10 @@ function HotbarController.OnBackpackAdded(tool: Tool)
 		UITemplate.Parent = Slot.SlotContainer
 		UITemplate.itemName.Text = tool.Name
 
+		tool:GetPropertyChangedSignal("Name"):Connect(function()
+			UITemplate.itemName.Text = tool.Name
+		end)
+
 		Slot.Visible = true
 
 		HotbarController:BindButton(UITemplate)
@@ -272,14 +262,18 @@ function HotbarController.OnBackpackAdded(tool: Tool)
 		UITemplate.Name = i
 		UITemplate.itemName.Text = tool.Name
 
+		tool:GetPropertyChangedSignal("Name"):Connect(function()
+			UITemplate.itemName.Text = tool.Name
+		end)
+
 		HotbarController:BindButton(UITemplate)
 	end
 
 	Events[tool][#Events[tool] + 1] = tool.Activated:Connect(function()
-		print(`{tool.Name} activated`)
+		HotbarService:OnFireServer("Activate", tool)
 	end)
 	Events[tool][#Events[tool] + 1] = tool.Equipped:Connect(function()
-		print(`{tool.Name} equipped`)
+		HotbarService:OnFireServer("Equip", tool)
 
 		local isActivated = UITemplate:FindFirstChild("IsActivated") :: UIStroke
 		if isActivated then
@@ -287,7 +281,7 @@ function HotbarController.OnBackpackAdded(tool: Tool)
 		end
 	end)
 	Events[tool][#Events[tool] + 1] = tool.Unequipped:Connect(function()
-		print(`{tool.Name} unequipped`)
+		HotbarService:OnFireServer("Unequip", tool)
 
 		local isActivated = UITemplate:FindFirstChild("IsActivated") :: UIStroke
 		if isActivated then
@@ -318,10 +312,6 @@ end
 
 function HotbarController:KnitStart()
 	HotbarService = Knit.GetService("HotbarService")
-	PlayerService = Knit.GetService("PlayerService")
-
-	local PlayerData = PlayerService:GetData(Player)
-	print(PlayerData)
 
 	HotbarController.LoadContainers()
 	self:RenderHotbar()

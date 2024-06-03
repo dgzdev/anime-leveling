@@ -140,12 +140,10 @@ Events.Buttons = {
 	end,
 
 	["LeftShop"] = function(Gui: GuiButton)
-		print("Left")
 		MarketController.TurnLeft()
 		--> item pra esquerda
 	end,
 	["RightShop"] = function(Gui: GuiButton)
-		--print("Right")
 		MarketController.TurnRight()
 		--> item pra direita
 	end,

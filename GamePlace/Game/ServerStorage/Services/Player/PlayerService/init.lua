@@ -50,7 +50,6 @@ function PlayerService.OnPlayerJoin(player: Player)
 	ProgressionService:UpdateLocalStatus(player)
 	player.CharacterAdded:Connect(function(character)
 		ClothingService:LoadCharacter(player, Manager:GetPlayerSlot().Character)
-		PlayerService:EquipWeapon(player, Data.Equiped.Id)
 
 		Character = player.Character or player.CharacterAdded:Wait()
 		Humanoid = Character:WaitForChild("Humanoid")
@@ -60,7 +59,6 @@ function PlayerService.OnPlayerJoin(player: Player)
 	end)
 
 	ClothingService:LoadCharacter(player, Manager:GetPlayerSlot().Character)
-	PlayerService:EquipWeapon(player, Data.Equiped.Id)
 end
 
 function PlayerService.OnPlayerLeave(player: Player)
@@ -132,38 +130,6 @@ end
 
 function PlayerService.Client:Respawn(player: Player)
 	return self.Server:Respawn(player)
-end
-
-function PlayerService:EquipWeapon(player: Player, weaponId: number)
-	if not weaponId then
-		return error("No weaponId")
-	end
-
-	local Manager = Managers[player.UserId]
-	if not Manager then
-		return error("No manager")
-	end
-
-	local Slot = Manager:GetPlayerSlot()
-	local Inventory: GameData.Inventory = Slot.Data.Inventory
-
-	local weaponData = {}
-	for weaponName, value in Inventory do
-		if value.Id == weaponId then
-			weaponData = value
-			weaponData.Name = weaponName
-			break
-		end
-	end
-
-	if not weaponData then
-		return error("No weaponData")
-	end
-
-	Slot.Data.Equiped.Weapon = weaponData.Name
-	Slot.Data.Equiped.Id = weaponData.Id
-
-	return InventoryService:EquipFromData(player, Slot.Data)
 end
 
 function PlayerService.Client:EquipWeapon(Player: Player, weaponId: NumberSequence)

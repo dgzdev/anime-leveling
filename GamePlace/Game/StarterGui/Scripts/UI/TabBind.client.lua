@@ -37,8 +37,6 @@ local function toggleTabGui(TabGui: ScreenGui)
 			continue
 		end
 
-		print(a.Name)
-
 		local slotContainer = a:FindFirstChild("SlotContainer", true)
 		if slotContainer then
 			if #slotContainer:GetChildren() == 1 then
