@@ -25,7 +25,7 @@ function TestSession.new(plan)
 		results = TestResults.new(plan),
 		nodeStack = {},
 		contextStack = {},
-		hasFocusNodes = false,
+		hasFocusNodes = false
 	}
 
 	setmetatable(self, TestSession)
@@ -71,7 +71,7 @@ function TestSession:gatherErrors()
 
 	results:visitAllNodes(function(node)
 		if #node.errors > 0 then
-			for _, message in node.errors do
+			for _, message in ipairs(node.errors) do
 				table.insert(results.errors, message)
 			end
 		end
@@ -190,7 +190,7 @@ end
 	way.
 ]]
 function TestSession:addDummyError(phrase, message)
-	self:pushNode({ type = TestEnum.NodeType.It, phrase = phrase })
+	self:pushNode({type = TestEnum.NodeType.It, phrase = phrase})
 	self:setError(message)
 	self:popNode()
 	self.nodeStack[#self.nodeStack].status = TestEnum.TestStatus.Failure
@@ -210,7 +210,7 @@ function TestSession:setStatusFromChildren()
 
 	-- If all children were skipped, then we were skipped
 	-- If any child failed, then we failed!
-	for _, child in last.children do
+	for _, child in ipairs(last.children) do
 		if child.status ~= TestEnum.TestStatus.Skipped then
 			skipped = false
 

@@ -1,5 +1,5 @@
-return function(_, players)
-	for _, player in players do
+return function (_, players)
+	for _, player in pairs(players) do
 		player:Kick("Kicked by admin.")
 	end
 

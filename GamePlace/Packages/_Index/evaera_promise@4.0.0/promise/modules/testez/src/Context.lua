@@ -10,7 +10,7 @@ function Context.new(parent)
 	meta.__index = index
 
 	if parent then
-		for key, value in getmetatable(parent).__index do
+		for key, value in pairs(getmetatable(parent).__index) do
 			index[key] = value
 		end
 	end

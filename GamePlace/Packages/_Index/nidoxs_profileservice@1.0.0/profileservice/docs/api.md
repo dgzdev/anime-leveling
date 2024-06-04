@@ -490,7 +490,7 @@ The right time to call this method can be seen in the [basic usage example](/Pro
 The following function is used in the reconciliation process:
 ``` lua
 local function ReconcileTable(target, template)
-	for k, v in (template) do
+	for k, v in pairs(template) do
 		if type(k) == "string" then -- Only string keys will be reconciled
 			if target[k] == nil then
 				if type(v) == "table" then
@@ -653,7 +653,7 @@ GlobalUpdates:GetActiveUpdates() --> [table] { {update_id, update_data}, ...}
 ```
 Should be used immediately after a `Profile` is loaded to scan and progress any pending `Active` updates to `Locked` state:
 ``` lua
-for _, update in (profile.GlobalUpdates:GetActiveUpdates()) do
+for _, update in ipairs(profile.GlobalUpdates:GetActiveUpdates()) do
   profile.GlobalUpdates:LockActiveUpdate(update[1])
 end
 ```
@@ -663,7 +663,7 @@ GlobalUpdates:GetLockedUpdates() --> [table] { {update_id, update_data}, ...}
 ```
 Should be used immediately after a `Profile` is loaded to scan and progress any pending `Locked` updates to `Cleared` state:
 ``` lua
-for _, update in (profile.GlobalUpdates:GetLockedUpdates()) do
+for _, update in ipairs(profile.GlobalUpdates:GetLockedUpdates()) do
   local update_id = update[1]
   local update_data = update[2]
   if update_data.Type == "AdminGift" and update_data.Item == "Coins" then

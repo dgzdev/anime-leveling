@@ -171,7 +171,7 @@ end
 
 ----- Initialize -----
 
-for _, player in (Players:GetPlayers()) do
+for _, player in ipairs(Players:GetPlayers()) do
 	task.spawn(PlayerAdded, player)
 end
 

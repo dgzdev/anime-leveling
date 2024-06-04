@@ -15,12 +15,9 @@ local OTS = require(game.ReplicatedStorage.Modules.OTS)
 local CameraEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("CAMERA")
 
 local Player = game.Players.LocalPlayer
-local playerGui = Player:WaitForChild("PlayerGui")
 local Character = Player.Character or Player.CharacterAdded:Wait()
 local Humanoid = Character:WaitForChild("Humanoid")
 local RootPart = Character.PrimaryPart
-local BodyLock: AlignOrientation = RootPart:WaitForChild("BodyLock")
-local Torso = Character:WaitForChild("Head")
 
 local Camera = workspace.CurrentCamera
 
@@ -52,7 +49,12 @@ function CameraModule.SetCameraLock()
 	Workspace.CurrentCamera.CFrame = c:Lerp(finalCF, 0.35)
 
 	local LookingCFrame = CFrame.lookAt(RootPart.Position, Camera.CFrame:PointToWorldSpace(Vector3.new(0, 0, -100000)))
-	RootPart.CFrame = CFrame.fromMatrix(RootPart.Position, LookingCFrame.XVector, RootPart.CFrame.YVector)
+
+	local state = Humanoid:GetState()
+	local anchored = Humanoid.RootPart.Anchored == true
+	if (state ~= Enum.HumanoidStateType.StrafingNoPhysics) and (anchored == false) then
+		RootPart.CFrame = CFrame.fromMatrix(RootPart.Position, LookingCFrame.XVector, RootPart.CFrame.YVector)
+	end
 end
 
 local isLocked = false

@@ -244,10 +244,7 @@ return function(Iris: Types.Iris): Types.Internal
 		-- some functions will only be needed if the widget has children or has state.
 		local thisWidget = {} :: Types.WidgetClass
 		for _, field: string in Fields.All.Required do
-			assert(
-				widgetClass[field] ~= nil,
-				`field {field} is missing from widget {type}, it is required for all widgets`
-			)
+			assert(widgetClass[field] ~= nil, `field {field} is missing from widget {type}, it is required for all widgets`)
 			thisWidget[field] = widgetClass[field]
 		end
 
@@ -262,10 +259,7 @@ return function(Iris: Types.Iris): Types.Internal
 
 		if widgetClass.hasState then
 			for _, field: string in Fields.IfState.Required do
-				assert(
-					widgetClass[field] ~= nil,
-					`field {field} is missing from widget {type}, it is required for all widgets with state`
-				)
+				assert(widgetClass[field] ~= nil, `field {field} is missing from widget {type}, it is required for all widgets with state`)
 				thisWidget[field] = widgetClass[field]
 			end
 			for _, field: string in Fields.IfState.Optional do
@@ -279,10 +273,7 @@ return function(Iris: Types.Iris): Types.Internal
 
 		if widgetClass.hasChildren then
 			for _, field: string in Fields.IfChildren.Required do
-				assert(
-					widgetClass[field] ~= nil,
-					`field {field} is missing from widget {type}, it is required for all widgets with children`
-				)
+				assert(widgetClass[field] ~= nil, `field {field} is missing from widget {type}, it is required for all widgets with children`)
 				thisWidget[field] = widgetClass[field]
 			end
 			for _, field: string in Fields.IfChildren.Optional do
@@ -381,12 +372,7 @@ return function(Iris: Types.Iris): Types.Internal
 		return thisWidget
 	end
 
-	function Internal._GenNewWidget(
-		widgetType: string,
-		arguments: Types.Arguments,
-		states: Types.States?,
-		ID: Types.ID
-	): Types.Widget
+	function Internal._GenNewWidget(widgetType: string, arguments: Types.Arguments, states: Types.States?, ID: Types.ID): Types.Widget
 		local parentId: Types.ID = Internal._IDStack[Internal._stackIndex]
 		local thisWidgetClass: Types.WidgetClass = Internal._widgets[widgetType]
 
@@ -400,9 +386,7 @@ return function(Iris: Types.Iris): Types.Internal
 		thisWidget.trackedEvents = {}
 
 		-- widgets have lots of space to ensure they are always visible.
-		thisWidget.ZIndex = thisWidget.parentWidget.ZIndex
-			+ (Internal._widgetCount * 0x40)
-			+ Internal._config.ZIndexOffset
+		thisWidget.ZIndex = thisWidget.parentWidget.ZIndex + (Internal._widgetCount * 0x40) + Internal._config.ZIndexOffset
 
 		thisWidget.Instance = thisWidgetClass.Generate(thisWidget)
 		thisWidget.Instance.Parent = if Internal._config.Parent
@@ -608,7 +592,7 @@ return function(Iris: Types.Iris): Types.Internal
 	function Internal._deepCopy(t: {}): {}
 		local copy: {} = {}
 
-		for k: any, v: any in t do
+		for k: any, v: any in pairs(t) do
 			if type(v) == "table" then
 				v = Internal._deepCopy(v)
 			end

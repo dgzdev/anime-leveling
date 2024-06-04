@@ -3,6 +3,7 @@
 -- Source: https://github.com/Quenty/NevermoreEngine/blob/8ef4242a880c645b2f82a706e8074e74f23aab06/Modules/Shared/Events/Maid.lua
 -- License: MIT (https://github.com/Quenty/NevermoreEngine/blob/version2/LICENSE.md)
 
+
 ---	Manages the cleaning of events and other things.
 -- Useful for encapsulating state and make deconstructors easy
 -- @classmod Maid
@@ -16,7 +17,7 @@ Maid.ClassName = "Maid"
 -- @treturn Maid
 function Maid.new()
 	return setmetatable({
-		_tasks = {},
+		_tasks = {}
 	}, Maid)
 end
 
@@ -78,10 +79,10 @@ function Maid:giveTask(task)
 		error("Task cannot be false or nil", 2)
 	end
 
-	local taskId = #self._tasks + 1
+	local taskId = #self._tasks+1
 	self[taskId] = task
 
-	if type(task) == "table" and not (task.Destroy or task.destroy) then
+	if type(task) == "table" and (not (task.Destroy or task.destroy)) then
 		warn("[Maid.GiveTask] - Gave table task without .Destroy\n\n" .. debug.traceback())
 	end
 
@@ -121,7 +122,7 @@ function Maid:doCleaning()
 	local tasks = self._tasks
 
 	-- Disconnect all events first as we know this is safe
-	for index, task in tasks do
+	for index, task in pairs(tasks) do
 		if typeof(task) == "RBXScriptConnection" then
 			tasks[index] = nil
 			task:Disconnect()

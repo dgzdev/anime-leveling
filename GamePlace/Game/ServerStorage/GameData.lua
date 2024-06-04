@@ -75,6 +75,7 @@ export type SlotData = {
 		Endurance: number,
 	},
 }
+
 export type Inventory = {
 	[string]: {
 		AchiveDate: number,
@@ -83,6 +84,7 @@ export type Inventory = {
 		Id: number,
 	},
 }
+
 local ProfileTemplate: ProfileData = {
 	Slots = {
 		[1] = {

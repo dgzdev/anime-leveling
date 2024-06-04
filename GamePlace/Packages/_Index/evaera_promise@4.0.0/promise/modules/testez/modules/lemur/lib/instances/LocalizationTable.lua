@@ -23,7 +23,7 @@ end
 function LocalizationTable.prototype:GetString(targetLocaleId, key)
 	local contents = getmetatable(self).instance.contents
 
-	for _, entry in contents do
+	for _, entry in ipairs(contents) do
 		if entry.key == key then
 			return entry.values[targetLocaleId]
 		end

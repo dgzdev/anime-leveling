@@ -12,7 +12,7 @@ local isRobloxCli, ProcessService = pcall(game.GetService, game, "ProcessService
 local function findUnitTests(container, foundTests)
 	foundTests = foundTests or {}
 
-	for _, child in (container:GetChildren()) do
+	for _, child in ipairs(container:GetChildren()) do
 		if child:IsA("ModuleScript") then
 			table.insert(foundTests, child)
 		end
@@ -31,12 +31,12 @@ local completed, result = xpcall(function()
 	local successCount = 0
 	local errorMessages = {}
 
-	for _, testModule in testModules do
+	for _, testModule in ipairs(testModules) do
 		local tests = require(testModule)
 
 		print(string.format("%s", testModule.Name))
 
-		for testName, testFunction in tests do
+		for testName, testFunction in pairs(tests) do
 			local success, message = pcall(testFunction)
 			totalCount = totalCount + 1
 

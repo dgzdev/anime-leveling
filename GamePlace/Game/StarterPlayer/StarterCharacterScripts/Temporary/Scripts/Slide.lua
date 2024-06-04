@@ -172,7 +172,7 @@ function Slide:Init(modules)
 			if Humanoid:GetAttribute("Slide") then
 				Slide.GetUp(true)
 			end
-		elseif key.KeyCode == Enum.KeyCode.C then
+		elseif key.KeyCode == Enum.KeyCode.LeftControl then
 			Slide.Slide()
 		end
 	end)

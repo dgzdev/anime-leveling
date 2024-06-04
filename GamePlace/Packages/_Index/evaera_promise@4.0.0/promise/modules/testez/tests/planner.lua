@@ -11,7 +11,7 @@ local function verifyPlan(plan, expected, notSkip)
 	end)
 
 	local nodeNames = {}
-	for _, node in nodes do
+	for _, node in ipairs(nodes) do
 		local name = node:getFullName()
 		if nodeNames[name] then
 			nodeNames[name] = nodeNames[name] + 1
@@ -20,7 +20,7 @@ local function verifyPlan(plan, expected, notSkip)
 		end
 	end
 
-	for _, name in expected do
+	for _, name in ipairs(expected) do
 		if nodeNames[name] then
 			nodeNames[name] = nodeNames[name] - 1
 		else
@@ -31,7 +31,7 @@ local function verifyPlan(plan, expected, notSkip)
 	local pass = true
 	local message = ""
 
-	for name, count in nodeNames do
+	for name, count in pairs(nodeNames) do
 		if count < 0 then
 			pass = false
 			message = message .. string.format("expected name [%s] not found, ", name)
@@ -61,7 +61,7 @@ return {
 			"planning d test4",
 			"planning d test4 test5",
 			"planning d test4 test6",
-			"planning d test4", -- Order doesn't actually matter for this test.
+			"planning d test4",  -- Order doesn't actually matter for this test.
 			"planning d test4 test5",
 			"planning d test4 test7",
 		}))
@@ -80,7 +80,7 @@ return {
 			"planning d test4",
 			"planning d test4 test5",
 			"planning d test4 test6",
-			"planning d test4", -- Order doesn't actually matter for this test.
+			"planning d test4",  -- Order doesn't actually matter for this test.
 			"planning d test4 test5",
 			"planning d test4 test7",
 		}, true))

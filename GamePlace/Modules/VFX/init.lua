@@ -23,6 +23,13 @@ function VFX:_ApplyParticle(
 		Root = target
 	elseif target:IsA("Model") then
 		Root = target.PrimaryPart
+	else
+		error(`Invalid target type: {target.ClassName} | {target:GetFullName()}`)
+		return
+	end
+
+	if Root == nil then
+		return
 	end
 
 	local block = VFXFolder:FindFirstChild(action)
@@ -40,6 +47,7 @@ function VFX:_ApplyParticle(
 	if typeof(offset) == "Vector3" then
 		offset = CFrame.new(offset)
 	end
+
 	particle.CFrame = Root.CFrame * (offset or CFrame.new(0, 0, 0))
 
 	if doNotWeld then

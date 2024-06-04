@@ -55,7 +55,7 @@ local names = {
 
 local instances = {}
 
-for _, name in names do
+for _, name in ipairs(names) do
 	instances[name] = import("./" .. name)
 end
 

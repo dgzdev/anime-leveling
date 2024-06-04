@@ -2,12 +2,52 @@ local Knit = require(game.ReplicatedStorage.Packages.Knit)
 local Debris = game:GetService("Debris")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
+local RunService = game:GetService("RunService")
 
 local DebugService = Knit.CreateService({
 	Name = "DebugService",
 })
 
 DebugService.Activated = false
+DebugService.AttachPart = nil
+
+function DebugService:CreatePartandAttachtoPos(CF)
+	local debugPart = Instance.new("Part")
+	debugPart.Parent = workspace:FindFirstChild("Debug")
+	debugPart.Anchored = true
+	debugPart.Transparency = 0
+	debugPart.Color = Color3.new(0, 1, 0)
+	debugPart.CanCollide = false
+	debugPart.Size = Vector3.new(1, 1, 1)
+	debugPart.Name = "DebugPart"
+	debugPart.CFrame = CF
+	debugPart.Shape = Enum.PartType.Ball
+	debugPart.Material = Enum.Material.Neon
+
+	Debris:AddItem(debugPart, 3)
+end
+
+function DebugService.Client:CreatePartandAttachtoPos(p, ...)
+	return self.Server:CreatePartandAttachtoPos(...)
+end
+
+function DebugService:CreatePartAtPos(Pos: Vector3)
+	local debugPart = Instance.new("Part")
+	debugPart.Parent = workspace:WaitForChild("Debug")
+	debugPart.Anchored = true
+	debugPart.Transparency = 0
+	debugPart.Color = Color3.new(1, 0, 0)
+	debugPart.CanCollide = false
+	debugPart.Size = Vector3.new(1, 1, 1)
+	debugPart.Name = "DebugPart"
+	debugPart.Position = Pos
+	debugPart.Shape = Enum.PartType.Ball
+	debugPart.Material = Enum.Material.Neon
+end
+
+function DebugService.Client:CreatePartAtPos(p, ...)
+	return self.Server:CreatePartAtPos(...)
+end
 
 function DebugService:CreatePathBetweenTwoPoints(Origin: CFrame, FinalPos: CFrame, RayResult: RaycastResult?)
 	local LastCFR = Origin
@@ -132,6 +172,10 @@ function DebugService:CreatePathBetweenTwoPoints(Origin: CFrame, FinalPos: CFram
 	end
 
 	table.clear(parts)
+end
+
+function DebugService.Client:CreatePathBetweenTwoPoints(p, ...)
+	return self.Server:CreatePathBetweenTwoPoints(...)
 end
 
 return DebugService

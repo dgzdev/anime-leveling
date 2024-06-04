@@ -686,7 +686,7 @@ return function(Iris: Types.Iris)
                 Iris.Separator()
 
                 Iris.SameLine()
-                    for i, v in (styleList) do
+                    for i, v in ipairs(styleList) do
                         Iris.RadioButton({ v[1], i }, { index = selectedPanel })
                     end
                 Iris.End()

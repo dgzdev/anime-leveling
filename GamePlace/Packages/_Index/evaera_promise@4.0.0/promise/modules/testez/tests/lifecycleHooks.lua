@@ -2,13 +2,13 @@ local TestEZ = require(script.Parent.Parent.TestEZ)
 
 local function expectShallowEquals(array1, array2)
 	local function shallowEquals()
-		for index, value in array1 do
+		for index, value in ipairs(array1) do
 			if array2[index] ~= value then
 				return false
 			end
 		end
 
-		for index, value in array2 do
+		for index, value in ipairs(array2) do
 			if array1[index] ~= value then
 				return false
 			end
@@ -18,13 +18,11 @@ local function expectShallowEquals(array1, array2)
 	end
 
 	if not shallowEquals() then
-		error(
-			string.format(
-				"Expected: {\n\t%s\n}.\nGot: {\n\t%s\n}",
-				table.concat(array2, "\n\t"),
-				table.concat(array1, "\n\t")
-			)
-		)
+		error(string.format(
+			"Expected: {\n\t%s\n}.\nGot: {\n\t%s\n}",
+			table.concat(array2, "\n\t"),
+			table.concat(array1, "\n\t")
+		))
 	end
 end
 
@@ -47,8 +45,8 @@ local function runTestPlan(testPlan)
 				setfenv(testPlan, getfenv())
 				testPlan(insertLifecycleEvent)
 			end,
-			path = { "lifecycleHooksTest" },
-		},
+			path = {'lifecycleHooksTest'}
+		}
 	})
 
 	local results = TestEZ.TestRunner.runPlan(plan)
@@ -215,6 +213,7 @@ return {
 		local function failLifecycleCase(hookType)
 			local itWasRun = false
 			local results = runTestPlan(function(insertLifecycleEvent)
+
 				if hookType == "beforeAll" then
 					beforeAll(function()
 						error("this is an error")

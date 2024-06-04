@@ -12,7 +12,7 @@ return function(context, players, placeId, jobId)
 	context:Reply("Commencing teleport...")
 
 	if jobId then
-		for _, player in players do
+		for _, player in ipairs(players) do
 			TeleportService:TeleportToPlaceInstance(placeId, jobId, player)
 		end
 	else

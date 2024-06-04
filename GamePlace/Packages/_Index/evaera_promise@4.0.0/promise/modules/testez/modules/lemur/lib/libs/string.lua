@@ -1,6 +1,6 @@
 local rbxString = {}
 
-for key, value in string do
+for key, value in pairs(string) do
 	rbxString[key] = value
 end
 

@@ -10,7 +10,7 @@ local Workspace = game:GetService("Workspace")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
-local screenGui = ReplicatedFirst:WaitForChild("loadingScreen"):Clone()
+local screenGui: ScreenGui = ReplicatedFirst:WaitForChild("loadingScreen"):Clone()
 
 local sound = ReplicatedFirst:WaitForChild("desolate")
 sound:Play()
@@ -21,16 +21,7 @@ local LoadingBar = bg:WaitForChild("LoadingBar")
 local Value: Frame = LoadingBar:WaitForChild("Value")
 local Assets: TextLabel = bg:WaitForChild("Assets")
 
-Assets.Text = "0%"
-
-local loadedAssets = 0
-local assetsToLoad = 101
-
-local function getpercentage()
-	local n = loadedAssets / assetsToLoad
-	n = math.clamp(n, 0, 1)
-	return n
-end
+Assets.Text = "0/0"
 
 local function FadeOut()
 	TweenService:Create(Value, TweenInfo.new(0.25, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut, 0, false, 0), {
@@ -60,15 +51,6 @@ task.spawn(function()
 	repeat
 		RootPart.Anchored = true
 	until RootPart.Anchored == true
-
-	while true do
-		local n = getpercentage()
-		TweenService:Create(Value, TweenInfo.new(0.45, Enum.EasingStyle.Cubic), {
-			Size = UDim2.fromScale(n, 1),
-		}):Play()
-		task.wait(0.25)
-		Assets.Text = tostring(math.floor(n * 100)) .. "%"
-	end
 end)
 
 local skipButton = Instance.new("TextButton")
@@ -86,7 +68,6 @@ skipButton.TextSize = 36
 skipButton.Visible = false
 
 screenGui.Parent = playerGui
--- Remove the default loading screen
 ReplicatedFirst:RemoveDefaultLoadingScreen()
 
 local start = tick()
@@ -94,8 +75,6 @@ local start = tick()
 if not game:IsLoaded() then
 	game.Loaded:Wait()
 end
-
-task.wait(5)
 
 task.delay(5, function()
 	skipButton.Parent = bg
@@ -107,17 +86,29 @@ skipButton.Activated:Connect(function(inputObject, clickCount)
 	FadeOut()
 end)
 
-local assets = SoundService:GetDescendants()
-for _, a in Workspace:GetDescendants() do
-	if a:IsA("Sound") then
-		table.insert(assets, a)
-	end
+local assets = game:GetDescendants()
+
+local totalAssets = #assets
+local loadedAssets = 0
+
+local function calc(): number
+	return math.clamp(loadedAssets / totalAssets, 0, 1)
 end
 
-ContentProvider:PreloadAsync(assets, function()
+Assets.Text = `0/${totalAssets}`
+Value:TweenSize(UDim2.fromScale(calc(), 1))
+
+for _index, asset in assets do
+	ContentProvider:PreloadAsync({ asset })
 	loadedAssets += 1
-	task.wait()
-end)
+
+	if screenGui.Enabled == false then
+		break
+	end
+
+	Assets.Text = `{loadedAssets}/{totalAssets}`
+	Value:TweenSize(UDim2.fromScale(calc(), 1))
+end
 
 local endTick = tick()
 

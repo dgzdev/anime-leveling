@@ -4,66 +4,41 @@ local Util = require(script.Parent.Util)
 
 --- The registry keeps track of all the commands and types that Cmdr knows about.
 local Registry = {
-	TypeMethods = Util.MakeDictionary({
-		"Transform",
-		"Validate",
-		"Autocomplete",
-		"Parse",
-		"DisplayName",
-		"Listable",
-		"ValidateOnce",
-		"Prefixes",
-		"Default",
-		"ArgumentOperatorAliases",
-	}),
-	CommandMethods = Util.MakeDictionary({
-		"Name",
-		"Aliases",
-		"AutoExec",
-		"Description",
-		"Args",
-		"Run",
-		"ClientRun",
-		"Data",
-		"Group",
-	}),
-	CommandArgProps = Util.MakeDictionary({ "Name", "Type", "Description", "Optional", "Default" }),
-	Types = {},
-	TypeAliases = {},
-	Commands = {},
-	CommandsArray = {},
-	Cmdr = nil,
+	TypeMethods = Util.MakeDictionary({"Transform", "Validate", "Autocomplete", "Parse", "DisplayName", "Listable", "ValidateOnce", "Prefixes", "Default", "ArgumentOperatorAliases"});
+	CommandMethods = Util.MakeDictionary({"Name", "Aliases", "AutoExec", "Description", "Args", "Run", "ClientRun", "Data", "Group"});
+	CommandArgProps = Util.MakeDictionary({"Name", "Type", "Description", "Optional", "Default"});
+	Types = {};
+	TypeAliases = {};
+	Commands = {};
+	CommandsArray = {};
+	Cmdr = nil;
 	Hooks = {
-		BeforeRun = {},
-		AfterRun = {},
-	},
+		BeforeRun = {};
+		AfterRun = {}
+	};
 	Stores = setmetatable({}, {
-		__index = function(self, k)
+		__index = function (self, k)
 			self[k] = {}
 			return self[k]
-		end,
-	}),
-	AutoExecBuffer = {},
+		end
+	});
+	AutoExecBuffer = {};
 }
 
 --- Registers a type in the system.
 -- name: The type Name. This must be unique.
-function Registry:RegisterType(name, typeObject)
+function Registry:RegisterType (name, typeObject)
 	if not name or typeof(name) ~= "string" then
 		error("Invalid type name provided: nil")
 	end
 
 	if not name:find("^[%d%l]%w*$") then
-		error(
-			('Invalid type name provided: "%s", type names must be alphanumeric and start with a lower-case letter or a digit.'):format(
-				name
-			)
-		)
+		error(('Invalid type name provided: "%s", type names must be alphanumeric and start with a lower-case letter or a digit.'):format(name))
 	end
 
-	for key in typeObject do
+	for key in pairs(typeObject) do
 		if self.TypeMethods[key] == nil then
-			error('Unknown key/method in type "' .. name .. '": ' .. key)
+			error("Unknown key/method in type \"" .. name .. "\": " .. key)
 		end
 	end
 
@@ -81,7 +56,7 @@ function Registry:RegisterType(name, typeObject)
 	end
 end
 
-function Registry:RegisterTypePrefix(name, union)
+function Registry:RegisterTypePrefix (name, union)
 	if not self.TypeAliases[name] then
 		self.TypeAliases[name] = name
 	end
@@ -89,14 +64,14 @@ function Registry:RegisterTypePrefix(name, union)
 	self.TypeAliases[name] = ("%s %s"):format(self.TypeAliases[name], union)
 end
 
-function Registry:RegisterTypeAlias(name, alias)
+function Registry:RegisterTypeAlias (name, alias)
 	assert(self.TypeAliases[name] == nil, ("Type alias %s already exists!"):format(alias))
 	self.TypeAliases[name] = alias
 end
 
 --- Helper method that registers types from all module scripts in a specific container.
-function Registry:RegisterTypesIn(container)
-	for _, object in (container:GetChildren()) do
+function Registry:RegisterTypesIn (container)
+	for _, object in pairs(container:GetChildren()) do
 		if object:IsA("ModuleScript") then
 			object.Parent = self.Cmdr.ReplicatedRoot.Types
 
@@ -112,25 +87,19 @@ Registry.RegisterHooksIn = Registry.RegisterTypesIn
 
 --- Registers a command based purely on its definition.
 -- Prefer using Registry:RegisterCommand for proper handling of server/client model.
-function Registry:RegisterCommandObject(commandObject, fromCmdr)
-	for key in commandObject do
+function Registry:RegisterCommandObject (commandObject, fromCmdr)
+	for key in pairs(commandObject) do
 		if self.CommandMethods[key] == nil then
 			error("Unknown key/method in command " .. (commandObject.Name or "unknown command") .. ": " .. key)
 		end
 	end
 
 	if commandObject.Args then
-		for i, arg in commandObject.Args do
+		for i, arg in pairs(commandObject.Args) do
 			if type(arg) == "table" then
-				for key in arg do
+				for key in pairs(arg) do
 					if self.CommandArgProps[key] == nil then
-						error(
-							('Unknown property in command "%s" argument #%d: %s'):format(
-								commandObject.Name or "unknown",
-								i,
-								key
-							)
-						)
+						error(('Unknown property in command "%s" argument #%d: %s'):format(commandObject.Name or "unknown", i, key))
 					end
 				end
 			end
@@ -145,7 +114,7 @@ function Registry:RegisterCommandObject(commandObject, fromCmdr)
 	-- Unregister the old command if it exists...
 	local oldCommand = self.Commands[commandObject.Name:lower()]
 	if oldCommand and oldCommand.Aliases then
-		for _, alias in oldCommand.Aliases do
+		for _, alias in pairs(oldCommand.Aliases) do
 			self.Commands[alias:lower()] = nil
 		end
 	elseif not oldCommand then
@@ -155,7 +124,7 @@ function Registry:RegisterCommandObject(commandObject, fromCmdr)
 	self.Commands[commandObject.Name:lower()] = commandObject
 
 	if commandObject.Aliases then
-		for _, alias in commandObject.Aliases do
+		for _, alias in pairs(commandObject.Aliases) do
 			self.Commands[alias:lower()] = commandObject
 		end
 	end
@@ -163,13 +132,11 @@ end
 
 --- Registers a command definition and its server equivalent.
 -- Handles replicating the definition to the client.
-function Registry:RegisterCommand(commandScript, commandServerScript, filter)
+function Registry:RegisterCommand (commandScript, commandServerScript, filter)
 	local commandObject = require(commandScript)
 	assert(
 		typeof(commandObject) == "table",
-		`Invalid return value from command script "{commandScript.Name}" (CommandDefinition expected, got {typeof(
-			commandObject
-		)})`
+		`Invalid return value from command script "{commandScript.Name}" (CommandDefinition expected, got {typeof(commandObject)})`
 	)
 
 	if commandServerScript then
@@ -187,11 +154,11 @@ function Registry:RegisterCommand(commandScript, commandServerScript, filter)
 end
 
 --- A helper method that registers all commands inside a specific container.
-function Registry:RegisterCommandsIn(container, filter)
+function Registry:RegisterCommandsIn (container, filter)
 	local skippedServerScripts = {}
 	local usedServerScripts = {}
 
-	for _, commandScript in (container:GetChildren()) do
+	for _, commandScript in pairs(container:GetChildren()) do
 		if commandScript:IsA("ModuleScript") then
 			if not commandScript.Name:find("Server") then
 				local serverCommandScript = container:FindFirstChild(commandScript.Name .. "Server")
@@ -209,19 +176,15 @@ function Registry:RegisterCommandsIn(container, filter)
 		end
 	end
 
-	for skippedScript in skippedServerScripts do
+	for skippedScript in pairs(skippedServerScripts) do
 		if not usedServerScripts[skippedScript] then
-			warn(
-				"Command script "
-					.. skippedScript.Name
-					.. " was skipped because it has 'Server' in its name, and has no equivalent shared script."
-			)
+			warn("Command script " .. skippedScript.Name .. " was skipped because it has 'Server' in its name, and has no equivalent shared script.")
 		end
 	end
 end
 
 --- Registers the default commands, with an optional filter function or array of groups.
-function Registry:RegisterDefaultCommands(arrayOrFunc)
+function Registry:RegisterDefaultCommands (arrayOrFunc)
 	assert(RunService:IsServer(), "RegisterDefaultCommands cannot be called from the client.")
 
 	local isArray = type(arrayOrFunc) == "table"
@@ -230,27 +193,27 @@ function Registry:RegisterDefaultCommands(arrayOrFunc)
 		arrayOrFunc = Util.MakeDictionary(arrayOrFunc)
 	end
 
-	self:RegisterCommandsIn(self.Cmdr.DefaultCommandsFolder, isArray and function(command)
+	self:RegisterCommandsIn(self.Cmdr.DefaultCommandsFolder, isArray and function (command)
 		return arrayOrFunc[command.Group] or false
 	end or arrayOrFunc)
 end
 
 --- Gets a command definition by name. (Can be an alias)
-function Registry:GetCommand(name)
+function Registry:GetCommand (name)
 	name = name or ""
 	return self.Commands[name:lower()]
 end
 
 --- Returns a unique array of all registered commands (not including aliases)
-function Registry:GetCommands()
+function Registry:GetCommands ()
 	return self.CommandsArray
 end
 
 --- Returns an array of the names of all registered commands (not including aliases)
-function Registry:GetCommandNames()
+function Registry:GetCommandNames ()
 	local commands = {}
 
-	for _, command in self.CommandsArray do
+	for _, command in pairs(self.CommandsArray) do
 		table.insert(commands, command.Name)
 	end
 
@@ -260,23 +223,24 @@ end
 Registry.GetCommandsAsStrings = Registry.GetCommandNames
 
 --- Returns an array of the names of all registered types (not including aliases)
-function Registry:GetTypeNames()
+function Registry:GetTypeNames ()
 	local typeNames = {}
 
-	for typeName in self.Types do
+	for typeName in pairs(self.Types) do
 		table.insert(typeNames, typeName)
 	end
 
 	return typeNames
 end
 
+
 --- Gets a type definition by name.
-function Registry:GetType(name)
+function Registry:GetType (name)
 	return self.Types[name]
 end
 
 --- Returns a type name, parsing aliases.
-function Registry:GetTypeName(name)
+function Registry:GetTypeName (name)
 	return self.TypeAliases[name] or name
 end
 
@@ -286,10 +250,8 @@ function Registry:RegisterHook(hookName, callback, priority)
 		error(("Invalid hook name: %q"):format(hookName), 2)
 	end
 
-	table.insert(self.Hooks[hookName], { callback = callback, priority = priority or 0 })
-	table.sort(self.Hooks[hookName], function(a, b)
-		return a.priority < b.priority
-	end)
+	table.insert(self.Hooks[hookName], { callback = callback; priority = priority or 0; } )
+	table.sort(self.Hooks[hookName], function(a, b) return a.priority < b.priority end)
 end
 
 -- Backwards compatability (deprecated)
@@ -316,8 +278,8 @@ end
 
 --- Runs all pending auto exec commands in Registry.AutoExecBuffer
 function Registry:FlushAutoExecBuffer()
-	for _, commandGroup in self.AutoExecBuffer do
-		for _, command in commandGroup do
+	for _, commandGroup in ipairs(self.AutoExecBuffer) do
+		for _, command in ipairs(commandGroup) do
 			self.Cmdr.Dispatcher:EvaluateAndRun(command)
 		end
 	end
@@ -325,7 +287,7 @@ function Registry:FlushAutoExecBuffer()
 	self.AutoExecBuffer = {}
 end
 
-return function(cmdr)
+return function (cmdr)
 	Registry.Cmdr = cmdr
 
 	return Registry

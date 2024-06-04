@@ -13,10 +13,11 @@ local function newEnvironment(currentNode, extraEnvironment)
 
 	if extraEnvironment then
 		if type(extraEnvironment) ~= "table" then
-			error(("Bad argument #2 to newEnvironment. Expected table, got %s"):format(typeof(extraEnvironment)), 2)
+			error(("Bad argument #2 to newEnvironment. Expected table, got %s"):format(
+				typeof(extraEnvironment)), 2)
 		end
 
-		for key, value in extraEnvironment do
+		for key, value in pairs(extraEnvironment) do
 			env[key] = value
 		end
 	end
@@ -66,10 +67,10 @@ local function newEnvironment(currentNode, extraEnvironment)
 		[TestEnum.NodeType.BeforeAll] = "beforeAll",
 		[TestEnum.NodeType.AfterAll] = "afterAll",
 		[TestEnum.NodeType.BeforeEach] = "beforeEach",
-		[TestEnum.NodeType.AfterEach] = "afterEach",
+		[TestEnum.NodeType.AfterEach] = "afterEach"
 	}
 
-	for nodeType, name in lifecycleHooks do
+	for nodeType, name in pairs(lifecycleHooks) do
 		env[name] = function(callback)
 			addChild(name .. "_" .. tostring(lifecyclePhaseId), callback, nodeType, TestEnum.NodeModifier.None)
 			lifecyclePhaseId = lifecyclePhaseId + 1
@@ -95,10 +96,8 @@ local function newEnvironment(currentNode, extraEnvironment)
 		warning.
 	]]
 	function env.HACK_NO_XPCALL()
-		warn(
-			"HACK_NO_XPCALL is deprecated. It is now safe to yield in an "
-				.. "xpcall, so this is no longer necessary. It can be safely deleted."
-		)
+		warn("HACK_NO_XPCALL is deprecated. It is now safe to yield in an " ..
+			"xpcall, so this is no longer necessary. It can be safely deleted.")
 	end
 
 	env.fit = env.itFOCUS
@@ -149,7 +148,7 @@ end
 
 function TestNode:addChild(phrase, nodeType, nodeModifier)
 	if nodeType == TestEnum.NodeType.It then
-		for _, child in self.children do
+		for _, child in pairs(self.children) do
 			if child.phrase == phrase then
 				error("Duplicate it block found: " .. child:getFullName())
 			end
@@ -184,7 +183,7 @@ end
 function TestNode:expand()
 	local originalEnv = getfenv(self.callback)
 	local callbackEnv = setmetatable({}, { __index = originalEnv })
-	for key, value in self.environment do
+	for key, value in pairs(self.environment) do
 		callbackEnv[key] = value
 	end
 	setfenv(self.callback, callbackEnv)
@@ -231,7 +230,7 @@ function TestPlan:addRoot(path, method)
 	for i = #path, 1, -1 do
 		local nextNode = nil
 
-		for _, child in curNode.children do
+		for _, child in ipairs(curNode.children) do
 			if child.phrase == path[i] then
 				nextNode = child
 				break
@@ -256,7 +255,7 @@ function TestPlan:visitAllNodes(callback, root, level)
 	root = root or self
 	level = level or 0
 
-	for _, child in root.children do
+	for _, child in ipairs(root.children) do
 		callback(child, level)
 
 		self:visitAllNodes(callback, child, level + 1)

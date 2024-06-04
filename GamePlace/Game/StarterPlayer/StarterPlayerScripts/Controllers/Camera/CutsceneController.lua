@@ -31,6 +31,13 @@ local function AnimateCamera(animation: string)
 	Camera.CameraType = Enum.CameraType.Scriptable
 	local Connections = {}
 
+	local cameraCFrame = Camera.CFrame
+	local ratePerSecond = 10
+
+	RunService:BindToRenderStep("AnimateCamera", Enum.RenderPriority.Camera.Value, function(deltaTime: number)
+		workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame:Lerp(cameraCFrame, deltaTime * ratePerSecond)
+	end)
+
 	task.spawn(function()
 		local Animation = Animations:WaitForChild(animation)
 
@@ -47,17 +54,11 @@ local function AnimateCamera(animation: string)
 
 		for i = 1, #Frames:GetChildren(), 1 do
 			task.wait(1 / 60)
+
 			local Frame = Frames:FindFirstChild(tostring(i))
 			local FOVFrame = Fov:FindFirstChild(tostring(i))
 
 			if not Frame then
-				continue
-			end
-			if not Frame then
-				continue
-			end
-
-			if AnimationTrack.IsPlaying == false then
 				break
 			end
 
@@ -116,12 +117,12 @@ local function AnimateCamera(animation: string)
 			end
 
 			if i >= 139 and i <= 460 then
-				Camera.CFrame = Head.CFrame
+				cameraCFrame = Head.CFrame
 				continue
 			end
 
 			if i == 1 then
-				Camera.CFrame = Frame.Value
+				cameraCFrame = Frame.Value
 				Camera.FieldOfView = FOVFrame.Value
 				continue
 			end
@@ -129,12 +130,14 @@ local function AnimateCamera(animation: string)
 			local CF = Frame.Value
 			local FOV = FOVFrame.Value
 
-			Camera.CFrame = Camera.CFrame:Lerp(CF, 0.1)
+			cameraCFrame = CF
 
 			TweenService:Create(Camera, TweenInfo.new(0.4, Enum.EasingStyle.Cubic), {
 				FieldOfView = FOV,
 			}):Play()
 		end
+
+		RunService:UnbindFromRenderStep("AnimateCamera")
 
 		Root.CFrame = Torso.CFrame
 		task.wait()
@@ -166,16 +169,14 @@ local CutsceneController = Knit.CreateController({
 
 function CutsceneController.Init()
 	local Character = Player.Character or Player.CharacterAdded:Wait()
-	local Torso = Character:WaitForChild("Torso")
 	local Root = Character:WaitForChild("HumanoidRootPart")
 	local Humanoid = Character:WaitForChild("Humanoid")
 	local Animator = Humanoid:WaitForChild("Animator")
 
-	Root.Anchored = true
+	local CutscenePosition: BasePart = Workspace:WaitForChild("CutscenePosition")
 
-	task.spawn(function()
-		PlayerEnterService:CutsceneStart(Player)
-	end)
+	Root.Anchored = true
+	Character:PivotTo(CutscenePosition.CFrame)
 
 	local cutscene = PlayerGui:WaitForChild("Cutscene")
 	cutscene.Enabled = true
@@ -185,20 +186,6 @@ function CutsceneController.Init()
 
 	local Animation = ReplicatedStorage:WaitForChild("Animations"):WaitForChild("Portal")
 	AnimationTrack = Animator:LoadAnimation(Animation)
-	AnimationTrack:Play(0)
-	AnimationTrack:AdjustSpeed(0)
-
-	local frames = ReplicatedStorage:WaitForChild("CameraAnimations")
-		:WaitForChild("Portal Leave")
-		:WaitForChild("Frames")
-		:WaitForChild("0")
-	Camera.CFrame = frames.Value
-
-	if not game:GetAttribute("Loaded") then
-		game:GetAttributeChangedSignal("Loaded"):Wait()
-	end
-
-	AnimationTrack.Looped = false
 
 	AnimationTrack.KeyframeReached:Connect(function(keyframeName)
 		if keyframeName == "leave" then
@@ -245,8 +232,11 @@ function CutsceneController.Init()
 		end
 	end)
 
-	AnimationTrack:AdjustSpeed(1)
-	task.wait()
+	if not game:GetAttribute("Loaded") then
+		game:GetAttributeChangedSignal("Loaded"):Wait()
+	end
+
+	AnimationTrack:Play()
 	AnimateCamera("Portal Leave")
 end
 
@@ -256,7 +246,6 @@ end
 
 function CutsceneController:KnitStart()
 	coroutine.wrap(function()
-		print("Init")
 		self:Init()
 	end)()
 end

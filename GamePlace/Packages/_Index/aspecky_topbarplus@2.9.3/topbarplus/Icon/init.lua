@@ -96,10 +96,7 @@ function Icon.new()
 		},
 		toggleable = {
 			["iconBackgroundColor"] = { instanceNames = { "iconButton" }, propertyName = "BackgroundColor3" },
-			["iconBackgroundTransparency"] = {
-				instanceNames = { "iconButton" },
-				propertyName = "BackgroundTransparency",
-			},
+			["iconBackgroundTransparency"] = { instanceNames = { "iconButton" }, propertyName = "BackgroundTransparency" },
 			["iconCornerRadius"] = {
 				instanceNames = { "iconCorner", "iconOverlayCorner" },
 				propertyName = "CornerRadius",
@@ -211,11 +208,7 @@ function Icon.new()
 				group = "tip",
 			},
 			["tipTextColor"] = { instanceNames = { "tipLabel" }, propertyName = "TextColor3" },
-			["tipTextTransparency"] = {
-				instanceNames = { "tipLabel" },
-				propertyName = "TextTransparency",
-				group = "tip",
-			},
+			["tipTextTransparency"] = { instanceNames = { "tipLabel" }, propertyName = "TextTransparency", group = "tip" },
 			["tipFont"] = { instanceNames = { "tipLabel" }, propertyName = "Font" },
 			["tipCornerRadius"] = { instanceNames = { "tipCorner" }, propertyName = "CornerRadius" },
 			["dropdownSize"] = { instanceNames = { "dropdownContainer" }, propertyName = "Size", unique = "dropdown" },
@@ -239,10 +232,7 @@ function Icon.new()
 				instanceNames = { "dropdownFrame" },
 				propertyName = "ScrollBarImageTransparency",
 			},
-			["dropdownScrollBarThickness"] = {
-				instanceNames = { "dropdownFrame" },
-				propertyName = "ScrollBarThickness",
-			},
+			["dropdownScrollBarThickness"] = { instanceNames = { "dropdownFrame" }, propertyName = "ScrollBarThickness" },
 			["dropdownIgnoreClipping"] = { callMethods = { self._dropdownIgnoreClipping } },
 			["menuSize"] = { instanceNames = { "menuContainer" }, propertyName = "Size", unique = "menu" },
 			["menuCanvasSize"] = { instanceNames = { "menuFrame" }, propertyName = "CanvasSize" },
@@ -269,8 +259,8 @@ function Icon.new()
 
 	---------------------------------
 	self._groupSettings = {}
-	for _, settingsDetails in self._settings do
-		for settingName, settingDetail in settingsDetails do
+	for _, settingsDetails in pairs(self._settings) do
+		for settingName, settingDetail in pairs(settingsDetails) do
 			local group = settingDetail.group
 			if group then
 				local groupSettings = self._groupSettings[group]
@@ -399,8 +389,8 @@ function Icon.new()
 			self:_decideToCallSignal("menu")
 		end,
 	}
-	for settingsType, settingsDetails in self._settings do
-		for settingName, settingDetail in settingsDetails do
+	for settingsType, settingsDetails in pairs(self._settings) do
+		for settingName, settingDetail in pairs(settingsDetails) do
 			if settingsType == "toggleable" then
 				settingDetail.values = settingDetail.values or {
 					deselected = nil,
@@ -819,7 +809,7 @@ function Icon:set(settingName, value, iconState, setAdditional)
 				table.insert(valuesToSet, "selected")
 				toggleState = nil
 			end
-			for i, v in valuesToSet do
+			for i, v in pairs(valuesToSet) do
 				settingDetail.values[v] = value
 				if setAdditional ~= "_ignorePrevious" then
 					settingDetail.additionalValues["previous_" .. v] = previousValue
@@ -862,14 +852,14 @@ function Icon:set(settingName, value, iconState, setAdditional)
 
 	-- Call any methods present
 	if settingDetail.callMethods then
-		for _, callMethod in settingDetail.callMethods do
+		for _, callMethod in pairs(settingDetail.callMethods) do
 			callMethod(self, value, iconState)
 		end
 	end
 
 	-- Call any signals present
 	if settingDetail.callSignals then
-		for _, callSignal in settingDetail.callSignals do
+		for _, callSignal in pairs(settingDetail.callSignals) do
 			callSignal:Fire()
 		end
 	end
@@ -883,7 +873,7 @@ function Icon:setAdditionalValue(settingName, setAdditional, value, iconState)
 	if iconState then
 		stringMatch = stringMatch .. iconState
 	end
-	for key, _ in settingDetail.additionalValues do
+	for key, _ in pairs(settingDetail.additionalValues) do
 		if string.match(key, stringMatch) then
 			settingDetail.additionalValues[key] = value
 		end
@@ -976,7 +966,7 @@ function Icon:_update(settingName, toggleState, customTweenInfo)
 		newValue = settingDetail.forcedGroupValue
 	end
 	if settingDetail.instanceNames then
-		for _, instanceName in settingDetail.instanceNames do
+		for _, instanceName in pairs(settingDetail.instanceNames) do
 			local instance = self.instances[instanceName]
 			local propertyType = typeof(instance[propertyName])
 			local cannotTweenProperty = invalidPropertiesTypes[propertyType] or typeof(instance) == "table"
@@ -997,7 +987,7 @@ function Icon:_update(settingName, toggleState, customTweenInfo)
 end
 
 function Icon:_updateAll(iconState, customTweenInfo)
-	for settingName, settingDetail in self._settingsDictionary do
+	for settingName, settingDetail in pairs(self._settingsDictionary) do
 		if settingDetail.instanceNames then
 			self:_update(settingName, iconState, customTweenInfo)
 		end
@@ -1010,7 +1000,7 @@ function Icon:_updateAll(iconState, customTweenInfo)
 end
 
 function Icon:_updateHovering(customTweenInfo)
-	for settingName, settingDetail in self._settingsDictionary do
+	for settingName, settingDetail in pairs(self._settingsDictionary) do
 		if settingDetail.instanceNames and settingDetail.hoveringValue ~= nil then
 			self:_update(settingName, nil, customTweenInfo)
 		end
@@ -1025,20 +1015,20 @@ end
 
 function Icon:setTheme(theme, updateAfterSettingAll)
 	self._updateAfterSettingAll = updateAfterSettingAll
-	for settingsType, settingsDetails in theme do
+	for settingsType, settingsDetails in pairs(theme) do
 		if settingsType == "toggleable" then
-			for settingName, settingValue in settingsDetails.deselected do
+			for settingName, settingValue in pairs(settingsDetails.deselected) do
 				if not self.lockedSettings[settingName] then
 					self:set(settingName, settingValue, "both")
 				end
 			end
-			for settingName, settingValue in settingsDetails.selected do
+			for settingName, settingValue in pairs(settingsDetails.selected) do
 				if not self.lockedSettings[settingName] then
 					self:set(settingName, settingValue, "selected")
 				end
 			end
 		else
-			for settingName, settingValue in settingsDetails do
+			for settingName, settingValue in pairs(settingsDetails) do
 				if not self.lockedSettings[settingName] then
 					local settingDetail = self._settingsDictionary[settingName]
 					if settingsType == "action" and settingDetail == nil then
@@ -1071,8 +1061,8 @@ function Icon:setInstance(instanceName, instance)
 end
 
 function Icon:getSettingDetail(targetSettingName)
-	for _, settingsDetails in self._settings do
-		for settingName, settingDetail in settingsDetails do
+	for _, settingsDetails in pairs(self._settings) do
+		for settingName, settingDetail in pairs(settingsDetails) do
 			if settingName == targetSettingName then
 				return settingDetail
 			end
@@ -1083,7 +1073,7 @@ end
 
 function Icon:modifySetting(settingName, dictionary)
 	local settingDetail = self:getSettingDetail(settingName)
-	for key, value in dictionary do
+	for key, value in pairs(dictionary) do
 		settingDetail[key] = value
 	end
 	return self
@@ -1098,7 +1088,7 @@ function Icon:convertLabelToNumberSpinner(numberSpinner)
 	local textLabel = {}
 	setmetatable(textLabel, {
 		__newindex = function(_, index, value)
-			for _, label in (numberSpinner.Frame:GetDescendants()) do
+			for _, label in pairs(numberSpinner.Frame:GetDescendants()) do
 				if label:IsA("TextLabel") then
 					label[index] = value
 				end
@@ -1113,7 +1103,7 @@ function Icon:convertLabelToNumberSpinner(numberSpinner)
 	self:modifySetting("iconText", { instanceNames = {} }) -- We do this to prevent text being modified within the metatable above
 	self:setInstance("iconLabelSpinner", numberSpinner.Frame)
 	local settingsToConvert = { "iconLabelVisible", "iconLabelAnchorPoint", "iconLabelPosition", "iconLabelSize" }
-	for _, settingName in settingsToConvert do
+	for _, settingName in pairs(settingsToConvert) do
 		self:modifySetting(settingName, { instanceNames = { "iconLabelSpinner" } })
 	end
 
@@ -1165,7 +1155,7 @@ function Icon:select(byIcon)
 		-- moves the controller selection to a selectable and active instance within that guiObject.
 		-- It also support back (Controller B) being pressed by navigating to previous pages or
 		-- closing the icon and focusing selection back on the controller navigation topbar.
-		for toggleItem, buttonInstancesArray in self.toggleItems do
+		for toggleItem, buttonInstancesArray in pairs(self.toggleItems) do
 			if #buttonInstancesArray > 0 then
 				local focusMaid = Maid.new()
 				guiService:AddSelectionTuple(self.UID, unpack(buttonInstancesArray))
@@ -1173,7 +1163,7 @@ function Icon:select(byIcon)
 				IconController.activeButtonBCallbacks += 1
 				focusMaid:give(userInputService.InputEnded:Connect(function(input, processed)
 					local blockBackBehaviour = false
-					for _, func in self.blockBackBehaviourChecks do
+					for _, func in pairs(self.blockBackBehaviourChecks) do
 						if func() == true then
 							blockBackBehaviour = true
 							break
@@ -1361,7 +1351,7 @@ function Icon:_updateBaseZIndex(baseValue)
 	if difference == 0 then
 		return "The baseValue is the same"
 	end
-	for _, object in self.instances do
+	for _, object in pairs(self.instances) do
 		if object:IsA("GuiObject") then
 			object.ZIndex = object.ZIndex + difference
 		end
@@ -1433,7 +1423,7 @@ function Icon:_updateIconSize(_, iconState)
 		iconImageRatio = self:get("iconImageRatio", iconState) or "_NIL",
 		iconLabelYScale = self:get("iconLabelYScale", iconState) or "_NIL",
 	}
-	for k, v in values do
+	for k, v in pairs(values) do
 		if v == "_NIL" then
 			return
 		end
@@ -1627,9 +1617,9 @@ end
 
 function Icon:updateSelectionInstances()
 	-- This is to assist with controller navigation and selection
-	for guiObjectOrLayerCollector, _ in self.toggleItems do
+	for guiObjectOrLayerCollector, _ in pairs(self.toggleItems) do
 		local buttonInstancesArray = {}
-		for _, instance in (guiObjectOrLayerCollector:GetDescendants()) do
+		for _, instance in pairs(guiObjectOrLayerCollector:GetDescendants()) do
 			if (instance:IsA("TextButton") or instance:IsA("ImageButton")) and instance.Active then
 				table.insert(buttonInstancesArray, instance)
 			end
@@ -1653,7 +1643,7 @@ function Icon:unbindToggleItem(guiObjectOrLayerCollector)
 end
 
 function Icon:_setToggleItemsVisible(bool, byIcon)
-	for toggleItem, _ in self.toggleItems do
+	for toggleItem, _ in pairs(self.toggleItems) do
 		if not byIcon or byIcon.toggleItems[toggleItem] == nil then
 			local property = "Visible"
 			if toggleItem:IsA("LayerCollector") then
@@ -1788,7 +1778,7 @@ function Icon:displayTip(bool)
 	end
 
 	-- Change transparency of relavent tip instances
-	for _, settingName in self._groupSettings.tip do
+	for _, settingName in pairs(self._groupSettings.tip) do
 		local settingDetail = self._settingsDictionary[settingName]
 		settingDetail.useForcedGroupValue = not isVisible
 		self:_update(settingName)
@@ -1905,7 +1895,7 @@ function Icon:displayCaption(bool)
 
 	-- Change transparency of relavent caption instances
 	local captionFadeInfo = self:get("captionFadeInfo")
-	for _, settingName in self._groupSettings.caption do
+	for _, settingName in pairs(self._groupSettings.caption) do
 		local settingDetail = self._settingsDictionary[settingName]
 		settingDetail.useForcedGroupValue = not isVisible
 		self:_update(settingName)
@@ -1924,7 +1914,7 @@ function Icon:join(parentIcon, featureName, dontUpdate)
 	self.joinedFeatureName = featureName
 	self._parentIcon = parentIcon
 	self.instances.iconContainer.Parent = parentFrame
-	for noticeId, noticeDetail in self.notices do
+	for noticeId, noticeDetail in pairs(self.notices) do
 		parentIcon:notify(noticeDetail.clearNoticeEvent, noticeId)
 		--parentIcon:notify(noticeDetail.completeSignal, noticeId)
 	end
@@ -1967,11 +1957,11 @@ function Icon:leave()
 	self.presentOnTopbar = true
 	self.joinedFeatureName = nil
 	local function scanFeature(t, prevReference, updateMethod)
-		for i, otherIcon in t do
+		for i, otherIcon in pairs(t) do
 			if otherIcon == self then
-				for _, settingName in settingsToReset do
+				for _, settingName in pairs(settingsToReset) do
 					local states = { "deselected", "selected" }
-					for _, toggleState in states do
+					for _, toggleState in pairs(states) do
 						local currentSetting, previousSetting = self:get(settingName, toggleState, prevReference)
 						if previousSetting then
 							self:set(settingName, previousSetting, toggleState)
@@ -1990,7 +1980,7 @@ function Icon:leave()
 	scanFeature(parentIcon.dropdownIcons, "beforeDropdown", parentIcon._updateDropdown)
 	scanFeature(parentIcon.menuIcons, "beforeMenu", parentIcon._updateMenu)
 	--
-	for noticeId, noticeDetail in self.notices do
+	for noticeId, noticeDetail in pairs(self.notices) do
 		local parentIconNoticeDetail = parentIcon.notices[noticeId]
 		if parentIconNoticeDetail then
 			parentIconNoticeDetail.completeSignal:Fire()
@@ -2035,7 +2025,7 @@ function Icon:_ignoreClipping(featureName)
 			fakeFrame.Position = frame.Position
 			fakeFrame.Parent = activeItems
 			--
-			for a, b in (frame:GetChildren()) do
+			for a, b in pairs(frame:GetChildren()) do
 				b.Parent = fakeFrame
 			end
 			--
@@ -2056,7 +2046,7 @@ function Icon:_ignoreClipping(featureName)
 			end))
 			updatePos()
 			maid:give(function()
-				for a, b in (fakeFrame:GetChildren()) do
+				for a, b in pairs(fakeFrame:GetChildren()) do
 					b.Parent = frame
 				end
 				fakeFrame.Name = "Destroying..."
@@ -2070,12 +2060,12 @@ end
 -- Dropdowns
 function Icon:setDropdown(arrayOfIcons)
 	-- Reset any previous icons
-	for i, otherIcon in self.dropdownIcons do
+	for i, otherIcon in pairs(self.dropdownIcons) do
 		otherIcon:leave()
 	end
 	-- Apply new icons
 	if type(arrayOfIcons) == "table" then
-		for i, otherIcon in arrayOfIcons do
+		for i, otherIcon in pairs(arrayOfIcons) do
 			otherIcon:join(self, "dropdown", true)
 		end
 	end
@@ -2093,7 +2083,7 @@ function Icon:_updateDropdown()
 		iconAlignment = self:get("alignment") or "_NIL",
 		scrollBarThickness = self:get("dropdownScrollBarThickness") or "_NIL",
 	}
-	for k, v in values do
+	for k, v in pairs(values) do
 		if v == "_NIL" then
 			return
 		end
@@ -2184,12 +2174,12 @@ end
 -- Menus
 function Icon:setMenu(arrayOfIcons)
 	-- Reset any previous icons
-	for i, otherIcon in self.menuIcons do
+	for i, otherIcon in pairs(self.menuIcons) do
 		otherIcon:leave()
 	end
 	-- Apply new icons
 	if type(arrayOfIcons) == "table" then
-		for i, otherIcon in arrayOfIcons do
+		for i, otherIcon in pairs(arrayOfIcons) do
 			otherIcon:join(self, "menu", true)
 		end
 	end
@@ -2214,7 +2204,7 @@ function Icon:_updateMenu()
 		iconAlignment = self:get("alignment") or "_NIL",
 		scrollBarThickness = self:get("menuScrollBarThickness") or "_NIL",
 	}
-	for k, v in values do
+	for k, v in pairs(values) do
 		if v == "_NIL" then
 			return
 		end

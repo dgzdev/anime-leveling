@@ -22,7 +22,7 @@ describe("createEnum", function()
 
 		local enum = createEnum("Bar", values)
 
-		for name, value in values do
+		for name, value in pairs(values) do
 			local enumValue = enum[name]
 
 			assert.equal(typeof(enumValue), "EnumItem")

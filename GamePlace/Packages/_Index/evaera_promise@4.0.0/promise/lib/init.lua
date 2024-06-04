@@ -28,7 +28,7 @@ end
 local function makeEnum(enumName, members)
 	local enum = {}
 
-	for _, memberName in members do
+	for _, memberName in ipairs(members) do
 		enum[memberName] = memberName
 	end
 
@@ -115,7 +115,7 @@ do
 			string.format("-- Promise.Error(%s) --", self.kind or "?"),
 		}
 
-		for _, runtimeError in (self:getErrorChain()) do
+		for _, runtimeError in ipairs(self:getErrorChain()) do
 			table.insert(
 				errorStrings,
 				table.concat({
@@ -490,7 +490,7 @@ function Promise._all(traceback, promises, amount)
 
 	-- We need to check that each value is a promise here so that we can produce
 	-- a proper error rather than a rejected promise with our error.
-	for i, promise in promises do
+	for i, promise in pairs(promises) do
 		if not Promise.is(promise) then
 			error(string.format(ERROR_NON_PROMISE_IN_LIST, "Promise.all", tostring(i)), 3)
 		end
@@ -513,7 +513,7 @@ function Promise._all(traceback, promises, amount)
 		local done = false
 
 		local function cancel()
-			for _, promise in newPromises do
+			for _, promise in ipairs(newPromises) do
 				promise:cancel()
 			end
 		end
@@ -543,7 +543,7 @@ function Promise._all(traceback, promises, amount)
 
 		-- We can assume the values inside `promises` are all promises since we
 		-- checked above.
-		for i, promise in promises do
+		for i, promise in ipairs(promises) do
 			newPromises[i] = promise:andThen(function(...)
 				resolveOne(i, ...)
 			end, function(...)
@@ -703,7 +703,7 @@ function Promise.allSettled(promises)
 
 	-- We need to check that each value is a promise here so that we can produce
 	-- a proper error rather than a rejected promise with our error.
-	for i, promise in promises do
+	for i, promise in pairs(promises) do
 		if not Promise.is(promise) then
 			error(string.format(ERROR_NON_PROMISE_IN_LIST, "Promise.allSettled", tostring(i)), 2)
 		end
@@ -735,14 +735,14 @@ function Promise.allSettled(promises)
 		end
 
 		onCancel(function()
-			for _, promise in newPromises do
+			for _, promise in ipairs(newPromises) do
 				promise:cancel()
 			end
 		end)
 
 		-- We can assume the values inside `promises` are all promises since we
 		-- checked above.
-		for i, promise in promises do
+		for i, promise in ipairs(promises) do
 			newPromises[i] = promise:finally(function(...)
 				resolveOne(i, ...)
 			end)
@@ -777,7 +777,7 @@ end
 function Promise.race(promises)
 	assert(type(promises) == "table", string.format(ERROR_NON_LIST, "Promise.race"))
 
-	for i, promise in promises do
+	for i, promise in pairs(promises) do
 		assert(Promise.is(promise), string.format(ERROR_NON_PROMISE_IN_LIST, "Promise.race", tostring(i)))
 	end
 
@@ -786,7 +786,7 @@ function Promise.race(promises)
 		local finished = false
 
 		local function cancel()
-			for _, promise in newPromises do
+			for _, promise in ipairs(newPromises) do
 				promise:cancel()
 			end
 		end
@@ -803,7 +803,7 @@ function Promise.race(promises)
 			return
 		end
 
-		for i, promise in promises do
+		for i, promise in ipairs(promises) do
 			newPromises[i] = promise:andThen(finalize(resolve), finalize(reject))
 		end
 
@@ -880,7 +880,7 @@ function Promise.each(list, predicate)
 		local cancelled = false
 
 		local function cancel()
-			for _, promiseToCancel in promisesToCancel do
+			for _, promiseToCancel in ipairs(promisesToCancel) do
 				promiseToCancel:cancel()
 			end
 		end
@@ -899,7 +899,7 @@ function Promise.each(list, predicate)
 
 		local preprocessedList = {}
 
-		for index, value in list do
+		for index, value in ipairs(list) do
 			if Promise.is(value) then
 				if value:getStatus() == Promise.Status.Cancelled then
 					cancel()
@@ -929,7 +929,7 @@ function Promise.each(list, predicate)
 			end
 		end
 
-		for index, value in preprocessedList do
+		for index, value in ipairs(preprocessedList) do
 			if Promise.is(value) then
 				local success
 				success, value = value:await()
@@ -1428,7 +1428,7 @@ function Promise.prototype:cancel()
 		self._parent:_consumerCancelled(self)
 	end
 
-	for child in self._consumers do
+	for child in pairs(self._consumers) do
 		child:cancel()
 	end
 
@@ -1788,7 +1788,7 @@ function Promise.prototype:_resolve(...)
 	self._valuesLength, self._values = pack(...)
 
 	-- We assume that these callbacks will not throw errors.
-	for _, callback in self._queuedResolve do
+	for _, callback in ipairs(self._queuedResolve) do
 		coroutine.wrap(callback)(...)
 	end
 
@@ -1806,7 +1806,7 @@ function Promise.prototype:_reject(...)
 	-- If there are any rejection handlers, call those!
 	if not isEmpty(self._queuedReject) then
 		-- We assume that these callbacks will not throw errors.
-		for _, callback in self._queuedReject do
+		for _, callback in ipairs(self._queuedReject) do
 			coroutine.wrap(callback)(...)
 		end
 	else
@@ -1828,7 +1828,7 @@ function Promise.prototype:_reject(...)
 			-- Build a reasonable message
 			local message = string.format("Unhandled Promise rejection:\n\n%s\n\n%s", err, self._source)
 
-			for _, callback in Promise._unhandledRejectionCallbacks do
+			for _, callback in ipairs(Promise._unhandledRejectionCallbacks) do
 				task.spawn(callback, self, unpack(self._values, 1, self._valuesLength))
 			end
 
@@ -1850,7 +1850,7 @@ end
 	failure, *and* cancellation.
 ]]
 function Promise.prototype:_finalize()
-	for _, callback in self._queuedFinally do
+	for _, callback in ipairs(self._queuedFinally) do
 		-- Purposefully not passing values to callbacks here, as it could be the
 		-- resolved values, or rejected errors. If the developer needs the values,
 		-- they should use :andThen or :catch explicitly.

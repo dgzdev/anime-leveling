@@ -30,7 +30,7 @@ function TestPlanner.createPlan(modulesList, testNamePattern, extraEnvironment)
 		return a.pathStringForSorting < b.pathStringForSorting
 	end)
 
-	for _, module in modulesList do
+	for _, module in ipairs(modulesList) do
 		plan:addRoot(module.path, module.method)
 	end
 

@@ -2,31 +2,31 @@ local Util = require(script.Parent.Parent.Shared.Util)
 
 local combinedInputEnums = Enum.UserInputType:GetEnumItems()
 
-for _, e in (Enum.KeyCode:GetEnumItems()) do
+for _, e in pairs(Enum.KeyCode:GetEnumItems()) do
 	combinedInputEnums[#combinedInputEnums + 1] = e
 end
 
 local userInputType = {
-	Transform = function(text)
+	Transform = function (text)
 		local findEnum = Util.MakeFuzzyFinder(combinedInputEnums)
 
 		return findEnum(text)
-	end,
+	end;
 
-	Validate = function(enums)
+	Validate = function (enums)
 		return #enums > 0
-	end,
+	end;
 
-	Autocomplete = function(enums)
+	Autocomplete = function (enums)
 		return Util.GetNames(enums)
-	end,
+	end;
 
-	Parse = function(enums)
-		return enums[1]
-	end,
+	Parse = function (enums)
+		return enums[1];
+	end;
 }
 
-return function(cmdr)
+return function (cmdr)
 	cmdr:RegisterType("userInput", userInputType)
 	cmdr:RegisterType("userInputs", Util.MakeListableType(userInputType))
 end

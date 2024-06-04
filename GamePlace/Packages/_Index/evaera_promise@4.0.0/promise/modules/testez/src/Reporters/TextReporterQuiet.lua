@@ -13,7 +13,7 @@ local INDENT = (" "):rep(3)
 local STATUS_SYMBOLS = {
 	[TestEnum.TestStatus.Success] = "+",
 	[TestEnum.TestStatus.Failure] = "-",
-	[TestEnum.TestStatus.Skipped] = "~",
+	[TestEnum.TestStatus.Skipped] = "~"
 }
 local UNKNOWN_STATUS_SYMBOL = "?"
 
@@ -32,12 +32,16 @@ local function reportNode(node, buffer, level)
 	if node.status ~= TestEnum.TestStatus.Success then
 		local symbol = STATUS_SYMBOLS[node.status] or UNKNOWN_STATUS_SYMBOL
 
-		line = ("%s[%s] %s"):format(INDENT:rep(level), symbol, node.planNode.phrase)
+		line = ("%s[%s] %s"):format(
+			INDENT:rep(level),
+			symbol,
+			node.planNode.phrase
+		)
 	end
 
 	table.insert(buffer, line)
 
-	for _, child in node.children do
+	for _, child in ipairs(node.children) do
 		reportNode(child, buffer, level + 1)
 	end
 
@@ -47,7 +51,7 @@ end
 local function reportRoot(node)
 	local buffer = {}
 
-	for _, child in node.children do
+	for _, child in ipairs(node.children) do
 		reportNode(child, buffer, 0)
 	end
 
@@ -64,7 +68,11 @@ function TextReporterQuiet.report(results)
 	local resultBuffer = {
 		"Test results:",
 		report(results),
-		("%d passed, %d failed, %d skipped"):format(results.successCount, results.failureCount, results.skippedCount),
+		("%d passed, %d failed, %d skipped"):format(
+			results.successCount,
+			results.failureCount,
+			results.skippedCount
+		)
 	}
 
 	print(table.concat(resultBuffer, "\n"))
@@ -77,7 +85,7 @@ function TextReporterQuiet.report(results)
 		print("Errors reported by tests:")
 		print("")
 
-		for _, message in results.errors do
+		for _, message in ipairs(results.errors) do
 			TestService:Error(message)
 
 			-- Insert a blank line after each error
