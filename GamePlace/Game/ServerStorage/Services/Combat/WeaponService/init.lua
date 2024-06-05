@@ -30,15 +30,20 @@ function WeaponService:WeaponInput(
 	local EquippedItemName = PlayerData.Equiped.Weapon
 	local itemData = GameData.gameWeapons[EquippedItemName]
 	local NoSpaceName = EquippedItemName:gsub(" ", "")
-	local WeaponType = Weapons[itemData.Type]
+	local WeaponTypeModule = Weapons[itemData.Type]
+	local WeaponNameModule = Weapons[NoSpaceName]
 
-	if WeaponType[NoSpaceName] then
-		if WeaponType[NoSpaceName][ActionName] then
-			WeaponType[NoSpaceName][ActionName](Character, InputState, Data)
-		elseif WeaponType.Default[ActionName] then
-			Weapons.Default[ActionName](Character, InputState, Data)
-		end
-	elseif Weapons.Default[ActionName] then
+	if WeaponNameModule[ActionName] then
+		WeaponNameModule[ActionName](Character, InputState, Data)
+		return
+	end
+
+	if WeaponTypeModule[ActionName] then
+		WeaponTypeModule[ActionName](Character, InputState, Data)
+		return
+	end
+
+	if Weapons.Default[ActionName] then
 		Weapons.Default[ActionName](Character, InputState, Data)
 	end
 end

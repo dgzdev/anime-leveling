@@ -15,7 +15,6 @@ local HitboxService
 local PlayerService
 local ProgressionService
 local CombatService
-local SkillService
 
 local function ApplyRagdoll(model: Model, time: number)
 	RagdollService:Ragdoll(model, time)
@@ -140,81 +139,13 @@ Dagger.Default = {
 			end)
 		end
 	end,
-
-	Defense = function(...)
-		print("Defense")
-	end,
 }
-
-Dagger["Venom'sFangs"] = {
-	Attack = function(
-		Character: Model,
-		InputState: Enum.UserInputState,
-		p: {
-			Position: CFrame,
-			Combo: number,
-			Combos: number,
-		}
-	)
-		Dagger.Default.Attack(Character, InputState, p)
-	end,
-
-	Defense = function(
-		Character: Model,
-		InputState: Enum.UserInputState,
-		p: {
-			Position: CFrame,
-			Combo: number,
-			Combos: number,
-		}
-	)
-		Dagger.Default.Defense(Character, InputState, p)
-	end,
-
-	["Venom Palm"] = function(...)
-		local args = table.pack(...)
-		local send = { "VenomPalm", args[1], args[2], args[3], DaggerHitFunction }
-
-		SkillService:CallSkill(table.unpack(send))
-	end,
-
-	["LStrike"] = function(...)
-		local args = table.pack(...)
-		local send = { "LStrike", args[1], args[2], args[3], DaggerHitFunction }
-
-		SkillService:CallSkill(table.unpack(send))
-	end,
-
-	["VenomBarrage"] = function(...)
-		local args = table.pack(...)
-		local send = { "VenomBarrage", args[1], args[2], args[3], DaggerHitFunction }
-
-		SkillService:CallSkill(table.unpack(send))
-	end,
-
-	["VenomDash"] = function(...)
-		local args = table.pack(...)
-		local send = { "VenomDash", args[1], args[2], args[3], DaggerHitFunction }
-
-		SkillService:CallSkill(table.unpack(send))
-	end,
-
-	["DualBarrage"] = function(...)
-		local args = table.pack(...)
-		local send = { "DualBarrage", args[1], args[2], args[3], DaggerHitFunction }
-
-		SkillService:CallSkill(table.unpack(send))
-	end,
-}
-
-Dagger.Dagger2 = Dagger.Default
 
 function Dagger.Start(default)
 	Default = default
 
 	RenderService = Knit.GetService("RenderService")
 	RagdollService = Knit.GetService("RagdollService")
-	SkillService = Knit.GetService("SkillService")
 
 	HitboxService = Knit.GetService("HitboxService")
 	HitboxService = Knit.GetService("HitboxService")

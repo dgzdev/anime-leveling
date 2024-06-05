@@ -1,15 +1,8 @@
-local Default = {}
+local Default = {
+	Attack = function() end,
+	StrongAttack = function() end,
+}
 
-function Default.Attack(Character: Model, InputState: Enum.UserInputState, p: { Position: CFrame }) end
-
-function Default.Defense(Character: Model, InputState: Enum.UserInputState, p: { Position: CFrame })
-	if InputState == Enum.UserInputState.Begin then
-		Character:SetAttribute("Defense", true)
-	elseif InputState == Enum.UserInputState.End then
-		Character:SetAttribute("Defense", false)
-	end
-end
-
-function Default.Start() end
+function Default.Start(_srvs) end
 
 return Default
