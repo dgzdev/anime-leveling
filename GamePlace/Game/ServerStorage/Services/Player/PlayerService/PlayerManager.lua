@@ -13,7 +13,6 @@ local ProfileStore = ProfileService.GetProfileStore(GameData.profileKey, GameDat
 function PlayerManager.new(player: Player)
 	local self = setmetatable({}, PlayerManager)
 
-	player:LoadCharacter()
 	self.Profile = {}
 
 	self.Player = player
@@ -21,53 +20,7 @@ function PlayerManager.new(player: Player)
 	self.Character = player.Character or player.CharacterAdded:Wait()
 	self.Humanoid = self.Character:WaitForChild("Humanoid")
 	self.PlayerGui = player:WaitForChild("PlayerGui")
-
-	local Animator = self.Humanoid:WaitForChild("Animator")
-
-	task.spawn(function()
-		while true do
-			local Character = player.Character or player.CharacterAdded:Wait()
-			if Character:GetAttribute("Stun") then
-				task.wait(1)
-				Character:SetAttribute("Stun", false)
-			end
-			Character:GetAttributeChangedSignal("Stun"):Wait()
-		end
-	end)
-
-	local function CreatePlayerHealth()
-		local PlayerHealth = game.ReplicatedStorage.Models.PlayerHealth:Clone()
-		PlayerHealth.Parent = self.Character
-		PlayerHealth.Adornee = self.Character:WaitForChild("Head")
-		PlayerHealth.PlayerToHideFrom = player
-
-		local Name = PlayerHealth:WaitForChild("Name"):WaitForChild("PlayerName")
-		Name.Text = self.Character.Name
-
-		local Health = PlayerHealth.Health.SizeFrame
-
-		self.Humanoid.HealthChanged:Connect(function(health)
-			local Scale = health / self.Humanoid.MaxHealth
-			local Color = Color3.fromRGB(2, 255, 150):Lerp(Color3.new(1, 0, 0), 1 - Scale)
-			local Tween = TweenService:Create(
-				Health,
-				TweenInfo.new(0.25, Enum.EasingStyle.Cubic),
-				{ Size = UDim2.fromScale(Scale, 1), BackgroundColor3 = Color }
-			)
-
-			Tween:Play()
-		end)
-	end
-
-	self.Player.CharacterAdded:Connect(function(character)
-		self.Character = character
-		self.Humanoid = character:WaitForChild("Humanoid")
-
-		CreatePlayerHealth()
-	end)
-
-	CreatePlayerHealth()
-
+	
 	return self
 end
 
@@ -143,4 +96,5 @@ export type Profile = {
 	_profile_store: table,
 	_release_listeners: any,
 }
+
 return PlayerManager

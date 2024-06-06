@@ -3,8 +3,8 @@ local Knit = require(game:GetService("ReplicatedStorage"):WaitForChild("Packages
 local ServerStorage = game:GetService("ServerStorage")
 
 local InventoryService
-local ClothingService
 local ProgressionService
+local CharacterService
 
 local GameData = require(ServerStorage.GameData)
 
@@ -41,24 +41,8 @@ function PlayerService.OnPlayerJoin(player: Player)
 	Data.Inventory = GameData.defaultInventory
 	Data.SkillsTreeUnlocked = GameData.profileTemplate.Slots[1].Data.SkillsTreeUnlocked
 
-	local Character = player.Character or player.CharacterAdded:Wait()
-	local Humanoid = Character:WaitForChild("Humanoid")
-
-	Humanoid.MaxHealth = math.floor(math.sqrt(100 * (Data.Points.Endurance + 1)) * 10)
-	Humanoid.Health = math.floor(math.sqrt(100 * (Data.Points.Endurance + 1)) * 10)
-
 	ProgressionService:UpdateLocalStatus(player)
-	player.CharacterAdded:Connect(function(character)
-		ClothingService:LoadCharacter(player, Manager:GetPlayerSlot().Character)
-
-		Character = player.Character or player.CharacterAdded:Wait()
-		Humanoid = Character:WaitForChild("Humanoid")
-
-		Humanoid.MaxHealth = math.floor(math.sqrt(100 * (Data.Points.Endurance + 1)) * 10)
-		Humanoid.Health = math.floor(math.sqrt(100 * (Data.Points.Endurance + 1)) * 10)
-	end)
-
-	ClothingService:LoadCharacter(player, Manager:GetPlayerSlot().Character)
+	CharacterService:LoadCharacter(player)
 end
 
 function PlayerService.OnPlayerLeave(player: Player)
@@ -150,8 +134,8 @@ end
 
 function PlayerService:KnitInit()
 	InventoryService = Knit.GetService("InventoryService")
-	ClothingService = Knit.GetService("ClothingService")
 	ProgressionService = Knit.GetService("ProgressionService")
+	CharacterService = Knit.GetService("CharacterService")
 end
 
 function PlayerService:KnitStart() end

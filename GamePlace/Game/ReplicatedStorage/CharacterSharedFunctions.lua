@@ -111,3 +111,5 @@ function CharacterSharedFunctions:ChangeJumpPower(humanoid, amount, overwrite)
     end
 
 end
+
+return CharacterSharedFunctions

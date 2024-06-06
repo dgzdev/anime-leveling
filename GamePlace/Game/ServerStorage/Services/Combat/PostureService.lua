@@ -6,6 +6,22 @@ local PostureService = Knit.CreateService({
 })
 
 local CombatService
+local CharacterService
+
+function CombatService:BlockBreak(Humanoid: Humanoid)
+	if Humanoid:GetAttribute("PostureBreak") then
+		return
+	end
+	Humanoid:SetAttribute("PostureBreak", true)
+	Humanoid:SetAttribute("Block", false)
+	Humanoid:SetAttribute("Posture", 0)
+
+	CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
+	task.delay(2, function()
+		Humanoid:SetAttribute("PostureBreak", false)
+		CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
+	end)
+end
 
 function PostureService:AddPostureDamage(Humanoid: Humanoid, Amount: number, ByDeflect: boolean?)
 	local ByDeflect = ByDeflect or false
@@ -26,6 +42,7 @@ end
 
 function PostureService.KnitInit()
 	CombatService = Knit.GetService("CombatService")
+	CharacterService = Knit.GetService("CharacterService")
 end
 
 return PostureService

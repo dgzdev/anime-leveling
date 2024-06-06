@@ -58,27 +58,6 @@ function CombatService:RegisterPlayerKilledByEnemy(enemy: Model, playerHumanoid:
 	return
 end
 
-function CombatService:BlockBreak(Humanoid: Humanoid)
-	if Humanoid:GetAttribute("PostureBreak") then
-		return
-	end
-	Humanoid:SetAttribute("PostureBreak", true)
-	Humanoid:SetAttribute("Block", false)
-	Humanoid:SetAttribute("Posture", 0)
-
-	-- local RenderData = RenderService:CreateRenderData(Humanoid, "General", "PostureBreak")
-	-- RenderService:RenderForPlayers(RenderData)
-
-	CharacterService:TrySetToDefaultJumpPower(Humanoid)
-	CharacterService:TrySetToDefaultWalkspeed(Humanoid)
-	task.delay(2, function()
-		Humanoid:SetAttribute("PostureBreak", false)
-
-		CharacterService:TrySetToDefaultWalkspeed(Humanoid)
-		CharacterService:TrySetToDefaultJumpPower(Humanoid)
-	end)
-end
-
 function CombatService:RegisterHumanoidKilled(Character: Model, EnemyHumanoid: Humanoid)
 	if Players:GetPlayerFromCharacter(Character) then
 		self:RegisterNPCEnemyKilledByPlayer(Character, EnemyHumanoid)
