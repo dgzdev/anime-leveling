@@ -9,6 +9,7 @@ local SkillService
 local PostureService
 local AnimationService
 local RenderService
+local CharacterService
 
 function DamageService:DealDamage(HumanoidToDamage: Humanoid, Damage: number, Humanoid: Humanoid?)
 	if HumanoidToDamage.Health - 1 < 0 then return end
@@ -47,6 +48,89 @@ function DamageService:Hit(HumanoidHitted: Humanoid, Humanoid: Humanoid, Damage:
 	RenderService:RenderForPlayers(hitEffectRenderData)
 end
 
+-- função hit, possui verificações de block e dodge, além de aplicar debuffs de hit
+function DamageService:TryHit(Humanoid: Humanoid, HumanoidHitted: Humanoid, _Damage: number)
+	if HumanoidHitted == nil then return end
+
+	task.spawn(function()
+		CharacterService:TrySetToDefaultWalkspeed(HumanoidHitted)
+		CharacterService:TrySetToDefaultJumpPower(HumanoidHitted)  
+	end)
+
+	if _Damage == nil then return print("Damage is nil") end
+
+	local Damage = _Damage
+	local DeflectPostureDamage
+	local BlockPostureDamage
+
+	if typeof(Damage) == "table" then
+		if Damage.Damage == nil then print("Table damage is nil") return end
+		if Damage.Block == nil then print("Table block is nil") return end
+		if Damage.Deflect == nil then print("Table deflect is nil") return end
+
+		Damage = _Damage.Damage
+		DeflectPostureDamage = _Damage.Deflect
+		BlockPostureDamage = _Damage.Block
+	elseif typeof(Damage) == "number" then
+		DeflectPostureDamage = Damage 
+		BlockPostureDamage = Damage * 1.2
+	end
+
+	if HumanoidHitted:GetAttribute("DeflectTime") then
+		HumanoidHitted:SetAttribute("HitCounter", 0)
+		DebounceService:AddDebounce(HumanoidHitted, "DeflectTime", .125, true)
+		PostureService:RemovePostureDamage(HumanoidHitted, 10)
+		Humanoid:SetAttribute("Deflected", true)
+		PostureService:AddPostureDamage(Humanoid, DeflectPostureDamage, true)
+		DebounceService:RemoveDebounce(HumanoidHitted, "Hit")
+		DebounceService:RemoveDebounce(HumanoidHitted, "Blocked")
+		Humanoid:SetAttribute("ComboCounter", 1)
+		HumanoidHitted:SetAttribute("BlockEndLag", false)
+		
+		AnimationService:StopM1Animation(Humanoid)
+
+		-- if Humanoid:GetAttribute("AttackDirection") == "Left" then
+		-- 	Humanoid.Animator:LoadAnimation(game.ReplicatedStorage.Assets.Animations.Weapons.General.DeflectedL):Play()
+		-- else
+		-- 	Humanoid.Animator:LoadAnimation(game.ReplicatedStorage.Assets.Animations.Weapons.General.DeflectedR):Play()		
+		-- end
+
+		-- local AnimationFolder = CharacterService:GetReplicatedAnimationFolder(HumanoidHitted.Parent)
+		-- if AnimationFolder then
+		-- 	HumanoidHitted.Animator:LoadAnimation(AnimationFolder.BlockHit):Play()
+		-- end
+
+		task.delay(1, function()
+			Humanoid:SetAttribute("Deflected", false)
+		end)
+
+		task.spawn(function()
+			local deflectEffectRenderData = RenderService:CreateRenderData(HumanoidHitted, "General", "DeflectEffect")
+			RenderService:RenderForPlayers(deflectEffectRenderData)
+		end)
+	else
+		if HumanoidHitted:GetAttribute("Block") then
+			HumanoidHitted:SetAttribute("HitCounter", 0)
+			-- local ReplicatedAnimations = CharacterService:GetReplicatedAnimationFolder(HumanoidHitted.Parent)
+			-- if ReplicatedAnimations then	
+			-- 	local BlockHit = HumanoidHitted.Animator:LoadAnimation(ReplicatedAnimations.BlockHit):: AnimationTrack
+			-- 	BlockHit.Priority = Enum.AnimationPriority.Action2
+			-- 	BlockHit:Play()
+			-- end
+
+			DebounceService:AddDebounce(HumanoidHitted, "Blocked", 0.5, true)
+			PostureService:AddPostureDamage(HumanoidHitted, BlockPostureDamage)
+
+			local blockEffectRenderData = RenderService:CreateRenderData(HumanoidHitted, "General", "BlockEffect")
+			RenderService:RenderForPlayers(blockEffectRenderData)
+		else
+			DamageService:Hit(HumanoidHitted, Humanoid, Damage)
+		end
+	end
+
+	CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
+	CharacterService:UpdateWalkSpeedAndJumpPower(HumanoidHitted)
+end
 
 
 -- retorna a ação que aconteceria caso um humanoid caso seja atacado
@@ -70,6 +154,7 @@ function DamageService.KnitInit()
 	PostureService = Knit.GetService("PostureService")
 	AnimationService = Knit.GetService("AnimationService")
 	RenderService = Knit.GetService("RenderService")
+	CharacterService = Knit.GetService("CharacterService")
 end
 
 return DamageService

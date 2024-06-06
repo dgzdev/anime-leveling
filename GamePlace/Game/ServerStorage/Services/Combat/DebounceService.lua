@@ -1,4 +1,4 @@
-local Knit = require(game.ReplicatedStorage.Knit.Knit)
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 --[[
     Módulo responsável por adicionar debounces á um Humanoid.

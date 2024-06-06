@@ -1,5 +1,5 @@
 local CollectionService = game:GetService("CollectionService")
-local Knit = require(game.ReplicatedStorage.Knit.Knit)
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 local RenderController = Knit.CreateController {
     Name = "RenderController"

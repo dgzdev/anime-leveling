@@ -9,18 +9,17 @@ local PlayerService
 local ClothingService
 
 function CharacterService:CreatePlayerHealth(Player: Player)
+    local Character = Player.Character
     local PlayerHealth = game.ReplicatedStorage.Models.PlayerHealth:Clone()
-    PlayerHealth.Parent = self.Character
-    PlayerHealth.Adornee = self.Character:WaitForChild("Head")
+    PlayerHealth.Adornee = Character:WaitForChild("Head")
+    PlayerHealth.Parent = Character
     PlayerHealth.PlayerToHideFrom = Player
 
 
     local Name = PlayerHealth:WaitForChild("Name"):WaitForChild("PlayerName")
-    Name.Text = self.Character.Name
+    Name.Text = Character.Name
 
     local Health = PlayerHealth.Health.SizeFrame
-    
-    local Character = Player.Character
     Character.Humanoid.HealthChanged:Connect(function(health)
         local Scale = health / self.Humanoid.MaxHealth
         local Color = Color3.fromRGB(2, 255, 150):Lerp(Color3.new(1, 0, 0), 1 - Scale)

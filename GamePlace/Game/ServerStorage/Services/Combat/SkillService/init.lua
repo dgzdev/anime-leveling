@@ -1,4 +1,4 @@
-local Knit = require(game.ReplicatedStorage.Knit.Knit)
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 local SkillService = Knit.CreateService {
     Name = "SkillService";
@@ -88,17 +88,17 @@ end
 function SkillService.KnitInit()
     WeaponService = Knit.GetService("WeaponService")
     
-    for i,v in ipairs(game.ServerStorage.Services.Services.Skills:GetDescendants()) do
+    for i,v in ipairs(script:GetDescendants()) do
         if v:IsA("ModuleScript") then
             Skills[v.Name] = require(v)
         end
     end
 
-    for i,v in pairs(Skills) do
-        if v.Start then
-            v.Start(Skills)
-        end
-    end
+    -- for i,v in pairs(Skills) do
+    --     if v.Start then
+    --         v.Start(Skills)
+    --     end
+    -- end
 end
 function SkillService.KnitStart()
 

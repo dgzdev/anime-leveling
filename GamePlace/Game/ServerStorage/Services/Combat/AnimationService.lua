@@ -29,3 +29,5 @@ end
 function AnimationService.KnitInit()
     
 end
+
+return AnimationService

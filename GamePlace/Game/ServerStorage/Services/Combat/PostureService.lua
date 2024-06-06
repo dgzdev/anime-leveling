@@ -8,7 +8,7 @@ local PostureService = Knit.CreateService({
 local CombatService
 local CharacterService
 
-function CombatService:BlockBreak(Humanoid: Humanoid)
+function PostureService:PostureBreak(Humanoid: Humanoid)
 	if Humanoid:GetAttribute("PostureBreak") then
 		return
 	end
