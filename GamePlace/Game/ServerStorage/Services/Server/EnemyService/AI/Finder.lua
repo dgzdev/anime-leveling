@@ -16,7 +16,9 @@ end
 
 function Finder.GetClosestHumanoid(from: Humanoid, onlyPlayers: boolean, magnitude: number): Humanoid?
 	local closest: Humanoid = nil
-	if Path.InPath then return end
+	if Path.InPath then
+		return
+	end
 	if onlyPlayers then
 		for _, player in game.Players:GetPlayers() do
 			if player.Character and player.Character:FindFirstChild("Humanoid") then

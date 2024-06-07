@@ -1,6 +1,9 @@
 local knit = require(game.ReplicatedStorage.Packages.Knit)
 
 local AI = script.AI
+local Animations = script.Animations
+
+Animations.Enabled = false
 AI.Enabled = false
 
 local EnemyService = knit.CreateService({
@@ -16,7 +19,15 @@ function EnemyService:CreateEnemy(enemy: Model)
 	local mainAI = AI:Clone()
 	mainAI.Parent = Actor
 
+	--> criar as animações dele
+	local mainAnimations = Animations:Clone()
+	mainAnimations.Parent = enemy
+
+	--> ativar a ia dele
 	mainAI.Enabled = true
+
+	--> ativar as animações dele
+	mainAnimations.Enabled = true
 end
 
 function EnemyService.KnitInit()

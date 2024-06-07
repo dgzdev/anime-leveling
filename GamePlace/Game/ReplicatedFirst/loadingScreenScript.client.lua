@@ -95,7 +95,7 @@ local function calc(): number
 	return math.clamp(loadedAssets / totalAssets, 0, 1)
 end
 
-Assets.Text = `0/${totalAssets}`
+Assets.Text = `0/{totalAssets}`
 Value:TweenSize(UDim2.fromScale(calc(), 1))
 
 for _index, asset in assets do

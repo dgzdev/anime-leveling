@@ -58,7 +58,28 @@ function CameraModule.SetCameraLock()
 end
 
 local isLocked = false
-function CameraModule.KnitInit()
+
+Humanoid.Died:Connect(function()
+	ContextActionService:UnbindAction("MouseMovement")
+	ContextActionService:UnbindAction("CameraLock")
+
+	if isLocked then
+		isLocked = false
+		UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+		Humanoid.AutoRotate = true
+		RunService:UnbindFromRenderStep("CameraLock")
+	end
+
+	Workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
+
+	Character = Player.CharacterAdded:Wait()
+	Humanoid = Character:WaitForChild("Humanoid")
+	RootPart = Character.PrimaryPart
+
+	CameraModule.CreateContext()
+end)
+
+function CameraModule.CreateContext()
 	ContextActionService:BindAction("MouseMovement", function(actionName, inputState, inputObject)
 		if inputState == Enum.UserInputState.Change then
 			cameraAngleX -= inputObject.Delta.X * 0.4
@@ -67,6 +88,10 @@ function CameraModule.KnitInit()
 	end, false, Enum.UserInputType.MouseMovement)
 
 	ContextActionService:BindAction("CameraLock", function(actionName, inputState, inputObject)
+		if Humanoid.Health == 0 then
+			return
+		end
+
 		if inputState == Enum.UserInputState.Begin then
 			if isLocked then
 				isLocked = false
@@ -84,6 +109,10 @@ function CameraModule.KnitInit()
 			end
 		end
 	end, false, Enum.KeyCode.LeftShift)
+end
+
+function CameraModule.KnitInit()
+	CameraModule.CreateContext()
 end
 
 return CameraModule
