@@ -77,13 +77,13 @@ local MeleeHitFunction = function(
 	end
 
 	if hitted:GetAttribute("Defense") == true then
-		RenderService:RenderForPlayersInArea(hitted.PrimaryPart.CFrame.Position, 200, {
+		RenderService:RenderForPlayersInRadius({
 			module = "Universal",
 			effect = "Replicate",
 			root = hitted.PrimaryPart,
 			["VFX"] = "BlockedHit",
 			["SFX"] = "Block",
-		})
+		}, hitted.PrimaryPart.CFrame.Position, 200)
 		return
 	end
 
@@ -102,13 +102,13 @@ local MeleeHitFunction = function(
 			CombatService:RegisterHumanoidKilled(Character, Humanoid)
 		end
 
-		RenderService:RenderForPlayersInArea(hitted.PrimaryPart.CFrame.Position, 200, {
+		RenderService:RenderForPlayersInRadius({
 			module = "Universal",
 			effect = "Replicate",
 			root = hitted.PrimaryPart,
 			["VFX"] = vfx,
 			["SFX"] = sfx,
-		})
+		}, hitted.PrimaryPart.CFrame.Position, 200)
 
 		local rag = ragdoll or 2
 		kb = kb or 0

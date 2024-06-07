@@ -36,11 +36,11 @@ return function(Character: Model, InputState: Enum.UserInputState, Data: { Posit
 
 	VFX:CreateInfinite(effectPart, "InfiniteLightning")
 
-	RenderService:RenderForPlayersInArea(Mid.Position, 200, {
+	RenderService:RenderForPlayersInRadius({
 		module = "Lightning",
 		effect = "LightningWave",
 		root = Character.PrimaryPart,
-	})
+	}, Mid.Position, 200)
 
 	SFX:Create(effectPart, "LightningFlashes", 0, 120, true)
 

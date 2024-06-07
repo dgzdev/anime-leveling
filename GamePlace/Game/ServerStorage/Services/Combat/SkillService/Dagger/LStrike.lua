@@ -60,12 +60,12 @@ return function(
 		Pos = RayResult.Position
 	end
 
-	RenderService:RenderForPlayersInArea(CFramePosition.Position, 200, {
+	RenderService:RenderForPlayersInRadius({
 		module = "Lightning",
 		effect = "LStrike",
 		root = Character.PrimaryPart,
 		position = CFramePosition,
-	})
+	}, CFramePosition.Position, 200)
 
 	if Distance > 6.5 then
 		if Pos then

@@ -26,11 +26,11 @@ return function(Character: Model, InputState: Enum.UserInputState, Data: { Posit
 				hitted = hitted.Parent
 			end
 
-			RenderService:RenderForPlayersInArea(Root.CFrame.Position, 200, {
+			RenderService:RenderForPlayersInRadius({
 				module = "Lightning",
 				effect = "Lightning",
 				root = hitted.PrimaryPart or hitted,
-			})
+			}, Root.CFrame.Position, 200)
 
 			return "break"
 		end)

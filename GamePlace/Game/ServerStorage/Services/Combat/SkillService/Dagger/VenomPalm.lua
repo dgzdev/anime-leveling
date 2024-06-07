@@ -17,12 +17,12 @@ return function(
 	local CFramePosition = p.Position
 	local WeaponFolder = Character:FindFirstChild("Weapons")
 
-	RenderService:RenderForPlayersInArea(CFramePosition.Position, 200, { --> VFX na Render
-		module = "Universal",
-		effect = "VenomPalm",
-		root = Character.PrimaryPart,
-		position = CFramePosition,
-	})
+	RenderService:RenderForPlayersInRadius({
+	module = "Universal",
+	effect = "VenomPalm",
+	root = Character.PrimaryPart,
+	position = CFramePosition,
+}, CFramePosition.Position, 200)
 
 	task.spawn(function() -- Para tirar o delay da skill.
 		for i, weapon: Model in (WeaponFolder:GetChildren()) do --> Hitbox

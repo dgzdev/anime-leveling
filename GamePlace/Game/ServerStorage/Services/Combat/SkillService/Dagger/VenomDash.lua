@@ -29,11 +29,11 @@ return function(
 	end)
 
 	
-	RenderService:RenderForPlayersInArea(p.Position.Position, 150,{
+	RenderService:RenderForPlayersInRadius({
 		module = "Universal",
 		effect = "VenomDash",
 		root = Character.PrimaryPart,
 		position = CFramePosition,
-	})
+	}, p.Position.Position, 150)
 
 end

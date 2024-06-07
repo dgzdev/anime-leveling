@@ -6,11 +6,11 @@ local RenderService = Knit.GetService("RenderService")
 return function(Character, InputState, p, MeleeHitFunction)
 	local op = WeaponService:GetOverlapParams(Character)
 
-	RenderService:RenderForPlayersInArea(p.Position.Position, 100, {
+	RenderService:RenderForPlayersInRadius({
 		["module"] = "Melee",
 		["effect"] = "GroundSlam",
 		root = Character.PrimaryPart,
-	})
+	}, p.Position.Position, 100)
 
 	HitboxService:CreateHitbox(Character, Vector3.new(25, 5, 25), 3, function(hitted)
 		MeleeHitFunction(Character, hitted, 0, "CombatHit", "Melee", nil, 3)

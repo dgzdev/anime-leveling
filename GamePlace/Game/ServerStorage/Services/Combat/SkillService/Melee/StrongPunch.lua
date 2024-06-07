@@ -12,11 +12,11 @@ return function(
 
 	MeleeHitFunction
 )
-	RenderService:RenderForPlayersInArea(p.Position.Position, 100, {
+	RenderService:RenderForPlayersInRadius({
 		["module"] = "Melee",
 		["effect"] = "StrongPunch",
 		root = Character.PrimaryPart,
-	})
+	}, p.Position.Position, 100)
 
 	local op = WeaponService:GetOverlapParams(Character)
 

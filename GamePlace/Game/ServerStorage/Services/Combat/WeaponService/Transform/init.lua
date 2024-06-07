@@ -88,13 +88,13 @@ local DaggerHitFunction = function(
 			CombatService:RegisterHumanoidKilled(Character, Humanoid)
 		end
 
-		RenderService:RenderForPlayersInArea(hitted.PrimaryPart.CFrame.Position, 200, {
+		RenderService:RenderForPlayersInRadius({
 			module = "Universal",
 			effect = "Replicate",
 			root = hitted.PrimaryPart,
 			["VFX"] = vfx,
 			["SFX"] = sfx,
-		})
+		}, hitted.PrimaryPart.CFrame.Position, 200)
 
 		local rag = ragdoll or 2
 

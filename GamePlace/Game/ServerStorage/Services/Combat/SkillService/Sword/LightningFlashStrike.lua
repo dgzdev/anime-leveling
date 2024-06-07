@@ -16,11 +16,11 @@ return function(
 		return
 	end
 
-	RenderService:RenderForPlayersInArea(Mid.Position, 200, {
+	RenderService:RenderForPlayersInRadius({
 		module = "Lightning",
 		effect = "FlashStrike",
 		root = Root,
-	})
+	}, Mid.Position, 200)
 
 	local op = OverlapParams.new()
 	op.FilterType = Enum.RaycastFilterType.Include
@@ -33,10 +33,10 @@ return function(
 		end, op)
 	end
 
-	RenderService:RenderForPlayersInArea(Mid.Position, 200, {
+	RenderService:RenderForPlayersInRadius({
 		["module"] = "Universal",
 		["effect"] = "Replicate",
 		["VFX"] = "SlashHit",
 		root = Character.PrimaryPart,
-	})
+	}, Mid.Position, 200)
 end

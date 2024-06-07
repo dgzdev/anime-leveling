@@ -6,11 +6,11 @@ local RenderService = Knit.GetService("RenderService")
 return function(Character: Model, InputState: Enum.UserInputState, Data: { Position: CFrame }, SwordHitFunction)
 	local Mid = Data.Position * CFrame.new(0, 0, -30)
 
-	RenderService:RenderForPlayersInArea(Mid.Position, 200, {
+	RenderService:RenderForPlayersInRadius({
 		module = "Universal",
 		effect = "FlashStrike",
 		root = Character.PrimaryPart,
-	})
+	}, Mid.Position, 200)
 
 	local op = OverlapParams.new()
 	op.FilterType = Enum.RaycastFilterType.Include

@@ -12,7 +12,15 @@ local RenderService = Knit.CreateService({
 	},
 })
 
-function RenderService:RenderForPlayers(RenderData: {}, players: { number: Player }?)
+export type RenderDataType = {
+	casterHumanoid: Humanoid,
+	module: string,
+	effect: string,
+	arguments: {any},
+	casterRootCFrame: CFrame
+}
+
+function RenderService:RenderForPlayers(RenderData: RenderDataType, players: { number: Player }?)
 	local players = players or Players:GetPlayers()
 
 	for _, player in players do
@@ -20,7 +28,7 @@ function RenderService:RenderForPlayers(RenderData: {}, players: { number: Playe
 	end
 end
 
-function RenderService:RenderForPlayersInArea(Position: Vector3, Area: number, RenderData: { string: any })
+function RenderService:RenderForPlayersInRadius(RenderData: RenderDataType, Position: Vector3, Area: number)
 	for _, player in Players:GetPlayers() do
 		if not player.Character or (player.Character:GetPivot().Position - Position).Magnitude > Area then
 			continue
@@ -29,7 +37,7 @@ function RenderService:RenderForPlayersInArea(Position: Vector3, Area: number, R
 	end
 end
 
-function RenderService:RenderForPlayersExceptCaster(RenderData: { casterHumanoid: Humanoid })
+function RenderService:RenderForPlayersExceptCaster(RenderData: RenderDataType)
 	local casterPlayer = Players:GetPlayerFromCharacter(RenderData.casterHumanoid.Parent)
 	local playersToRender = game.Players:GetPlayers()
 
@@ -42,7 +50,7 @@ function RenderService:RenderForPlayersExceptCaster(RenderData: { casterHumanoid
 	RenderService:RenderForPlayers(RenderData, playersToRender)
 end
 
-function RenderService:CreateRenderData(casterHumanoid: Humanoid, module: string, effect: string, arguments: {}?)
+function RenderService:CreateRenderData(casterHumanoid: Humanoid, module: string, effect: string, arguments: {}?): RenderDataType
 	local RenderData = {
 		casterHumanoid = casterHumanoid,
 		module = module,
