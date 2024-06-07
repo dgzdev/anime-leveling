@@ -164,11 +164,11 @@ function RenderController.Render(RenderData)
     end
 end
 
-function RenderController:ExecuteForCaster(RenderData, func)
+function RenderController:ExecuteForHumanoid(Humanoid: Humanoid, func)
     local Character = Player.Character
-    local Humanoid = Character.Humanoid
+    local PlayerHumanoid = Character.Humanoid
 
-    if RenderData.casterHumanoid == Humanoid then
+    if PlayerHumanoid == Humanoid then
         func()
     end
 end
