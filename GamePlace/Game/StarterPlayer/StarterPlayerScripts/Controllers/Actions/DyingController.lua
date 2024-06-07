@@ -140,24 +140,18 @@ function DyingController.OnDie()
 	local head: BasePart = character:WaitForChild("Head")
 
 	game.Workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
+	game.Workspace.CurrentCamera.CameraSubject = root
+
+	TweenService:Create(game.Workspace.CurrentCamera, TweenInfo.new(4, Enum.EasingStyle.Cubic), {
+		CFrame = CFrame.lookAt(
+			root.CFrame.Position + Vector3.new(0, 12, 0),
+			head.CFrame.Position,
+			Vector3.new(1, 1, 1)
+		),
+		FieldOfView = 90,
+	}):Play()
 
 	do
-		local ratePerSecond = 0.65
-		local fovPerSecond = 15
-
-		RunService:BindToRenderStep("DyingController", Enum.RenderPriority.Last.Value, function(deltaTime: number)
-			local cameraPosition =
-				CFrame.lookAt(root.CFrame.Position + Vector3.new(0, 12, 0), head.CFrame.Position, Vector3.new(1, 1, 1))
-
-			game.Workspace.CurrentCamera.FieldOfView =
-				math.clamp(game.Workspace.CurrentCamera.FieldOfView + (fovPerSecond * deltaTime), 70, 90)
-			game.Workspace.CurrentCamera.CFrame =
-				game.Workspace.CurrentCamera.CFrame:Lerp(cameraPosition, ratePerSecond * deltaTime)
-
-			game.Workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
-			game.Workspace.CurrentCamera.CameraSubject = root
-		end)
-
 		task.delay(3, function()
 			DyingController.CreateViewport()
 			DyingController.ShowInScreen()
