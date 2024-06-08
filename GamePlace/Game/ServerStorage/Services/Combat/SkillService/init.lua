@@ -31,45 +31,47 @@ function SkillService.UseSkill(Humanoid: Humanoid, SkillName: string, Data: {})
 	end)
 end
 
+function SkillService:SetSkillState(Humanoid: Humanoid, skillName: string, state: string)
+    local SkillData = SkillService:GetSkillState(Humanoid)
+    SkillData[skillName] = state
+    return SkillData[skillName] 
+end
 
-function SkillService:GetSkillsDataForHumanoid(Humanoid)
+function SkillService:GetSkillsStates(Humanoid: Humanoid)
     if not SkillDatas[Humanoid] then
         SkillDatas[Humanoid] = {}
     end
 
     return SkillDatas[Humanoid]
 end
-function SkillService:GetSkillState(Humanoid, Skill)
+
+function SkillService:GetSkillState(Humanoid: Humanoid, skillName: string)
     if not SkillDatas[Humanoid] then
         SkillDatas[Humanoid] = {}
     end
 
-    return SkillDatas[Humanoid][Skill]
+    return SkillDatas[Humanoid][skillName]
 end
 
-function SkillService:SetSkillState(Humanoid, skillName, state)
-    local SkillData = SkillService:GetSkillsDataForHumanoid(Humanoid)
-    SkillData[skillName] = state
-    return SkillData[skillName] 
-end
 
 --skill no state Charge poderão ser canceladas
-function SkillService:TryCancelSkillState(Humanoid)
-    local SkillData = SkillService:GetSkillsDataForHumanoid(Humanoid)
+function SkillService:TryCancelSkillsStates(Humanoid: Humanoid)
+    local SkillData = SkillService:GetSkillState(Humanoid)
     for skill, state in pairs(SkillData) do
         if state == "Charge" then
             SkillData[skill] = "Cancel"
 			if SkillThreads[Humanoid] then
-				-- não sei se vai funcionar corretamente
 				task.cancel(SkillThreads[Humanoid])
-				-- será necessário chamar a função de cancel da skill
 			end
+            if Skills[skill].Cancel then
+                Skills[skill].Cancel(Humanoid)
+            end
         end
     end
 end
 
 -- usar quando o humanoid morrer
-function SkillService:ClearSkillState(Humanoid)
+function SkillService:ClearSkillStates(Humanoid: Humanoid)
     if not SkillDatas[Humanoid] then return end 
     for k, v in SkillDatas[Humanoid] do
         SkillDatas[Humanoid][k] = nil
