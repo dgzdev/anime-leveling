@@ -60,17 +60,7 @@ end
 local isLocked = false
 
 Humanoid.Died:Connect(function()
-	ContextActionService:UnbindAction("MouseMovement")
-	ContextActionService:UnbindAction("CameraLock")
-
-	if isLocked then
-		isLocked = false
-		UserInputService.MouseBehavior = Enum.MouseBehavior.Default
-		Humanoid.AutoRotate = true
-		RunService:UnbindFromRenderStep("CameraLock")
-	end
-
-	Workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
+	CameraModule:DisableCamera()
 
 	Character = Player.CharacterAdded:Wait()
 	Humanoid = Character:WaitForChild("Humanoid")
@@ -109,6 +99,25 @@ function CameraModule.CreateContext()
 			end
 		end
 	end, false, Enum.KeyCode.LeftShift)
+end
+
+function CameraModule:DisableCamera()
+	ContextActionService:UnbindAction("MouseMovement")
+	ContextActionService:UnbindAction("CameraLock")
+
+	if isLocked then
+		isLocked = false
+		UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+		Humanoid.AutoRotate = true
+		RunService:UnbindFromRenderStep("CameraLock")
+	end
+
+	Workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
+end
+function CameraModule:EnableCamera()
+	CameraModule.CreateContext()
+
+	Workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
 end
 
 function CameraModule.KnitInit()
