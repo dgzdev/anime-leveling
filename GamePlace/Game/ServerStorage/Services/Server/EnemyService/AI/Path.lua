@@ -3,6 +3,7 @@ Path.Combos = {}
 Path.InPath = false
 Path.AttackDebounce = false
 Path.Combos.CurrentMelee = 1
+Path.Stamina = 100
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local PathfindingService = game:GetService("PathfindingService")
@@ -14,6 +15,7 @@ local Task: thread = nil
 local Align: AlignOrientation = nil
 
 local defaultDelay = 0
+
 
 local loop = function(thread: () -> any, ...)
 	return task.spawn(function(...)
@@ -68,13 +70,18 @@ do
 		Path.InPath = true
 
 		task.spawn(function()
+
+			if not From then
+				return
+			end
+
 			if (From.RootPart.Position - Target.Position).Magnitude > 50 or Target.Parent.Humanoid.Health <= 0 then
 				Path.LeaveFollowing()
 				Path.InPath = false
 				return
 			end
 
-			if Target.Parent.Humanoid.Health > 0 and (From.RootPart.Position - Target.Position).Magnitude < 4 then
+			if Target.Parent.Humanoid.Health > 0 and (From.RootPart.Position - Target.Position).Magnitude < 4 then ------------ Perto o suficiente para executar M1's
 				if Path.AttackDebounce then
 					return
 				end
@@ -87,12 +94,15 @@ do
 				AnimationTrack:Play(0.3)
 				Path.AttackDebounce = true
 				task.delay(AnimationTrack.Length, function()
-					Path.AttackDebounce = false
 					CurrentHitAnimation:Destroy()
 					if not HitAnimations:FindFirstChild(Path.Combos.CurrentMelee + 1) then
 						Path.Combos.CurrentMelee = 1
+						--task.delay(2,function()
+							Path.AttackDebounce = false
+						--end)
 					else
 						Path.Combos.CurrentMelee += 1
+						Path.AttackDebounce = false
 					end
 				end)
 			else
