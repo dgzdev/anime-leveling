@@ -37,7 +37,7 @@ function DamageService:Hit(HumanoidHitted: Humanoid, Humanoid: Humanoid, Damage:
 
 	AnimationService:StopM1Animation(HumanoidHitted)
 
-	local hitEffectRenderData = RenderService:CreateRenderData(HumanoidHitted, "HitEffects", HitEffect or "Default")
+	local hitEffectRenderData = RenderService:CreateRenderData(HumanoidHitted, "HitEffects", HitEffect or "None")
 	RenderService:RenderForPlayers(hitEffectRenderData)
 end
 

@@ -37,10 +37,10 @@ local function AnimateCamera(animation: string)
 	local Connections = {}
 
 	local cameraCFrame = Camera.CFrame
-	local ratePerSecond = 10
+	local lerp = .85
 
 	RunService:BindToRenderStep("AnimateCamera", Enum.RenderPriority.Camera.Value, function(deltaTime: number)
-		workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame:Lerp(cameraCFrame, deltaTime * ratePerSecond)
+		workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame:Lerp(cameraCFrame, lerp)
 	end)
 
 	task.spawn(function()
@@ -70,6 +70,7 @@ local function AnimateCamera(animation: string)
 			end
 
 			if i == 139 then
+				lerp = 0.435
 				Connections[#Connections + 1] = Character.DescendantAdded:Connect(function(desc: BasePart)
 					if desc:IsA("BasePart") then
 						local basepart = desc

@@ -22,7 +22,7 @@ function Bind()
 			CFrame.new(Neck.C0.Position)
 				* CFrame.Angles(0, -math.asin(CameraDirection.x), 0)
 				* CFrame.Angles(-math.pi / 2 + math.asin(math.clamp(CameraDirection.y, 0, 0.5)), 0, math.pi),
-			0.15
+			0.5
 		)
 	end)
 end
@@ -38,5 +38,5 @@ function HandleCharacter(Character)
 	Bind()
 end
 
--- HandleCharacter(Player.Character or Player.CharacterAdded:Wait())
--- Player.CharacterAdded:Connect(HandleCharacter)
+HandleCharacter(Player.Character or Player.CharacterAdded:Wait())
+Player.CharacterAdded:Connect(HandleCharacter)

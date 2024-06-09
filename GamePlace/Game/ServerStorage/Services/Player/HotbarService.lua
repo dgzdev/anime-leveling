@@ -27,6 +27,30 @@ local Events = {
 			Classes[Class]()
 		end
 	end,
+	Equip = function(Player: Player, data)
+		local Character = Player.Character
+		local Tool = HotbarService:GetEquippedTool(Character)
+		if not Tool then
+			return
+		end
+
+		if Tool:FindFirstChild("ToolGrip", true) then
+			Tool:FindFirstChild("ToolGrip", true):Destroy()
+		end
+
+		local RightGrip: WeldConstraint = Character:FindFirstChild("RightGrip", true)
+
+		for _, m6: Motor6D in Tool:GetDescendants() do
+			if m6:IsA("Motor6D") then
+				m6.Part0 = Character:FindFirstChild(m6.Name, true)
+				m6.Part1 = m6.Parent
+				m6.C0 = Tool.Grip
+			end
+		end
+	end,
+	Unequip = function(Player: Player, data)
+		print("Equip")
+	end
 }
 
 function HotbarService:GetEquippedTool(Character: Model)
@@ -46,34 +70,51 @@ end
 function HotbarService:RenderItems(Player: Player)
 	local PlayerData = PlayerService:GetData(Player)
 
-	for _, v in PlayerData.Inventory do
-		if not ToolsFolder:FindFirstChild(v.Name) then
+	for _, item in PlayerData.Inventory do
+		if item.Class == "Skill" then
+			local ToolSkill = Instance.new("Tool")
+			ToolSkill.Name = item.Name
+			ToolSkill:SetAttribute("DisplayName", item.DisplayName)
+			ToolSkill:SetAttribute("Id", item.Id)
+			ToolSkill:SetAttribute("Class", "Skill")
+			ToolSkill:SetAttribute("Type", item.Type)
+
+
+			if table.find(PlayerData.Hotbar, item.Id) then
+				local index = table.find(PlayerData.Hotbar, item.Id)
+				ToolSkill:SetAttribute("Hotbar", index)
+			end
+
+			ToolSkill.RequiresHandle = false
+			ToolSkill.Enabled = true
+			ToolSkill.Parent = Player.Backpack
+
 			continue
 		end
-		local ToolClone = ToolsFolder[v.Name]:Clone() :: Tool
+
+		if not ToolsFolder:FindFirstChild(item.Name) then
+			continue
+		end
+
+		local ToolClone = ToolsFolder[item.Name]:Clone() :: Tool
+		ToolClone:SetAttribute("Id", item.Id)
+		ToolClone:SetAttribute("Damage", item.Damage)
+		ToolClone:SetAttribute("SwingSpeed", item.SwingSpeed)
+		ToolClone:SetAttribute("Name", item.Name)
+		ToolClone:SetAttribute("Class", item.Class)
+		ToolClone:SetAttribute("Type", item.Type)
+		ToolClone:SetAttribute("HitEffect", item.HitEffect)
+		ToolClone:SetAttribute("DisplayName", item.DisplayName)
+		ToolClone:SetAttribute("Grip", ToolClone.Grip)
+
+		if table.find(PlayerData.Hotbar, item.Id) then
+			local index = table.find(PlayerData.Hotbar, item.Id)
+			ToolClone:SetAttribute("Hotbar", index)
+		end
+
 		ToolClone.RequiresHandle = false
 		ToolClone.Enabled = true
 		ToolClone.Parent = Player.Backpack
-
-		ToolClone:SetAttribute("Id", v.Id)
-		ToolClone:SetAttribute("Damage", v.Damage)
-		ToolClone:SetAttribute("SwingSpeed", v.SwingSpeed)
-		ToolClone:SetAttribute("Name", v.Name)
-		ToolClone:SetAttribute("Class", v.Class)
-		ToolClone:SetAttribute("Type", v.Type)
-		ToolClone:SetAttribute("HitEffect", v.HitEffect)
-		ToolClone:SetAttribute("DisplayName", v.DisplayName)
-		ToolClone:SetAttribute("Grip", ToolClone.Grip)
-
-		-- if PlayerData.Equiped.Id == v.Id then
-		-- 	ToolClone.Name = "Weapon"
-		-- 	ToolClone:SetAttribute("Equiped", true)
-		-- end
-
-		if table.find(PlayerData.Hotbar, v.Id) then
-			local index = table.find(PlayerData.Hotbar, v.Id)
-			ToolClone:SetAttribute("Hotbar", index)
-		end
 	end
 end
 function HotbarService.Client:RenderItems(...)

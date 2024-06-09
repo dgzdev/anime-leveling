@@ -96,7 +96,7 @@ local function calc(): number
 end
 
 Assets.Text = `0/{totalAssets}`
-Value:TweenSize(UDim2.fromScale(calc(), 1))
+Value.Size = UDim2.fromScale(calc(), 1)
 
 for _index, asset in assets do
 	ContentProvider:PreloadAsync({ asset })

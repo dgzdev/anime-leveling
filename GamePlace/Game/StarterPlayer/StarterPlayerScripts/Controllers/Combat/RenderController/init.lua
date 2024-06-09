@@ -128,10 +128,11 @@ function RenderController:ClearCacheOfHumanoid(module: string, casterHumanoid: H
 	RenderController:ClearInstances(module, casterHumanoid)
 end
 
-function RenderController:StopPlayingMatchAnimation(Humanoid: Humanoid, AnimationName: string)
+function RenderController:StopPlayingMatchAnimation(Humanoid: Humanoid, AnimationName: string, transition: number?)
 	for i, v: AnimationTrack in ipairs(Humanoid.Animator:GetPlayingAnimationTracks()) do
 		if v.Name:match(AnimationName) then
-			v:Stop()
+			v:AdjustSpeed(0)
+			v:Stop(transition or 0.1)
 		end
 	end
 end

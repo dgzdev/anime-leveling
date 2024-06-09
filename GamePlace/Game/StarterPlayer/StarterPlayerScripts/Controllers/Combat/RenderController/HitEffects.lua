@@ -11,6 +11,10 @@ local RenderController
 function HitEffects.Default(RenderData)
 	local casterHumanoid: Humanoid = RenderData.casterHumanoid
 
+	if RenderData.effect == "None" then
+		return
+	end
+
 	local Effect = EffectsFolder[RenderData.effect]:Clone()
 
 	local Weld = Instance.new("WeldConstraint")

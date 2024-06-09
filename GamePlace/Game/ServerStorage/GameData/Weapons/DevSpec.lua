@@ -9,6 +9,7 @@ return {
 		Rarity = "S",
 		SubRarity = "I", -- "II" | "III" | "IV" | "V"
 	},
+	
 	Mister = {
 		Name = "Mister",
 		DisplayName = "Mister",

@@ -1,3 +1,4 @@
+local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
@@ -30,9 +31,23 @@ function WeaponService:IncreaseComboCounter(Humanoid: Humanoid)
 	if Humanoid:GetAttribute("ComboCounter") < #AnimationsFolder.Hit:GetChildren() then
 		Humanoid:SetAttribute("ComboCounter", Humanoid:GetAttribute("ComboCounter") + 1)
 	else
-		DebounceService:AddDebounce(Humanoid, "ComboDebounce", 1)
+		DebounceService:AddDebounce(Humanoid, "ComboDebounce", 2)
 		Humanoid:SetAttribute("ComboCounter", 1)
 	end
+end
+
+function WeaponService:Stun(Character: Model, Position: Vector3, Duration: number)
+	local AlignPosition = Instance.new("AlignPosition")
+	AlignPosition.Attachment0 = Character.PrimaryPart.RootAttachment
+	AlignPosition.Mode = Enum.PositionAlignmentMode.OneAttachment
+	AlignPosition.MaxVelocity = math.huge
+	AlignPosition.MaxForce = math.huge
+	AlignPosition.Name = "FlashStrikeAlignPosition"
+	AlignPosition.Responsiveness = 10
+	-- AlignPosition.RigidityEnabled = true
+	AlignPosition.Position = Position
+	AlignPosition.Parent = Character.PrimaryPart
+	Debris:AddItem(AlignPosition, Duration)
 end
 
 function WeaponService:Block(Character: Model, state: boolean)

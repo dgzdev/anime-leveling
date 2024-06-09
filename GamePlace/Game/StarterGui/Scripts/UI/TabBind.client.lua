@@ -39,7 +39,7 @@ local function toggleTabGui(TabGui: ScreenGui)
 
 		local slotContainer = a:FindFirstChild("SlotContainer", true)
 		if slotContainer then
-			if #slotContainer:GetChildren() == 1 then
+			if #slotContainer:GetChildren() == 0 then
 				a.Visible = TabGui:WaitForChild("Inventory").Enabled
 			end
 		end

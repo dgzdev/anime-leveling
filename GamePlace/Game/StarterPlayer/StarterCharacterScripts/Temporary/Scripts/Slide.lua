@@ -16,6 +16,8 @@ local Humanoid = Character:WaitForChild("Humanoid")
 local RootPart = Character:WaitForChild("HumanoidRootPart")
 local Animator = Humanoid:WaitForChild("Animator")
 
+local Validate = require(game.ReplicatedStorage.Validate)
+
 local anim = Instance.new("Animation")
 anim.AnimationId = "rbxassetid://16728371797"
 
@@ -47,23 +49,7 @@ function Slide.GetUp(jumped)
 end
 
 function Slide.Slide()
-	if Humanoid.WalkSpeed == 0 then
-		return
-	end
-
-	if RootPart.Anchored then
-		return
-	end
-
-	if Humanoid:GetAttribute("Slide") then
-		return
-	end
-
-	if Humanoid:GetState() ~= Enum.HumanoidStateType.Running then
-		return
-	end
-
-	if Humanoid.Health <= 0 then
+	if not Validate:CanSlide(Humanoid) then
 		return
 	end
 

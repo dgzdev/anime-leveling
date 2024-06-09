@@ -20,12 +20,8 @@ function DebounceService:AddDebounce(Humanoid: Humanoid, debounceName: string, t
     if not time then return print("Invalid debounce timer") end
     if not Humanoid then return print("Humanoid is nil") end
 
-    if setToAttribute == nil then
-        setToAttribute = true
-    end
-
     table.insert(Debounces, debounceName)
-    if setToAttribute then
+    if setToAttribute ~= false then
         Humanoid:SetAttribute(debounceName, true)
     end
 
@@ -42,24 +38,28 @@ function DebounceService:AddDebounce(Humanoid: Humanoid, debounceName: string, t
 end
 
 function DebounceService:HaveDebounce(Humanoid: Model, debounceName: string)
+    local Index = DebounceService:GetIndex(Humanoid, debounceName)
+    return Index ~= nil
+end
+
+function DebounceService:GetIndex(Humanoid: Model, debounceName: string)
     local Debounces = DebounceService:GetHumanoidDebounces(Humanoid)
 
-    local Index = table.find(Debounces, debounceName) 
-    if Index then
-        return true
+    for i, v in Debounces do
+        if v == debounceName then
+            return i
+        end
     end
-
-    return false
 end
 
 
 function DebounceService:RemoveDebounce(Humanoid: Model, debounceName: string)
     local Debounces = DebounceService:GetHumanoidDebounces(Humanoid)
 
-    local Index = table.find(Debounces, debounceName) 
-
+    local Index = DebounceService:GetIndex(Humanoid, debounceName)
     if Index then
         table.remove(Debounces, Index)
+        Humanoid:SetAttribute(debounceName, nil)
     end
 end
 

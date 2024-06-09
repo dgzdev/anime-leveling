@@ -8,6 +8,7 @@ local RunService = game:GetService("RunService")
 local GrabService = Knit.GetService("GrabService")
 
 local SFX = require(game.ReplicatedStorage.Modules.SFX)
+local Validate = require(game.ReplicatedStorage.Validate)
 
 local function GetModelMass(model: Model)
 	local mass = 0
@@ -53,7 +54,7 @@ function DoubleJump:Init()
 		if (key.KeyCode == Enum.KeyCode.Space) or (key.KeyCode == Enum.KeyCode.ButtonA) and not gp then
 			if humanoidRootPart and humanoid then
 				if humanoid:GetState() == Enum.HumanoidStateType.Freefall then
-					if jumpUsage >= 1 then
+					if jumpUsage >= 1 and Validate:CanDoubleJump(humanoid) then
 						jumpUsage -= 1
 
 						local LookV = humanoid.MoveDirection * 75 * GetModelMass(char)
@@ -71,6 +72,7 @@ function DoubleJump:Init()
 
 								local params = RaycastParams.new()
 								params.FilterType = Enum.RaycastFilterType.Exclude
+								params.RespectCanCollide = true
 								params.FilterDescendantsInstances = { char, workspace:FindFirstChild("Debug") }
 
 								local rayResult = workspace:Spherecast(

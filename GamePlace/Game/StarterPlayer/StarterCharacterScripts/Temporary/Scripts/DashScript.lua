@@ -20,6 +20,7 @@ local Humanoid = Character:WaitForChild("Humanoid")
 local Animator = Humanoid:WaitForChild("Animator")
 
 local SFX = require(ReplicatedStorage.Modules.SFX)
+local Validate = require(ReplicatedStorage.Validate)
 
 local Slide
 
@@ -103,19 +104,7 @@ function DashScript:Dash()
 		return
 	end
 
-	if Humanoid.WalkSpeed == 0 then
-		return
-	end
-
-	if HumanoidRootPart.Anchored then
-		return
-	end
-
-	if DashDirection.Magnitude == 0 then
-		return
-	end
-
-	if Humanoid.Health <= 0 then
+	if not Validate:CanRoll(Humanoid) then
 		return
 	end
 

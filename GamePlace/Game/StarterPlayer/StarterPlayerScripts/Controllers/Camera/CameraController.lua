@@ -13,12 +13,13 @@ local Player = game.Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
 local Humanoid = Character:WaitForChild("Humanoid")
 local RootPart = Character.PrimaryPart
+local Subject: BasePart = workspace.CurrentCamera:WaitForChild("CameraSubject")
 
 local Camera = workspace.CurrentCamera
 
 local cameraAngleX = 0
 local cameraAngleY = 0
-local cameraOffset = Vector3.new(2, 2, 9.5)
+local cameraOffset = Vector3.new(2, 0, 9.5)
 
 local cameraOffsetMin = 3
 local cameraOffsetMax = 25
@@ -26,19 +27,19 @@ local cameraOffsetMax = 25
 function CameraModule.GetLockCFrame()
 	--CFrame.new(Root.Position, Root.Position + Vector3.new(cammer.CFrame.LookVector.X,0,cammer.CFrame.LookVector.Z))
 	return CFrame.new(
-		RootPart.Position,
-		RootPart.Position + Vector3.new(Camera.CFrame.LookVector.X, 0, Camera.CFrame.LookVector.Z)
+		Subject.Position,
+		Subject.Position + Vector3.new(Camera.CFrame.LookVector.X, 0, Camera.CFrame.LookVector.Z)
 	)
 end
 function CameraModule.GetCameraCFrame()
-	return RootPart.CFrame * CFrame.new(0, 1.5, 3)
+	return Subject.CFrame * CFrame.new(0, 1.5, 3)
 end
 
-function CameraModule.SetCameraLock()
+function CameraModule.SetCameraLock(deltaTime: number)
 	Workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
 
 	local c = Workspace.CurrentCamera.CFrame
-	local startCFrame = CFrame.new(RootPart.CFrame.Position)
+	local startCFrame = CFrame.new(Subject.CFrame.Position)
 		* CFrame.Angles(0, math.rad(cameraAngleX), 0)
 		* CFrame.Angles(math.rad(cameraAngleY), 0, 0)
 	local cameraCFrame = startCFrame:PointToWorldSpace(cameraOffset)
@@ -57,13 +58,15 @@ function CameraModule.SetCameraLock()
 		finalCF = CFrame.lookAt(point.Position, cameraFocus)
 	end
 
-	Workspace.CurrentCamera.CFrame = c:Lerp(finalCF, 0.35)
+	Workspace.CurrentCamera.CFrame = c:Lerp(finalCF, 0.5)
 
 	local LookingCFrame = CFrame.lookAt(RootPart.Position, Camera.CFrame:PointToWorldSpace(Vector3.new(0, 0, -100000)))
 
 	local state = Humanoid:GetState()
 	local anchored = Humanoid.RootPart.Anchored == true
-	if (state ~= Enum.HumanoidStateType.StrafingNoPhysics) and (anchored == false) then
+	local hasAlignPosition = Humanoid.RootPart:FindFirstChildWhichIsA("AlignPosition") ~= nil
+
+	if (state ~= Enum.HumanoidStateType.StrafingNoPhysics) and (anchored == false) and (hasAlignPosition == false) then
 		RootPart.CFrame = CFrame.fromMatrix(RootPart.Position, LookingCFrame.XVector, RootPart.CFrame.YVector)
 	end
 end
@@ -85,12 +88,14 @@ function CameraModule.CreateContext()
 		if inputState == Enum.UserInputState.Change then
 			cameraAngleX -= inputObject.Delta.X * 0.4
 			cameraAngleY = math.clamp(cameraAngleY - inputObject.Delta.Y * 0.4, -75, 75)
+		else
+			return Enum.ContextActionResult.Pass
 		end
 	end, false, Enum.UserInputType.MouseMovement)
 
 	ContextActionService:BindAction("CameraOffset", function(actionName, inputState, inputObject)
 		if not isLocked then
-			return
+			return Enum.ContextActionResult.Pass
 		end
 
 		if inputState == Enum.UserInputState.Change then
@@ -104,7 +109,7 @@ function CameraModule.CreateContext()
 
 	ContextActionService:BindAction("CameraLock", function(actionName, inputState, inputObject)
 		if Humanoid.Health == 0 then
-			return
+			return Enum.ContextActionResult.Pass
 		end
 
 		if inputState == Enum.UserInputState.Begin then
@@ -118,10 +123,12 @@ function CameraModule.CreateContext()
 				isLocked = true
 				UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
 				Humanoid.AutoRotate = false
-				RunService:BindToRenderStep("CameraLock", Enum.RenderPriority.Camera.Value, function()
-					CameraModule:SetCameraLock()
+				RunService:BindToRenderStep("CameraLock", Enum.RenderPriority.Camera.Value, function(dt)
+					CameraModule.SetCameraLock(dt)
 				end)
 			end
+		else
+			return Enum.ContextActionResult.Pass
 		end
 	end, false, Enum.KeyCode.LeftShift)
 end

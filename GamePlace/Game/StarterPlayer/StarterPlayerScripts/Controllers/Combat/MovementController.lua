@@ -170,6 +170,14 @@ function MovementModule:CreateBinds()
 			end
 		end)
 
+		UserInputService.JumpRequest:Connect(function()
+			if Humanoid.RootPart:FindFirstChildWhichIsA("AlignPosition") then
+				Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
+			else
+				Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
+			end
+		end)
+
 		Humanoid.Jumping:Connect(function(active)
 			if active then
 				ef1.Enabled = false

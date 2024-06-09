@@ -8,7 +8,7 @@ local SkillService = Knit.CreateService({
 --[[
 	Reponsável principalmente por chamar as skills,
 	Quando estiver criando uma skill que substitua o m1 do player, utilize o SetAttackOverwrite
-	
+
 	Ao iniciar uma skill crie utilize o SetSkillState para definir como Charge, assim podendo ser cancelado caso tomar um ataque,
 	Caso ele receba um ataque, a skill data ficará com o estado Cancel, então antes de continuar a skill, verifique o estado dela
 
@@ -20,8 +20,9 @@ local SkillDatas = {}
 local SkillThreads = {}
 
 local WeaponService
+local RenderService
 
-function SkillService.UseSkill(Humanoid: Humanoid, SkillName: string, Data: {})
+function SkillService:UseSkill(Humanoid: Humanoid, SkillName: string, Data: {})
 	if not Skills[SkillName] then
 		return
 	end
@@ -30,11 +31,26 @@ function SkillService.UseSkill(Humanoid: Humanoid, SkillName: string, Data: {})
 		Skills[SkillName].Caller(Humanoid, Data)
 	end)
 end
+function SkillService.Client:UseSkill(Player: Player, skillName: string, Data: {})
+	local Character = Player.Character 
+	if not Character then
+		return
+	end
+
+	local Humanoid = Character:FindFirstChild("Humanoid")
+	if not Humanoid then
+		return
+	end
+
+	self.Server:UseSkill(Humanoid, skillName, Data)
+end
 
 function SkillService:SetSkillState(Humanoid: Humanoid, skillName: string, state: string)
-	local SkillData = SkillService:GetSkillState(Humanoid)
-	SkillData[skillName] = state
-	return SkillData[skillName]
+	if not SkillDatas[Humanoid] then
+		SkillDatas[Humanoid] = {}
+	end
+
+	SkillDatas[Humanoid][skillName] = state
 end
 
 function SkillService:GetSkillsStates(Humanoid: Humanoid)
@@ -58,12 +74,17 @@ function SkillService:TryCancelSkillsStates(Humanoid: Humanoid)
 	local SkillDatas = SkillService:GetSkillsStates(Humanoid)
 	for skillName, state in SkillDatas do
 		if state == "Charge" then
-			SkillDatas[skillName] = "Cancel"
+			SkillService:SetSkillState(Humanoid, skillName, nil)
 			if SkillThreads[Humanoid] then
 				task.cancel(SkillThreads[Humanoid])
 			end
+
+
 			if Skills[skillName].Cancel then
 				Skills[skillName].Cancel(Humanoid)
+			else
+				local CancelRenderData = RenderService:CreateRenderData(Humanoid, skillName, "Cancel")
+				RenderService:RenderForPlayers(CancelRenderData)
 			end
 		end
 	end
@@ -90,6 +111,7 @@ end
 
 function SkillService.KnitInit()
 	WeaponService = Knit.GetService("WeaponService")
+	RenderService = Knit.GetService("RenderService")
 
 	for i, v in ipairs(script:GetDescendants()) do
 		if v:IsA("ModuleScript") then
@@ -97,11 +119,11 @@ function SkillService.KnitInit()
 		end
 	end
 
-	-- for i,v in pairs(Skills) do
-	--     if v.Start then
-	--         v.Start(Skills)
-	--     end
-	-- end
+	for _, v in pairs(Skills) do
+	    if v.Start then
+	        v.Start(Skills)
+	    end
+	end
 end
 function SkillService.KnitStart() end
 

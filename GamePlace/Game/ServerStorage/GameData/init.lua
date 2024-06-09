@@ -97,22 +97,32 @@ local function CreateHumanoidDescription(desc: { [string]: any }): HumanoidDescr
 end
 
 local function addId()
-	print(require(script.Weapons))
-	local newWeapons = {}
+	local newItems = {}
 	local index = 1
+
 	for i, _weapon in require(script.Weapons) do
 		local weapon = table.clone(_weapon)
 		weapon.Id = index
 		index += 1
-		table.insert(newWeapons, weapon)
+		table.insert(newItems, weapon)
 	end
-	return newWeapons
+
+	for i, _skill in require(script.Skills) do
+		local skill = table.clone(_skill)
+		skill.Id = index
+		index += 1
+		table.insert(newItems, skill)
+	end
+
+	return newItems
 end
+
 return {
 	profileKey = "DEVELOPMENT_7",
 	profileTemplate = ProfileTemplate,
 	defaultInventory = addId(),
 	gameWeapons = require(script.Weapons),
+	gameSkills = require(script.Skills),
 	newbieBadge = 2066631008828576,
 
 	rarity = {

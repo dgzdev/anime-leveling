@@ -23,10 +23,10 @@ local Default = {
 		end
 
 		local Damage = Tool:GetAttribute("Damage") or 5
-		local SwingSpeed = Tool:GetAttribute("SwingSpeed") or 0.4
+		local SwingSpeed = Tool:GetAttribute("SwingSpeed") or 0.3
 		local HitEffect = Tool:GetAttribute("HitEffect") or Tool:GetAttribute("Type")
 
-		DebounceService:AddDebounce(Humanoid, "AttackCombo", SwingSpeed + 0.1)
+		DebounceService:AddDebounce(Humanoid, "AttackCombo", SwingSpeed + 0.15)
 		DebounceService:AddDebounce(Humanoid, "AttackDebounce", SwingSpeed)
 		Humanoid:SetAttribute("LastAttackTick", tick())
 		CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)

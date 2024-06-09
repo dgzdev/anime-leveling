@@ -20,6 +20,7 @@ return {
 				},
 				["Colors"] = { 255, 204, 153 },
 			},
+
 			["Location"] = "Character Creation",
 			["LastJoin"] = os.date("%x"),
 			["Data"] = {
@@ -33,6 +34,7 @@ return {
 					["Weapon"] = "Fists",
 					["Id"] = 1,
 				},
+
 				["Quests"] = {},
 				["Hotbar"] = { 1 },
 				["Inventory"] = {
@@ -43,7 +45,6 @@ return {
 					},
 				},
 				["SkillsTreeUnlocked"] = { ["1"] = true },
-				["Skills"] = {},
 
 				["PointsAvailable"] = 0,
 				["Points"] = {

@@ -1,5 +1,5 @@
 {
-    "files.autoSave": "onFocusChange",
+    "files.autoSave": "off",
     "editor.smoothScrolling": true,
     "editor.cursorSmoothCaretAnimation": "on",
     "editor.minimap.enabled": false,

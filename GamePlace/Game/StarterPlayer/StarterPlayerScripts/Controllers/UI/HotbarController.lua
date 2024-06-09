@@ -17,31 +17,39 @@ local HotbarController = Knit.CreateController({
 local BlockController
 local HotbarService
 local PlayerService
+local SkillService
 
 local Events = {}
 
-function HotbarController.EquipHotbarItem() end
 function HotbarController.FireServer(...)
 	HotbarService:OnFireServer(...)
+end
+
+function HotbarController.ChangeItem(tool: Tool)
+		if not tool:IsDescendantOf(Character) then
+			if tool:GetAttribute("Class") ~= "Skill" then
+				for _, t: Tool in Character:GetDescendants() do
+					if t:IsA("Tool") then
+						if t == tool then
+							continue
+						end
+						t.Parent = Player.Backpack
+					end
+			end
+				tool.Parent = Character
+			else
+				SkillService:UseSkill(tool.Name, {})
+			end
+		else
+			tool.Parent = Player.Backpack
+		end
 end
 
 function HotbarController:BindButton(Template: TextButton)
 	Events[#Events + 1] = Template.Activated:Connect(function()
 		local Tool = Template.Tool.Value :: Tool
-		if not Tool:IsDescendantOf(Character) then
-			for _, t: Tool in Character:GetDescendants() do
-				if t:IsA("Tool") then
-					if t == Tool then
-						continue
-					end
-					t.Parent = Player.Backpack
-				end
-			end
 
-			Tool.Parent = Character
-		else
-			Tool.Parent = Player.Backpack
-		end
+		HotbarController.ChangeItem(Tool)
 	end)
 
 	local isHolding
@@ -122,20 +130,7 @@ function HotbarController:BindButton(Template: TextButton)
 										return Enum.ContextActionResult.Pass
 									end
 
-									if not tool:IsDescendantOf(Character) then
-										for _, t: Tool in Character:GetDescendants() do
-											if t:IsA("Tool") then
-												if t == tool then
-													continue
-												end
-												t.Parent = Player.Backpack
-											end
-										end
-
-										tool.Parent = Character
-									else
-										tool.Parent = Player.Backpack
-									end
+									HotbarController.ChangeItem(tool)
 								end,
 								false,
 								Numbers[isOnHotbar]
@@ -241,20 +236,7 @@ function HotbarController.OnBackpackAdded(tool: Tool)
 				return Enum.ContextActionResult.Pass
 			end
 
-			if not tool:IsDescendantOf(Character) then
-				for _, t: Tool in Character:GetDescendants() do
-					if t:IsA("Tool") then
-						if t == tool then
-							continue
-						end
-						t.Parent = Player.Backpack
-					end
-				end
-
-				tool.Parent = Character
-			else
-				tool.Parent = Player.Backpack
-			end
+			HotbarController.ChangeItem(tool)
 		end, false, Numbers[isOnHotbar])
 	end
 
@@ -273,10 +255,10 @@ function HotbarController.OnBackpackAdded(tool: Tool)
 		UITemplate = ReplicatedStorage.Models.UI.SlotItem:Clone() :: TextButton
 		UITemplate.Tool.Value = tool
 		UITemplate.Parent = Slot.SlotContainer
-		UITemplate.itemName.Text = tool.Name
+		UITemplate.itemName.Text = tool:GetAttribute("DisplayName") or tool.Name
 
-		tool:GetPropertyChangedSignal("Name"):Connect(function()
-			UITemplate.itemName.Text = tool.Name
+		tool:GetAttributeChangedSignal("DisplayName"):Connect(function()
+			UITemplate.itemName.Text = tool:GetAttribute("DisplayName") or tool.Name
 		end)
 
 		Slot.Visible = true
@@ -290,11 +272,12 @@ function HotbarController.OnBackpackAdded(tool: Tool)
 
 		UITemplate.Parent = InventoryFrame
 		UITemplate.Name = i
-		UITemplate.itemName.Text = tool.Name
+		UITemplate.itemName.Text = tool:GetAttribute("DisplayName") or tool.Name
 
-		tool:GetPropertyChangedSignal("Name"):Connect(function()
-			UITemplate.itemName.Text = tool.Name
+		tool:GetAttributeChangedSignal("DisplayName"):Connect(function()
+			UITemplate.itemName.Text = tool:GetAttribute("DisplayName") or tool.Name
 		end)
+
 
 		HotbarController:BindButton(UITemplate)
 	end
@@ -351,6 +334,8 @@ end
 function HotbarController.KnitInit()
 	HotbarService = Knit.GetService("HotbarService")
 	BlockController = Knit.GetController("BlockController")
+	PlayerService = Knit.GetService("PlayerService")
+	SkillService = Knit.GetService("SkillService")
 end
 
 function HotbarController:KnitStart()
