@@ -37,26 +37,6 @@ function HotbarController.ChangeItem(tool: Tool)
 				end
 			end
 
-			for _, obj: BasePart in Character:GetDescendants() do
-				if obj:IsA("BasePart") then
-					obj.LocalTransparencyModifier = obj.Transparency
-				end
-			end
-
-			for _, m6: Motor6D in tool:GetDescendants() do
-				if m6:IsA("Motor6D") then
-					if m6:GetAttribute("Hide") == true then
-						for _, obj: BasePart in Character:GetDescendants() do
-							if obj:IsA("BasePart") then
-								if obj.Name == m6.Name then
-									obj.LocalTransparencyModifier = 1
-								end
-							end
-						end
-					end
-				end
-			end
-
 			tool.Parent = Character
 		else
 			SkillService:UseSkill(tool.Name, {})
