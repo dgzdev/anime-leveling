@@ -5,9 +5,8 @@ local requireAndAdd = function(module)
 	end
 end
 
-requireAndAdd(script.Sword)
-requireAndAdd(script.Staff)
-requireAndAdd(script.DevSpec)
-requireAndAdd(script.Dagger)
+for __index, module in script:GetChildren() do
+	requireAndAdd(module)
+end
 
 return weapons

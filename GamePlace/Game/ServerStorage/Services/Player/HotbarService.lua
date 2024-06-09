@@ -38,19 +38,36 @@ local Events = {
 			Tool:FindFirstChild("ToolGrip", true):Destroy()
 		end
 
-		local RightGrip: WeldConstraint = Character:FindFirstChild("RightGrip", true)
+		local exclude = { "HumanoidRootPart" }
+
+		for _, obj: BasePart in Character:GetDescendants() do
+			if obj:IsA("BasePart") and not table.find(exclude, obj.Name) then
+				obj.Transparency = 0
+			end
+		end
 
 		for _, m6: Motor6D in Tool:GetDescendants() do
 			if m6:IsA("Motor6D") then
 				m6.Part0 = Character:FindFirstChild(m6.Name, true)
 				m6.Part1 = m6.Parent
-				m6.C0 = Tool.Grip
+
+				m6.C0 = m6.C0 * Tool.Grip
+
+				if m6:GetAttribute("Hide") then
+					for _, obj in Character:GetDescendants() do
+						if obj:IsA("BasePart") and not table.find(exclude, obj.Name) then
+							if obj.Name == m6.Name then
+								obj.Transparency = 1
+							end
+						end
+					end
+				end
 			end
 		end
 	end,
 	Unequip = function(Player: Player, data)
 		print("Equip")
-	end
+	end,
 }
 
 function HotbarService:GetEquippedTool(Character: Model)
@@ -78,7 +95,6 @@ function HotbarService:RenderItems(Player: Player)
 			ToolSkill:SetAttribute("Id", item.Id)
 			ToolSkill:SetAttribute("Class", "Skill")
 			ToolSkill:SetAttribute("Type", item.Type)
-
 
 			if table.find(PlayerData.Hotbar, item.Id) then
 				local index = table.find(PlayerData.Hotbar, item.Id)

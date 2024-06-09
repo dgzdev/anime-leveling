@@ -26,23 +26,44 @@ function HotbarController.FireServer(...)
 end
 
 function HotbarController.ChangeItem(tool: Tool)
-		if not tool:IsDescendantOf(Character) then
-			if tool:GetAttribute("Class") ~= "Skill" then
-				for _, t: Tool in Character:GetDescendants() do
-					if t:IsA("Tool") then
-						if t == tool then
-							continue
-						end
-						t.Parent = Player.Backpack
+	if not tool:IsDescendantOf(Character) then
+		if tool:GetAttribute("Class") ~= "Skill" then
+			for _, t: Tool in Character:GetDescendants() do
+				if t:IsA("Tool") then
+					if t == tool then
+						continue
 					end
+					t.Parent = Player.Backpack
+				end
 			end
-				tool.Parent = Character
-			else
-				SkillService:UseSkill(tool.Name, {})
+
+			for _, obj: BasePart in Character:GetDescendants() do
+				if obj:IsA("BasePart") then
+					obj.LocalTransparencyModifier = obj.Transparency
+				end
 			end
+
+			for _, m6: Motor6D in tool:GetDescendants() do
+				if m6:IsA("Motor6D") then
+					if m6:GetAttribute("Hide") == true then
+						for _, obj: BasePart in Character:GetDescendants() do
+							if obj:IsA("BasePart") then
+								if obj.Name == m6.Name then
+									obj.LocalTransparencyModifier = 1
+								end
+							end
+						end
+					end
+				end
+			end
+
+			tool.Parent = Character
 		else
-			tool.Parent = Player.Backpack
+			SkillService:UseSkill(tool.Name, {})
 		end
+	else
+		tool.Parent = Player.Backpack
+	end
 end
 
 function HotbarController:BindButton(Template: TextButton)
@@ -277,7 +298,6 @@ function HotbarController.OnBackpackAdded(tool: Tool)
 		tool:GetAttributeChangedSignal("DisplayName"):Connect(function()
 			UITemplate.itemName.Text = tool:GetAttribute("DisplayName") or tool.Name
 		end)
-
 
 		HotbarController:BindButton(UITemplate)
 	end
