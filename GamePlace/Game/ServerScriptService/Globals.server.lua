@@ -45,6 +45,11 @@ do --> ### Carrega os serviços do servidor.
 	end
 
 	Knit.Start()
+		:andThen(function()
+			warn("Knit started!")
+		end)
+		:catch(warn)
+
 	debug.profileend()
 
 	debug.profilebegin("CMDR Load")

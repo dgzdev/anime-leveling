@@ -19,6 +19,18 @@ local InventoryService = Knit.CreateService({
 
 local GameData = require(ServerStorage.GameData)
 
+function InventoryService:GetItemById(Player: Player, Id: string): boolean
+	local Inventory = InventoryService:GetPlayerInventory(Player)
+
+	for _, item in Inventory do
+		if item.Id == Id then
+			return item
+		end
+	end
+
+	return false
+end
+
 function InventoryService:AddItemToHotbar(Player, itemName, posInHotbar)
 	local Data = PlayerService:GetData(Player)
 	if not Data.Inventory[itemName] then
@@ -51,7 +63,7 @@ end
 
 function InventoryService:GetPlayerInventory(Player)
 	local Data = PlayerService:GetData(Player)
-	return Data.Inventory
+	return Data.Inventory or {}
 end
 
 function InventoryService.Client:GetPlayerInventory(player)

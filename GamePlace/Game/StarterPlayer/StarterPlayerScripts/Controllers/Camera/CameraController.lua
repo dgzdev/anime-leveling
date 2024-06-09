@@ -1,6 +1,4 @@
 local ContextActionService = game:GetService("ContextActionService")
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
@@ -10,9 +8,6 @@ local Knit = require(game.ReplicatedStorage.Packages.Knit)
 local CameraModule = Knit.CreateController({
 	Name = "CameraController",
 })
-
-local OTS = require(game.ReplicatedStorage.Modules.OTS)
-local CameraEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("CAMERA")
 
 local Player = game.Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
@@ -24,6 +19,9 @@ local Camera = workspace.CurrentCamera
 local cameraAngleX = 0
 local cameraAngleY = 0
 local cameraOffset = Vector3.new(2, 2, 9.5)
+
+local cameraOffsetMin = 3
+local cameraOffsetMax = 25
 
 function CameraModule.GetLockCFrame()
 	--CFrame.new(Root.Position, Root.Position + Vector3.new(cammer.CFrame.LookVector.X,0,cammer.CFrame.LookVector.Z))
@@ -38,13 +36,26 @@ end
 
 function CameraModule.SetCameraLock()
 	Workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
+
 	local c = Workspace.CurrentCamera.CFrame
 	local startCFrame = CFrame.new(RootPart.CFrame.Position)
 		* CFrame.Angles(0, math.rad(cameraAngleX), 0)
 		* CFrame.Angles(math.rad(cameraAngleY), 0, 0)
 	local cameraCFrame = startCFrame:PointToWorldSpace(cameraOffset)
 	local cameraFocus = startCFrame:PointToWorldSpace(Vector3.new(cameraOffset.X, cameraCFrame.Y, -100000))
+
 	local finalCF = CFrame.lookAt(cameraCFrame, cameraFocus)
+
+	local filter = RaycastParams.new()
+	filter.RespectCanCollide = true
+	filter.CollisionGroup = "Camera"
+
+	local direction = CFrame.new(RootPart.CFrame.Position, finalCF.Position).LookVector
+	local distance = (RootPart.Position - finalCF.Position).Magnitude
+	local point = workspace:Raycast(RootPart.CFrame.Position, direction * distance, filter)
+	if point then
+		finalCF = CFrame.lookAt(point.Position, cameraFocus)
+	end
 
 	Workspace.CurrentCamera.CFrame = c:Lerp(finalCF, 0.35)
 
@@ -76,6 +87,20 @@ function CameraModule.CreateContext()
 			cameraAngleY = math.clamp(cameraAngleY - inputObject.Delta.Y * 0.4, -75, 75)
 		end
 	end, false, Enum.UserInputType.MouseMovement)
+
+	ContextActionService:BindAction("CameraOffset", function(actionName, inputState, inputObject)
+		if not isLocked then
+			return
+		end
+
+		if inputState == Enum.UserInputState.Change then
+			cameraOffset = Vector3.new(
+				cameraOffset.X,
+				cameraOffset.Y,
+				math.clamp(cameraOffset.Z - inputObject.Position.Z, cameraOffsetMin, cameraOffsetMax)
+			)
+		end
+	end, false, Enum.UserInputType.MouseWheel)
 
 	ContextActionService:BindAction("CameraLock", function(actionName, inputState, inputObject)
 		if Humanoid.Health == 0 then
@@ -118,10 +143,6 @@ function CameraModule:EnableCamera()
 	CameraModule.CreateContext()
 
 	Workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
-end
-
-function CameraModule.KnitInit()
-	CameraModule.CreateContext()
 end
 
 return CameraModule

@@ -85,68 +85,7 @@ export type Inventory = {
 	},
 }
 
-local ProfileTemplate: ProfileData = {
-	Slots = {
-		[1] = {
-			["Character"] = {
-				["Shirt"] = {
-					Id = 1,
-					Color = "#ff0000",
-				},
-				["Pants"] = {
-					Id = 1,
-					Color = "#ff0000",
-				},
-				["Shoes"] = {
-					Id = 1,
-					Color = "#ff0000",
-				},
-				["Hair"] = {
-					Id = 1,
-					Color = "#ff0000",
-				},
-				["Colors"] = { 255, 204, 153 },
-			},
-			["Location"] = "Character Creation",
-			["LastJoin"] = os.date("%x"),
-			["Data"] = {
-				["Level"] = 1,
-
-				["Experience"] = 0,
-
-				["Gold"] = 0,
-
-				["Equiped"] = {
-					["Weapon"] = "Fists",
-					["Id"] = 1,
-				},
-				["Quests"] = {},
-				["Hotbar"] = { 1 },
-				["Inventory"] = {
-					["Fists"] = {
-						AchiveDate = os.time(),
-						Rank = "E",
-						Id = 1,
-					},
-				},
-				["SkillsTreeUnlocked"] = { ["1"] = true },
-				["Skills"] = {},
-
-				["PointsAvailable"] = 0,
-				["Points"] = {
-					["Inteligence"] = 0,
-					["Strength"] = 0,
-					["Agility"] = 0,
-					["Endurance"] = 0,
-				},
-			},
-		},
-		[2] = "false",
-		[3] = "false",
-		[4] = "false",
-	},
-	Selected_Slot = 1,
-}
+local ProfileTemplate: ProfileData = require(script.ProfileTemplate)
 
 local function CreateHumanoidDescription(desc: { [string]: any }): HumanoidDescription
 	local hd = Instance.new("HumanoidDescription")
@@ -157,156 +96,23 @@ local function CreateHumanoidDescription(desc: { [string]: any }): HumanoidDescr
 	return hd
 end
 
+local function addId()
+	print(require(script.Weapons))
+	local newWeapons = {}
+	local index = 1
+	for i, _weapon in require(script.Weapons) do
+		local weapon = table.clone(_weapon)
+		weapon.Id = index
+		index += 1
+		table.insert(newWeapons, weapon)
+	end
+	return newWeapons
+end
 return {
 	profileKey = "DEVELOPMENT_7",
 	profileTemplate = ProfileTemplate,
-	defaultInventory = {
-		["Fists"] = {
-			AchiveDate = os.time(),
-			Rank = "E",
-			Id = 1,
-		},
-		["Starter Sword"] = {
-			AchiveDate = os.time(),
-			Rank = "E",
-			Id = 2,
-		},
-		["Iron Starter Sword"] = {
-			AchiveDate = os.time(),
-			Rank = "E",
-			Id = 3,
-		},
-		["Luxury Sword"] = {
-			AchiveDate = os.time(),
-			Rank = "D",
-			Id = 4,
-		},
-		["Maou's Sword"] = {
-			AchiveDate = os.time(),
-			Rank = "S",
-			Id = 5,
-		},
-		["Venom's Fangs"] = {
-			AchiveDate = os.time(),
-			Rank = "E",
-			Id = 6,
-		},
-		["TestStaff"] = {
-			AchiveDate = os.time(),
-			Rank = "E",
-			Id = 7,
-		},
-		["Golden Gauntlets"] = {
-			AchiveDate = os.time(),
-			Rank = "E",
-			Id = 8,
-		},
-		["Nyon"] = {
-			AchiveDate = os.time(),
-			Rank = "S",
-			Id = 9,
-		},
-		["Mister"] = {
-			AchiveDate = os.time(),
-			Rank = "S",
-			Id = 10,
-		},
-		["Omnitrix"] = {
-			AchiveData = os.time(),
-			Rank = "S",
-			Id = 11,
-		},
-		["Dagger2"] = {
-			AchiveData = os.time(),
-			Rank = "S",
-			Id = 12,
-		},
-		["test1"] = {
-			AchiveData = os.time(),
-			Rank = "S",
-			Id = 13,
-		},
-	},
-	gameWeapons = {
-		["Fists"] = {
-			Type = "Melee",
-			Damage = 5,
-			Rarity = "E",
-			SubRarity = "I", --| "II" | "III" | "IV" | "V"
-		},
-		["Golden Gauntlets"] = {
-			Type = "Melee",
-			Damage = 10,
-			Rarity = "A",
-			SubRarity = "I", --| "II" | "III" | "IV" | "V"
-		},
-		["Starter Sword"] = {
-			Type = "Sword",
-			Damage = 10,
-			Rarity = "E", --| "D" | "C" | "B" | "A" | "S"
-			SubRarity = "I", --| "II" | "III" | "IV" | "V"
-		},
-		["Iron Starter Sword"] = {
-			Type = "Sword",
-			Damage = 20,
-			Rarity = "E",
-			SubRarity = "II", -- "II" | "III" | "IV" | "V"
-		},
-		["Luxury Sword"] = {
-			Type = "Sword",
-			Damage = 30,
-			Rarity = "D",
-			SubRarity = "I", -- "II" | "III" | "IV" | "V"
-		},
-		["Maou's Sword"] = {
-			Type = "Sword",
-			Damage = 50,
-			Rarity = "S",
-			SubRarity = "I", -- "II" | "III" | "IV" | "V"
-		},
-		["Venom's Fangs"] = {
-			Type = "Dagger",
-			Damage = 5,
-			Rarity = "E",
-			SubRarity = "I", -- "II" | "III" | "IV" | "V"
-		},
-		["TestStaff"] = {
-			Type = "Staff",
-			Damage = 5,
-			Rarity = "E",
-			SubRarity = "I", -- "II" | "III" | "IV" | "V"
-		},
-		["Nyon"] = {
-			Type = "Sword",
-			Damage = 20,
-			Rarity = "S",
-			SubRarity = "I", -- "II" | "III" | "IV" | "V"
-		},
-		["Mister"] = {
-			Type = "Sword",
-			Damage = 30,
-			Rarity = "S",
-			SubRarity = "I", -- "II" | "III" | "IV" | "V"
-		},
-		["Omnitrix"] = {
-			Type = "Melee",
-			Damage = 300,
-			Rarity = "S",
-			SubRarity = "I", -- "II" | "III" | "IV" | "V"
-		},
-		["Dagger2"] = {
-			Type = "Dagger",
-			Damage = 3 ^ 10,
-			Rarity = "S",
-			SubRarity = "I", -- "II" | "III" | "IV" | "V"
-		},
-		["test1"] = {
-			Type = "Transform",
-			Damage = 3 ^ 10,
-			Rarity = "S",
-			SubRarity = "I", -- "II" | "III" | "IV" | "V"
-		},
-	},
+	defaultInventory = addId(),
+	gameWeapons = require(script.Weapons),
 	newbieBadge = 2066631008828576,
 
 	rarity = {

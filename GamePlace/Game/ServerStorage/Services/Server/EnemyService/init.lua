@@ -4,7 +4,6 @@ local AI = script.AI
 local Animations = script.Animations
 
 Animations.Enabled = false
-AI.Enabled = false
 
 local EnemyService = knit.CreateService({
 	Name = "EnemyService",
@@ -24,19 +23,23 @@ function EnemyService:CreateEnemy(enemy: Model)
 	mainAnimations.Parent = enemy
 
 	--> ativar a ia dele
-	mainAI.Enabled = true
+	require(mainAI)
 
 	--> ativar as animações dele
 	mainAnimations.Enabled = true
 end
 
-function EnemyService.KnitInit()
+function EnemyService.KnitStart()
 	--> criar inimigos
 
 	local Enemies = workspace.Test:GetChildren()
 	for _, enemy in Enemies do
 		EnemyService:CreateEnemy(enemy)
 	end
+
+	workspace.Test.ChildAdded:Connect(function(enemy)
+		EnemyService:CreateEnemy(enemy)
+	end)
 end
 
 return EnemyService

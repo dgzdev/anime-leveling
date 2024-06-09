@@ -14,6 +14,7 @@ local HotbarController = Knit.CreateController({
 	Name = "HotbarController",
 })
 
+local BlockController
 local HotbarService
 local PlayerService
 
@@ -28,6 +29,15 @@ function HotbarController:BindButton(Template: TextButton)
 	Events[#Events + 1] = Template.Activated:Connect(function()
 		local Tool = Template.Tool.Value :: Tool
 		if not Tool:IsDescendantOf(Character) then
+			for _, t: Tool in Character:GetDescendants() do
+				if t:IsA("Tool") then
+					if t == Tool then
+						continue
+					end
+					t.Parent = Player.Backpack
+				end
+			end
+
 			Tool.Parent = Character
 		else
 			Tool.Parent = Player.Backpack
@@ -113,6 +123,15 @@ function HotbarController:BindButton(Template: TextButton)
 									end
 
 									if not tool:IsDescendantOf(Character) then
+										for _, t: Tool in Character:GetDescendants() do
+											if t:IsA("Tool") then
+												if t == tool then
+													continue
+												end
+												t.Parent = Player.Backpack
+											end
+										end
+
 										tool.Parent = Character
 									else
 										tool.Parent = Player.Backpack
@@ -223,7 +242,18 @@ function HotbarController.OnBackpackAdded(tool: Tool)
 			end
 
 			if not tool:IsDescendantOf(Character) then
+				for _, t: Tool in Character:GetDescendants() do
+					if t:IsA("Tool") then
+						if t == tool then
+							continue
+						end
+						t.Parent = Player.Backpack
+					end
+				end
+
 				tool.Parent = Character
+			else
+				tool.Parent = Player.Backpack
 			end
 		end, false, Numbers[isOnHotbar])
 	end
@@ -275,6 +305,10 @@ function HotbarController.OnBackpackAdded(tool: Tool)
 	Events[tool][#Events[tool] + 1] = tool.Equipped:Connect(function()
 		HotbarService:OnFireServer("Equip", tool)
 
+		if tool:GetAttribute("Class") == "Weapon" then
+			BlockController:BindBlock()
+		end
+
 		local isActivated = UITemplate:FindFirstChild("IsActivated") :: UIStroke
 		if isActivated then
 			isActivated.Enabled = true
@@ -282,6 +316,10 @@ function HotbarController.OnBackpackAdded(tool: Tool)
 	end)
 	Events[tool][#Events[tool] + 1] = tool.Unequipped:Connect(function()
 		HotbarService:OnFireServer("Unequip", tool)
+
+		if tool:GetAttribute("Class") == "Weapon" then
+			BlockController:UnbindBlock()
+		end
 
 		local isActivated = UITemplate:FindFirstChild("IsActivated") :: UIStroke
 		if isActivated then
@@ -310,9 +348,12 @@ function HotbarController:RenderHotbar()
 	end)
 end
 
-function HotbarController:KnitStart()
+function HotbarController.KnitInit()
 	HotbarService = Knit.GetService("HotbarService")
+	BlockController = Knit.GetController("BlockController")
+end
 
+function HotbarController:KnitStart()
 	HotbarController.LoadContainers()
 	self:RenderHotbar()
 end

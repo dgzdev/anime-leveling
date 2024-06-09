@@ -16,6 +16,10 @@ local Knit = require(ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Kn
 local ProgressionService
 local StatusController
 
+local taps = 0
+local lastTap = tick()
+local keys = { Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D }
+
 local MovementModule = Knit.CreateController({
 	Name = "MovementController",
 
@@ -60,12 +64,31 @@ function MovementModule:ChangeCharacterState(state: CharacterState)
 		JumpPower = Movement.JumpPower,
 	}):Play()
 
+	Humanoid:SetAttribute("State", state)
+
 	CameraEvent:Fire("FOV", Movement.FOV)
 end
 
-local taps = 0
-local lastTap = tick()
-local keys = { Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D }
+function MovementModule.BindAttribute()
+	local Character = Player.Character or Player.CharacterAdded:Wait()
+	local Humanoid = Character:WaitForChild("Humanoid")
+
+	Humanoid:GetAttributeChangedSignal("State"):Connect(function()
+		local value = Humanoid:GetAttribute("State")
+		if value then
+			MovementModule:ChangeCharacterState(value)
+		end
+	end)
+
+	Humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+		local value = Humanoid.WalkSpeed
+		if value <= StarterPlayer.CharacterWalkSpeed then
+			MovementModule:ChangeCharacterState("WALK")
+		else
+			MovementModule:ChangeCharacterState("RUN")
+		end
+	end)
+end
 
 function MovementModule:CreateContextBinder(): string
 	UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
@@ -168,6 +191,7 @@ function MovementModule:KnitStart()
 	coroutine.wrap(function()
 		MovementModule:CreateBinds()
 		MovementModule:CreateContextBinder()
+		MovementModule.BindAttribute()
 	end)()
 end
 

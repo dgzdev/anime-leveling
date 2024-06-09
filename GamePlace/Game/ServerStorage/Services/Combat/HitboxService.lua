@@ -200,13 +200,7 @@ function HitboxService:CreateHitbox(
 	end)
 end
 
-function HitboxService:CreateFixedHitbox(
-	Position: CFrame,
-	Size: Vector3,
-	Ticks: number,
-	callback,
-	Params: OverlapParams?
-)
+function HitboxService:CreateFixedHitbox(CFrame: CFrame, Size: Vector3, Ticks: number, callback, Params: OverlapParams?)
 	local Hitted = {}
 
 	if not Params then
@@ -216,7 +210,7 @@ function HitboxService:CreateFixedHitbox(
 	end
 
 	for i = 0, Ticks, 1 do
-		local CharactersInside = HitboxService:GetCharactersInBoxArea(Position, Size, Params)
+		local CharactersInside = HitboxService:GetCharactersInBoxArea(CFrame, Size, Params)
 
 		for _, char in CharactersInside do
 			if table.find(Hitted, char) then
@@ -230,7 +224,7 @@ function HitboxService:CreateFixedHitbox(
 end
 
 -- cria uma hitbox com part, welda, posiciona na frente do character fornecido com base no tamanho da hitbox, o callback retornara o character hitado
---ticks é quantas vezes ele vai verificar a hitbox: 5 ticks = 5 vezes com o intervalo a cada frame
+-- ticks é quantas vezes ele vai verificar a hitbox: 5 ticks = 5 vezes com o intervalo a cada frame
 function HitboxService:CreatePartHitbox(
 	Character: Model,
 	HitboxSize: Vector3,
@@ -249,7 +243,7 @@ function HitboxService:CreatePartHitbox(
 	Hitbox.Anchored = false
 	Hitbox.CanCollide = false
 	Hitbox.Massless = true
-	Hitbox.Transparency = 0.5
+	Hitbox.Transparency = 1
 	Hitbox.Size = HitboxSize
 	Hitbox.CFrame = RootPart.CFrame * CFrame.new(0, 0, -HitboxSize.Z / 2)
 	Hitbox.Parent = Character

@@ -29,8 +29,11 @@ function PostureService:AddPostureDamage(Humanoid: Humanoid, Amount: number, ByD
 	Humanoid:SetAttribute("Posture", Humanoid:GetAttribute("Posture") + DamageClap)
 
 	if not ByDeflect then
-		if Humanoid:GetAttribute("Posture") >= Humanoid:GetAttribute("MaxPosture") and not Humanoid:GetAttribute("PostureBreak") then
-			CombatService:PostureBreak(Humanoid)
+		if
+			Humanoid:GetAttribute("Posture") >= Humanoid:GetAttribute("MaxPosture")
+			and not Humanoid:GetAttribute("PostureBreak")
+		then
+			PostureService:PostureBreak(Humanoid)
 		end
 	end
 end

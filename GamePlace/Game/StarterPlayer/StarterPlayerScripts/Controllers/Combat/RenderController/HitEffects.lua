@@ -1,16 +1,39 @@
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
+
 local HitEffects = {}
 
--- padrão saindo sangue
-function HitEffects.Default()
-    
+local SFX = require(game.ReplicatedStorage.Modules.SFX)
+
+local EffectsFolder = game.ReplicatedStorage.VFX.HitEffects
+local Debris = game:GetService("Debris")
+local RenderController
+
+function HitEffects.Default(RenderData)
+	local casterHumanoid: Humanoid = RenderData.casterHumanoid
+
+	local Effect = EffectsFolder[RenderData.effect]:Clone()
+
+	local Weld = Instance.new("WeldConstraint")
+	Weld.Part0 = casterHumanoid.RootPart
+	Weld.Part1 = Effect
+	Weld.Parent = Effect
+
+	Effect:PivotTo(casterHumanoid.RootPart:GetPivot())
+	Effect.Parent = casterHumanoid.Parent
+
+	SFX:Apply(casterHumanoid.RootPart, RenderData.effect .. "Hit")
+
+	RenderController:EmitParticles(Effect)
+
+	Debris:AddItem(Effect, 2)
 end
 
 function HitEffects.Caller(RenderData)
-	if HitEffects[RenderData.effect] then
-		task.spawn(HitEffects[RenderData.effect], RenderData)
-	else
-		error("Render not found!")
-	end
+	HitEffects.Default(RenderData)
+end
+
+function HitEffects.Start()
+	RenderController = Knit.GetController("RenderController")
 end
 
 return HitEffects

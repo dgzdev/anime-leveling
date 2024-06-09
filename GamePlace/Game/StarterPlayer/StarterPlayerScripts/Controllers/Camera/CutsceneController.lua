@@ -10,8 +10,14 @@ local Workspace = game:GetService("Workspace")
 local Camera = Workspace.CurrentCamera
 
 local PlayerEnterService
+local CameraController
+local HumanoidManagerController
 
 local Player = Players.LocalPlayer
+local Character = Player.Character or Player.CharacterAdded:Wait()
+local Root = Character:WaitForChild("HumanoidRootPart")
+local Humanoid = Character:WaitForChild("Humanoid")
+local Animator = Humanoid:WaitForChild("Animator")
 
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
@@ -21,13 +27,12 @@ local AnimationTrack: AnimationTrack
 
 local Animations = ReplicatedStorage:WaitForChild("CameraAnimations")
 
-local function AnimateCamera(animation: string)
-	local Character = Player.Character or Player.CharacterAdded:Wait()
-	local Torso = Character:WaitForChild("Torso")
-	local Root = Character:WaitForChild("HumanoidRootPart")
-	local Humanoid = Character:WaitForChild("Humanoid")
-	local Animator = Humanoid:WaitForChild("Animator")
+-----------------------------------------------------------------------------------
+-- Variables
+-----------------------------------------------------------------------------------
+local shouldSkipCutscene = RunService:IsStudio() == true
 
+local function AnimateCamera(animation: string)
 	Camera.CameraType = Enum.CameraType.Scriptable
 	local Connections = {}
 
@@ -51,6 +56,8 @@ local function AnimateCamera(animation: string)
 			"Right Arm",
 			"Torso",
 		}
+
+		local Torso = Character:WaitForChild("Torso")
 
 		for i = 1, #Frames:GetChildren(), 1 do
 			task.wait(1 / 60)
@@ -160,6 +167,18 @@ local function AnimateCamera(animation: string)
 
 		Workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
 		Workspace.City.JoinPortal:Destroy()
+
+		CameraController:EnableCamera()
+
+		HumanoidManagerController:RunForAllHumanoidsExcept(function(humanoid: Humanoid)
+			local parent = humanoid.Parent
+
+			for _, bp: BasePart in parent:GetDescendants() do
+				if bp:IsA("BasePart") then
+					bp.LocalTransparencyModifier = 0
+				end
+			end
+		end, Humanoid)
 	end)
 end
 
@@ -168,11 +187,6 @@ local CutsceneController = Knit.CreateController({
 })
 
 function CutsceneController.Init()
-	local Character = Player.Character or Player.CharacterAdded:Wait()
-	local Root = Character:WaitForChild("HumanoidRootPart")
-	local Humanoid = Character:WaitForChild("Humanoid")
-	local Animator = Humanoid:WaitForChild("Animator")
-
 	local CutscenePosition: BasePart = Workspace:WaitForChild("CutscenePosition")
 
 	Root.Anchored = true
@@ -232,6 +246,16 @@ function CutsceneController.Init()
 		end
 	end)
 
+	HumanoidManagerController:RunForAllHumanoidsExcept(function(humanoid: Humanoid)
+		local parent = humanoid.Parent
+
+		for _, bp: BasePart in parent:GetDescendants() do
+			if bp:IsA("BasePart") then
+				bp.LocalTransparencyModifier = 1
+			end
+		end
+	end, Humanoid)
+
 	if not game:GetAttribute("Loaded") then
 		game:GetAttributeChangedSignal("Loaded"):Wait()
 	end
@@ -242,12 +266,27 @@ end
 
 function CutsceneController:KnitInit()
 	PlayerEnterService = Knit.GetService("PlayerEnterService")
-end
+	CameraController = Knit.GetController("CameraController")
+	HumanoidManagerController = Knit.GetController("HumanoidManagerController")
 
-function CutsceneController:KnitStart()
-	coroutine.wrap(function()
-		self:Init()
-	end)()
+	Humanoid.Died:Connect(function()
+		Character = Player.CharacterAdded:Wait()
+		Root = Character:WaitForChild("HumanoidRootPart")
+		Humanoid = Character:WaitForChild("Humanoid")
+		Animator = Humanoid:WaitForChild("Animator")
+
+		CameraController:EnableCamera()
+	end)
+
+	if shouldSkipCutscene then
+		ReplicatedStorage:SetAttribute("FirstTimeAnimationEnd", true)
+		Root.Anchored = false
+		PlayerGui:WaitForChild("Cutscene").Enabled = false
+		PlayerGui:WaitForChild("PlayerHud").Enabled = true
+		CameraController:EnableCamera()
+		return
+	end
+	self.Init()
 end
 
 return CutsceneController

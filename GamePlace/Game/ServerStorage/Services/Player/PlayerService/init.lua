@@ -22,14 +22,12 @@ local Managers: { [number]: typeof(PlayerManager) | nil } = {}
 -- ========================================
 
 function PlayerService.OnPlayerJoin(player: Player)
-	warn("JOINED")
 	task.spawn(function()
 		CharacterService:LoadCharacter(player)
 	end)
 
 	local Manager = PlayerManager.new(player)
 	Manager:LoadProfile()
-
 
 	if player:IsDescendantOf(Players) then
 		if Manager.Profile then
@@ -48,7 +46,6 @@ function PlayerService.OnPlayerJoin(player: Player)
 	Data.SkillsTreeUnlocked = GameData.profileTemplate.Slots[1].Data.SkillsTreeUnlocked
 
 	ProgressionService:UpdateLocalStatus(player)
-
 end
 
 function PlayerService.OnPlayerLeave(player: Player)

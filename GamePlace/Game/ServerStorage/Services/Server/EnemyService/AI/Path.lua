@@ -1,21 +1,28 @@
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
+
 local Path = {}
 Path.Combos = {}
 Path.InPath = false
 Path.AttackDebounce = false
 Path.Combos.CurrentMelee = 1
+Path.HitCount = 0
+Path.PlayComboAnim = true
+Path.LastHitTick = nil
 Path.Stamina = 100
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local PathfindingService = game:GetService("PathfindingService")
+local RunService = game:GetService("RunService")
+
+local HitboxService
+local AnimationService
 
 local AnimationsFolder = ReplicatedStorage:WaitForChild("Animations")
+local Op: OverlapParams = nil
 local Target: BasePart = nil
 local From: Humanoid = nil
 local Task: thread = nil
 local Align: AlignOrientation = nil
-
-local defaultDelay = 0
-
 
 local loop = function(thread: () -> any, ...)
 	return task.spawn(function(...)
@@ -24,7 +31,8 @@ local loop = function(thread: () -> any, ...)
 			if stop then
 				break
 			end
-			task.wait(defaultDelay)
+
+			task.wait()
 		end
 	end)
 end
@@ -32,6 +40,8 @@ end
 function Path.LeaveFollowing()
 	task.synchronize()
 	Target = nil
+	Op = nil
+
 	if not From then
 		return
 	end
@@ -51,6 +61,7 @@ function Path.StartFollowing(from: Humanoid, target: BasePart)
 	task.desynchronize()
 	Align = AlignOrientation
 
+	Op = OverlapParams.new()
 	Target = target
 	From = from
 end
@@ -60,46 +71,93 @@ do
 		if not Target then
 			return
 		end
+		if not Target.Parent then
+			return
+		end
+		if not Target.Parent.Humanoid then
+			return
+		end
 
 		task.synchronize() --> roda em serial
-
-		--> Se setar o CFrame da RootPart, o personagem fica todo travado
-		--> AlignOrientation
 
 		Align.LookAtPosition = Target.Position
 		Path.InPath = true
 
 		task.spawn(function()
-
 			if not From then
 				return
 			end
 
-			if (From.RootPart.Position - Target.Position).Magnitude > 50 or Target.Parent.Humanoid.Health <= 0 then
+			if
+				Target and (From.RootPart.Position - Target.Position).Magnitude > 50
+				or Target.Parent.Humanoid.Health <= 0
+			then
 				Path.LeaveFollowing()
 				Path.InPath = false
 				return
 			end
 
-			if Target.Parent.Humanoid.Health > 0 and (From.RootPart.Position - Target.Position).Magnitude < 4 then ------------ Perto o suficiente para executar M1's
+			if
+				Path.PlayComboAnim
+				and Target.Parent.Humanoid.Health > 0
+				and (From.RootPart.Position - Target.Position).Magnitude < 4
+			then ------------> Perto o suficiente para executar M1's
 				if Path.AttackDebounce then
 					return
 				end
+				Path.AttackDebounce = true
+				Op.FilterType = Enum.RaycastFilterType.Exclude
+				Op.FilterDescendantsInstances = { From.Parent }
 				From.WalkSpeed = 8
 				local HitAnimations = AnimationsFolder.Melee.Hit
 				local CurrentHitAnimation = HitAnimations[Path.Combos.CurrentMelee]:Clone() :: Animation
-				local AnimationTrack =
-					From:FindFirstChildWhichIsA("Animator"):LoadAnimation(CurrentHitAnimation) :: AnimationTrack
+				local Animator = From:FindFirstChildWhichIsA("Animator") :: Animator
+				local AnimationTrack = Animator:LoadAnimation(CurrentHitAnimation) :: AnimationTrack
 
-				AnimationTrack:Play(0.3)
-				Path.AttackDebounce = true
+				AnimationTrack:Play()
+				AnimationTrack:AdjustSpeed(1)
+
+				AnimationTrack:GetMarkerReachedSignal("Hit"):Connect(function()
+					HitboxService:CreateFixedHitbox(
+						From.RootPart.CFrame * CFrame.new(0, 0, -2),
+						Vector3.new(3, 3, 3),
+						1,
+						function(Hitted)
+							if Path.LastHitTick and Path.LastHitTick - tick() <= 1 then
+								Path.HitCount += 1
+								if Path.HitCount >= #HitAnimations:GetChildren() then
+									Path.HitCount = 0
+									Path.PlayComboAnim = false
+									AnimationService:StopAllAnimations(From, 0.5)
+
+									local UltAnimation = AnimationsFolder.Melee["Ground Slam"]:Clone() :: Animation
+									local UltAnimationTrack = Animator:LoadAnimation(UltAnimation) :: AnimationTrack
+
+									UltAnimationTrack:Play()
+									task.delay(UltAnimationTrack.Length * 1.5, function()
+										Path.AttackDebounce = false
+										Path.Combos.CurrentMelee = 1
+										Path.PlayComboAnim = true
+									end)
+								end
+							end
+							print(Path.HitCount)
+							Path.LastHitTick = tick()
+						end,
+						Op
+					)
+				end)
 				task.delay(AnimationTrack.Length, function()
+					if not Path.PlayComboAnim then
+						Path.PlayComboAnim = true
+						return
+					end
 					CurrentHitAnimation:Destroy()
 					if not HitAnimations:FindFirstChild(Path.Combos.CurrentMelee + 1) then
 						Path.Combos.CurrentMelee = 1
-						--task.delay(2,function()
+						task.delay(2, function()
 							Path.AttackDebounce = false
-						--end)
+						end)
 					else
 						Path.Combos.CurrentMelee += 1
 						Path.AttackDebounce = false
@@ -124,6 +182,11 @@ do
 
 		task.desynchronize() --> roda em paralelo
 	end)
+end
+
+function Path.Start()
+	HitboxService = Knit.GetService("HitboxService")
+	AnimationService = Knit.GetService("AnimationService")
 end
 
 return Path

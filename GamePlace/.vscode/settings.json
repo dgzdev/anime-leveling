@@ -6,8 +6,8 @@
     "editor.renderWhitespace": "trailing",
     "editor.renderLineHighlight": "gutter",
     "editor.rulers": [
-        80,
-        120
+        120,
+        180
     ],
     "editor.defaultFormatter": "lixvbnet.styluafork",
 }

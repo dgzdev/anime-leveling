@@ -1,6 +1,7 @@
 local Workspace = game:GetService("Workspace")
 local Finder = {}
-local Path = require(script.Parent.Path)
+local Path
+
 function Finder.IsOnDot(from: Humanoid, humanoid: Humanoid): boolean
 	local npcToCharacter = (humanoid.RootPart.Position - from.RootPart.Position).Unit :: Vector3
 	local npcLook = from.RootPart.CFrame.LookVector
@@ -22,6 +23,11 @@ function Finder.GetClosestHumanoid(from: Humanoid, onlyPlayers: boolean, magnitu
 	if onlyPlayers then
 		for _, player in game.Players:GetPlayers() do
 			if player.Character and player.Character:FindFirstChild("Humanoid") then
+				local hum = player.Character:FindFirstChild("Humanoid")
+				if hum.Health <= 0 then
+					continue
+				end
+
 				if not closest then
 					local distance = (player.Character.Humanoid.RootPart.Position - from.RootPart.Position).Magnitude
 					if distance < magnitude then
@@ -39,6 +45,10 @@ function Finder.GetClosestHumanoid(from: Humanoid, onlyPlayers: boolean, magnitu
 	else
 		for _, hum: Humanoid in Workspace:GetDescendants() do
 			if hum:IsA("Humanoid") then
+				if hum.Health <= 0 then
+					continue
+				end
+
 				if not game.Players:GetPlayerFromCharacter(hum.Parent) then
 					if not closest then
 						local distance = (hum.RootPart.Position - from.RootPart.Position).Magnitude
@@ -58,6 +68,10 @@ function Finder.GetClosestHumanoid(from: Humanoid, onlyPlayers: boolean, magnitu
 	end
 
 	return closest
+end
+
+function Finder.Start(path)
+	Path = path
 end
 
 return Finder

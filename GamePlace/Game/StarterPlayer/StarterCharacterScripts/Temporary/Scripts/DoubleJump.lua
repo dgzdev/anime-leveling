@@ -5,6 +5,7 @@ Knit.OnStart():await()
 
 local DebugService = Knit.GetService("DebugService")
 local RunService = game:GetService("RunService")
+local GrabService = Knit.GetService("GrabService")
 
 local SFX = require(game.ReplicatedStorage.Modules.SFX)
 
@@ -41,6 +42,8 @@ function DoubleJump:Init()
 	local humanoidRootPart = char:WaitForChild("HumanoidRootPart")
 	local humanoid = char:WaitForChild("Humanoid")
 	local animator: Animator = humanoid:WaitForChild("Animator")
+	local doubleJump: Animation = game.ReplicatedStorage.Animations.DoubleJump
+	local doubleJumpTrack: AnimationTrack = animator:LoadAnimation(doubleJump)
 
 	local jumpUsage = 1
 
@@ -58,14 +61,14 @@ function DoubleJump:Init()
 						humanoidRootPart.AssemblyLinearVelocity = LookV + Vector3.new(0, 60, 0)
 						local timerStart = tick()
 
+						doubleJumpTrack:Play()
+
 						task.spawn(function()
 							repeat
 								RunService.RenderStepped:Wait()
 
 								DebugService.AttachPart = true
-								--DebugService:CreatePartandAttachtoPos(
-								--	player.Character.Head.CFrame * CFrame.new(0, 4, 0)
-								--)
+
 								local params = RaycastParams.new()
 								params.FilterType = Enum.RaycastFilterType.Exclude
 								params.FilterDescendantsInstances = { char, workspace:FindFirstChild("Debug") }
@@ -145,6 +148,10 @@ function DoubleJump:Init()
 											end
 										)
 
+										task.delay(0.25, function()
+											GrabService:Grab(cframe)
+										end)
+
 										char.PrimaryPart.AssemblyLinearVelocity = Vector3.new()
 										char.PrimaryPart.AssemblyAngularVelocity = Vector3.new()
 
@@ -164,6 +171,7 @@ function DoubleJump:Init()
 												humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 												AnimationTrack:Stop(0)
 												RunService:UnbindFromRenderStep("Grabbing")
+												GrabService:Ungrab()
 											end
 										end)
 

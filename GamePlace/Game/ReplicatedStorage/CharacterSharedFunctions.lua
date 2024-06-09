@@ -1,115 +1,111 @@
 local CharacterSharedFunctions = {}
 function CharacterSharedFunctions:ChangeWalkSpeed(humanoid: Humanoid, amount: number?, overwrite: string?)
-    local function change(toChange, walkspeed)
-        -- print(humanoid.Parent.Name, priority, highestPriority, walkspeed)
-        if toChange == overwrite then
-            humanoid.WalkSpeed = amount
-        else
-            humanoid.WalkSpeed = walkspeed
-        end
-    end
+	local function change(toChange, walkspeed)
+		if toChange == overwrite then
+			humanoid.WalkSpeed = amount
+		else
+			humanoid.WalkSpeed = walkspeed
+		end
+	end
 
-    local Walkspeeds = {
-        PostureBreak = function()
-            change("PostureBreak", 0)
-        end,
+	local Walkspeeds = {
+		PostureBreak = function()
+			change("PostureBreak", 0)
+		end,
 
-        Hit = function()
-            change("Hit", 0)
-        end,
-        -- Windy = function()
-        --     change("Windy", 4)
-        -- end,
+		Hit = function()
+			change("Hit", 0)
+		end,
 
-        StrongAttack = function()
-            change("StrongAttack", 0)
-        end,
+		StrongAttack = function()
+			change("StrongAttack", 0)
+		end,
 
-        AttackCombo = function()
-            change("AttackCombo", 10)
-        end,
+		AttackCombo = function()
+			change("AttackCombo", 10)
+		end,
 
-        Block = function()
-            change("Block", 3)
-        end,
+		Block = function()
+			change("Block", 8)
+		end,
 
-        Running = function()
-            change("Running", 4)
-        end,
+		Running = function()
+			change("Running", 4)
+		end,
 
-        Crouch = function()
-            change("Running", 6)
-        end,
+		Crouch = function()
+			change("Running", 6)
+		end,
 
-        Default = function()
-            -- print(humanoid.Parent.Name, " Set to default: ", amount or humanoid:GetAttributes("DefaultWalkSpeed") or humanoid.WalkSpeed)
-            humanoid.WalkSpeed = amount or humanoid:GetAttributes("DefaultWalkSpeed") or humanoid.WalkSpeed
-        end
-    }
+		Default = function()
+			humanoid.WalkSpeed = amount or 16
+		end,
+	}
 
-    local set = false
-    for attributeName, func in pairs(Walkspeeds) do
-        if not humanoid:GetAttribute(attributeName) == true then continue end
-        set = true
-        func()
-        break
-    end
+	local set = false
+	for attributeName, func in pairs(Walkspeeds) do
+		if not humanoid:GetAttribute(attributeName) == true then
+			continue
+		end
+		set = true
+		func()
+		break
+	end
 
-    if not set then
-        Walkspeeds.Default()
-    end
+	if not set then
+		Walkspeeds.Default()
+	end
 end
-
 
 --[[
     Funciona da mesma forma que a função ChangeWalkspeed, porém alterando a propriedade de JumpPower do Humanoid
 ]]
 function CharacterSharedFunctions:ChangeJumpPower(humanoid, amount, overwrite)
-    amount = amount or humanoid:GetAttribute("DefaultJumpPower") or 40
+	amount = amount or humanoid:GetAttribute("DefaultJumpPower") or 40
 
-    local function change(toChange, walkspeed)
-        if toChange == overwrite then
-            humanoid.JumpPower = amount
-        else
-            humanoid.JumpPower = walkspeed
-        end
-    end
+	local function change(toChange, walkspeed)
+		if toChange == overwrite then
+			humanoid.JumpPower = amount
+		else
+			humanoid.JumpPower = walkspeed
+		end
+	end
 
-    local JumpPowers = {
-        PostureBreak = function()
-            change("PostureBreak", 0)
-        end,
+	local JumpPowers = {
+		PostureBreak = function()
+			change("PostureBreak", 0)
+		end,
 
-        Hit = function()
-            change("Hit", 0)
-        end,
+		Hit = function()
+			change("Hit", 0)
+		end,
 
-        StrongAttack = function()
-            change("StrongAttack", 0)
-        end,
+		StrongAttack = function()
+			change("StrongAttack", 0)
+		end,
 
-        AttackCombo = function()
-            change("AttackCombo", 0)
-        end,
+		AttackCombo = function()
+			change("AttackCombo", 0)
+		end,
 
+		Default = function()
+			humanoid.JumpPower = amount
+		end,
+	}
 
-        Default = function()
-            humanoid.JumpPower = amount
-        end,
-    }
+	local set = false
+	for attributeName, func in pairs(JumpPowers) do
+		if not humanoid:GetAttribute(attributeName) == true then
+			continue
+		end
+		set = true
+		func()
+		break
+	end
 
-    local set = false
-    for attributeName, func in pairs(JumpPowers) do
-        if not humanoid:GetAttribute(attributeName) == true then continue end
-        set = true
-        func()
-        break
-    end
-
-    if not set then
-        JumpPowers.Default()
-    end
-
+	if not set then
+		JumpPowers.Default()
+	end
 end
 
 return CharacterSharedFunctions

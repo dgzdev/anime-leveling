@@ -48,12 +48,25 @@ function CharacterService:LoadCharacter(Player: Player)
 	Humanoid.MaxHealth = math.floor(math.sqrt(100 * (Data.Points.Endurance + 1)) * 10)
 	Humanoid.Health = math.floor(math.sqrt(100 * (Data.Points.Endurance + 1)) * 10)
 
-	print(Data)
-	print(Data.Character)
-	print(SlotData)
-
 	CharacterService:CreatePlayerHealth(Player)
 	ClothingService:LoadCharacter(Player, SlotData.Character)
+
+	Character.ChildAdded:Connect(function(tool)
+		if tool:IsA("Tool") then
+			Humanoid:SetAttribute("WeaponEquipped", true)
+			Humanoid:SetAttribute("ComboCounter", 1)
+			Humanoid:SetAttribute("WeaponName", tool.Name)
+			Humanoid:SetAttribute("WeaponType", tool:GetAttribute("Type"))
+		end
+	end)
+
+	Character.ChildRemoved:Connect(function(tool)
+		if tool:IsA("Tool") then
+			Humanoid:SetAttribute("WeaponEquipped", false)
+			Humanoid:SetAttribute("WeaponName", nil)
+			Humanoid:SetAttribute("WeaponType", nil)
+		end
+	end)
 
 	Humanoid:SetAttribute("Loaded", true)
 end
