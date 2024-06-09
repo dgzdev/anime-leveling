@@ -22,6 +22,9 @@ function HitboxService:GetHumanoidsInTable(tabela)
 		if table.find(Characters, Character) then
 			continue
 		end
+		if not Character:FindFirstChild("Humanoid") then
+			continue
+		end
 
 		table.insert(Characters, Character)
 	end
@@ -132,7 +135,7 @@ function HitboxService:CreateHitboxFromModel(
 	if not Params then
 		Params = OverlapParams.new()
 		Params.FilterType = Enum.RaycastFilterType.Include
-		Params.FilterDescendantsInstances = { Workspace.Enemies }
+		Params.FilterDescendantsInstances = { Workspace.Enemies, Workspace.Characters, Workspace.Test }
 	end
 
 	task.spawn(function()
@@ -253,12 +256,11 @@ function HitboxService:CreatePartHitbox(
 	if not Params then
 		Params = OverlapParams.new()
 		Params.FilterType = Enum.RaycastFilterType.Include
-		Params.FilterDescendantsInstances = { Enemies }
+		Params.FilterDescendantsInstances = { Enemies, Workspace.Test, Workspace.Characters }
 	end
 
 	for i = 0, Ticks, 1 do
 		local CharactersInside = HitboxService:GetCharactersInPart(Hitbox, Params)
-
 		for _, char in CharactersInside do
 			if char == Character then
 				continue

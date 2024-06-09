@@ -20,7 +20,6 @@ function PlayerManager.new(player: Player)
 	self.Character = player.Character or player.CharacterAdded:Wait()
 	self.Humanoid = self.Character:WaitForChild("Humanoid")
 	self.PlayerGui = player:WaitForChild("PlayerGui")
-	
 	return self
 end
 

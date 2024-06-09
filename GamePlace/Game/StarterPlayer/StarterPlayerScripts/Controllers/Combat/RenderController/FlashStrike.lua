@@ -28,7 +28,7 @@ end
 
 function FlashStrike.Attack(RenderData)
 	local casterRootCFrame = RenderData.casterRootCFrame
-	VFX:CreateParticle(casterRootCFrame * CFrame.new(0,0,-24), "FlashStrike", 1)
+	VFX:CreateParticle(casterRootCFrame * CFrame.new(0,0,-13) * CFrame.Angles(0,math.rad(-90),0), "FlashStrike", 1)
 end
 
 function FlashStrike.Cancel(RenderData)

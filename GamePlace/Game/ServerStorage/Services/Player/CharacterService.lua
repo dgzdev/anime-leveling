@@ -36,17 +36,39 @@ function CharacterService:CreatePlayerHealth(Player: Player)
 	end)
 end
 
+function CharacterService:BindAttackTick(Humanoid: Humanoid)
+	task.spawn(function()
+        while Humanoid:IsDescendantOf(workspace) do
+            repeat
+                task.wait(0.1)
+            until Humanoid:GetAttribute("LastAttackTick") + 2.5 <= tick()
+            Humanoid:SetAttribute("ComboCounter", 1)
+            Humanoid:GetAttributeChangedSignal("LastAttackTick"):Wait()
+        end
+    end)
+end
+
 function CharacterService:LoadCharacter(Player: Player)
+	if not Player:IsDescendantOf(game) then
+		return
+	end
+
 	Player:LoadCharacter()
 
 	local Data = PlayerService:GetData(Player)
 	local SlotData = PlayerService:GetSlot(Player)
 	local Character = Player.Character or Player.CharacterAdded:Wait()
 	local Humanoid = Character:WaitForChild("Humanoid")
+	repeat
+		Character.Parent = game.Workspace.Characters
+		task.wait()
+	until Character.Parent == game.Workspace.Characters
 	CharacterService:ApplyHumanoidDefaultAttributes(Humanoid)
 
 	Humanoid.MaxHealth = math.floor(math.sqrt(100 * (Data.Points.Endurance + 1)) * 10)
 	Humanoid.Health = math.floor(math.sqrt(100 * (Data.Points.Endurance + 1)) * 10)
+
+	CharacterService:BindAttackTick(Humanoid)
 
 	CharacterService:CreatePlayerHealth(Player)
 	ClothingService:LoadCharacter(Player, SlotData.Character)
@@ -69,13 +91,14 @@ function CharacterService:LoadCharacter(Player: Player)
 	end)
 
 	Humanoid:SetAttribute("Loaded", true)
+
+	return Character
 end
 
 function CharacterService:ApplyHumanoidDefaultAttributes(Humanoid: Humanoid)
 	Humanoid:SetAttribute("WeaponEquipped", false)
 	Humanoid:SetAttribute("ComboCounter", 1)
 	Humanoid:SetAttribute("AttackDebounce", false)
-	Humanoid:SetAttribute("Equipping", false)
 	Humanoid:SetAttribute("BlockReleaseTick", 0)
 	Humanoid:SetAttribute("LastAttackTick", 0)
 

@@ -1,6 +1,14 @@
 local Validate = {}
 
 local function check(Humanoid: Humanoid, cant)
+	if Humanoid.RootPart.Anchored then
+		return false
+	end
+
+	if Humanoid.Health <= 0 then
+		return false
+	end
+
 	for _, att in ipairs(cant) do
 		if Humanoid:GetAttribute(att) == true then
 			return false
@@ -18,7 +26,6 @@ function Validate:CanAttack(Humanoid: Humanoid)
 		"Hit",
 		"PostureBreak",
 		"UsingSkill",
-		"BlockEndLag",
 		"Block",
 		"Blocked",
 		"AttackCombo",
@@ -26,16 +33,6 @@ function Validate:CanAttack(Humanoid: Humanoid)
 		"ComboDebounce",
 		"Ragdoll",
 	}
-
-	if Humanoid.RootPart.Anchored then
-		return false
-	end
-	if Humanoid.WalkSpeed == 0 then
-		return false
-	end
-	if Humanoid.Health <= 0 then
-		return false
-	end
 
 	return check(Humanoid, cant) and Humanoid:GetAttribute("WeaponEquipped")
 end
@@ -46,24 +43,16 @@ function Validate:CanRoll(Humanoid: Humanoid)
 		"StrongAttack",
 		"Hit",
 		"PostureBreak",
-		"BlockEndLag",
 		"Block",
 		"UsingSkill",
 		"Blocked",
 		"AttackCombo",
 		"AttackDebounce",
 		"Deflected",
-		"ComboDebounce",
 		"Ragdoll",
 	}
 
-	if Humanoid.RootPart.Anchored then
-		return false
-	end
 	if Humanoid.WalkSpeed == 0 then
-		return false
-	end
-	if Humanoid.Health <= 0 then
 		return false
 	end
 
@@ -77,24 +66,17 @@ function Validate:CanSlide(Humanoid: Humanoid)
 		"Hit",
 		"PostureBreak",
 		"UsingSkill",
-		"BlockEndLag",
 		"Block",
 		"Blocked",
 		"AttackCombo",
 		"Deflected",
-		"ComboDebounce",
 		"Ragdoll",
 	}
 
-	if Humanoid.RootPart.Anchored then
-		return false
-	end
 	if Humanoid.WalkSpeed == 0 then
 		return false
 	end
-	if Humanoid.Health <= 0 then
-		return false
-	end
+
 	if Humanoid:GetState() ~= Enum.HumanoidStateType.Running then
 		return false
 	end
@@ -109,22 +91,33 @@ function Validate:CanDoubleJump(Humanoid: Humanoid)
 		"Hit",
 		"UsingSkill",
 		"PostureBreak",
-		"BlockEndLag",
 		"Block",
 		"Blocked",
 		"AttackCombo",
 		"Deflected",
-		"ComboDebounce",
 		"Ragdoll",
 	}
 
-	if Humanoid.RootPart.Anchored then
-		return false
-	end
 	if Humanoid.WalkSpeed == 0 then
 		return false
 	end
-	if Humanoid.Health <= 0 then
+
+	return check(Humanoid, cant)
+end
+
+function Validate:CanRun(Humanoid: Humanoid)
+	local cant = {
+		"Slide",
+		"Roll",
+		"Ragdoll",
+		"UsingSkill",
+		"PostureBreak",
+		"Block",
+		"AttackCombo",
+		"Downed",
+	}
+
+	if Humanoid.WalkSpeed == 0 then
 		return false
 	end
 
@@ -144,16 +137,6 @@ function Validate:CanBlock(Humanoid: Humanoid)
 		"Downed",
 		"BlockDebounce",
 	}
-
-	if Humanoid.RootPart.Anchored then
-		return false
-	end
-	if Humanoid.WalkSpeed == 0 then
-		return false
-	end
-	if Humanoid.Health <= 0 then
-		return false
-	end
 
 	return check(Humanoid, cant) and Humanoid:GetAttribute("WeaponEquipped")
 end

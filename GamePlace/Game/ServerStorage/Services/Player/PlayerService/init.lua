@@ -24,6 +24,33 @@ local Managers: { [number]: typeof(PlayerManager) | nil } = {}
 function PlayerService.OnPlayerJoin(player: Player)
 	task.spawn(function()
 		CharacterService:LoadCharacter(player)
+
+		local function OnDestroing()
+			local Character: Instance = CharacterService:LoadCharacter(player)
+			if Character then
+				local Root = player.Character:WaitForChild("HumanoidRootPart")
+				local Connection: RBXScriptSignal
+				Connection = Root.Changed:Connect(function(property: string)
+					if property == "Parent" then
+						if Root.Parent == nil then
+							OnDestroing()
+							Connection:Disconnect()
+						end
+					end
+				end)
+			end
+		end
+
+		local Root = player.Character:WaitForChild("HumanoidRootPart")
+		local Connection: RBXScriptSignal
+		Connection = Root.Changed:Connect(function(property: string)
+			if property == "Parent" then
+				if Root.Parent == nil then
+					OnDestroing()
+					Connection:Disconnect()
+				end
+			end
+		end)
 	end)
 
 	local Manager = PlayerManager.new(player)
@@ -37,15 +64,17 @@ function PlayerService.OnPlayerJoin(player: Player)
 			end)
 
 			Managers[player.UserId] = Manager
+
+			local Data = Manager:GetData()
+
+			Data.Inventory = GameData.defaultInventory
+			Data.SkillsTreeUnlocked = GameData.profileTemplate.Slots[1].Data.SkillsTreeUnlocked
+
+			ProgressionService:UpdateLocalStatus(player)
 		end
 	end
 
-	local Data = Manager:GetData()
 
-	Data.Inventory = GameData.defaultInventory
-	Data.SkillsTreeUnlocked = GameData.profileTemplate.Slots[1].Data.SkillsTreeUnlocked
-
-	ProgressionService:UpdateLocalStatus(player)
 end
 
 function PlayerService.OnPlayerLeave(player: Player)

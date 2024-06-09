@@ -26,6 +26,12 @@ function DamageService:Hit(HumanoidHitted: Humanoid, Humanoid: Humanoid, Damage:
 	DamageService:DealDamage(HumanoidHitted, Damage, Humanoid)
 	SkillService:TryCancelSkillsStates(HumanoidHitted)
 
+	task.delay(1, function()
+		if not DebounceService:HaveDebounce(HumanoidHitted, "Hit") then
+			CharacterService:UpdateWalkSpeedAndJumpPower(HumanoidHitted)
+		end 
+	end)
+
 	PostureService:RemovePostureDamage(Humanoid, Damage / 2.5)
 
 	if HumanoidHitted:GetAttribute("HitCounter") == 4 then
@@ -41,12 +47,46 @@ function DamageService:Hit(HumanoidHitted: Humanoid, Humanoid: Humanoid, Damage:
 	RenderService:RenderForPlayers(hitEffectRenderData)
 end
 
+function DamageService:BlockHit(HumanoidHitted: Humanoid, Humanoid: Humanoid, BlockPostureDamage: number)
+	HumanoidHitted:SetAttribute("HitCounter", 0)
+
+	DebounceService:AddDebounce(Humanoid, "Blocked", 0.35, true)
+	PostureService:AddPostureDamage(HumanoidHitted, BlockPostureDamage)
+
+	local blockEffectRenderData = RenderService:CreateRenderData(HumanoidHitted, "HitEffects", "Blocked")
+	RenderService:RenderForPlayers(blockEffectRenderData)
+	return false
+end
+
+function DamageService:DeflectHit(HumanoidHitted: Humanoid, Humanoid: Humanoid, DeflectPostureDamage: number)
+	HumanoidHitted:SetAttribute("HitCounter", 0)
+	DebounceService:AddDebounce(HumanoidHitted, "DeflectTime", 0.125, true)
+	PostureService:RemovePostureDamage(HumanoidHitted, 10)
+	Humanoid:SetAttribute("Deflected", true)
+	PostureService:AddPostureDamage(Humanoid, DeflectPostureDamage, true)
+	DebounceService:RemoveDebounce(HumanoidHitted, "Hit")
+	DebounceService:RemoveDebounce(HumanoidHitted, "Blocked")
+	Humanoid:SetAttribute("ComboCounter", 1)
+	HumanoidHitted:SetAttribute("BlockEndLag", false)
+
+	AnimationService:StopM1Animation(Humanoid)
+
+	task.delay(1, function()
+		Humanoid:SetAttribute("Deflected", false)
+	end)
+
+	task.spawn(function()
+		local deflectEffectRenderData = RenderService:CreateRenderData(HumanoidHitted, "HitEffects", "Deflect")
+		RenderService:RenderForPlayers(deflectEffectRenderData)
+	end)
+end
+
 -- função hit, possui verificações de block e dodge, além de aplicar debuffs de hit
 function DamageService:TryHit(Humanoid: Humanoid, HumanoidHitted: Humanoid, _Damage: number, HitEffect: string?)
 	if HumanoidHitted == nil then
 		return
 	end
-
+	
 	CharacterService:UpdateWalkSpeedAndJumpPower(HumanoidHitted)
 
 	if _Damage == nil then
@@ -80,60 +120,17 @@ function DamageService:TryHit(Humanoid: Humanoid, HumanoidHitted: Humanoid, _Dam
 	end
 
 	if HumanoidHitted:GetAttribute("DeflectTime") then
-		HumanoidHitted:SetAttribute("HitCounter", 0)
-		DebounceService:AddDebounce(HumanoidHitted, "DeflectTime", 0.125, true)
-		PostureService:RemovePostureDamage(HumanoidHitted, 10)
-		Humanoid:SetAttribute("Deflected", true)
-		PostureService:AddPostureDamage(Humanoid, DeflectPostureDamage, true)
-		DebounceService:RemoveDebounce(HumanoidHitted, "Hit")
-		DebounceService:RemoveDebounce(HumanoidHitted, "Blocked")
-		Humanoid:SetAttribute("ComboCounter", 1)
-		HumanoidHitted:SetAttribute("BlockEndLag", false)
-
-		AnimationService:StopM1Animation(Humanoid)
-
-		-- if Humanoid:GetAttribute("AttackDirection") == "Left" then
-		-- 	Humanoid.Animator:LoadAnimation(game.ReplicatedStorage.Assets.Animations.Weapons.General.DeflectedL):Play()
-		-- else
-		-- 	Humanoid.Animator:LoadAnimation(game.ReplicatedStorage.Assets.Animations.Weapons.General.DeflectedR):Play()
-		-- end
-
-		-- local AnimationFolder = CharacterService:GetReplicatedAnimationFolder(HumanoidHitted.Parent)
-		-- if AnimationFolder then
-		-- 	HumanoidHitted.Animator:LoadAnimation(AnimationFolder.BlockHit):Play()
-		-- end
-
-		task.delay(1, function()
-			Humanoid:SetAttribute("Deflected", false)
-		end)
-
-		task.spawn(function()
-			local deflectEffectRenderData = RenderService:CreateRenderData(HumanoidHitted, "HitEffects", "Deflect")
-			RenderService:RenderForPlayers(deflectEffectRenderData)
-		end)
+		DamageService:DeflectHit(HumanoidHitted, Humanoid, DeflectPostureDamage)
 		return false
 	else
 		if HumanoidHitted:GetAttribute("Block") then
-			HumanoidHitted:SetAttribute("HitCounter", 0)
-			-- local ReplicatedAnimations = CharacterService:GetReplicatedAnimationFolder(HumanoidHitted.Parent)
-			-- if ReplicatedAnimations then
-			-- 	local BlockHit = HumanoidHitted.Animator:LoadAnimation(ReplicatedAnimations.BlockHit):: AnimationTrack
-			-- 	BlockHit.Priority = Enum.AnimationPriority.Action2
-			-- 	BlockHit:Play()
-			-- end
-
-			DebounceService:AddDebounce(HumanoidHitted, "Blocked", 0.5, true)
-			PostureService:AddPostureDamage(HumanoidHitted, BlockPostureDamage)
-
-			local blockEffectRenderData = RenderService:CreateRenderData(HumanoidHitted, "HitEffects", "Blocked")
-			RenderService:RenderForPlayers(blockEffectRenderData)
+			DamageService:BlockHit(HumanoidHitted, Humanoid, BlockPostureDamage)
 			return false
 		else
 			DamageService:Hit(HumanoidHitted, Humanoid, Damage, HitEffect)
 		end
 	end
 
-	CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
 	CharacterService:UpdateWalkSpeedAndJumpPower(HumanoidHitted)
 end
 

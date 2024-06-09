@@ -36,6 +36,14 @@ function CameraModule.GetCameraCFrame()
 end
 
 function CameraModule.SetCameraLock(deltaTime: number)
+	if not Character:IsDescendantOf(workspace) then
+		return
+	end
+
+	if not Character.PrimaryPart then
+		return
+	end
+
 	Workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
 
 	local c = Workspace.CurrentCamera.CFrame

@@ -37,26 +37,6 @@ function HotbarController.ChangeItem(tool: Tool)
 				end
 			end
 
-			for _, obj: BasePart in Character:GetDescendants() do
-				if obj:IsA("BasePart") then
-					obj.LocalTransparencyModifier = obj.Transparency
-				end
-			end
-
-			for _, m6: Motor6D in tool:GetDescendants() do
-				if m6:IsA("Motor6D") then
-					if m6:GetAttribute("Hide") == true then
-						for _, obj: BasePart in Character:GetDescendants() do
-							if obj:IsA("BasePart") then
-								if obj.Name == m6.Name then
-									obj.LocalTransparencyModifier = 1
-								end
-							end
-						end
-					end
-				end
-			end
-
 			tool.Parent = Character
 		else
 			SkillService:UseSkill(tool.Name, {})
@@ -306,28 +286,30 @@ function HotbarController.OnBackpackAdded(tool: Tool)
 		HotbarService:OnFireServer("Activate", tool)
 	end)
 	Events[tool][#Events[tool] + 1] = tool.Equipped:Connect(function()
+		local isActivated = UITemplate:FindFirstChild("IsActivated") :: UIStroke
+		if isActivated then
+			isActivated.Enabled = true
+		end
+
 		HotbarService:OnFireServer("Equip", tool)
 
 		if tool:GetAttribute("Class") == "Weapon" then
 			BlockController:BindBlock()
 		end
-
-		local isActivated = UITemplate:FindFirstChild("IsActivated") :: UIStroke
-		if isActivated then
-			isActivated.Enabled = true
-		end
 	end)
 	Events[tool][#Events[tool] + 1] = tool.Unequipped:Connect(function()
-		HotbarService:OnFireServer("Unequip", tool)
-
-		if tool:GetAttribute("Class") == "Weapon" then
-			BlockController:UnbindBlock()
-		end
-
 		local isActivated = UITemplate:FindFirstChild("IsActivated") :: UIStroke
 		if isActivated then
 			isActivated.Enabled = false
 		end
+
+		task.spawn(function() --> POR ALGUM MOTIVO ALGO QUE TA AQUI DENTRO YIELDA O CODIGO
+			HotbarService:OnFireServer("Unequip", tool)
+
+			if tool:GetAttribute("Class") == "Weapon" then
+				BlockController:UnbindBlock()
+			end
+		end)
 	end)
 end
 

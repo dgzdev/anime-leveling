@@ -9,5 +9,6 @@
         120,
         180
     ],
+	"editor.codeActionsOnSave": {},
     "editor.defaultFormatter": "lixvbnet.styluafork",
 }

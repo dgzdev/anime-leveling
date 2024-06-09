@@ -58,9 +58,6 @@ function WeaponService:Block(Character: Model, state: boolean)
 			return
 		end
 
-		Humanoid:SetAttribute("State", "WALK")
-		-- SharedCharacterFuncitons:ChangeWalkSpeed(Humanoid, 5, "Block")
-
 		task.delay(0.25, function()
 			Humanoid:SetAttribute("BlockEndLag", false)
 		end)
@@ -75,16 +72,20 @@ function WeaponService:Block(Character: Model, state: boolean)
 		DebounceService:AddDebounce(Humanoid, "DeflectTime", 0.25, true)
 		Humanoid:SetAttribute("BlockDebounce", true)
 
-		task.delay(0.5, function()
-			Humanoid:SetAttribute("BlockDebounce", false)
-		end)
+		CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
 	else
 		repeat
 			task.wait()
 		until Humanoid:GetAttribute("BlockEndLag") == false
+
 		AnimationService:StopAnimationMatch(Humanoid, "Block")
 		Humanoid:SetAttribute("BlockReleaseTick", tick())
 		Humanoid:SetAttribute("Block", false)
+		
+		CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
+		task.delay(0.5, function()
+			Humanoid:SetAttribute("BlockDebounce", false)
+		end)
 	end
 end
 function WeaponService.Client:Block(Player: Player, state: boolean)

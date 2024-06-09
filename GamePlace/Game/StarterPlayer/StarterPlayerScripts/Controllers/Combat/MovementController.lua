@@ -12,6 +12,7 @@ local Events = ReplicatedStorage:WaitForChild("Events")
 local CameraEvent = Events:WaitForChild("CAMERA")
 
 local Knit = require(ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit"))
+local Validate = require(ReplicatedStorage.Validate)
 
 local ProgressionService
 local StatusController
@@ -59,38 +60,49 @@ function MovementModule:ChangeCharacterState(state: CharacterState)
 
 	local Movement = self.CharacterProperties.Movement[state]
 
-	TweenService:Create(Humanoid, self.TweenInfo, {
-		WalkSpeed = Movement.WalkSpeed,
-		JumpPower = Movement.JumpPower,
-	}):Play()
+	if Humanoid.WalkSpeed ~= Movement.WalkSpeed then
+		Humanoid.WalkSpeed = Movement.WalkSpeed
+		Humanoid.JumpPower = Movement.JumpPower
+
+	end
 
 	Humanoid:SetAttribute("State", state)
 
 	CameraEvent:Fire("FOV", Movement.FOV)
 end
 
-function MovementModule.BindAttribute()
+function MovementModule:BindAttribute()
 	local Character = Player.Character or Player.CharacterAdded:Wait()
 	local Humanoid = Character:WaitForChild("Humanoid")
 
-	Humanoid:GetAttributeChangedSignal("State"):Connect(function()
-		local value = Humanoid:GetAttribute("State")
-		if value then
-			MovementModule:ChangeCharacterState(value)
-		end
-	end)
+	-- Humanoid:GetAttributeChangedSignal("State"):Connect(function()
+	-- 	local value = Humanoid:GetAttribute("State")
+	-- 	if value then
+	-- 		MovementModule:ChangeCharacterState(value)
+	-- 	end
+	-- end)
 
 	Humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
 		local value = Humanoid.WalkSpeed
 		if value <= StarterPlayer.CharacterWalkSpeed then
-			MovementModule:ChangeCharacterState("WALK")
+			self.CharacterProperties.CharacterState = "WALK"
 		else
-			MovementModule:ChangeCharacterState("RUN")
+			if Validate:CanRun(Humanoid) then
+				self.CharacterProperties.CharacterState = "RUN"
+			end
 		end
+
+		local state = self.CharacterProperties.CharacterState
+		local Movement = self.CharacterProperties.Movement[state]
+		CameraEvent:Fire("FOV", Movement.FOV)
+
+		Humanoid.WalkSpeed = value
 	end)
 end
 
 function MovementModule:CreateContextBinder(): string
+	local Character = Player.Character or Player.CharacterAdded:Wait()
+	local Humanoid = Character:WaitForChild("Humanoid")
 	UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
 		if gameProcessedEvent then
 			return
@@ -106,7 +118,9 @@ function MovementModule:CreateContextBinder(): string
 					end
 
 					if taps == 2 then
-						MovementModule:ChangeCharacterState("RUN")
+						if Validate:CanRun(Humanoid) then
+							MovementModule:ChangeCharacterState("RUN")
+						end
 					end
 				end
 				lastTap = tick()
@@ -199,7 +213,7 @@ function MovementModule:KnitStart()
 	coroutine.wrap(function()
 		MovementModule:CreateBinds()
 		MovementModule:CreateContextBinder()
-		MovementModule.BindAttribute()
+		MovementModule:BindAttribute()
 	end)()
 end
 

@@ -74,9 +74,11 @@ function FlashStrike.Attack(Humanoid: Humanoid)
 		table.insert(Enemies, Enemy)
 
 		task.spawn(function()
-			WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 3)
+			if DamageService:GetHitContext(Enemy.Humanoid) == "Hit" then
+				WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 3)
+			end
 			for _ = 1, 10, 1 do
-				DamageService:Hit(Enemy.Humanoid, Humanoid, 4, "Sword")
+				DamageService:TryHit(Humanoid, Enemy.Humanoid, 4, "Sword")
 				task.wait(0.1)
 			end
 		end)
@@ -97,7 +99,7 @@ function FlashStrike.Attack(Humanoid: Humanoid)
 	for _, Enemy in Enemies do
 		print(Enemy)
 		DamageService:Hit(Enemy.Humanoid, Humanoid, 20, "Sword")
-	end 
+	end
 
 	SkillService:SetSkillState(Humanoid, "FlashStrike", nil)
 end

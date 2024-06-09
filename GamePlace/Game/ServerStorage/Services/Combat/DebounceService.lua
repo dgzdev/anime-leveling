@@ -59,7 +59,9 @@ function DebounceService:RemoveDebounce(Humanoid: Model, debounceName: string)
     local Index = DebounceService:GetIndex(Humanoid, debounceName)
     if Index then
         table.remove(Debounces, Index)
-        Humanoid:SetAttribute(debounceName, nil)
+        if not DebounceService:HaveDebounce(Humanoid, debounceName) then
+            Humanoid:SetAttribute(debounceName, nil)
+        end
     end
 end
 

@@ -18,8 +18,8 @@ function AnimationService:StopAllAnimations(Humanoid: Humanoid, transition: numb
 end
 
 function AnimationService:GetWeaponAnimationFolder(Humanoid: Humanoid)
-	local WeaponName = AnimationsFolder:FindFirstChild(Humanoid:GetAttribute("WeaponName"))
-	local WeaponType = AnimationsFolder:FindFirstChild(Humanoid:GetAttribute("WeaponType"))
+	local WeaponName = AnimationsFolder:FindFirstChild(Humanoid:GetAttribute("WeaponName") or "")
+	local WeaponType = AnimationsFolder:FindFirstChild(Humanoid:GetAttribute("WeaponType") or "")
 	return WeaponName or WeaponType
 end
 

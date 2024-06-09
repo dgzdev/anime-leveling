@@ -38,7 +38,7 @@ local Events = {
 			Tool:FindFirstChild("ToolGrip", true):Destroy()
 		end
 
-		local exclude = { "HumanoidRootPart" }
+		local exclude = { "RightHand", "LeftHand", "RootPart", "HumanoidRootPart", "Root" }
 
 		for _, obj: BasePart in Character:GetDescendants() do
 			if obj:IsA("BasePart") and not table.find(exclude, obj.Name) then
@@ -51,7 +51,9 @@ local Events = {
 				m6.Part0 = Character:FindFirstChild(m6.Name, true)
 				m6.Part1 = m6.Parent
 
-				m6.C0 = m6.C0 * Tool.Grip
+				if not m6:GetAttribute("NoGrip") then
+					m6.C0 = Tool.Grip
+				end
 
 				if m6:GetAttribute("Hide") then
 					for _, obj in Character:GetDescendants() do
@@ -66,7 +68,15 @@ local Events = {
 		end
 	end,
 	Unequip = function(Player: Player, data)
-		print("Equip")
+		local Character = Player.Character
+		local exclude = { "RightHand", "LeftHand", "RootPart", "HumanoidRootPart", "Root" }
+
+		for _, obj: BasePart in Character:GetDescendants() do
+			if obj:IsA("BasePart") and not table.find(exclude, obj.Name) then
+				obj.Transparency = 0
+			end
+		end
+
 	end,
 }
 

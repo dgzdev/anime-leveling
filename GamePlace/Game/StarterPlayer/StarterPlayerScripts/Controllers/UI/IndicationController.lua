@@ -5,43 +5,41 @@ local Workspace = game:GetService("Workspace")
 
 local Knit = require(ReplicatedStorage.Packages.Knit)
 
+local Source = game.ReplicatedStorage.Models.UI.DamageTemplate
+
 local Indication = Knit.CreateController({
 	Name = "Indication",
 })
 
-function Indication:BindToAllNPCS()
-	local DamageIndication = require(ReplicatedStorage.Modules.DamageIndication)
-	local Player = Players.LocalPlayer
+function Indication.BindToAllNPCS()
+	local Indicator: {
+		Me: Humanoid,
+		Start: () -> ()
+	} = {}
+	Indicator.__index = Indicator
 
-	for _, instance in (game.Workspace:GetDescendants()) do
-		if not instance:IsA("Humanoid") then
-			continue
-		end
+	function Indicator.new(humanoid: Humanoid)
+		local self = setmetatable({}, Indicator)
 
-		if not instance.Parent:FindFirstChild("Head") then
-			continue
-		end
+		self.Me = humanoid
 
-		DamageIndication.new(instance.Parent)
+		return self
 	end
 
-	game.Workspace.DescendantAdded:Connect(function(descendant)
-		if not descendant:IsA("Humanoid") then
-			return
+	function Indicator:Start()
+		self.Me
+	end
+
+	for __index, instance: Humanoid? in workspace:GetDescendants() do
+		if instance:IsA("Humanoid") then
+			local indicator = Indicator.new(instance)
+			indicator:Start()
 		end
-
-		DamageIndication.new(descendant.Parent)
-	end)
-
-	Workspace:FindFirstChild("Enemies").ChildAdded:Connect(function(enemy)
-		DamageIndication.new(enemy)
-	end)
+	end
 end
 
-function Indication:KnitStart()
-	coroutine.wrap(function()
-		self:BindToAllNPCS()
-	end)()
+function Indication.KnitInit()
+	Indication.BindToAllNPCS()
 end
 
 return Indication

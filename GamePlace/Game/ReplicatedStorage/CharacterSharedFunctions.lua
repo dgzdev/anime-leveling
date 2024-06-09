@@ -22,11 +22,11 @@ function CharacterSharedFunctions:ChangeWalkSpeed(humanoid: Humanoid, amount: nu
 		end,
 
 		AttackCombo = function()
-			change("AttackCombo", 10)
+			change("AttackCombo", 8)
 		end,
 
 		Block = function()
-			change("Block", 8)
+			change("Block", 4)
 		end,
 
 		Running = function()
@@ -38,7 +38,7 @@ function CharacterSharedFunctions:ChangeWalkSpeed(humanoid: Humanoid, amount: nu
 		end,
 
 		Default = function()
-			humanoid.WalkSpeed = amount or 16
+			humanoid.WalkSpeed = 16
 		end,
 	}
 
@@ -89,7 +89,7 @@ function CharacterSharedFunctions:ChangeJumpPower(humanoid, amount, overwrite)
 		end,
 
 		Default = function()
-			humanoid.JumpPower = amount
+			humanoid.JumpPower = 40
 		end,
 	}
 
