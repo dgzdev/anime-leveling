@@ -81,7 +81,7 @@ function WeaponService:Block(Character: Model, state: boolean, cantParry: boolea
 	else
 		repeat
 			task.wait()
-		until Humanoid:GetAttribute("BlockEndLag") == false
+		until Humanoid:GetAttribute("BlockEndLag") == false and Humanoid:GetAttribute("DeflectTime") == false
 
 		AnimationService:StopAnimationMatch(Humanoid, "Block")
 		Humanoid:SetAttribute("BlockReleaseTick", tick())

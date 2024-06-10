@@ -93,7 +93,7 @@ function FlashStrike.Attack(Humanoid: Humanoid)
 		task.spawn(function()
 			Humanoid:SetAttribute("HitboxStart", true)
 			if DamageService:GetHitContext(Enemy.Humanoid) == "Hit" then
-				WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 3)
+				WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 2.2)
 				table.insert(Enemies, Enemy)
 			else
 				WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 1.5)
@@ -124,10 +124,12 @@ function FlashStrike.Attack(Humanoid: Humanoid)
 		DamageService:Hit(Enemy.Humanoid, Humanoid, 20, "Sword")
 	end
 
+	DebounceService:RemoveDebounce(Humanoid, "UsingSkill")
 	SkillService:SetSkillState(Humanoid, "FlashStrike", nil)
 end
 
 function FlashStrike.Cancel(Humanoid)
+	DebounceService:RemoveDebounce(Humanoid, "UsingSkill")
 	local CancelRenderData = RenderService:CreateRenderData(Humanoid, "FlashStrike", "Cancel")
 	RenderService:RenderForPlayers(CancelRenderData)
 end

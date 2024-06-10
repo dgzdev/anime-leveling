@@ -141,7 +141,7 @@ do
 
 			if Target.Parent.Humanoid.Health > 0 and (From.RootPart.Position - Target.Position).Magnitude < 4 then
 				local randomNumber = math.random(0, 100) / 100
-				local flashStrikeChance = 1 / 100
+				local flashStrikeChance = 20 / 100
 
 				local isFlashStrike = randomNumber <= flashStrikeChance
 

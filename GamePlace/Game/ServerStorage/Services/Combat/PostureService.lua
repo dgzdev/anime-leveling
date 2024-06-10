@@ -7,16 +7,24 @@ local PostureService = Knit.CreateService({
 
 local CombatService
 local CharacterService
+local RenderService
+local AnimationService
 
 function PostureService:PostureBreak(Humanoid: Humanoid)
 	if Humanoid:GetAttribute("PostureBreak") then
 		return
 	end
+
+	AnimationService:StopAnimationMatch(Humanoid, "Block")
 	Humanoid:SetAttribute("PostureBreak", true)
 	Humanoid:SetAttribute("Block", false)
 	Humanoid:SetAttribute("Posture", 0)
 
 	CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
+
+	local PostureBreakRenderData = RenderService:CreateRenderData(Humanoid, "HitEffects", "PostureBreak")
+	RenderService:RenderForPlayers(PostureBreakRenderData)
+
 	task.delay(2, function()
 		Humanoid:SetAttribute("PostureBreak", false)
 		CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
@@ -44,7 +52,9 @@ function PostureService:RemovePostureDamage(Humanoid: Humanoid, Recover: number)
 end
 
 function PostureService.KnitInit()
+	AnimationService = Knit.GetService("AnimationService")
 	CombatService = Knit.GetService("CombatService")
+	RenderService = Knit.GetService("RenderService")
 	CharacterService = Knit.GetService("CharacterService")
 end
 

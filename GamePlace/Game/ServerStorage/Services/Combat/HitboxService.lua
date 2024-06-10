@@ -219,7 +219,7 @@ function HitboxService:CreateFixedHitbox(CFrame: CFrame, Size: Vector3, Ticks: n
 	if not Params then
 		Params = OverlapParams.new()
 		Params.FilterType = Enum.RaycastFilterType.Include
-		Params.FilterDescendantsInstances = { Enemies, game.Workspace.Test }
+		Params.FilterDescendantsInstances = { Enemies, game.Workspace.Test, Workspace.Characters }
 	end
 
 	for i = 0, Ticks, 1 do
