@@ -50,8 +50,9 @@ function WeaponService:Stun(Character: Model, Position: Vector3, Duration: numbe
 	Debris:AddItem(AlignPosition, Duration)
 end
 
-function WeaponService:Block(Character: Model, state: boolean)
+function WeaponService:Block(Character: Model, state: boolean, cantParry: boolean?)
 	local Humanoid = Character.Humanoid
+
 	if state then
 		if not Validate:CanBlock(Humanoid) then
 			Humanoid:SetAttribute("Block", false)
@@ -69,7 +70,11 @@ function WeaponService:Block(Character: Model, state: boolean)
 
 		Humanoid:SetAttribute("BlockEndLag", true)
 		Humanoid:SetAttribute("Block", true)
-		DebounceService:AddDebounce(Humanoid, "DeflectTime", 0.25, true)
+
+		if not cantParry then --> se for true, não pode parry
+			DebounceService:AddDebounce(Humanoid, "DeflectTime", 0.25, true)
+		end
+
 		Humanoid:SetAttribute("BlockDebounce", true)
 
 		CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
@@ -81,7 +86,7 @@ function WeaponService:Block(Character: Model, state: boolean)
 		AnimationService:StopAnimationMatch(Humanoid, "Block")
 		Humanoid:SetAttribute("BlockReleaseTick", tick())
 		Humanoid:SetAttribute("Block", false)
-		
+
 		CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
 		task.delay(0.5, function()
 			Humanoid:SetAttribute("BlockDebounce", false)

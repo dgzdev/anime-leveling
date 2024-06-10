@@ -15,10 +15,10 @@ local function getAllAnimationEventNames(animID: string): table
 	local ks: KeyframeSequence = KeyframeSequenceProvider:GetKeyframeSequenceAsync(animID)
 	local function recurse(parent: Instance)
 		for _, child in pairs(parent:GetChildren()) do
-			if (child:IsA("KeyframeMarker")) then
+			if child:IsA("KeyframeMarker") then
 				table.insert(markers, child)
 			end
-			if (#child:GetChildren() > 0) then
+			if #child:GetChildren() > 0 then
 				recurse(child)
 			end
 		end
@@ -61,15 +61,19 @@ local Default = {
 		Animation:Play()
 
 		local Markers = getAllAnimationEventNames(AnimationPath.AnimationId)
-		
+
 		local function Attack()
-			HitboxService:CreatePartHitbox(Character, Vector3.new(3, 3, 3), 10, function(Enemy)
-				if Humanoid:GetAttribute("Hit") or Humanoid:GetAttribute("Blocked") or Humanoid:GetAttribute("Deflected") then
+			Humanoid:SetAttribute("HitboxStart", true)
+			HitboxService:CreatePartHitbox(Character, Vector3.new(4, 4, 4), 10, function(Enemy)
+				if
+					Humanoid:GetAttribute("Hit")
+					or Humanoid:GetAttribute("Blocked")
+					or Humanoid:GetAttribute("Deflected")
+				then
 					return false
 				end
 
 				if Humanoid:GetAttribute("ComboCounter") > #AnimationsFolder:GetChildren() then
-					
 				end
 				return DamageService:TryHit(Humanoid, Enemy.Humanoid, Damage, HitEffect)
 			end)
@@ -86,7 +90,9 @@ local Default = {
 		end
 
 		WeaponService:IncreaseComboCounter(Humanoid)
-
+		task.delay(SwingSpeed, function()
+			Humanoid:SetAttribute("HitboxStart", false)
+		end)
 		task.delay(SwingSpeed + 0.15, function()
 			CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
 		end)

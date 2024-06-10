@@ -6,6 +6,7 @@ local Knit = require(game.ReplicatedStorage.Packages.Knit)
 Knit.OnStart():await()
 
 local StatusController = Knit.GetController("StatusController")
+local CameraController = Knit.GetController("CameraController")
 
 local Debris = game:GetService("Debris")
 local Player = game:GetService("Players").LocalPlayer
@@ -15,7 +16,7 @@ local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 local Character = Player.Character or Player.CharacterAdded:Wait()
 local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
-local LockMouse: AlignOrientation = HumanoidRootPart:WaitForChild("BodyLock")
+
 local Humanoid = Character:WaitForChild("Humanoid")
 local Animator = Humanoid:WaitForChild("Animator")
 
@@ -23,6 +24,10 @@ local SFX = require(ReplicatedStorage.Modules.SFX)
 local Validate = require(ReplicatedStorage.Validate)
 
 local Slide
+
+local function IsMouseLocked()
+	return CameraController:IsLocked()
+end
 
 local function GetModelMass(model: Model)
 	local mass = 0
@@ -37,20 +42,15 @@ local function GetModelMass(model: Model)
 	return mass + 1
 end
 
-local function CheckHigher(Vector: Vector3)
-	if math.abs(Vector.X) > math.abs(Vector.Z) then
-		return "X"
-	else
-		return "Z"
-	end
-end
-
 local VFX = require(game.ReplicatedStorage.Modules.VFX)
 
-local function CreateAnimationWithID(id: string)
+local function CreateAnimationWithID(id: string): AnimationTrack
 	local a = Instance.new("Animation")
 	a.AnimationId = `rbxassetid://{id}`
-	return a
+
+	local track: AnimationTrack = Animator:LoadAnimation(a)
+
+	return track
 end
 
 local DashAnimations = {
@@ -117,7 +117,7 @@ function DashScript:Dash()
 	local Animation
 	local Direction
 
-	if LockMouse.Enabled then
+	if not IsMouseLocked() then
 		local WalkDirWorld = getWalkDirectionCameraSpace()
 
 		local DashDiretionString = ""
@@ -135,6 +135,7 @@ function DashScript:Dash()
 			return
 		end
 
+		print(DashDiretionString)
 		local id = DashAnimations[DashDiretionString or "F"] or DashAnimations.F
 		Direction = id
 		Animation = id.anim
@@ -143,19 +144,15 @@ function DashScript:Dash()
 		Animation = DashAnimations.F.anim
 	end
 
-	local AnimationTrack: AnimationTrack = Animator:LoadAnimation(Animation)
+	Animation:Play(0.1, 1, Direction.speed)
 
-	task.wait()
-	AnimationTrack:Play()
 	SFX:Apply(Character, "Dash")
-
-	AnimationTrack:AdjustSpeed(Direction.speed)
 
 	local mass = GetModelMass(Character)
 	local DashVelocity = DashDirection * 100 * mass
 	HumanoidRootPart.AssemblyLinearVelocity = DashVelocity
 
-	AnimationTrack.Ended:Wait()
+	Animation.Ended:Wait()
 end
 
 function DashScript:Init(Modules)

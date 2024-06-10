@@ -1,8 +1,12 @@
+local CollectionService = game:GetService("CollectionService")
 local RunService = game:GetService("RunService")
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 local AI = {}
 
 AI.AnimationsTable = nil
+
+local ToolsFolder = game.ReplicatedStorage.Models.Tools
 
 function AI.Start()
 	do --> começa a buscar o humanoid
@@ -10,15 +14,28 @@ function AI.Start()
 			local Path = require(script.Path)
 			local Finder = require(script.Finder)
 
+			local EquipService = Knit.GetService("EquipService")
+
 			local NPC: Model = script:FindFirstAncestorOfClass("Model")
-
 			local Humanoid: Humanoid = NPC:FindFirstChildWhichIsA("Humanoid", true)
-
 			local Animator = Humanoid:FindFirstChildWhichIsA("Animator") :: Animator
+
+			local weaponName = NPC:GetAttribute("Weapon") or "Fists"
+
+			local Weapon: Tool = ToolsFolder:FindFirstChild(weaponName):Clone()
+			Weapon:SetAttribute("Class", "Weapon")
+			Weapon.Parent = NPC
+
+			EquipService:EquipItem(NPC)
+
+			Humanoid:SetAttribute("WeaponType", Weapon:GetAttribute("Type") or "Melee")
+			Humanoid:SetAttribute("WeaponEquipped", true)
+
+			CollectionService:AddTag(NPC, "Enemies")
 
 			local AnimationsFolder = game.ReplicatedStorage:WaitForChild("Animations")
 
-			 AI.AnimationsTable = {
+			AI.AnimationsTable = {
 				["Melee"] = {
 					["Hit"] = {
 						[1] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["1"]:Clone()),
@@ -28,14 +45,11 @@ function AI.Start()
 					},
 					["Ground Slam"] = Animator:LoadAnimation(AnimationsFolder.Melee["Ground Slam"]:Clone()),
 					["Block"] = Animator:LoadAnimation(AnimationsFolder.Melee["Block"]:Clone()),
-				}
-
+				},
 			}
 
 			Path.Start(Humanoid)
 			Finder.Start(Path)
-
-
 
 			local AlignOrientation = Instance.new("AlignOrientation", Humanoid.RootPart)
 			AlignOrientation.AlignType = Enum.AlignType.PrimaryAxisLookAt
@@ -48,7 +62,9 @@ function AI.Start()
 			local Connection
 			Connection = RunService.Heartbeat:ConnectParallel(function()
 				if Humanoid.Health <= 0 then
+					task.synchronize()
 					Connection:Disconnect()
+					task.desynchronize()
 					return
 				end
 

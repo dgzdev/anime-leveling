@@ -24,12 +24,13 @@ local AnimationsFolder = ReplicatedStorage:WaitForChild("Animations")
 
 Path.AnimationsTable = nil
 
-
 local Op: OverlapParams = nil
 local Target: BasePart = nil
+local TargetConnections = {}
 local From: Humanoid = nil
 local Task: thread = nil
 local Align: AlignOrientation = nil
+local Randomizer = Random.new()
 
 local loop = function(thread: () -> any, ...)
 	return task.spawn(function(...)
@@ -46,9 +47,12 @@ end
 
 function Path.LeaveFollowing()
 	task.synchronize()
+	for k, v in TargetConnections do
+		v:Disconnect()
+		TargetConnections[k] = nil
+	end
 	Target = nil
 	Op = nil
-
 	if not From then
 		return
 	end
@@ -64,13 +68,44 @@ function Path.StartFollowing(from: Humanoid, target: BasePart)
 	if AlignOrientation then
 		task.synchronize()
 		AlignOrientation.Enabled = true
+		AlignOrientation.CFrame = CFrame.lookAt(from.RootPart.Position, target.Position)
 	end
-	task.desynchronize()
-	Align = AlignOrientation
 
+	Align = AlignOrientation
 	Op = OverlapParams.new()
 	Target = target
+	table.insert(
+		TargetConnections,
+		Target.Parent.Humanoid:GetAttributeChangedSignal("HitboxStart"):Connect(function()
+			local state = Target.Parent.Humanoid:GetAttribute("HitboxStart")
+			if not state then
+				return
+			end
+
+			local parryChance = 30 / 100
+			local blockChance = 45 / 100
+			local randomNumber = math.random(0, 100) / 100
+
+			local isParry = randomNumber <= parryChance
+			local isBlock = (randomNumber <= blockChance) and not isParry
+
+			if isParry then
+				From:SetAttribute("BlockDebounce", false)
+				From:SetAttribute("Blocked", false)
+				From:SetAttribute("BlockEndLag", false)
+				From:SetAttribute("Block", false)
+				WeaponService:Block(From.Parent, true)
+			elseif isBlock then
+				WeaponService:Block(From.Parent, true, true)
+			end
+
+			task.delay(0.25, function()
+				WeaponService:Block(From.Parent, false)
+			end)
+		end)
+	)
 	From = from
+	task.desynchronize()
 end
 
 do
@@ -84,8 +119,6 @@ do
 		if not Target.Parent.Humanoid then
 			return
 		end
-
-
 
 		task.synchronize() --> roda em serial
 
@@ -107,55 +140,17 @@ do
 			end
 
 			if Target.Parent.Humanoid.Health > 0 and (From.RootPart.Position - Target.Position).Magnitude < 4 then
-				WeaponService:WeaponInput(From.Parent, "Attack")
+				local randomNumber = math.random(0, 100) / 100
+				local flashStrikeChance = 1 / 100
+
+				local isFlashStrike = randomNumber <= flashStrikeChance
+
+				if not isFlashStrike then
+					WeaponService:WeaponInput(From.Parent, "Attack")
+				else
+					SkillService:UseSkill(From, "FlashStrike")
+				end
 			end
-
-			-- SkillService:UseSkill(From, "FlashStrike")
-
-			-- if
-			-- 	Path.PlayComboAnim
-			-- 	and Target.Parent.Humanoid.Health > 0
-			-- 	and (From.RootPart.Position - Target.Position).Magnitude < 4
-			-- then ------------> Perto o suficiente para executar M1's
-			-- 	if Path.AttackDebounce then
-			-- 		return
-			-- 	end
-			-- 	Path.AttackDebounce = true
-			-- 	Op.FilterType = Enum.RaycastFilterType.Exclude
-			-- 	Op.FilterDescendantsInstances = { From.Parent }
-			-- 	From.WalkSpeed = 8
-			-- 	local HitAnimations = AnimationsFolder.Melee.Hit
-			-- 	local AnimationTrack = Path.AnimationsTable.Melee.Hit[Path.Combos.CurrentMelee] :: AnimationTrack
-
-			-- 	AnimationTrack:Play()
-
-			-- 	AnimationTrack:GetMarkerReachedSignal("Hit"):Connect(function()
-			-- 		HitboxService:CreateFixedHitbox(
-			-- 			From.RootPart.CFrame * CFrame.new(0, 0, -2),
-			-- 			Vector3.new(3, 3, 3),
-			-- 			1,
-			-- 			function(Hitted)
-
-			-- 			end,
-			-- 			Op
-			-- 		)
-			-- 		if not Path.PlayComboAnim then
-			-- 			Path.PlayComboAnim = true
-			-- 			return
-			-- 		end
-			-- 		if not HitAnimations:FindFirstChild(Path.Combos.CurrentMelee + 1) then
-			-- 			Path.Combos.CurrentMelee = 1
-			-- 			task.delay(2, function()
-			-- 				Path.AttackDebounce = false
-			-- 			end)
-			-- 		else
-			-- 			Path.Combos.CurrentMelee += 1
-			-- 			Path.AttackDebounce = false
-			-- 		end
-			-- 	end)
-			-- else
-			-- 	From.WalkSpeed = 16
-			-- end
 
 			local p = PathfindingService:CreatePath()
 			p:ComputeAsync(From.RootPart.Position, Target.Position)
@@ -174,7 +169,7 @@ do
 	end)
 end
 
-function Path.Start(Humanoid : Humanoid)
+function Path.Start(Humanoid: Humanoid)
 	HitboxService = Knit.GetService("HitboxService")
 	AnimationService = Knit.GetService("AnimationService")
 	SkillService = Knit.GetService("SkillService")
@@ -182,19 +177,18 @@ function Path.Start(Humanoid : Humanoid)
 	local Animator: Animator = Humanoid:WaitForChild("Animator")
 
 	local AnimationsFolder = game.ReplicatedStorage:WaitForChild("Animations")
-		Path.AnimationsTable = {
-			["Melee"] = {
-				["Hit"] = {
-					[1] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["1"]:Clone()),
-					[2] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["2"]:Clone()),
-					[3] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["3"]:Clone()),
-					[4] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["4"]:Clone()),
-				},
-				["Ground Slam"] = Animator:LoadAnimation(AnimationsFolder.Melee["Ground Slam"]:Clone()),
-				["Block"] = Animator:LoadAnimation(AnimationsFolder.Melee["Block"]:Clone()),
-			}
-
-		}
+	Path.AnimationsTable = {
+		["Melee"] = {
+			["Hit"] = {
+				[1] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["1"]:Clone()),
+				[2] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["2"]:Clone()),
+				[3] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["3"]:Clone()),
+				[4] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["4"]:Clone()),
+			},
+			["Ground Slam"] = Animator:LoadAnimation(AnimationsFolder.Melee["Ground Slam"]:Clone()),
+			["Block"] = Animator:LoadAnimation(AnimationsFolder.Melee["Block"]:Clone()),
+		},
+	}
 end
 
 return Path

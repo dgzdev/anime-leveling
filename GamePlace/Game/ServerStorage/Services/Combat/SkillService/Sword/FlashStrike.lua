@@ -1,4 +1,5 @@
 local Debris = game:GetService("Debris")
+local TweenService = game:GetService("TweenService")
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
 local HitboxService
 local RenderService
@@ -12,7 +13,7 @@ local Validate = require(game.ReplicatedStorage.Validate)
 local FlashStrike = {}
 
 local Cooldown = 5
-function FlashStrike.Charge(Humanoid: Humanoid, Data: {any})
+function FlashStrike.Charge(Humanoid: Humanoid, Data: { any })
 	DebounceService:AddDebounce(Humanoid, "FlashStrike", Cooldown, false)
 	SkillService:SetSkillState(Humanoid, "FlashStrike", "Charge")
 
@@ -25,25 +26,49 @@ function FlashStrike.Charge(Humanoid: Humanoid, Data: {any})
 	FlashStrike.Attack(Humanoid, Data)
 end
 
+function GetModelMass(model: Model): number
+	local mass = 1
+	for _, part: BasePart in (model:GetDescendants()) do
+		if part:IsA("BasePart") then
+			if part.Massless == true then
+				continue
+			end
+			mass += part:GetMass()
+		end
+	end
+	return mass
+end
+
 function FlashStrike.Attack(Humanoid: Humanoid)
+	local Character = Humanoid.Parent
 	local AttackRenderData = RenderService:CreateRenderData(Humanoid, "FlashStrike", "Attack")
 	RenderService:RenderForPlayers(AttackRenderData)
-	local RootPart = Humanoid.RootPart
+	local RootPart: BasePart = Humanoid.RootPart
 
 	local Params = RaycastParams.new()
-	Params.FilterDescendantsInstances = {Humanoid.Parent, workspace.Test}
+	Params.FilterDescendantsInstances = { workspace.Enemies, workspace.Characters, workspace.Test }
 	Params.FilterType = Enum.RaycastFilterType.Exclude
 
 	local raycast = workspace:Spherecast(RootPart.CFrame.Position, 3, (RootPart.CFrame.LookVector * 25), Params)
 
-	local AlignPosition = Instance.new("AlignPosition")
-	AlignPosition.Attachment0 = RootPart.RootAttachment
-	AlignPosition.Mode = Enum.PositionAlignmentMode.OneAttachment
-	AlignPosition.MaxVelocity = math.huge
-	AlignPosition.ForceLimitMode = Enum.ForceLimitMode.PerAxis
-	AlignPosition.MaxAxesForce = Vector3.new(1, 0, 1) * math.huge
-	AlignPosition.Name = "FlashStrikeAlignPosition"
-	AlignPosition.Responsiveness = 35
+	local Distance = 50
+	local DefaltDistance = 50
+	if raycast then
+		Distance = raycast.Distance
+	end
+
+	RootPart.AssemblyLinearVelocity = Vector3.zero
+	RootPart.AssemblyAngularVelocity = Vector3.zero
+	RootPart.AssemblyLinearVelocity = (
+		RootPart.CFrame.LookVector
+		* (600 / (DefaltDistance / Distance))
+		* GetModelMass(Humanoid.Parent)
+	)
+
+	local TInfo = TweenInfo.new(0.2, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut, 0, false, 0)
+	TweenService:Create(Humanoid.RootPart, TInfo, {
+		AssemblyLinearVelocity = Vector3.new(0, 0, 0),
+	}):Play()
 
 	local AlignOrientation = Instance.new("AlignOrientation")
 	AlignOrientation.Attachment0 = RootPart.RootAttachment
@@ -52,31 +77,28 @@ function FlashStrike.Attack(Humanoid: Humanoid)
 	AlignOrientation.RigidityEnabled = true
 	AlignOrientation.CFrame = CFrame.Angles(Humanoid.RootPart.CFrame:ToEulerAnglesXYZ())
 
-	local Distance = 50
-	if raycast then
-		Distance = raycast.Distance
-		AlignPosition.Position = (RootPart.CFrame * CFrame.new(0, 0, -raycast.Distance)).Position
-	else
-		AlignPosition.Position = (RootPart.CFrame * CFrame.new(0, 0, -Distance)).Position
-	end
-
 	local StartCFrame = Humanoid.RootPart.CFrame
 	AlignOrientation.Parent = Humanoid.RootPart
-	AlignPosition.Parent = RootPart
-	Debris:AddItem(AlignPosition, 3)
+
 	Debris:AddItem(AlignOrientation, 3)
 
 	local HitboxSize = Vector3.new(5, 5, Distance)
-	local HitboxCFrame = StartCFrame * CFrame.new(0, 0, -Distance/2)
+	local HitboxCFrame = StartCFrame * CFrame.new(0, 0, -Distance / 2)
 
 	local Enemies = {}
 	HitboxService:CreateFixedHitbox(HitboxCFrame, HitboxSize, 1, function(Enemy)
-		table.insert(Enemies, Enemy)
-
+		if Enemy == Humanoid.Parent then
+			return
+		end
 		task.spawn(function()
+			Humanoid:SetAttribute("HitboxStart", true)
 			if DamageService:GetHitContext(Enemy.Humanoid) == "Hit" then
 				WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 3)
+				table.insert(Enemies, Enemy)
+			else
+				WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 1.5)
 			end
+
 			for _ = 1, 10, 1 do
 				DamageService:TryHit(Humanoid, Enemy.Humanoid, 4, "Sword")
 				task.wait(0.1)
@@ -85,19 +107,20 @@ function FlashStrike.Attack(Humanoid: Humanoid)
 	end)
 
 	task.wait(0.35)
+	Humanoid:SetAttribute("HitboxStart", false)
 	if #Enemies == 0 then
-		AlignPosition:Destroy()
 		AlignOrientation:Destroy()
 
 		Humanoid.RootPart.AssemblyLinearVelocity = Vector3.zero
 		DebounceService:RemoveDebounce(Humanoid, "UsingSkill")
 		FlashStrike.Cancel(Humanoid)
 		SkillService:SetSkillState(Humanoid, "FlashStrike", nil)
+	else
+		WeaponService:Stun(Character, Character:GetPivot().Position, 1.85)
 	end
 
 	task.wait(1.85)
 	for _, Enemy in Enemies do
-		print(Enemy)
 		DamageService:Hit(Enemy.Humanoid, Humanoid, 20, "Sword")
 	end
 
@@ -109,8 +132,7 @@ function FlashStrike.Cancel(Humanoid)
 	RenderService:RenderForPlayers(CancelRenderData)
 end
 
-
-function FlashStrike.Caller(Humanoid: Humanoid, Data: {any})
+function FlashStrike.Caller(Humanoid: Humanoid, Data: { any })
 	if Validate:CanAttack(Humanoid) and not DebounceService:HaveDebounce(Humanoid, "FlashStrike") then
 		FlashStrike.Charge(Humanoid, Data)
 	end

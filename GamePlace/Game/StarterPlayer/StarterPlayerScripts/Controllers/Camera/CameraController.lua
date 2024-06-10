@@ -81,6 +81,10 @@ end
 
 local isLocked = false
 
+function CameraModule:IsLocked()
+	return isLocked == true
+end
+
 Humanoid.Died:Connect(function()
 	CameraModule:DisableCamera()
 

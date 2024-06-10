@@ -29,7 +29,7 @@ function DamageService:Hit(HumanoidHitted: Humanoid, Humanoid: Humanoid, Damage:
 	task.delay(1, function()
 		if not DebounceService:HaveDebounce(HumanoidHitted, "Hit") then
 			CharacterService:UpdateWalkSpeedAndJumpPower(HumanoidHitted)
-		end 
+		end
 	end)
 
 	PostureService:RemovePostureDamage(Humanoid, Damage / 2.5)
@@ -50,7 +50,7 @@ end
 function DamageService:BlockHit(HumanoidHitted: Humanoid, Humanoid: Humanoid, BlockPostureDamage: number)
 	HumanoidHitted:SetAttribute("HitCounter", 0)
 
-	DebounceService:AddDebounce(Humanoid, "Blocked", 0.35, true)
+	-- DebounceService:AddDebounce(Humanoid, "Blocked", 0.35, true)
 	PostureService:AddPostureDamage(HumanoidHitted, BlockPostureDamage)
 
 	local blockEffectRenderData = RenderService:CreateRenderData(HumanoidHitted, "HitEffects", "Blocked")
@@ -65,7 +65,7 @@ function DamageService:DeflectHit(HumanoidHitted: Humanoid, Humanoid: Humanoid, 
 	Humanoid:SetAttribute("Deflected", true)
 	PostureService:AddPostureDamage(Humanoid, DeflectPostureDamage, true)
 	DebounceService:RemoveDebounce(HumanoidHitted, "Hit")
-	DebounceService:RemoveDebounce(HumanoidHitted, "Blocked")
+	-- DebounceService:RemoveDebounce(HumanoidHitted, "Blocked")
 	Humanoid:SetAttribute("ComboCounter", 1)
 	HumanoidHitted:SetAttribute("BlockEndLag", false)
 
@@ -86,7 +86,7 @@ function DamageService:TryHit(Humanoid: Humanoid, HumanoidHitted: Humanoid, _Dam
 	if HumanoidHitted == nil then
 		return
 	end
-	
+
 	CharacterService:UpdateWalkSpeedAndJumpPower(HumanoidHitted)
 
 	if _Damage == nil then

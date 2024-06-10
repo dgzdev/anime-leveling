@@ -5,90 +5,76 @@ local EquipService = knit.CreateService({
 	Client = {},
 })
 
-function EquipService:FindEquiped(player: Player)
-	local character = player.Character
-	if not character then
+function EquipService:GetEquippedTool(Character: Model)
+	return Character:FindFirstChildWhichIsA("Tool")
+end
+
+function EquipService:EquipItem(Player: Player)
+	local Character
+	if Player:IsA("Player") then
+		Character = Player.Character
+	elseif Player:IsA("Model") then
+		Character = Player
+	else
+		return error("Invalid argument #1 to 'EquipItem' (Player expected, got " .. typeof(Player) .. ")")
+	end
+
+	local Tool = self:GetEquippedTool(Character)
+	if not Tool then
 		return
 	end
 
-	for _, tool in ipairs(character:GetChildren()) do
-		if tool:IsA("Tool") and tool:GetAttribute("Equiped") then
-			return tool
+	if Tool:FindFirstChild("ToolGrip", true) then
+		Tool:FindFirstChild("ToolGrip", true):Destroy()
+	end
+
+	local exclude = { "RightHand", "LeftHand", "RootPart", "HumanoidRootPart", "Root" }
+
+	for _, obj: BasePart in Character:GetDescendants() do
+		if obj:IsA("BasePart") and not table.find(exclude, obj.Name) then
+			obj.Transparency = 0
 		end
 	end
 
-	for _, tool in ipairs(player.Backpack:GetChildren()) do
-		if tool:IsA("Tool") and tool:GetAttribute("Equiped") then
-			return tool
-		end
-	end
-end
+	for _, m6: Motor6D in Tool:GetDescendants() do
+		if m6:IsA("Motor6D") then
+			m6.Part0 = Character:FindFirstChild(m6.Name, true)
+			m6.Part1 = m6.Parent
 
-function EquipService:EquipItem(player: Player, tool: Tool)
-	--> tentar equipar um item
-	local equiped = self:FindEquiped(player)
+			if not m6:GetAttribute("NoGrip") then
+				m6.C0 = Tool.Grip
+			end
 
-	if not tool:GetAttribute("Equiped") then
-		tool:SetAttribute("Equiped", true)
-		tool.Parent = player.Character
-		tool.Name = tool:GetAttribute("Type")
-		tool.Grip = tool:GetAttribute("Grip")
-
-		if equiped then
-			equiped:SetAttribute("Equiped", nil)
-			equiped.Parent = player.Backpack
-			equiped.Grip = CFrame.new(
-				0.725000024,
-				0.00200000009,
-				-0.354000002,
-				-0.00830843206,
-				0.976898074,
-				-0.213543966,
-				-0.999151468,
-				-0.0167251024,
-				-0.0376378633,
-				-0.040339902,
-				0.213050067,
-				0.97620815
-			)
-			equiped.Name = equiped:GetAttribute("Name")
-		end
-	end
-end
-
-function EquipService:UnequipItem() end
-
-function EquipService:HoldItem(player: Player, tool: Tool)
-	for _, v in player.Character:GetDescendants() do
-		if v:IsA("Tool") and v.Name ~= tool.Name and v.Name ~= "Weapon" then
-			v.Parent = player.Backpack
-
-			if v:FindFirstChildWhichIsA("Motor6D") then
-				v:FindFirstChildWhichIsA("Motor6D"):Destroy()
+			if m6:GetAttribute("Hide") then
+				for _, obj in Character:GetDescendants() do
+					if obj:IsA("BasePart") and not table.find(exclude, obj.Name) then
+						if obj.Name == m6.Name then
+							obj.Transparency = 1
+						end
+					end
+				end
 			end
 		end
 	end
+end
 
-	tool.Parent = player.Character
-	tool.Enabled = true
-
-	local handle = tool:FindFirstChild("Handle", true)
-	if not handle then
-		return
+function EquipService:UnequipItem(Player)
+	local Character
+	if Player:IsA("Player") then
+		Character = Player.Character
+	elseif Player:IsA("Model") then
+		Character = Player
+	else
+		return error("Invalid argument #1 to 'EquipItem' (Player expected, got " .. typeof(Player) .. ")")
 	end
 
-	local M6 = Instance.new("Motor6D", handle)
-	local I = handle:GetAttribute("Instance") or "RightHand"
-	local Instance = player.Character:FindFirstChild(I, true)
+	local exclude = { "RightHand", "LeftHand", "RootPart", "HumanoidRootPart", "Root" }
 
-	if not Instance then
-		return
+	for _, obj: BasePart in Character:GetDescendants() do
+		if obj:IsA("BasePart") and not table.find(exclude, obj.Name) then
+			obj.Transparency = 0
+		end
 	end
-
-	M6.Part0 = Instance
-	M6.Part1 = handle
-
-	M6.C0 = tool.Grip
 end
 
 return EquipService

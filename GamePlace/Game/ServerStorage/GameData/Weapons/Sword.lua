@@ -40,4 +40,24 @@ return {
 		Rarity = "S",
 		SubRarity = "I", -- "II" | "III" | "IV" | "V"
 	},
+	OrcBroadsword = {
+		Name = "OrcBroadsword",
+		DisplayName = "Orc Broadsword",
+
+		Class = "Weapon",
+		Type = "Sword",
+		Damage = 40,
+		Rarity = "A",
+		SubRarity = "I", -- "II" | "III" | "IV" | "V"
+	},
+	CrimsonBroadsword = {
+		Name = "CrimsonBroadsword",
+		DisplayName = "Crimson Broadsword",
+
+		Class = "Weapon",
+		Type = "Sword",
+		Damage = 60,
+		Rarity = "S",
+		SubRarity = "I", -- "II" | "III" | "IV" | "V"
+	},
 }

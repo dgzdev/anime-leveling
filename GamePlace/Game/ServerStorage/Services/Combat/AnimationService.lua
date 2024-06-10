@@ -8,7 +8,6 @@ local AnimationsFolder = game.ReplicatedStorage.Animations
 
 function AnimationService:StopAllAnimations(Humanoid: Humanoid, transition: number?, ignore: string?)
 	local Animator: Animator = Humanoid:WaitForChild("Animator")
-	print(Animator:GetPlayingAnimationTracks())
 	for _, anim in Animator:GetPlayingAnimationTracks() do
 		if anim.Name == ignore or anim.Name == "LocalAnimation" then
 			continue

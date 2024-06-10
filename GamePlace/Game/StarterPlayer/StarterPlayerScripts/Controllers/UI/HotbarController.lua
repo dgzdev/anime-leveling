@@ -58,6 +58,11 @@ function HotbarController:BindButton(Template: TextButton)
 	local duration = 0
 
 	Template.MouseButton1Down:Connect(function()
+		local inventoryHud: ScreenGui = Player.PlayerGui.Inventory.Inventory
+		if not inventoryHud.Enabled then
+			return
+		end
+
 		isHolding = true
 
 		local Clone = Template
@@ -150,7 +155,15 @@ function HotbarController:BindButton(Template: TextButton)
 
 			Clone.Parent = Draggable
 			Clone.AnchorPoint = Vector2.new(0.5, 0.5)
-			Clone.Size = UDim2.fromOffset(75, 75)
+
+			local ScreenPixelX = 1920
+			local ScreenPixelY = 1080
+
+			local screenX, screenY = workspace.CurrentCamera.ViewportSize.X, workspace.CurrentCamera.ViewportSize.Y
+			local resizeX = screenX / ScreenPixelX
+			local resizeY = screenY / ScreenPixelY
+
+			Clone.Size = UDim2.fromOffset(75 * resizeX, 75 * resizeY)
 		end)
 
 		task.spawn(function()

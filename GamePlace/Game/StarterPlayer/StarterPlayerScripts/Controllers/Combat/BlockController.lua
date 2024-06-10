@@ -11,6 +11,7 @@ local ContextActionService = game:GetService("ContextActionService")
 local Binded = false
 local Validate = require(game.ReplicatedStorage.Validate)
 local Player = game.Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
 
 function BlockController:BindBlock()
 	ContextActionService:BindAction("Block", function(_, inputState)
@@ -19,9 +20,15 @@ function BlockController:BindBlock()
 
 		if inputState == Enum.UserInputState.Begin then
 			if not Validate:CanBlock(Humanoid) then
+				repeat
+					task.wait()
+				until Validate:CanBlock(Humanoid) or not UserInputService:IsKeyDown(Enum.KeyCode.F)
+			end
+
+			if not UserInputService:IsKeyDown(Enum.KeyCode.F) then
 				return
 			end
-			print("Block")
+
 			WeaponService:Block(true)
 		elseif inputState == Enum.UserInputState.End then
 			WeaponService:Block(false)

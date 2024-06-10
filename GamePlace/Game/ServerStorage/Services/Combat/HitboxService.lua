@@ -64,6 +64,16 @@ function HitboxService.Client:GetCharactersInBoxArea(player, cframe, size, Param
 	return self.Server:GetCharactersInBoxArea(cframe, size, Params)
 end
 
+local function CheckCharacters(char1, char2)
+	if char1 == char2 then
+		return false
+	end
+	if char1.Name == char2.Name then
+		return false
+	end
+	return true
+end
+
 function HitboxService:CreateStun(target: Model, time: number, callback: () -> nil)
 	local Pr = target.PrimaryPart
 	local Stun = Instance.new("LinearVelocity")
@@ -142,10 +152,10 @@ function HitboxService:CreateHitboxFromModel(
 		for i = 0, CheckTicks or 16, 1 do
 			local Hitbox = HitboxService:GetCharactersInBoxArea(model:GetPivot(), size, Params)
 			for i, char in Hitbox do
-				if char == Character then
+				if table.find(Hitted, char) then
 					continue
 				end
-				if table.find(Hitted, char) then
+				if not CheckCharacters(char, Character) then
 					continue
 				end
 				table.insert(Hitted, char)
@@ -185,14 +195,14 @@ function HitboxService:CreateHitbox(
 				HitboxSize,
 				Params
 			)
-
 			for i, char in Hitbox do
-				if char == Character then
-					continue
-				end
 				if table.find(Hitted, char) then
 					continue
 				end
+				if not CheckCharacters(char, Character) then
+					continue
+				end
+
 				table.insert(Hitted, char)
 
 				task.spawn(callback, char)
@@ -262,7 +272,7 @@ function HitboxService:CreatePartHitbox(
 	for i = 0, Ticks, 1 do
 		local CharactersInside = HitboxService:GetCharactersInPart(Hitbox, Params)
 		for _, char in CharactersInside do
-			if char == Character then
+			if not CheckCharacters(char, Character) then
 				continue
 			end
 			if table.find(Hitted, char) then
