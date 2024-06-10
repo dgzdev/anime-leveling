@@ -22,11 +22,14 @@ function FlashStrike.Charge(Humanoid: Humanoid, Data: { any })
 	RenderService:RenderForPlayers(ChargeRenderData)
 
 	DebounceService:AddDebounce(Humanoid, "UsingSkill", 2.7)
-
+	Humanoid.RootPart:FindFirstChildWhichIsA("AlignOrientation").Enabled = false
 	local Animation: AnimationTrack = Humanoid.Animator:LoadAnimation(game.ReplicatedStorage.Animations.Skills.FlashStrike.FlashStrikeAttack)
 	Animation.Priority = Enum.AnimationPriority.Action
 	Animation:Play()
 
+	task.delay(Animation.Length, function()
+		Humanoid.RootPart:FindFirstChildWhichIsA("AlignOrientation").Enabled = true
+	end)
 	task.wait(0.5)
 	FlashStrike.Attack(Humanoid, Data)
 end
@@ -89,8 +92,7 @@ function FlashStrike.Attack(Humanoid: Humanoid)
 
 	local StartCFrame = Humanoid.RootPart.CFrame
 	AlignOrientation.Parent = Humanoid.RootPart
-
-	Debris:AddItem(AlignOrientation, 3)
+	Debris:AddItem(AlignOrientation, 1.4)
 
 	local HitboxSize = Vector3.new(5, 5, Distance)
 	local HitboxCFrame = StartCFrame * CFrame.new(0, 0, -Distance / 2)
@@ -119,7 +121,7 @@ function FlashStrike.Attack(Humanoid: Humanoid)
 	task.wait(0.35)
 	Humanoid:SetAttribute("HitboxStart", false)
 	if #Enemies == 0 then
-		AlignOrientation:Destroy()
+		--AlignOrientation:Destroy()
 
 		Humanoid.RootPart.AssemblyLinearVelocity = Vector3.zero
 		DebounceService:RemoveDebounce(Humanoid, "UsingSkill")

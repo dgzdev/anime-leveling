@@ -4,9 +4,11 @@ local Path = {}
 Path.Combos = {}
 Path.InPath = false
 Path.AttackDebounce = false
+Path.AlignOriDb = false
 Path.MoveDebounce = false
 Path.LastContactTick = tick()
 Path.Combos.CurrentMelee = 1
+Path.CanLeaveCombat = true
 Path.HitCount = 0
 Path.PlayComboAnim = true
 Path.LoadedAnims = false
@@ -25,7 +27,7 @@ local SkillService
 local AnimationsFolder = ReplicatedStorage:WaitForChild("Animations")
 
 Path.AnimationsTable = nil
-
+---
 local Op: OverlapParams = nil
 local Target: BasePart = nil
 local TargetConnections = {}
@@ -83,8 +85,8 @@ function Path.StartFollowing(from: Humanoid, target: BasePart)
 				return
 			end
 
-			local parryChance = 30 / 100
-			local blockChance = 45 / 100
+			local parryChance = 100 / 100
+			local blockChance = 0 / 100
 			local randomNumber = math.random(0, 100) / 100
 
 			local isParry = randomNumber <= parryChance
@@ -123,7 +125,6 @@ do
 
 		task.synchronize() --> roda em serial
 
-		Align.LookAtPosition = Target.Position
 		Path.InPath = true
 
 		task.spawn(function()
@@ -131,10 +132,18 @@ do
 				return
 			end
 			-- print(Target)
+			if math.abs(From.RootPart.Position.Y - Target.Position.Y) > 1 and not Path.AlignOriDb and not From.RootPart.Anchored then
+				From.RootPart:FindFirstChild("LookPlayer").Enabled = false
+			else
+				From.RootPart:FindFirstChild("LookPlayer").Enabled = true
+				Align.LookAtPosition = Target.Position
+			end 
+
 			if
-				Target and (From.RootPart.Position - Target.Position).Magnitude > 50
+				Target and Path.CanLeaveCombat and (From.RootPart.Position - Target.Position).Magnitude > 80
 				or Target.Parent.Humanoid.Health <= 0
 			then
+				print((From.RootPart.Position - Target.Position).Magnitude)
 				Path.LeaveFollowing()
 				Path.InPath = false
 				return
@@ -150,7 +159,11 @@ do
 					if not isFlashStrike then
 						WeaponService:WeaponInput(From.Parent, "Attack")
 					else
+						Path.AlignOriDb = true
 						SkillService:UseSkill(From, "FlashStrike")
+						task.delay(5, function()
+							Path.AlignOriDb = false
+						end)
 					end
 				end
 			end)

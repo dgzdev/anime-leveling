@@ -52,6 +52,7 @@ function AI.Start()
 			Finder.Start(Path)
 
 			local AlignOrientation = Instance.new("AlignOrientation", Humanoid.RootPart)
+			AlignOrientation.Name = "LookPlayer"
 			AlignOrientation.AlignType = Enum.AlignType.PrimaryAxisLookAt
 			AlignOrientation.Mode = Enum.OrientationAlignmentMode.OneAttachment
 			AlignOrientation.Attachment0 = Humanoid.RootPart:FindFirstChild("Align", true)
@@ -67,6 +68,7 @@ function AI.Start()
 					task.desynchronize()
 					return
 				end
+				
 
 				local closest = Finder.GetClosestHumanoid(Humanoid, true, 15)
 				if not closest then
@@ -77,9 +79,8 @@ function AI.Start()
 
 				local isOnLook = Finder.IsOnDot(Humanoid, closest)
 
-				if isOnLook and (Humanoid.RootPart.Position - closest.RootPart.Position).Magnitude < 20 and Path.LastContactTick - tick() < 5 then
+				if isOnLook and (Humanoid.RootPart.Position - closest.RootPart.Position).Magnitude < 20 then
 					Path.StartFollowing(Humanoid, closest.RootPart)
-					Path.LastContactTick = tick()
 				else
 					Path.LeaveFollowing()
 				end
