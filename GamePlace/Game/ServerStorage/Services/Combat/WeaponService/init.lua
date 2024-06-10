@@ -42,7 +42,7 @@ function WeaponService:Stun(Character: Model, Position: Vector3, Duration: numbe
 	AlignPosition.Mode = Enum.PositionAlignmentMode.OneAttachment
 	AlignPosition.MaxVelocity = math.huge
 	AlignPosition.MaxForce = math.huge
-	AlignPosition.Name = "FlashStrikeAlignPosition"
+	AlignPosition.Name = "StunAlignPosition"
 	AlignPosition.Responsiveness = 10
 	-- AlignPosition.RigidityEnabled = true
 	AlignPosition.Position = Position
@@ -81,7 +81,7 @@ function WeaponService:Block(Character: Model, state: boolean, cantParry: boolea
 	else
 		repeat
 			task.wait()
-		until Humanoid:GetAttribute("BlockEndLag") == false and Humanoid:GetAttribute("DeflectTime") == false
+		until not Humanoid:GetAttribute("BlockEndLag") and not Humanoid:GetAttribute("DeflectTime") 
 
 		AnimationService:StopAnimationMatch(Humanoid, "Block")
 		Humanoid:SetAttribute("BlockReleaseTick", tick())

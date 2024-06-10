@@ -72,7 +72,6 @@ function Path.StartFollowing(from: Humanoid, target: BasePart)
 	end
 
 	Align = AlignOrientation
-	Op = OverlapParams.new()
 	Target = target
 	table.insert(
 		TargetConnections,
@@ -139,18 +138,20 @@ do
 				return
 			end
 
-			if Target.Parent.Humanoid.Health > 0 and (From.RootPart.Position - Target.Position).Magnitude < 4 then
-				local randomNumber = math.random(0, 100) / 100
-				local flashStrikeChance = 20 / 100
-
-				local isFlashStrike = randomNumber <= flashStrikeChance
-
-				if not isFlashStrike then
-					WeaponService:WeaponInput(From.Parent, "Attack")
-				else
-					SkillService:UseSkill(From, "FlashStrike")
+			task.spawn(function()
+				if Target.Parent.Humanoid.Health > 0 and (From.RootPart.Position - Target.Position).Magnitude < 6 then
+					local randomNumber = math.random(0, 100) / 100
+					local flashStrikeChance = 20 / 100
+	
+					local isFlashStrike = randomNumber <= flashStrikeChance
+	
+					if not isFlashStrike then
+						WeaponService:WeaponInput(From.Parent, "Attack")
+					else
+						SkillService:UseSkill(From, "FlashStrike")
+					end
 				end
-			end
+			end)
 
 			local p = PathfindingService:CreatePath()
 			p:ComputeAsync(From.RootPart.Position, Target.Position)
