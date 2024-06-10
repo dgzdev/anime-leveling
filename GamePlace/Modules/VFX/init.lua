@@ -145,7 +145,13 @@ function VFX:CreateParticle(position: CFrame, action: string, time: number?)
 	particle.Parent = Workspace.VFXs
 	particle.CFrame = position
 	particle.Transparency = 1
-	particle.Massless = true
+	for _, part in ipairs(particle:GetDescendants()) do
+		if part:IsA("BasePart") then
+			part.Massless = true
+			part.CanCollide = false
+		end
+	end
+	-- particle.Massless = true
 	particle.CanCollide = false
 	particle.Anchored = true
 

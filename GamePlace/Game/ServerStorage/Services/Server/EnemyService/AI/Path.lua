@@ -4,6 +4,8 @@ local Path = {}
 Path.Combos = {}
 Path.InPath = false
 Path.AttackDebounce = false
+Path.MoveDebounce = false
+Path.LastContactTick = tick()
 Path.Combos.CurrentMelee = 1
 Path.HitCount = 0
 Path.PlayComboAnim = true
@@ -128,7 +130,7 @@ do
 			if not From then
 				return
 			end
-
+			-- print(Target)
 			if
 				Target and (From.RootPart.Position - Target.Position).Magnitude > 50
 				or Target.Parent.Humanoid.Health <= 0

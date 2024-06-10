@@ -36,6 +36,25 @@ function Validate:CanAttack(Humanoid: Humanoid)
 
 	return check(Humanoid, cant) and Humanoid:GetAttribute("WeaponEquipped")
 end
+
+function Validate:CanUseSkill(Humanoid: Humanoid)
+	local cant = {
+		"Slide",
+		"Roll",
+		"StrongAttack",
+		"Hit",
+		"PostureBreak",
+		"UsingSkill",
+		"Block",
+		"Blocked",
+		"AttackCombo",
+		"Deflected",
+		"Ragdoll",
+	}
+
+	return check(Humanoid, cant) and Humanoid:GetAttribute("WeaponEquipped")
+end
+
 function Validate:CanRoll(Humanoid: Humanoid)
 	local cant = {
 		"Slide",

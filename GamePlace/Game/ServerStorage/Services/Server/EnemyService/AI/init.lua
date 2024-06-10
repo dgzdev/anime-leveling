@@ -77,8 +77,9 @@ function AI.Start()
 
 				local isOnLook = Finder.IsOnDot(Humanoid, closest)
 
-				if isOnLook and (Humanoid.RootPart.Position - closest.RootPart.Position).Magnitude < 20 then
+				if isOnLook and (Humanoid.RootPart.Position - closest.RootPart.Position).Magnitude < 20 and Path.LastContactTick - tick() < 5 then
 					Path.StartFollowing(Humanoid, closest.RootPart)
+					Path.LastContactTick = tick()
 				else
 					Path.LeaveFollowing()
 				end

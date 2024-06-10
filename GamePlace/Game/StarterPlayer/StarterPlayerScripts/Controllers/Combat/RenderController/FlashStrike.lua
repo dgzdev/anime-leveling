@@ -8,22 +8,24 @@ local ShakerController
 
 function FlashStrike.Charge(RenderData)
 	local casterHumanoid = RenderData.casterHumanoid
-	local casterRoot: BasePart = casterHumanoid.RootPart
 
-	local Animation: AnimationTrack = casterHumanoid.Animator:LoadAnimation(game.ReplicatedStorage.Animations.Skills.FlashStrike.FlashStrikeAttack)
-	Animation.Priority = Enum.AnimationPriority.Action
-	Animation:Play()
+	RenderController:ExecuteForHumanoid(casterHumanoid, function()
+		local Animation: AnimationTrack = RenderController:GetPlayingAnimationTrack(casterHumanoid, "FlashStrike")
+		if not Animation then
+			return
+		end
 
-	local connection
-	connection = Animation:GetMarkerReachedSignal("attack"):Once(function()
-		ShakerController:Shake(ShakerController.Presets.Bump)
+		local connection
+		connection = Animation:GetMarkerReachedSignal("attack"):Once(function()
+			ShakerController:Shake(ShakerController.Presets.Bump)
+		end)
+	
+		Animation.Ended:Once(function()
+			connection:Disconnect()
+		end)
+
+		ShakerController:Shake(ShakerController.Presets.Bump2)
 	end)
-
-	Animation.Ended:Once(function()
-		connection:Disconnect()
-	end)
-
-	ShakerController:Shake(ShakerController.Presets.Bump2)
 end
 
 function FlashStrike.Attack(RenderData)
@@ -32,8 +34,7 @@ function FlashStrike.Attack(RenderData)
 end
 
 function FlashStrike.Cancel(RenderData)
-	local casterHumanoid = RenderData.casterHumanoid
-	RenderController:StopPlayingMatchAnimation(casterHumanoid, "FlashStrikeAttack", 0.45)
+
 end
 
 function FlashStrike.Start()

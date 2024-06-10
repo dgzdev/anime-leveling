@@ -17,7 +17,6 @@ local SkillService = Knit.CreateService({
 
 local Skills = {}
 local SkillDatas = {}
-local SkillThreads = {}
 
 local WeaponService
 local RenderService
@@ -27,9 +26,8 @@ function SkillService:UseSkill(Humanoid: Humanoid, SkillName: string, Data: {})
 		return
 	end
 
-	SkillThreads[Humanoid] = task.spawn(function()
-		Skills[SkillName].Caller(Humanoid, Data)
-	end)
+
+	Skills[SkillName].Caller(Humanoid, Data)
 end
 function SkillService.Client:UseSkill(Player: Player, skillName: string, Data: {})
 	local Character = Player.Character 
@@ -75,10 +73,6 @@ function SkillService:TryCancelSkillsStates(Humanoid: Humanoid)
 	for skillName, state in SkillDatas do
 		if state == "Charge" then
 			SkillService:SetSkillState(Humanoid, skillName, nil)
-			if SkillThreads[Humanoid] then
-				task.cancel(SkillThreads[Humanoid])
-			end
-
 
 			if Skills[skillName].Cancel then
 				Skills[skillName].Cancel(Humanoid)

@@ -65,7 +65,8 @@ function WeaponService:Block(Character: Model, state: boolean, cantParry: boolea
 
 		local Animations = AnimationService:GetWeaponAnimationFolder(Humanoid)
 		local BlockAnimation = Humanoid.Animator:LoadAnimation(Animations.Block)
-		AnimationService:StopAllAnimations(Humanoid)
+
+		AnimationService:StopM1Animation(Humanoid)
 		BlockAnimation:Play()
 
 		Humanoid:SetAttribute("BlockEndLag", true)

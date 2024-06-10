@@ -7,6 +7,7 @@ local SkillService
 local DebounceService
 local DamageService
 local WeaponService
+local AnimationService
 
 local Validate = require(game.ReplicatedStorage.Validate)
 
@@ -21,6 +22,10 @@ function FlashStrike.Charge(Humanoid: Humanoid, Data: { any })
 	RenderService:RenderForPlayers(ChargeRenderData)
 
 	DebounceService:AddDebounce(Humanoid, "UsingSkill", 2.7)
+
+	local Animation: AnimationTrack = Humanoid.Animator:LoadAnimation(game.ReplicatedStorage.Animations.Skills.FlashStrike.FlashStrikeAttack)
+	Animation.Priority = Enum.AnimationPriority.Action
+	Animation:Play()
 
 	task.wait(0.5)
 	FlashStrike.Attack(Humanoid, Data)
@@ -40,6 +45,11 @@ function GetModelMass(model: Model): number
 end
 
 function FlashStrike.Attack(Humanoid: Humanoid)
+	local state = SkillService:GetSkillState(Humanoid, "FlashStrike") 
+	if state == nil or state == "Cancel" then
+		return
+	end
+
 	local Character = Humanoid.Parent
 	local AttackRenderData = RenderService:CreateRenderData(Humanoid, "FlashStrike", "Attack")
 	RenderService:RenderForPlayers(AttackRenderData)
@@ -129,18 +139,21 @@ function FlashStrike.Attack(Humanoid: Humanoid)
 end
 
 function FlashStrike.Cancel(Humanoid)
+	print("cancelled")
 	DebounceService:RemoveDebounce(Humanoid, "UsingSkill")
+	AnimationService:StopAnimationMatch(Humanoid, "FlashStrikeAttack", 0.45)
 	local CancelRenderData = RenderService:CreateRenderData(Humanoid, "FlashStrike", "Cancel")
 	RenderService:RenderForPlayers(CancelRenderData)
 end
 
 function FlashStrike.Caller(Humanoid: Humanoid, Data: { any })
-	if Validate:CanAttack(Humanoid) and not DebounceService:HaveDebounce(Humanoid, "FlashStrike") then
+	if Validate:CanUseSkill(Humanoid) and not DebounceService:HaveDebounce(Humanoid, "FlashStrike") then
 		FlashStrike.Charge(Humanoid, Data)
 	end
 end
 
 function FlashStrike.Start()
+	AnimationService = Knit.GetService("AnimationService")
 	WeaponService = Knit.GetService("WeaponService")
 	DebounceService = Knit.GetService("DebounceService")
 	SkillService = Knit.GetService("SkillService")

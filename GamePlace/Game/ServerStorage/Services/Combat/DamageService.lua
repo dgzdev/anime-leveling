@@ -21,10 +21,10 @@ end
 
 -- força um hit, ignorando o block
 function DamageService:Hit(HumanoidHitted: Humanoid, Humanoid: Humanoid, Damage: number, HitEffect: string?)
-	HumanoidHitted:SetAttribute("Running", false)
-	DebounceService:AddDebounce(HumanoidHitted, "Hit", 1, true)
-	DamageService:DealDamage(HumanoidHitted, Damage, Humanoid)
 	SkillService:TryCancelSkillsStates(HumanoidHitted)
+	DebounceService:AddDebounce(HumanoidHitted, "Hit", 1, true)
+	HumanoidHitted:SetAttribute("Running", false)
+	DamageService:DealDamage(HumanoidHitted, Damage, Humanoid)
 
 	task.delay(1, function()
 		if not DebounceService:HaveDebounce(HumanoidHitted, "Hit") then

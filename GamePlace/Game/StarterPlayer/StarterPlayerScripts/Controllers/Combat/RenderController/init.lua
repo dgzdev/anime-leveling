@@ -122,13 +122,21 @@ function RenderController:ClearInstances(module, casterHumanoid)
 	end)
 end
 
+function RenderController:GetPlayingAnimationTrack(Humanoid: Humanoid, animationName)
+	for i, v: AnimationTrack in Humanoid.Animator:GetPlayingAnimationTracks() do
+		if v.Name == animationName then
+			return v
+		end
+	end
+end
+
 function RenderController:ClearCacheOfHumanoid(module: string, casterHumanoid: Humanoid)
 	RenderController:ClearTasks(module, casterHumanoid)
 	RenderController:ClearConnections(module, casterHumanoid)
 	RenderController:ClearInstances(module, casterHumanoid)
 end
 
-function RenderController:StopPlayingMatchAnimation(Humanoid: Humanoid, AnimationName: string, transition: number?)
+function RenderController:StopAnimationMatch(Humanoid: Humanoid, AnimationName: string, transition: number?)
 	for i, v: AnimationTrack in ipairs(Humanoid.Animator:GetPlayingAnimationTracks()) do
 		if v.Name:match(AnimationName) then
 			v:AdjustSpeed(0)
