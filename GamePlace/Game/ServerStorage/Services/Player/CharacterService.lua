@@ -19,33 +19,30 @@ function CharacterService:CreatePlayerHealth(Player: Player)
 	Name.Text = Character.Name
 
 	local Health = PlayerHealth.Health.SizeFrame
-	Character.Humanoid.HealthChanged:Connect(function(health)
-		if not self.Humanoid then
-			return
-		end
 
-		local Scale = health / self.Humanoid.MaxHealth
+	local Humanoid: Humanoid = Character:WaitForChild("Humanoid")
+	Humanoid.HealthChanged:Connect(function(health)
+		local Scale = health / Humanoid.MaxHealth
 		local Color = Color3.fromRGB(2, 255, 150):Lerp(Color3.new(1, 0, 0), 1 - Scale)
 		local Tween = TweenService:Create(
 			Health,
 			TweenInfo.new(0.25, Enum.EasingStyle.Cubic),
 			{ Size = UDim2.fromScale(Scale, 1), BackgroundColor3 = Color }
 		)
-
 		Tween:Play()
 	end)
 end
 
 function CharacterService:BindAttackTick(Humanoid: Humanoid)
 	task.spawn(function()
-        while Humanoid:IsDescendantOf(workspace) do
-            repeat
-                task.wait(0.1)
-            until Humanoid:GetAttribute("LastAttackTick") + 2.5 <= tick()
-            Humanoid:SetAttribute("ComboCounter", 1)
-            Humanoid:GetAttributeChangedSignal("LastAttackTick"):Wait()
-        end
-    end)
+		while Humanoid:IsDescendantOf(workspace) do
+			repeat
+				task.wait(0.1)
+			until Humanoid:GetAttribute("LastAttackTick") + 2.5 <= tick()
+			Humanoid:SetAttribute("ComboCounter", 1)
+			Humanoid:GetAttributeChangedSignal("LastAttackTick"):Wait()
+		end
+	end)
 end
 
 function CharacterService:LoadCharacter(Player: Player)

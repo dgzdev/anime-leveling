@@ -65,6 +65,14 @@ local Default = {
 		local function Attack()
 			Humanoid:SetAttribute("HitboxStart", true)
 			HitboxService:CreatePartHitbox(Character, Vector3.new(4, 4, 4), 10, function(Enemy)
+				if Enemy:FindFirstChild("EnemyAI") then
+					if Enemy:FindFirstChild("EnemyAI"):FindFirstChild("AI"):FindFirstChild("Hitted") then
+						local HittedEvent = Enemy:FindFirstChild("EnemyAI")
+							:FindFirstChild("AI")
+							:FindFirstChild("Hitted") :: BindableEvent
+						HittedEvent:Fire(Humanoid)
+					end
+				end
 				if
 					Humanoid:GetAttribute("Hit")
 					or Humanoid:GetAttribute("Blocked")

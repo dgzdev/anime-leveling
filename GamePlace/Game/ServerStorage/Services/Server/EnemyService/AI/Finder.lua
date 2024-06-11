@@ -30,7 +30,7 @@ function Finder.GetClosestHumanoid(from: Humanoid, onlyPlayers: boolean, magnitu
 			if player.Character and player.Character:FindFirstChild("Humanoid") then
 				if closest then
 					if not closest:IsDescendantOf(workspace) then
-						closest=nil
+						closest = nil
 					end
 				end
 
@@ -59,7 +59,7 @@ function Finder.GetClosestHumanoid(from: Humanoid, onlyPlayers: boolean, magnitu
 					end
 				else
 					local distance1 = (closest.RootPart.Position - from.RootPart.Position).Magnitude
-					local distance2 = (Position.Position - from.RootPart.Position).Magnitude
+					local distance2 = (Position - from.RootPart.Position).Magnitude
 					if distance2 < distance1 and distance2 < magnitude then
 						closest = hum
 					end

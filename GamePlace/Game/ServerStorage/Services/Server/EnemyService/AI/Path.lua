@@ -49,6 +49,14 @@ local loop = function(thread: () -> any, ...)
 	end)
 end
 
+function Path.ChangeTarget(from, newTarget: Humanoid)
+	if not From then
+		return
+	end
+	Path.LeaveFollowing()
+	Path.StartFollowing(From, newTarget.RootPart)
+end
+
 function Path.LeaveFollowing()
 	task.synchronize()
 	for k, v in TargetConnections do
@@ -132,12 +140,16 @@ do
 				return
 			end
 			-- print(Target)
-			if math.abs(From.RootPart.Position.Y - Target.Position.Y) > 1 and not Path.AlignOriDb and not From.RootPart.Anchored then
+			if
+				math.abs(From.RootPart.Position.Y - Target.Position.Y) > 1
+				and not Path.AlignOriDb
+				and not From.RootPart.Anchored
+			then
 				From.RootPart:FindFirstChild("LookPlayer").Enabled = false
 			else
 				From.RootPart:FindFirstChild("LookPlayer").Enabled = true
 				Align.LookAtPosition = Target.Position
-			end 
+			end
 
 			if
 				Target and Path.CanLeaveCombat and (From.RootPart.Position - Target.Position).Magnitude > 80
@@ -153,9 +165,9 @@ do
 				if Target.Parent.Humanoid.Health > 0 and (From.RootPart.Position - Target.Position).Magnitude < 6 then
 					local randomNumber = math.random(0, 100) / 100
 					local flashStrikeChance = 20 / 100
-	
+
 					local isFlashStrike = randomNumber <= flashStrikeChance
-	
+
 					if not isFlashStrike then
 						WeaponService:WeaponInput(From.Parent, "Attack")
 					else
@@ -191,6 +203,20 @@ function Path.Start(Humanoid: Humanoid)
 	SkillService = Knit.GetService("SkillService")
 	WeaponService = Knit.GetService("WeaponService")
 	local Animator: Animator = Humanoid:WaitForChild("Animator")
+	local HittedEvent = script.Parent:WaitForChild("Hitted") :: BindableEvent
+	local Connection: RBXScriptSignal
+	Connection = HittedEvent.Event:Connect(function(target)
+		print("recebiakshdjahsdhasd")
+		print(target)
+		if not From then
+			From = script:FindFirstAncestorWhichIsA("Model"):FindFirstChildWhichIsA("Humanoid")
+		end
+		if target then
+			Path.ChangeTarget(From, target)
+		else
+			Path.StartFollowing(From, target.RootPart)
+		end
+	end)
 
 	local AnimationsFolder = game.ReplicatedStorage:WaitForChild("Animations")
 	Path.AnimationsTable = {

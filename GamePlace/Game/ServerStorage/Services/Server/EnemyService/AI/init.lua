@@ -23,6 +23,9 @@ function AI.Start()
 			local weaponName = NPC:GetAttribute("Weapon") or "Fists"
 
 			local Weapon: Tool = ToolsFolder:FindFirstChild(weaponName):Clone()
+
+			local HittedEvent = Instance.new("BindableEvent", script)
+			HittedEvent.Name = "Hitted"
 			Weapon:SetAttribute("Class", "Weapon")
 			Weapon.Parent = NPC
 
@@ -68,7 +71,6 @@ function AI.Start()
 					task.desynchronize()
 					return
 				end
-				
 
 				local closest = Finder.GetClosestHumanoid(Humanoid, true, 15)
 				if not closest then
