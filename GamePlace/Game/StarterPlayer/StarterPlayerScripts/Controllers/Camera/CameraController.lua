@@ -85,12 +85,24 @@ function CameraModule:IsLocked()
 	return isLocked == true
 end
 
-Humanoid.Died:Connect(function()
-	CameraModule:DisableCamera()
+local function BindHumanoid()
+	Humanoid.Died:Once(function()
+		CameraModule:DisableCamera()
+		workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+	end)
+end
 
-	Character = Player.CharacterAdded:Wait()
+BindHumanoid()
+
+Player.CharacterAdded:Connect(function(character)
+	workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+
+	Character = Player.Character or Player.CharacterAdded:Wait()
 	Humanoid = Character:WaitForChild("Humanoid")
 	RootPart = Character.PrimaryPart
+	Subject = workspace.CurrentCamera:WaitForChild("CameraSubject")
+
+	BindHumanoid()
 
 	CameraModule.CreateContext()
 end)

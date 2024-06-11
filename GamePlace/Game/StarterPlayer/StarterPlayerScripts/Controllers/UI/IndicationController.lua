@@ -52,6 +52,7 @@ function Indication.BindToAllNPCS()
 			local isDamage = damage < 0
 
 			local clone: BillboardGui = Source:Clone()
+			clone.MaxDistance = 60
 
 			if isHeal then
 				local OP = self.Me.MaxHealth / 100

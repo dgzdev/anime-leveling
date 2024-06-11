@@ -39,7 +39,7 @@ function CharacterService:BindAttackTick(Humanoid: Humanoid)
 			repeat
 				task.wait(0.1)
 			until Humanoid:GetAttribute("LastAttackTick") + 2.5 <= tick()
-			Humanoid:SetAttribute("ComboCounter", 1)
+			Humanoid:SetAttribute("ComboCounter", 0)
 			Humanoid:GetAttributeChangedSignal("LastAttackTick"):Wait()
 		end
 	end)
@@ -50,16 +50,24 @@ function CharacterService:LoadCharacter(Player: Player)
 		return
 	end
 
+	if Player.Character then
+		Player.Character:Destroy()
+	end
+
 	Player:LoadCharacter()
 	
 	local Data = PlayerService:GetData(Player)
 	local SlotData = PlayerService:GetSlot(Player)
 	local Character = Player.Character or Player.CharacterAdded:Wait()
 	local Humanoid = Character:WaitForChild("Humanoid")
+
 	repeat
-		Character.Parent = game.Workspace.Characters
+		if Character.Parent ~= nil then
+			Character.Parent = game.Workspace.Characters
+		end
 		task.wait()
 	until Character.Parent == game.Workspace.Characters
+
 	CharacterService:ApplyHumanoidDefaultAttributes(Humanoid)
 
 	Humanoid.MaxHealth = math.floor(math.sqrt(100 * (Data.Points.Endurance + 1)) * 10)
@@ -73,7 +81,7 @@ function CharacterService:LoadCharacter(Player: Player)
 	Character.ChildAdded:Connect(function(tool)
 		if tool:IsA("Tool") then
 			Humanoid:SetAttribute("WeaponEquipped", true)
-			Humanoid:SetAttribute("ComboCounter", 1)
+			Humanoid:SetAttribute("ComboCounter", 0)
 			Humanoid:SetAttribute("WeaponName", tool.Name)
 			Humanoid:SetAttribute("WeaponType", tool:GetAttribute("Type"))
 		end
@@ -94,7 +102,7 @@ end
 
 function CharacterService:ApplyHumanoidDefaultAttributes(Humanoid: Humanoid)
 	Humanoid:SetAttribute("WeaponEquipped", false)
-	Humanoid:SetAttribute("ComboCounter", 1)
+	Humanoid:SetAttribute("ComboCounter", 0)
 	Humanoid:SetAttribute("AttackDebounce", false)
 	Humanoid:SetAttribute("BlockReleaseTick", 0)
 	Humanoid:SetAttribute("LastAttackTick", 0)

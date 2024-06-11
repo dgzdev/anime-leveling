@@ -30,7 +30,7 @@ function SkillService:UseSkill(Humanoid: Humanoid, SkillName: string, Data: {})
 	Skills[SkillName].Caller(Humanoid, Data)
 end
 function SkillService.Client:UseSkill(Player: Player, skillName: string, Data: {})
-	local Character = Player.Character 
+	local Character = Player.Character
 	if not Character then
 		return
 	end
@@ -73,7 +73,6 @@ function SkillService:TryCancelSkillsStates(Humanoid: Humanoid)
 	for skillName, state in SkillDatas do
 		if state == "Charge" then
 			SkillService:SetSkillState(Humanoid, skillName, nil)
-
 			if Skills[skillName].Cancel then
 				Skills[skillName].Cancel(Humanoid)
 			else

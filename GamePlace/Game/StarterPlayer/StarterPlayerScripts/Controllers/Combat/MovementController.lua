@@ -21,6 +21,12 @@ local taps = 0
 local lastTap = tick()
 local keys = { Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D }
 
+		local Character = Player.Character or Player.CharacterAdded:Wait()
+		local LeftLeg = Character:WaitForChild("Left Leg")
+		local RightLeg = Character:WaitForChild("Right Leg")
+		local Humanoid = Character:WaitForChild("Humanoid")
+		local RootPart = Character:WaitForChild("HumanoidRootPart")
+
 local MovementModule = Knit.CreateController({
 	Name = "MovementController",
 
@@ -50,8 +56,7 @@ function UpdateRunWalkSpeed()
 end
 
 function MovementModule:ChangeCharacterState(state: CharacterState)
-	local Character = Player.Character or Player.CharacterAdded:Wait()
-	local Humanoid = Character:WaitForChild("Humanoid")
+
 
 	if self.CharacterProperties.CharacterState == state then
 		return
@@ -72,9 +77,6 @@ function MovementModule:ChangeCharacterState(state: CharacterState)
 end
 
 function MovementModule:BindAttribute()
-	local Character = Player.Character or Player.CharacterAdded:Wait()
-	local Humanoid = Character:WaitForChild("Humanoid")
-
 	-- Humanoid:GetAttributeChangedSignal("State"):Connect(function()
 	-- 	local value = Humanoid:GetAttribute("State")
 	-- 	if value then
@@ -101,8 +103,6 @@ function MovementModule:BindAttribute()
 end
 
 function MovementModule:CreateContextBinder(): string
-	local Character = Player.Character or Player.CharacterAdded:Wait()
-	local Humanoid = Character:WaitForChild("Humanoid")
 	UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
 		if gameProcessedEvent then
 			return
@@ -143,16 +143,7 @@ end
 export type CharacterState = "RUN" | "WALK"
 
 function MovementModule:CreateBinds()
-	local Character = Player.Character or Player.CharacterAdded:Wait()
-	local LeftLeg = Character:WaitForChild("Left Leg")
-	local RightLeg = Character:WaitForChild("Right Leg")
-	local Humanoid = Character:WaitForChild("Humanoid")
-
-	local function CharacterAdded()
-		Character = Player.Character or Player.CharacterAdded:Wait()
-		LeftLeg = Character:WaitForChild("Left Leg")
-		RightLeg = Character:WaitForChild("Right Leg")
-		Humanoid = Character:WaitForChild("Humanoid")
+	MovementModule:ChangeCharacterState("WALK")
 
 		local EF = ReplicatedStorage:WaitForChild("Models"):WaitForChild("ef")
 		local ef1 = EF:Clone()
@@ -185,7 +176,7 @@ function MovementModule:CreateBinds()
 		end)
 
 		UserInputService.JumpRequest:Connect(function()
-			if Humanoid.RootPart:FindFirstChildWhichIsA("AlignPosition") then
+			if RootPart:FindFirstChildWhichIsA("AlignPosition") then
 				Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
 			else
 				Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
@@ -198,23 +189,28 @@ function MovementModule:CreateBinds()
 				ef2.Enabled = false
 			end
 		end)
-	end
-
-	CharacterAdded()
-	Player.CharacterAdded:Connect(CharacterAdded)
 end
 
 function MovementModule:KnitInit()
 	ProgressionService = Knit.GetService("ProgressionService")
 	StatusController = Knit.GetController("StatusController")
-end
 
-function MovementModule:KnitStart()
 	coroutine.wrap(function()
 		MovementModule:CreateBinds()
 		MovementModule:CreateContextBinder()
 		MovementModule:BindAttribute()
 	end)()
+
+	Player.CharacterAdded:Connect(function(character)
+		Character = character
+		LeftLeg = Character:WaitForChild("Left Leg")
+		RightLeg = Character:WaitForChild("Right Leg")
+		Humanoid = Character:WaitForChild("Humanoid")
+
+		MovementModule:CreateBinds()
+		MovementModule:CreateContextBinder()
+		MovementModule:BindAttribute()
+	end)
 end
 
 return MovementModule

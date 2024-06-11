@@ -31,7 +31,7 @@ function PostureService:PostureBreak(Humanoid: Humanoid)
 	end)
 end
 
-function PostureService:AddPostureDamage(Humanoid: Humanoid, Amount: number, ByDeflect: boolean?)
+function PostureService:AddPostureDamage(Humanoid: Humanoid, HumanoidWhoHitted: Humanoid, Amount: number, ByDeflect: boolean?)
 	local ByDeflect = ByDeflect or false
 	local DamageClap = math.clamp(Amount, 0, Humanoid:GetAttribute("MaxPosture") - Humanoid:GetAttribute("Posture"))
 	Humanoid:SetAttribute("Posture", Humanoid:GetAttribute("Posture") + DamageClap)
@@ -41,6 +41,7 @@ function PostureService:AddPostureDamage(Humanoid: Humanoid, Amount: number, ByD
 			Humanoid:GetAttribute("Posture") >= Humanoid:GetAttribute("MaxPosture")
 			and not Humanoid:GetAttribute("PostureBreak")
 		then
+			HumanoidWhoHitted:SetAttribute("ComboCounter", 0)
 			PostureService:PostureBreak(Humanoid)
 		end
 	end
