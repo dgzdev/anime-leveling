@@ -12,11 +12,11 @@ local RenderService
 local CharacterService
 
 function DamageService:DealDamage(HumanoidToDamage: Humanoid, Damage: number, Humanoid: Humanoid?)
-	if HumanoidToDamage.Health - 1 < 0 then
-		return
-	end
-	local DamageClamp = math.clamp(Damage, 0, HumanoidToDamage.Health - 1)
-	HumanoidToDamage:TakeDamage(DamageClamp)
+	--if HumanoidToDamage.Health - 1 < 0 then
+	--	return
+	--end
+	--local DamageClamp = math.clamp(Damage, 0, HumanoidToDamage.Health - 1)
+	HumanoidToDamage:TakeDamage(Damage)
 end
 
 -- força um hit, ignorando o block

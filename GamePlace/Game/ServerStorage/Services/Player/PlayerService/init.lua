@@ -20,6 +20,13 @@ local Managers: { [number]: typeof(PlayerManager) | nil } = {}
 -- ========================================
 -- Connections
 -- ========================================
+function PlayerService:Respawn(player: Player)
+	CharacterService:LoadCharacter(player)
+end
+
+function PlayerService.Client:Respawn(player: Player)
+	return self.Server:Respawn(player)
+end
 
 function PlayerService.OnPlayerJoin(player: Player)
 	task.spawn(function()
@@ -73,8 +80,6 @@ function PlayerService.OnPlayerJoin(player: Player)
 			ProgressionService:UpdateLocalStatus(player)
 		end
 	end
-
-
 end
 
 function PlayerService.OnPlayerLeave(player: Player)
@@ -138,14 +143,6 @@ end
 function PlayerService.Client:GetData(player: Player)
 	local data = self.Server:GetData(player)
 	return data
-end
-
-function PlayerService:Respawn(player: Player)
-	player:LoadCharacter()
-end
-
-function PlayerService.Client:Respawn(player: Player)
-	return self.Server:Respawn(player)
 end
 
 function PlayerService.Client:EquipWeapon(Player: Player, weaponId: NumberSequence)

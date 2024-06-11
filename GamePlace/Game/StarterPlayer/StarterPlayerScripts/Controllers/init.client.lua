@@ -33,7 +33,9 @@ for i, v in Controllers do
 	require(v)
 end
 
-Knit.Start({ ServicePromises = false }):catch(warn)
+Knit.Start({ ServicePromises = false }):andThen(function()
+	print("Knit client started")
+end)
 
 local SmartBone = require(game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("smartbone-2"))
 

@@ -5,7 +5,6 @@ if not (game:IsLoaded()) then
 	game.Loaded:Wait()
 end
 
-local spawn = task.spawn
 local Modules = {}
 
 StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, false)

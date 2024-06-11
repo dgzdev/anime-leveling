@@ -23,7 +23,8 @@ function FlashStrike.Charge(Humanoid: Humanoid, Data: { any })
 
 	DebounceService:AddDebounce(Humanoid, "UsingSkill", 2.7)
 	Humanoid.RootPart:FindFirstChildWhichIsA("AlignOrientation").Enabled = false
-	local Animation: AnimationTrack = Humanoid.Animator:LoadAnimation(game.ReplicatedStorage.Animations.Skills.FlashStrike.FlashStrikeAttack)
+	local Animation: AnimationTrack =
+		Humanoid.Animator:LoadAnimation(game.ReplicatedStorage.Animations.Skills.FlashStrike.FlashStrikeAttack)
 	Animation.Priority = Enum.AnimationPriority.Action
 	Animation:Play()
 
@@ -48,7 +49,7 @@ function GetModelMass(model: Model): number
 end
 
 function FlashStrike.Attack(Humanoid: Humanoid)
-	local state = SkillService:GetSkillState(Humanoid, "FlashStrike") 
+	local state = SkillService:GetSkillState(Humanoid, "FlashStrike")
 	if state == nil or state == "Cancel" then
 		return
 	end
@@ -103,7 +104,7 @@ function FlashStrike.Attack(Humanoid: Humanoid)
 			return
 		end
 		task.spawn(function()
-			Humanoid:SetAttribute("HitboxStart", true)
+			DebounceService:AddDebounce(Humanoid, "HitboxStart", 0.1)
 			if DamageService:GetHitContext(Enemy.Humanoid) == "Hit" then
 				WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 2.2)
 				table.insert(Enemies, Enemy)
@@ -119,7 +120,6 @@ function FlashStrike.Attack(Humanoid: Humanoid)
 	end)
 
 	task.wait(0.35)
-	Humanoid:SetAttribute("HitboxStart", false)
 	if #Enemies == 0 then
 		--AlignOrientation:Destroy()
 

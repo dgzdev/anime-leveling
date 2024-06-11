@@ -1,6 +1,10 @@
 local Validate = {}
 
 local function check(Humanoid: Humanoid, cant)
+	if Humanoid.RootPart ~= nil then
+		return false
+	end
+
 	if Humanoid.RootPart.Anchored then
 		return false
 	end

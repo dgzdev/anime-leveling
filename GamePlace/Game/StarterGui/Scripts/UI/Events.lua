@@ -15,6 +15,8 @@ local ProgressionService = Knit.GetService("ProgressionService")
 local SkillTreeService = Knit.GetService("SkillTreeService")
 local InventoryService = Knit.GetService("InventoryService")
 local MarketController = Knit.GetController("MarketController")
+local PlayerService = Knit.GetService("PlayerService")
+
 local Workspace = game:GetService("Workspace")
 
 local function LockMouse(boolean: boolean)
@@ -203,7 +205,6 @@ Events.Hover = {
 		end
 		SoundService:WaitForChild("SFX"):WaitForChild("UIHover"):Play()
 	end,
-
 	["MenuGui"] = function(Gui: GuiButton)
 		SoundService:WaitForChild("SFX"):WaitForChild("UIHover"):Play()
 		local UIScale = Gui:FindFirstChildWhichIsA("UIScale")

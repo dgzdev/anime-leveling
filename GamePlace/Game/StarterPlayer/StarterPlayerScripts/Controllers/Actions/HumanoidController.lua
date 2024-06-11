@@ -12,55 +12,88 @@ local HumanoidHandler = Knit.CreateController({
 	Name = "HumanoidHandler",
 })
 
-local Player = Players.LocalPlayer
-local Character
-local Humanoid
-local Animator: Animator
+-- local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 
-local VFX = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("VFX"))
+-- local DyingGui = PlayerGui:WaitForChild("DyingGui")
+-- local Background = DyingGui:WaitForChild("Background")
+-- local Respawn = Background:WaitForChild("Respawn")
 
-function HumanoidHandler:OnLand()
-	VFX:ApplyParticle(Character, "Fell", nil, Vector3.new(0, -2, 0), true)
-	local Animation = ReplicatedStorage:WaitForChild("Animations"):WaitForChild("Landed")
-	local AnimationTrack = Animator:LoadAnimation(Animation)
-	AnimationTrack:Play(0.15)
-end
+-- local HealthScreen: ScreenGui = PlayerGui:WaitForChild("Health")
+-- local HealthEffect: ImageLabel = HealthScreen:WaitForChild("HealthEffect")
 
-function HumanoidHandler:OnFallingDown()
-	VFX:ApplyParticle(Character, "Falling", nil, nil, true)
-end
+-- local Player = Players.LocalPlayer
+-- local Character
+-- local Humanoid
+-- local Animator: Animator
 
-function HumanoidHandler:BindHumanoid(Humanoid: Humanoid)
-	Humanoid.StateChanged:Connect(function(old, new)
-		if new == Enum.HumanoidStateType.Landed then
-			self:OnLand()
-		end
-		if new == Enum.HumanoidStateType.Freefall then
-			self:OnFallingDown()
-		end
-	end)
-end
+-- local VFX = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("VFX"))
 
-function HumanoidHandler:KnitInit()
-	PlayerService = Knit.GetService("PlayerService")
-	CameraController = Knit.GetController("CameraController")
-end
+-- function HumanoidHandler:OnLand()
+-- 	VFX:ApplyParticle(Character, "Fell", nil, Vector3.new(0, -2, 0), true)
+-- 	local Animation = ReplicatedStorage:WaitForChild("Animations"):WaitForChild("Landed")
+-- 	local AnimationTrack = Animator:LoadAnimation(Animation)
+-- 	AnimationTrack:Play(0.15)
+-- end
 
-function HumanoidHandler:KnitStart()
-	coroutine.wrap(function()
-		Character = Player.Character or Player.CharacterAdded:Wait()
-		Humanoid = Character:WaitForChild("Humanoid")
-		Animator = Humanoid:WaitForChild("Animator")
+-- function HumanoidHandler:OnFallingDown()
+-- 	VFX:ApplyParticle(Character, "Falling", nil, nil, true)
+-- end
 
-		Player.CharacterAdded:Connect(function(character)
-			Character = character
-			Humanoid = character:WaitForChild("Humanoid")
-			Animator = Humanoid:WaitForChild("Animator")
-			self:BindHumanoid(Humanoid)
-		end)
+-- function HumanoidHandler:BindHumanoid(Humanoid: Humanoid)
+-- 	--[[
+-- 	Respawn.Activated:Connect(function(inputObject, clickCount)
+-- 		PlayerService:Respawn()
+-- 	end)
+-- 	]]
 
-		self:BindHumanoid(Humanoid)
-	end)()
-end
+-- 	Humanoid.HealthChanged:Connect(function(health)
+-- 		local scale = math.clamp(health / Humanoid.MaxHealth, 0, 1)
+
+-- 		if scale <= 0.3 then
+-- 			HealthScreen.Enabled = true
+
+-- 			TweenService:Create(
+-- 				HealthEffect,
+-- 				TweenInfo.new(0.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.In, 0, false, 0),
+-- 				{
+-- 					ImageTransparency = scale + 0.3,
+-- 				}
+-- 			):Play()
+-- 		else
+-- 			HealthScreen.Enabled = false
+-- 		end
+-- 	end)
+
+-- 	Humanoid.StateChanged:Connect(function(old, new)
+-- 		if new == Enum.HumanoidStateType.Landed then
+-- 			self:OnLand()
+-- 		end
+-- 		if new == Enum.HumanoidStateType.Freefall then
+-- 			self:OnFallingDown()
+-- 		end
+-- 	end)
+-- end
+
+-- function HumanoidHandler:KnitInit()
+-- 	PlayerService = Knit.GetService("PlayerService")
+-- 	CameraController = Knit.GetController("CameraController")
+-- end
+
+-- function HumanoidHandler:KnitStart()
+-- 	coroutine.wrap(function()
+-- 		Character = Player.Character or Player.CharacterAdded:Wait()
+-- 		Humanoid = Character:WaitForChild("Humanoid")
+-- 		Animator = Humanoid:WaitForChild("Animator")
+
+-- 		Player.CharacterAdded:Connect(function(character)
+-- 			Character = character
+-- 			Humanoid = character:WaitForChild("Humanoid")
+-- 			Animator = Humanoid:WaitForChild("Animator")
+-- 			self:BindHumanoid(Humanoid)
+-- 		end)
+
+-- 		self:BindHumanoid(Humanoid)
+-- 	end)()
+-- end
 
 return HumanoidHandler

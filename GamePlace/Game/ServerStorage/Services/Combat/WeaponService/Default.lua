@@ -63,7 +63,7 @@ local Default = {
 		local Markers = getAllAnimationEventNames(AnimationPath.AnimationId)
 
 		local function Attack()
-			Humanoid:SetAttribute("HitboxStart", true)
+			DebounceService:AddDebounce(Humanoid, "HitboxStart", 0.1)
 			HitboxService:CreatePartHitbox(Character, Vector3.new(4, 4, 4), 10, function(Enemy)
 				if Enemy:FindFirstChild("EnemyAI") then
 					if Enemy:FindFirstChild("EnemyAI"):FindFirstChild("AI"):FindFirstChild("Hitted") then
@@ -98,9 +98,6 @@ local Default = {
 		end
 
 		WeaponService:IncreaseComboCounter(Humanoid)
-		task.delay(SwingSpeed, function()
-			Humanoid:SetAttribute("HitboxStart", false)
-		end)
 		task.delay(SwingSpeed + 0.15, function()
 			CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
 		end)
