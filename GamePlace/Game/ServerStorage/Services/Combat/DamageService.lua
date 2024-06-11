@@ -10,6 +10,8 @@ local PostureService
 local AnimationService
 local RenderService
 local CharacterService
+local WeaponService
+local RagdollService
 
 function DamageService:DealDamage(HumanoidToDamage: Humanoid, Damage: number, Humanoid: Humanoid?)
 	--if HumanoidToDamage.Health - 1 < 0 then
@@ -26,6 +28,7 @@ function DamageService:Hit(HumanoidHitted: Humanoid, Humanoid: Humanoid, Damage:
 	HumanoidHitted:SetAttribute("Running", false)
 	DamageService:DealDamage(HumanoidHitted, Damage, Humanoid)
 
+
 	task.delay(1, function()
 		if not DebounceService:HaveDebounce(HumanoidHitted, "Hit") then
 			CharacterService:UpdateWalkSpeedAndJumpPower(HumanoidHitted)
@@ -33,13 +36,6 @@ function DamageService:Hit(HumanoidHitted: Humanoid, Humanoid: Humanoid, Damage:
 	end)
 
 	PostureService:RemovePostureDamage(Humanoid, Damage / 2.5)
-
-	if HumanoidHitted:GetAttribute("HitCounter") == 4 then
-		HumanoidHitted:SetAttribute("HitCounter", 0)
-	end
-
-	HumanoidHitted:SetAttribute("HitCounter", math.clamp((HumanoidHitted:GetAttribute("HitCounter") or 1) + 1, 0, 4))
-	Humanoid:SetAttribute("HitCounter", 1)
 
 	AnimationService:StopM1Animation(HumanoidHitted)
 
@@ -51,7 +47,7 @@ function DamageService:BlockHit(HumanoidHitted: Humanoid, Humanoid: Humanoid, Bl
 	HumanoidHitted:SetAttribute("HitCounter", 0)
 
 	-- DebounceService:AddDebounce(Humanoid, "Blocked", 0.35, true)
-	PostureService:AddPostureDamage(HumanoidHitted, BlockPostureDamage)
+	PostureService:AddPostureDamage(HumanoidHitted, Humanoid, BlockPostureDamage)
 
 	local blockEffectRenderData = RenderService:CreateRenderData(HumanoidHitted, "HitEffects", "Blocked")
 	RenderService:RenderForPlayers(blockEffectRenderData)
@@ -63,10 +59,10 @@ function DamageService:DeflectHit(HumanoidHitted: Humanoid, Humanoid: Humanoid, 
 	DebounceService:AddDebounce(HumanoidHitted, "DeflectTime", 0.125, true)
 	PostureService:RemovePostureDamage(HumanoidHitted, 10)
 	Humanoid:SetAttribute("Deflected", true)
-	PostureService:AddPostureDamage(Humanoid, DeflectPostureDamage, true)
+	PostureService:AddPostureDamage(Humanoid, HumanoidHitted, DeflectPostureDamage, true)
 	DebounceService:RemoveDebounce(HumanoidHitted, "Hit")
 	-- DebounceService:RemoveDebounce(HumanoidHitted, "Blocked")
-	Humanoid:SetAttribute("ComboCounter", 1)
+	Humanoid:SetAttribute("ComboCounter", 0)
 	HumanoidHitted:SetAttribute("BlockEndLag", false)
 
 	AnimationService:StopM1Animation(Humanoid)
@@ -150,6 +146,8 @@ function DamageService:GetHitContext(HumanoidHitted: Humanoid)
 end
 
 function DamageService.KnitInit()
+	RagdollService = Knit.GetService("RagdollService")
+	WeaponService = Knit.GetService("WeaponService")
 	DebounceService = Knit.GetService("DebounceService")
 	SkillService = Knit.GetService("SkillService")
 	PostureService = Knit.GetService("PostureService")

@@ -227,8 +227,8 @@ function HotbarController.OnBackpackRemoved(tool: Tool)
 end
 
 function HotbarController.OnBackpackAdded(tool: Tool)
-	local HotbarFrame = Player.PlayerGui.Inventory.Hotbar.Background
-	local InventoryFrame = Player.PlayerGui.Inventory.Inventory.Background.ScrollingFrame.Equipments.InventoryTemplate
+	local HotbarFrame = Player.PlayerGui:WaitForChild("Inventory"):WaitForChild("Hotbar"):WaitForChild("Background")
+	local InventoryFrame = Player.PlayerGui:WaitForChild("Inventory"):WaitForChild("Inventory"):WaitForChild("Background"):WaitForChild("ScrollingFrame"):WaitForChild("Equipments"):WaitForChild("InventoryTemplate")
 
 	local Numbers = {
 		[1] = Enum.KeyCode.One,
@@ -327,7 +327,7 @@ function HotbarController.OnBackpackAdded(tool: Tool)
 end
 
 function HotbarController:RenderHotbar()
-	local InventoryFrame = Player.PlayerGui.Inventory.Inventory.Background.ScrollingFrame.Equipments.InventoryTemplate
+	local InventoryFrame = Player.PlayerGui:WaitForChild("Inventory"):WaitForChild("Inventory"):WaitForChild("Background"):WaitForChild("ScrollingFrame"):WaitForChild("Equipments"):WaitForChild("InventoryTemplate")
 
 	HotbarService:RenderItems(Player)
 
@@ -351,11 +351,15 @@ function HotbarController.KnitInit()
 	BlockController = Knit.GetController("BlockController")
 	PlayerService = Knit.GetService("PlayerService")
 	SkillService = Knit.GetService("SkillService")
-end
 
-function HotbarController:KnitStart()
+	Player.CharacterAdded:Connect(function(char)
+		Character = char
+		HotbarController:RenderHotbar()
+		HotbarController.LoadContainers()
+	end)
+
 	HotbarController.LoadContainers()
-	self:RenderHotbar()
+	HotbarController:RenderHotbar()
 end
 
 return HotbarController

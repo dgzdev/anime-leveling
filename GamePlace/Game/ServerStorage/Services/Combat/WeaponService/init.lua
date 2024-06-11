@@ -25,14 +25,17 @@ local SharedCharacterFuncitons = require(game.ReplicatedStorage.CharacterSharedF
 
 local Weapons = {}
 
-function WeaponService:IncreaseComboCounter(Humanoid: Humanoid)
+function WeaponService:IsLastHit(Humanoid: Humanoid)
 	local AnimationsFolder = AnimationService:GetWeaponAnimationFolder(Humanoid)
+	return not (Humanoid:GetAttribute("ComboCounter") < #AnimationsFolder.Hit:GetChildren() - 1)
+end
 
-	if Humanoid:GetAttribute("ComboCounter") < #AnimationsFolder.Hit:GetChildren() then
+function WeaponService:IncreaseComboCounter(Humanoid: Humanoid)
+	if not WeaponService:IsLastHit(Humanoid) then
 		Humanoid:SetAttribute("ComboCounter", Humanoid:GetAttribute("ComboCounter") + 1)
 	else
-		DebounceService:AddDebounce(Humanoid, "ComboDebounce", 2)
-		Humanoid:SetAttribute("ComboCounter", 1)
+		DebounceService:AddDebounce(Humanoid, "ComboDebounce", 1.5)
+		Humanoid:SetAttribute("ComboCounter", 0)
 	end
 end
 
@@ -146,6 +149,19 @@ function WeaponService:GetOverlapParams(Character)
 	end
 
 	return op
+end
+
+function WeaponService:GetModelMass(model: Model): number
+	local mass = 1
+	for _, part: BasePart in (model:GetDescendants()) do
+		if part:IsA("BasePart") then
+			if part.Massless == true then
+				continue
+			end
+			mass += part:GetMass()
+		end
+	end
+	return mass
 end
 
 function WeaponService.KnitInit()

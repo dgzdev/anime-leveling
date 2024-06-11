@@ -13,7 +13,7 @@ local Validate = require(game.ReplicatedStorage.Validate)
 
 local FlashStrike = {}
 
-local Cooldown = 5
+local Cooldown = 0
 function FlashStrike.Charge(Humanoid: Humanoid, Data: { any })
 	DebounceService:AddDebounce(Humanoid, "FlashStrike", Cooldown, false)
 	SkillService:SetSkillState(Humanoid, "FlashStrike", "Charge")
@@ -22,35 +22,20 @@ function FlashStrike.Charge(Humanoid: Humanoid, Data: { any })
 	RenderService:RenderForPlayers(ChargeRenderData)
 
 	DebounceService:AddDebounce(Humanoid, "UsingSkill", 2.7)
-	Humanoid.RootPart:FindFirstChildWhichIsA("AlignOrientation").Enabled = false
 	local Animation: AnimationTrack =
 		Humanoid.Animator:LoadAnimation(game.ReplicatedStorage.Animations.Skills.FlashStrike.FlashStrikeAttack)
 	Animation.Priority = Enum.AnimationPriority.Action
 	Animation:Play()
 
-	task.delay(Animation.Length, function()
-		Humanoid.RootPart:FindFirstChildWhichIsA("AlignOrientation").Enabled = true
-	end)
+
 	task.wait(0.5)
 	FlashStrike.Attack(Humanoid, Data)
 end
 
-function GetModelMass(model: Model): number
-	local mass = 1
-	for _, part: BasePart in (model:GetDescendants()) do
-		if part:IsA("BasePart") then
-			if part.Massless == true then
-				continue
-			end
-			mass += part:GetMass()
-		end
-	end
-	return mass
-end
 
 function FlashStrike.Attack(Humanoid: Humanoid)
 	local state = SkillService:GetSkillState(Humanoid, "FlashStrike")
-	if state == nil or state == "Cancel" then
+	if state == nil then
 		return
 	end
 
@@ -76,7 +61,7 @@ function FlashStrike.Attack(Humanoid: Humanoid)
 	RootPart.AssemblyLinearVelocity = (
 		RootPart.CFrame.LookVector
 		* (600 / (DefaltDistance / Distance))
-		* GetModelMass(Humanoid.Parent)
+		* WeaponService:GetModelMass(Humanoid.Parent)
 	)
 
 	local TInfo = TweenInfo.new(0.2, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut, 0, false, 0)
@@ -99,12 +84,12 @@ function FlashStrike.Attack(Humanoid: Humanoid)
 	local HitboxCFrame = StartCFrame * CFrame.new(0, 0, -Distance / 2)
 
 	local Enemies = {}
+	DebounceService:AddDebounce(Humanoid, "HitboxStart", 0.05)
 	HitboxService:CreateFixedHitbox(HitboxCFrame, HitboxSize, 1, function(Enemy)
 		if Enemy == Humanoid.Parent then
 			return
 		end
 		task.spawn(function()
-			DebounceService:AddDebounce(Humanoid, "HitboxStart", 0.1)
 			if DamageService:GetHitContext(Enemy.Humanoid) == "Hit" then
 				WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 2.2)
 				table.insert(Enemies, Enemy)
@@ -121,19 +106,20 @@ function FlashStrike.Attack(Humanoid: Humanoid)
 
 	task.wait(0.35)
 	if #Enemies == 0 then
-		--AlignOrientation:Destroy()
+		AlignOrientation:Destroy()
 
 		Humanoid.RootPart.AssemblyLinearVelocity = Vector3.zero
 		DebounceService:RemoveDebounce(Humanoid, "UsingSkill")
 		FlashStrike.Cancel(Humanoid)
 		SkillService:SetSkillState(Humanoid, "FlashStrike", nil)
+		return
 	else
 		WeaponService:Stun(Character, Character:GetPivot().Position, 1.85)
 	end
 
 	task.wait(1.85)
 	for _, Enemy in Enemies do
-		DamageService:Hit(Enemy.Humanoid, Humanoid, 20, "Sword")
+		DamageService:TryHit(Humanoid, Enemy.Humanoid, 20, "Sword")
 	end
 
 	DebounceService:RemoveDebounce(Humanoid, "UsingSkill")
@@ -141,7 +127,6 @@ function FlashStrike.Attack(Humanoid: Humanoid)
 end
 
 function FlashStrike.Cancel(Humanoid)
-	print("cancelled")
 	DebounceService:RemoveDebounce(Humanoid, "UsingSkill")
 	AnimationService:StopAnimationMatch(Humanoid, "FlashStrikeAttack", 0.45)
 	local CancelRenderData = RenderService:CreateRenderData(Humanoid, "FlashStrike", "Cancel")

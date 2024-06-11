@@ -27,6 +27,8 @@ local SkillService
 local AnimationsFolder = ReplicatedStorage:WaitForChild("Animations")
 
 Path.AnimationsTable = nil
+
+local AUTO_PARRY = false
 ---
 local Op: OverlapParams = nil
 local Target: BasePart = nil
@@ -93,18 +95,23 @@ function Path.StartFollowing(from: Humanoid, target: BasePart)
 				return
 			end
 
-			local parryChance = 100 / 100
-			local blockChance = 0 / 100
+			local parryChance = 20 / 100
+			local blockChance = 50 / 100
 			local randomNumber = math.random(0, 100) / 100
 
 			local isParry = randomNumber <= parryChance
 			local isBlock = (randomNumber <= blockChance) and not isParry
 
-			if isParry then
-				From:SetAttribute("BlockDebounce", false)
-				From:SetAttribute("Blocked", false)
-				From:SetAttribute("BlockEndLag", false)
-				From:SetAttribute("Block", false)
+			if isParry or AUTO_PARRY then
+				if AUTO_PARRY then
+					From:SetAttribute("BlockDebounce", false)
+					From:SetAttribute("Blocked", false)
+					From:SetAttribute("BlockEndLag", false)
+					From:SetAttribute("AttackCombo", false)
+					From:SetAttribute("Block", false)
+					From:SetAttribute("UsingSkill", false)
+				end
+
 				WeaponService:Block(From.Parent, true)
 			elseif isBlock then
 				WeaponService:Block(From.Parent, true, true)
@@ -206,8 +213,7 @@ function Path.Start(Humanoid: Humanoid)
 	local HittedEvent = script.Parent:WaitForChild("Hitted") :: BindableEvent
 	local Connection: RBXScriptSignal
 	Connection = HittedEvent.Event:Connect(function(target)
-		print("recebiakshdjahsdhasd")
-		print(target)
+		
 		if not From then
 			From = script:FindFirstAncestorWhichIsA("Model"):FindFirstChildWhichIsA("Humanoid")
 		end

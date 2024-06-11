@@ -7,6 +7,7 @@ local DebounceService
 local CharacterService
 local HotbarService
 local AnimationService
+local RagdollService
 
 local Validate = require(game.ReplicatedStorage.Validate)
 local KeyframeSequenceProvider = game:GetService("KeyframeSequenceProvider")
@@ -63,8 +64,8 @@ local Default = {
 		local Markers = getAllAnimationEventNames(AnimationPath.AnimationId)
 
 		local function Attack()
-			DebounceService:AddDebounce(Humanoid, "HitboxStart", 0.1)
-			HitboxService:CreatePartHitbox(Character, Vector3.new(4, 4, 4), 10, function(Enemy)
+			DebounceService:AddDebounce(Humanoid, "HitboxStart", 0.05)
+			HitboxService:CreatePartHitbox(Character, Vector3.new(6, 6, 6), 10, function(Enemy)
 				if Enemy:FindFirstChild("EnemyAI") then
 					if Enemy:FindFirstChild("EnemyAI"):FindFirstChild("AI"):FindFirstChild("Hitted") then
 						local HittedEvent = Enemy:FindFirstChild("EnemyAI")
@@ -81,8 +82,17 @@ local Default = {
 					return false
 				end
 
-				if Humanoid:GetAttribute("ComboCounter") > #AnimationsFolder:GetChildren() then
+				if DamageService:GetHitContext(Enemy.Humanoid) == "Hit" and
+				 Humanoid:GetAttribute("ComboCounter") - #AnimationsFolder:GetChildren() == -3 then
+					RagdollService:Ragdoll(Enemy, 1)
+
+					Enemy.PrimaryPart.AssemblyLinearVelocity = (
+						Humanoid.RootPart.CFrame.LookVector
+						* (200)
+						* WeaponService:GetModelMass(Enemy.Parent)
+					)
 				end
+
 				return DamageService:TryHit(Humanoid, Enemy.Humanoid, Damage, HitEffect)
 			end)
 		end
@@ -107,6 +117,7 @@ local Default = {
 }
 
 function Default.Start()
+	RagdollService = Knit.GetService("RagdollService")
 	WeaponService = Knit.GetService("WeaponService")
 	HitboxService = Knit.GetService("HitboxService")
 	DamageService = Knit.GetService("DamageService")

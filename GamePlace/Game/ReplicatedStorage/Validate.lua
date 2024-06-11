@@ -1,7 +1,7 @@
 local Validate = {}
 
 local function check(Humanoid: Humanoid, cant)
-	if Humanoid.RootPart ~= nil then
+	if Humanoid.RootPart == nil then
 		return false
 	end
 
