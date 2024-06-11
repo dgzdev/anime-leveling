@@ -3,10 +3,20 @@ local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 local GoldService = Knit.CreateService {
     Name = "GoldService",
-    Client = {},
+    Client = {
+        GoldUpdated = Knit.CreateSignal()
+    },
 }
 
 local PlayerService
+
+function GoldService:UpdateGold(Player: Player, Amount: number?)
+    GoldService.Client.GoldUpdated:Fire(Player, Amount or GoldService:GetGold(Player))
+end
+
+function GoldService:GetGold(Player)
+    return PlayerService:GetData(Player).Gold
+end
 
 function GoldService:HaveGold(Player: Player, Amount: number): boolean
     local PlayerData = PlayerService:GetData(Player)
@@ -20,18 +30,21 @@ function GoldService:RemoveGold(Player: Player, Amount: number): number | boolea
     end
 
     PlayerData.Gold -= Amount
+    GoldService:UpdateGold(Player, PlayerData.Gold)
     return PlayerData.Gold
 end
 
 function GoldService:AddGold(Player: Player, Amount: number): number
     local PlayerData = PlayerService:GetData(Player)
     PlayerData.Gold += Amount
+    GoldService:UpdateGold(Player, PlayerData.Gold)
     return PlayerData.Gold
 end
 
 function GoldService:SetGold(Player: Player, Amount: number)
     local PlayerData = PlayerService:GetData(Player)
     PlayerData.Gold = Amount
+    GoldService:UpdateGold(Player, PlayerData.Gold)
 end
 
 -- caso for possivel comprar, executa o callback
