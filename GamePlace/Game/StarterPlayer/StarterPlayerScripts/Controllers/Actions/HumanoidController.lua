@@ -2,8 +2,8 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
-local Knit = require(ReplicatedStorage.Packages.Knit)
-local CameraEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("CAMERA")
+-- local Knit = require(ReplicatedStorage.Packages.Knit)
+-- local CameraEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("CAMERA")
 
 local PlayerService
 local CameraController

@@ -51,7 +51,7 @@ function CharacterService:LoadCharacter(Player: Player)
 	end
 
 	Player:LoadCharacter()
-
+	
 	local Data = PlayerService:GetData(Player)
 	local SlotData = PlayerService:GetSlot(Player)
 	local Character = Player.Character or Player.CharacterAdded:Wait()

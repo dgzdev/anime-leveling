@@ -8,9 +8,14 @@ version = "4.0.0"
 dependencies = []
 
 [[package]]
+name = "jakeywastaken/smartbone-2"
+version = "0.3.1"
+dependencies = []
+
+[[package]]
 name = "joao/menuplace"
 version = "0.1.0"
-dependencies = [["Knit", "sleitnick/knit@1.7.0"]]
+dependencies = [["Knit", "sleitnick/knit@1.7.0"], ["smartbone-2", "jakeywastaken/smartbone-2@0.3.1"]]
 
 [[package]]
 name = "sleitnick/comm"
