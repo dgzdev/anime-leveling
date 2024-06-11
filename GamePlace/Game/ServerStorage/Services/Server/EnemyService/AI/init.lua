@@ -22,12 +22,15 @@ function AI.Start()
 
 			local weaponName = NPC:GetAttribute("Weapon") or "Fists"
 
-			local Weapon: Tool = ToolsFolder:FindFirstChild(weaponName):Clone()
+			local Weapon: Tool = ToolsFolder:FindFirstChild(weaponName) or ToolsFolder:WaitForChild("Fists", 10)
+			if Weapon then
+				Weapon = Weapon:Clone()
+				Weapon:SetAttribute("Class", "Weapon")
+				Weapon.Parent = NPC
+			end
 
 			local HittedEvent = Instance.new("BindableEvent", script)
 			HittedEvent.Name = "Hitted"
-			Weapon:SetAttribute("Class", "Weapon")
-			Weapon.Parent = NPC
 
 			EquipService:EquipItem(NPC)
 
@@ -36,15 +39,19 @@ function AI.Start()
 
 			CollectionService:AddTag(NPC, "Enemies")
 
+			Humanoid:SetAttribute("ComboCounter", 0)
+			Humanoid:SetAttribute("MaxPosture", 100)
+			Humanoid:SetAttribute("Posture", 0)
+
 			local AnimationsFolder = game.ReplicatedStorage:WaitForChild("Animations")
 
 			AI.AnimationsTable = {
 				["Melee"] = {
 					["Hit"] = {
-						[1] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["1"]:Clone()),
-						[2] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["2"]:Clone()),
-						[3] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["3"]:Clone()),
-						[4] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["4"]:Clone()),
+						[1] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["0"]:Clone()),
+						[2] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["1"]:Clone()),
+						[3] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["2"]:Clone()),
+						[4] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["3"]:Clone()),
 					},
 					["Ground Slam"] = Animator:LoadAnimation(AnimationsFolder.Melee["Ground Slam"]:Clone()),
 					["Block"] = Animator:LoadAnimation(AnimationsFolder.Melee["Block"]:Clone()),

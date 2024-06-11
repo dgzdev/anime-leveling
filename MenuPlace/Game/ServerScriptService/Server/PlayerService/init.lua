@@ -50,7 +50,7 @@ end
 -- Client
 -- ========================================
 
-function PlayerService:GetData(player: Player | Model): GameData.SlotData
+function PlayerService:GetData(player: Player | Model)
 	local Player: Player = player
 	if player:IsA("Model") then
 		if Players:GetPlayerFromCharacter(player) then

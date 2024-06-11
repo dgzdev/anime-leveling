@@ -288,11 +288,11 @@ function MenuController.KnitInit()
 	MenuController.CreateContext()
 	MenuController.CreateRunService()
 
-	Humanoid.Died:Connect(function()
+	Player.CharacterAdded:Connect(function(character)
 		MenuController.DisableContext()
 		RunService:UnbindFromRenderStep("Menu")
 
-		Character = Player.CharacterAdded:Wait()
+		Character = character
 		Humanoid = Character:WaitForChild("Humanoid")
 		TargetCFrame = CFrame.new()
 		menuIsShowing = false

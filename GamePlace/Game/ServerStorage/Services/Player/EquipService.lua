@@ -28,10 +28,23 @@ function EquipService:EquipItem(Player: Player)
 		Tool:FindFirstChild("ToolGrip", true):Destroy()
 	end
 
-	local exclude = { "RightHand", "LeftHand", "RootPart", "HumanoidRootPart", "Root" }
+	local exclude = { "RightHand", "LeftHand", "RootPart", "HumanoidRootPart", "Root", "Hitbox", "VFX", "Cloth" }
 
 	for _, obj: BasePart in Character:GetDescendants() do
-		if obj:IsA("BasePart") and not table.find(exclude, obj.Name) then
+		if obj:IsA("BasePart") then
+			if table.find(exclude, obj.Name) then
+				continue
+			end
+
+			for _, tag: string in exclude do
+				if obj:HasTag(tag) then
+					continue
+				end
+				if obj.Name:find(tag) then
+					continue
+				end
+			end
+
 			obj.Transparency = 0
 		end
 	end
@@ -47,10 +60,21 @@ function EquipService:EquipItem(Player: Player)
 
 			if m6:GetAttribute("Hide") then
 				for _, obj in Character:GetDescendants() do
-					if obj:IsA("BasePart") and not table.find(exclude, obj.Name) then
-						if obj.Name == m6.Name then
-							obj.Transparency = 1
+					if obj:IsA("BasePart") then
+						if table.find(exclude, obj.Name) then
+							continue
 						end
+
+						for _, tag: string in exclude do
+							if obj:HasTag(tag) then
+								continue
+							end
+							if obj.Name:find(tag) then
+								continue
+							end
+						end
+
+						obj.Transparency = 1
 					end
 				end
 			end
@@ -68,10 +92,23 @@ function EquipService:UnequipItem(Player)
 		return error("Invalid argument #1 to 'EquipItem' (Player expected, got " .. typeof(Player) .. ")")
 	end
 
-	local exclude = { "RightHand", "LeftHand", "RootPart", "HumanoidRootPart", "Root" }
+	local exclude = { "RightHand", "LeftHand", "RootPart", "HumanoidRootPart", "Root", "Hitbox", "VFX", "Cloth" }
 
 	for _, obj: BasePart in Character:GetDescendants() do
-		if obj:IsA("BasePart") and not table.find(exclude, obj.Name) then
+		if obj:IsA("BasePart") then
+			if table.find(exclude, obj.Name) then
+				continue
+			end
+
+			for _, tag: string in exclude do
+				if obj:HasTag(tag) then
+					continue
+				end
+				if obj.Name:find(tag) then
+					continue
+				end
+			end
+
 			obj.Transparency = 0
 		end
 	end

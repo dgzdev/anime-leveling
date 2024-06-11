@@ -25,13 +25,13 @@ end
 
 function PlayerManager:GetData()
 	local slot = self.Profile.Data["Selected_Slot"]
-	local data: GameData.SlotData = self.Profile.Data["Slots"][slot].Data
+	local data = self.Profile.Data["Slots"][slot].Data
 	return data
 end
 
 function PlayerManager:GetPlayerSlot()
 	local CurrentSlot = self.Profile.Data["Selected_Slot"]
-	local Slot: GameData.PlayerSlot = self.Profile.Data["Slots"][CurrentSlot]
+	local Slot = self.Profile.Data["Slots"][CurrentSlot]
 	return Slot
 end
 
@@ -55,7 +55,7 @@ function PlayerManager:Release()
 end
 
 export type Profile = {
-	Data: GameData.ProfileData,
+	Data: {},
 	GlobalUpdates: table,
 	KeyInfo: any,
 	KeyInfoUpdated: any,

@@ -5,7 +5,7 @@
         "ServerScriptService": {
             "$className": "ServerScriptService",
             "$ignoreUnknownInstances": true,
-            "$path": "src/ServerScriptService"
+            "$path": "Game/ServerScriptService"
         },
         "SoundService": {
             "$properties": {
@@ -15,36 +15,36 @@
         "ServerStorage": {
             "$className": "ServerStorage",
             "$ignoreUnknownInstances": true,
-            "$path": "src/ServerStorage"
+            "$path": "Game/ServerStorage"
         },
         "StarterGui": {
             "$className": "StarterGui",
             "$ignoreUnknownInstances": true,
-            "$path": "src/StarterGui"
+            "$path": "Game/StarterGui"
         },
         "StarterPack": {
             "$className": "StarterPack",
             "$ignoreUnknownInstances": true,
-            "$path": "src/StarterPack"
+            "$path": "Game/StarterPack"
         },
         "StarterPlayer": {
             "$className": "StarterPlayer",
             "StarterCharacterScripts": {
                 "$className": "StarterCharacterScripts",
                 "$ignoreUnknownInstances": true,
-                "$path": "src/StarterPlayer/StarterCharacterScripts"
+                "$path": "Game/StarterPlayer/StarterCharacterScripts"
             },
             "StarterPlayerScripts": {
                 "$className": "StarterPlayerScripts",
                 "$ignoreUnknownInstances": true,
-                "$path": "src/StarterPlayer/StarterPlayerScripts"
+                "$path": "Game/StarterPlayer/StarterPlayerScripts"
             },
             "$ignoreUnknownInstances": true
         },
         "Workspace": {
             "$className": "Workspace",
             "$ignoreUnknownInstances": true,
-            "$path": "src/Workspace",
+            "$path": "Game/Workspace",
             "$properties": {
                 "HumanoidOnlySetCollisionsOnStateChange": "Enabled",
                 "InterpolationThrottling": "Enabled",
@@ -53,29 +53,28 @@
                 "Retargeting": "Enabled",
                 "SignalBehavior": "Immediate",
                 "TouchesUseCollisionGroups": true,
-                "StreamingEnabled": false,
                 "FilteringEnabled": true
             }
         },
         "ReplicatedStorage": {
             "$className": "ReplicatedStorage",
             "$ignoreUnknownInstances": true,
-            "$path": "src/ReplicatedStorage",
+            "$path": "Game/ReplicatedStorage",
             "Modules": {
                 "$className": "Folder",
                 "$ignoreUnknownInstances": true,
-                "$path": "src/Modules"
+                "$path": "Modules"
             },
             "Packages": {
+                "$path": "Packages",
                 "$className": "Folder",
-                "$ignoreUnknownInstances": true,
-                "$path": "Packages"
+                "$ignoreUnknownInstances": true
             }
         },
         "ReplicatedFirst": {
             "$className": "ReplicatedFirst",
             "$ignoreUnknownInstances": true,
-            "$path": "src/ReplicatedFirst"
+            "$path": "Game/ReplicatedFirst"
         }
     }
 }
