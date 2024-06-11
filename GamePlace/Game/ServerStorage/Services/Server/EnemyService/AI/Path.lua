@@ -212,12 +212,11 @@ function Path.Start(Humanoid: Humanoid)
 	local Animator: Animator = Humanoid:WaitForChild("Animator")
 	local HittedEvent = script.Parent:WaitForChild("Hitted") :: BindableEvent
 	local Connection: RBXScriptSignal
-	Connection = HittedEvent.Event:Connect(function(target)
-		
+	Connection = HittedEvent.Event:Connect(function(target: Humanoid)
 		if not From then
-			From = script:FindFirstAncestorWhichIsA("Model"):FindFirstChildWhichIsA("Humanoid")
+			From = script.Parent.Parent.Parent:FindFirstChildWhichIsA("Humanoid")
 		end
-		if target then
+		if Target and Target ~= target then
 			Path.ChangeTarget(From, target)
 		else
 			Path.StartFollowing(From, target.RootPart)
@@ -228,10 +227,10 @@ function Path.Start(Humanoid: Humanoid)
 	Path.AnimationsTable = {
 		["Melee"] = {
 			["Hit"] = {
-				[1] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["1"]:Clone()),
-				[2] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["2"]:Clone()),
-				[3] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["3"]:Clone()),
-				[4] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["4"]:Clone()),
+				[1] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["0"]:Clone()),
+				[2] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["1"]:Clone()),
+				[3] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["2"]:Clone()),
+				[4] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["3"]:Clone()),
 			},
 			["Ground Slam"] = Animator:LoadAnimation(AnimationsFolder.Melee["Ground Slam"]:Clone()),
 			["Block"] = Animator:LoadAnimation(AnimationsFolder.Melee["Block"]:Clone()),

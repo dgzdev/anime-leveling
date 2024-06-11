@@ -118,7 +118,7 @@ local function addId()
 end
 
 return {
-	profileKey = "DEVELOPMENT_7_PVP",
+	profileKey = "DEVELOPMENT_7",
 	profileTemplate = ProfileTemplate,
 	defaultInventory = addId(),
 	gameWeapons = require(script.Weapons),

@@ -58,13 +58,9 @@ function WeaponService:Block(Character: Model, state: boolean, cantParry: boolea
 
 	if state then
 		if not Validate:CanBlock(Humanoid) then
-			Humanoid:SetAttribute("Block", false)
+			-- Humanoid:SetAttribute("Block", false)
 			return
 		end
-
-		task.delay(0.25, function()
-			Humanoid:SetAttribute("BlockEndLag", false)
-		end)
 
 		local Animations = AnimationService:GetWeaponAnimationFolder(Humanoid)
 		local BlockAnimation = Humanoid.Animator:LoadAnimation(Animations.Block)
@@ -72,29 +68,24 @@ function WeaponService:Block(Character: Model, state: boolean, cantParry: boolea
 		AnimationService:StopM1Animation(Humanoid)
 		BlockAnimation:Play()
 
-		Humanoid:SetAttribute("BlockEndLag", true)
-		Humanoid:SetAttribute("Block", true)
+		DebounceService:AddDebounce(Humanoid, "BlockEndLag", 0.125)
 
 		if not cantParry then --> se for true, não pode parry
-			DebounceService:AddDebounce(Humanoid, "DeflectTime", 0.25, true)
+			DebounceService:AddDebounce(Humanoid, "DeflectTime", 0.2, true)
 		end
-
-		Humanoid:SetAttribute("BlockDebounce", true)
+		Humanoid:SetAttribute("Block", true)
 
 		CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
 	else
 		repeat
 			task.wait()
-		until not Humanoid:GetAttribute("BlockEndLag") and not Humanoid:GetAttribute("DeflectTime") 
+		until not Humanoid:GetAttribute("BlockEndLag") and not Humanoid:GetAttribute("DeflectTime")
+		DebounceService:AddDebounce(Humanoid, "BlockDebounce", 0.25)
 
 		AnimationService:StopAnimationMatch(Humanoid, "Block")
 		Humanoid:SetAttribute("BlockReleaseTick", tick())
 		Humanoid:SetAttribute("Block", false)
-
 		CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
-		task.delay(0.5, function()
-			Humanoid:SetAttribute("BlockDebounce", false)
-		end)
 	end
 end
 function WeaponService.Client:Block(Player: Player, state: boolean)

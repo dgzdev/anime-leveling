@@ -6,16 +6,16 @@ local TeleportService = game:GetService("TeleportService")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
+local Rig = ReplicatedStorage.Rig:Clone()
+Rig.Parent = Workspace:WaitForChild("Characters")
+Rig:PivotTo(Workspace:WaitForChild("Spawn").CFrame)
+
 -- ====================================================================================================
 --// Modules
 -- ====================================================================================================
 local GameData = require(ServerStorage.GameData)
 local ProfileService = require(ServerStorage.ProfileService)
 local ProfileStore = ProfileService.GetProfileStore(GameData.profileKey, GameData.profileTemplate)
-
-local Rig = ReplicatedStorage.Rig:Clone()
-Rig.Parent = Workspace:WaitForChild("Characters")
-Rig:PivotTo(Workspace:WaitForChild("Spawn").CFrame)
 
 local Knit = require(ReplicatedStorage.Packages.Knit)
 
@@ -26,7 +26,7 @@ Knit.Start():await()
 
 local Characters = Workspace:WaitForChild("Characters")
 
-local Profile: { Data: GameData.ProfileData } | nil
+local Profile
 
 local serverRequests = {
 	["Slots"] = function(slot, description: HumanoidDescription)

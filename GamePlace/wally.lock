@@ -8,6 +8,11 @@ version = "2.9.3"
 dependencies = []
 
 [[package]]
+name = "drewbokman/smartbone"
+version = "0.1.2"
+dependencies = []
+
+[[package]]
 name = "evaera/cmdr"
 version = "1.12.0"
 dependencies = []
@@ -30,7 +35,7 @@ dependencies = []
 [[package]]
 name = "joao/gameplace"
 version = "0.1.0"
-dependencies = [["Knit", "sleitnick/knit@1.7.0"], ["cmdr", "evaera/cmdr@1.12.0"], ["janitor", "howmanysmall/janitor@1.16.0"], ["profileservice", "nidoxs/profileservice@1.0.0"], ["smartbone-2", "jakeywastaken/smartbone-2@0.3.1"], ["topbarplus", "aspecky/topbarplus@2.9.3"]]
+dependencies = [["Knit", "sleitnick/knit@1.7.0"], ["cmdr", "evaera/cmdr@1.12.0"], ["janitor", "howmanysmall/janitor@1.16.0"], ["profileservice", "nidoxs/profileservice@1.0.0"], ["smartbone", "drewbokman/smartbone@0.1.2"], ["smartbone-2", "jakeywastaken/smartbone-2@0.3.1"], ["topbarplus", "aspecky/topbarplus@2.9.3"]]
 
 [[package]]
 name = "nidoxs/profileservice"

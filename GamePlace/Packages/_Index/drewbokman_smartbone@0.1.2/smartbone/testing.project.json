@@ -1,0 +1,10 @@
+{
+    "name": "SmartBone testing",
+    "tree": {
+      "$className": "DataModel",
+      "ReplicatedStorage": {
+        "$className": "ReplicatedStorage",
+        "$path": "src"
+      }
+    }
+}

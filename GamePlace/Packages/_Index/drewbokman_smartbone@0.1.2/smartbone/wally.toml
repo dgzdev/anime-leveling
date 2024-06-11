@@ -1,0 +1,5 @@
+[package]
+name = "drewbokman/smartbone"
+version = "0.1.2"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"

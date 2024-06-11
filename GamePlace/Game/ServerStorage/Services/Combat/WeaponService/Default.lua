@@ -66,14 +66,6 @@ local Default = {
 		local function Attack()
 			DebounceService:AddDebounce(Humanoid, "HitboxStart", 0.05)
 			HitboxService:CreatePartHitbox(Character, Vector3.new(6, 6, 6), 10, function(Enemy)
-				if Enemy:FindFirstChild("EnemyAI") then
-					if Enemy:FindFirstChild("EnemyAI"):FindFirstChild("AI"):FindFirstChild("Hitted") then
-						local HittedEvent = Enemy:FindFirstChild("EnemyAI")
-							:FindFirstChild("AI")
-							:FindFirstChild("Hitted") :: BindableEvent
-						HittedEvent:Fire(Humanoid)
-					end
-				end
 				if
 					Humanoid:GetAttribute("Hit")
 					or Humanoid:GetAttribute("Blocked")
@@ -82,13 +74,24 @@ local Default = {
 					return false
 				end
 
-				if DamageService:GetHitContext(Enemy.Humanoid) == "Hit" and
-				 Humanoid:GetAttribute("ComboCounter") - #AnimationsFolder:GetChildren() == -3 then
+				if Enemy:FindFirstChild("EnemyAI") then
+					if Enemy:FindFirstChild("EnemyAI"):FindFirstChild("AI"):FindFirstChild("Hitted") then
+						local HittedEvent = Enemy:FindFirstChild("EnemyAI")
+							:FindFirstChild("AI")
+							:FindFirstChild("Hitted") :: BindableEvent
+						HittedEvent:Fire(Humanoid)
+					end
+				end
+
+				if
+					DamageService:GetHitContext(Enemy.Humanoid) == "Hit"
+					and Humanoid:GetAttribute("ComboCounter") - #AnimationsFolder:GetChildren() == -3
+				then
 					RagdollService:Ragdoll(Enemy, 1)
 
 					Enemy.PrimaryPart.AssemblyLinearVelocity = (
 						Humanoid.RootPart.CFrame.LookVector
-						* (200)
+						* 200
 						* WeaponService:GetModelMass(Enemy.Parent)
 					)
 				end

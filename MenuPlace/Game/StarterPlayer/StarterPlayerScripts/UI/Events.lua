@@ -7,7 +7,6 @@ local SoundService = game:GetService("SoundService")
 local StarterGui = game:GetService("StarterGui")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
-local Rig = Workspace.Characters:WaitForChild("Rig")
 
 local Start = ReplicatedStorage:WaitForChild("Start")
 
@@ -20,9 +19,6 @@ Knit.Start({ ServicePromises = false }):await()
 local ClothingService = Knit.GetService("ClothingService")
 
 local ColorPickerModule = require(game.ReplicatedStorage.Color)
-
-local TurnRight = false
-local TurnLeft = false
 
 local function SlideOut()
 	local SlotSelection = PlayerGui:WaitForChild("SlotSelection")
@@ -92,35 +88,28 @@ function CheckTableEquality(t1, t2)
 	return true
 end
 
-
 Events.ButtonDown = {
 	["TurnRight"] = function()
-		TurnRight = true
-		task.spawn(function()
-			repeat
-				task.wait()
-				Character.HumanoidRootPart.CFrame *= CFrame.Angles(0, math.rad(.5), 0)
-			until TurnRight == false
+		local ratePerSecond = 90
+		RunService:BindToRenderStep("TurnRight", Enum.RenderPriority.Input.Value, function(delta: number)
+			Character.HumanoidRootPart.CFrame *= CFrame.Angles(0, math.rad(ratePerSecond * delta), 0)
 		end)
 	end,
 	["TurnLeft"] = function()
-		TurnLeft = true
-		task.spawn(function()
-			repeat
-				task.wait()
-				Character.HumanoidRootPart.CFrame *= CFrame.Angles(0, math.rad(-.5), 0)
-			until TurnLeft == false
+		local ratePerSecond = 90
+		RunService:BindToRenderStep("TurnLeft", Enum.RenderPriority.Input.Value, function(delta: number)
+			Character.HumanoidRootPart.CFrame *= CFrame.Angles(0, math.rad(-(ratePerSecond * delta)), 0)
 		end)
 	end,
 }
 
 Events.ButtonUp = {
 	["TurnRight"] = function()
-		TurnRight = false
+		RunService:UnbindFromRenderStep("TurnRight")
 	end,
 	["TurnLeft"] = function()
-		TurnLeft = false
-	end
+		RunService:UnbindFromRenderStep("TurnLeft")
+	end,
 }
 
 Events.Buttons = {
@@ -144,7 +133,7 @@ Events.Buttons = {
 		SlideOut()
 
 		RunService:BindToRenderStep("Camera", Enum.RenderPriority.Camera.Value, function()
-			camera.CFrame = camera.CFrame:Lerp(CFrame.new(head.Position + Vector3.new(5, 0, 0), head.Position), 0.1)
+			camera.CFrame = camera.CFrame:Lerp(CFrame.new(head.Position + Vector3.new(5, 0, 0), head.Position), 0.5)
 		end)
 
 		local portalPosition = Workspace:WaitForChild("CharacterPortalPosition")
@@ -161,7 +150,7 @@ Events.Buttons = {
 
 					break
 				end
-				task.wait()
+				RunService.RenderStepped:Wait()
 			end
 		end)
 
@@ -263,15 +252,14 @@ Events.Buttons = {
 
 			local ClothingInfo = {}
 
-			for i,v in pairs(workspace.Characters.Rig.Clothes:GetChildren()) do
-				for j,k in pairs(v:GetDescendants()) do
+			for i, v in pairs(workspace.Characters.Rig.Clothes:GetChildren()) do
+				for j, k in pairs(v:GetDescendants()) do
 					if k:IsA("BasePart") and k:GetAttribute("CanColor") then
 						ClothingInfo[v.Name] = k.Color
 						break
 					end
 				end
 			end
-
 
 			-->
 			ClothingService:SaveClothingColors(ClothingInfo)
@@ -366,18 +354,21 @@ Events.Hover = {
 }
 
 local Picker = ColorPickerModule.New(CharacterCustomization, {
-	Position = UDim2.fromScale(0.65,0.3)
+	Position = UDim2.fromScale(0.65, 0.3),
 })
 
-Picker.Updated:Connect(function(color : Color3)
+Picker.Updated:Connect(function(color: Color3)
+	local Rig = Workspace:WaitForChild("Characters"):WaitForChild("Rig")
 	-- Fired every time the color changes
 
 	--[[
 		activeFrame: string | "Hair", "Shirt", "Pants", "Shoes"
 	]]
-	if not Rig.Clothes[activeFrame] then return end
+	if not Rig.Clothes[activeFrame] then
+		return
+	end
 
-	for i,v in pairs(Rig.Clothes[activeFrame]:GetDescendants()) do
+	for i, v in pairs(Rig.Clothes[activeFrame]:GetDescendants()) do
 		if v:IsA("BasePart") and v:GetAttribute("CanColor") then
 			v.Color = color
 		end
@@ -385,6 +376,5 @@ Picker.Updated:Connect(function(color : Color3)
 
 	--print(color)
 end)
-
 
 return Events
