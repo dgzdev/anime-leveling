@@ -21,20 +21,25 @@ function FlashStrike.Charge(Humanoid: Humanoid, Data: { any })
 	local ChargeRenderData = RenderService:CreateRenderData(Humanoid, "FlashStrike", "Charge")
 	RenderService:RenderForPlayers(ChargeRenderData)
 
-	DebounceService:AddDebounce(Humanoid, "UsingSkill", 2.7)
 	local Animation: AnimationTrack =
 		Humanoid.Animator:LoadAnimation(game.ReplicatedStorage.Animations.Skills.FlashStrike.FlashStrikeAttack)
 	Animation.Priority = Enum.AnimationPriority.Action
 	Animation:Play()
-
+	DebounceService:AddDebounce(Humanoid, "UsingSkill", 2.7)
 
 	task.wait(0.5)
-	FlashStrike.Attack(Humanoid, Data)
+	if Data then
+		FlashStrike.Attack(Humanoid, Data)
+	else
+		FlashStrike.Attack(Humanoid, {})
+	end
 end
 
 
-function FlashStrike.Attack(Humanoid: Humanoid)
+function FlashStrike.Attack(Humanoid: Humanoid, Data)
 	local state = SkillService:GetSkillState(Humanoid, "FlashStrike")
+	local Damage = Data.Damage or 4
+
 	if state == nil then
 		return
 	end
@@ -89,16 +94,24 @@ function FlashStrike.Attack(Humanoid: Humanoid)
 		if Enemy == Humanoid.Parent then
 			return
 		end
+		if not Enemy:FindFirstChild("Humanoid") then
+			return
+		end
+
+		local EnemyHumanoid = Enemy:FindFirstChild("Humanoid")
+
 		task.spawn(function()
+
 			if DamageService:GetHitContext(Enemy.Humanoid) == "Hit" then
+				DebounceService:AddDebounce(EnemyHumanoid, "Unparryable", 3, true)
 				WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 2.2)
 				table.insert(Enemies, Enemy)
 			else
 				WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 1.5)
 			end
-
+			
 			for _ = 1, 10, 1 do
-				DamageService:TryHit(Humanoid, Enemy.Humanoid, 4, "Sword")
+				DamageService:TryHit(Humanoid, Enemy.Humanoid, math.ceil(Damage * .4), "Sword")
 				task.wait(0.1)
 			end
 		end)
@@ -119,7 +132,7 @@ function FlashStrike.Attack(Humanoid: Humanoid)
 
 	task.wait(1.85)
 	for _, Enemy in Enemies do
-		DamageService:TryHit(Humanoid, Enemy.Humanoid, 20, "Sword")
+		DamageService:TryHit(Humanoid, Enemy.Humanoid, Damage * 2, "Sword")
 	end
 
 	DebounceService:RemoveDebounce(Humanoid, "UsingSkill")

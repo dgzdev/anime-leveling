@@ -114,12 +114,13 @@ function DamageService:TryHit(Humanoid: Humanoid, HumanoidHitted: Humanoid, _Dam
 		DeflectPostureDamage = Damage
 		BlockPostureDamage = Damage * 1.2
 	end
-
-	if HumanoidHitted:GetAttribute("DeflectTime") then
+ ---not HumanoidHitted:GetAttribute("Unparryable")
+	task.wait()
+	if HumanoidHitted:GetAttribute("DeflectTime") and not HumanoidHitted:GetAttribute("Unparryable") then
 		DamageService:DeflectHit(HumanoidHitted, Humanoid, DeflectPostureDamage)
 		return false
 	else
-		if HumanoidHitted:GetAttribute("Block") then
+		if HumanoidHitted:GetAttribute("Block") and not HumanoidHitted:GetAttribute("Unparryable") then
 			DamageService:BlockHit(HumanoidHitted, Humanoid, BlockPostureDamage)
 			return false
 		else
@@ -132,10 +133,10 @@ end
 
 -- retorna a ação que aconteceria caso um humanoid caso seja atacado
 function DamageService:GetHitContext(HumanoidHitted: Humanoid)
-	if HumanoidHitted:GetAttribute("DeflectTime") then
+	if HumanoidHitted:GetAttribute("DeflectTime") and not HumanoidHitted:GetAttribute("Unparryable") then
 		return "Deflect"
 	else
-		if HumanoidHitted:GetAttribute("Block") then
+		if HumanoidHitted:GetAttribute("Block") and not HumanoidHitted:GetAttribute("Unparryable") then
 			return "Block"
 		else -- if HumanoidHitted:GetAttribute("RollIFrame") then
 			-- 	return "Dodge"

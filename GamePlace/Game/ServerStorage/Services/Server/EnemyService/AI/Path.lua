@@ -1,4 +1,6 @@
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
+local Gamedata = require(game.ServerStorage.GameData)
+
 
 local Path = {}
 Path.Combos = {}
@@ -14,6 +16,8 @@ Path.PlayComboAnim = true
 Path.LoadedAnims = false
 Path.LastHitTick = nil
 Path.Stamina = 100
+Path.Data = {}
+
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local PathfindingService = game:GetService("PathfindingService")
@@ -95,13 +99,12 @@ function Path.StartFollowing(from: Humanoid, target: BasePart)
 				return
 			end
 
-			local parryChance = 20 / 100
-			local blockChance = 50 / 100
+			local parryChance = Path.Data.ParryChance / 100
+			local blockChance = Path.Data.BlockChance / 100
 			local randomNumber = math.random(0, 100) / 100
 
 			local isParry = randomNumber <= parryChance
 			local isBlock = (randomNumber <= blockChance) and not isParry
-
 			if isParry or AUTO_PARRY then
 				if AUTO_PARRY then
 					From:SetAttribute("BlockDebounce", false)
@@ -111,7 +114,6 @@ function Path.StartFollowing(from: Humanoid, target: BasePart)
 					From:SetAttribute("Block", false)
 					From:SetAttribute("UsingSkill", false)
 				end
-
 				WeaponService:Block(From.Parent, true)
 			elseif isBlock then
 				WeaponService:Block(From.Parent, true, true)
@@ -179,7 +181,7 @@ do
 						WeaponService:WeaponInput(From.Parent, "Attack")
 					else
 						Path.AlignOriDb = true
-						SkillService:UseSkill(From, "FlashStrike")
+						SkillService:UseSkill(From, "FlashStrike", {Damage = Path.Data.Damage})
 						task.delay(5, function()
 							Path.AlignOriDb = false
 						end)
@@ -212,10 +214,17 @@ function Path.Start(Humanoid: Humanoid)
 	local Animator: Animator = Humanoid:WaitForChild("Animator")
 	local HittedEvent = script.Parent:WaitForChild("Hitted") :: BindableEvent
 	local Connection: RBXScriptSignal
+
+
+	if Gamedata.gameEnemies[script.Parent.Parent.Parent.Name] then
+		Path.Data = Gamedata.gameEnemies[script.Parent.Parent.Parent.Name]
+	end
+
+	if not From then
+		From = script.Parent.Parent.Parent:FindFirstChildWhichIsA("Humanoid")
+	end
+
 	Connection = HittedEvent.Event:Connect(function(target: Humanoid)
-		if not From then
-			From = script.Parent.Parent.Parent:FindFirstChildWhichIsA("Humanoid")
-		end
 		if Target and Target ~= target then
 			Path.ChangeTarget(From, target)
 		else
