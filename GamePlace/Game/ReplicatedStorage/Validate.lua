@@ -1,6 +1,6 @@
 local Validate = {}
 
-local function check(Humanoid: Humanoid, cant)
+local function check(Humanoid: Humanoid, cant, debug)
 	if Humanoid.RootPart == nil then
 		return false
 	end
@@ -15,6 +15,9 @@ local function check(Humanoid: Humanoid, cant)
 
 	for _, att in ipairs(cant) do
 		if Humanoid:GetAttribute(att) == true then
+			if debug then
+				print(att)
+			end
 			return false
 		end
 	end

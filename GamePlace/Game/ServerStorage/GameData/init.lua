@@ -194,10 +194,12 @@ return {
 		Debuffs = {},
 	},
 	gameEnemies = {
-		["Teste"] = {
-			Health = 10000,
-			Damage = 1,
-			Speed = 1,
+		["Test"] = {
+			Health = 1000000000000000000,
+			ParryChance = 90,
+			BlockChance = 100,
+			Damage = 10,
+			Speed = 16,
 			Inteligence = 1,
 			Experience = 100,
 			AttackType = "Melee",
@@ -206,6 +208,22 @@ return {
 				["Iron Starter Sword"] = 15,
 			},
 		},
+		
+		["Test2"] =  {
+			Health = 1000000000000000000,
+			ParryChance = 30,
+			BlockChance = 60,
+			Damage = 4,
+			Speed = 16,
+			Inteligence = 1,
+			Experience = 100,
+			AttackType = "Melee",
+			Gold = 100,
+			Drops = {
+				["Iron Starter Sword"] = 15,
+			},
+		},
+
 		["Goblin"] = {
 			Health = 50,
 			Damage = 5,

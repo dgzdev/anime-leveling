@@ -61,7 +61,6 @@ function WeaponService:Block(Character: Model, state: boolean, cantParry: boolea
 			-- Humanoid:SetAttribute("Block", false)
 			return
 		end
-
 		local Animations = AnimationService:GetWeaponAnimationFolder(Humanoid)
 		local BlockAnimation = Humanoid.Animator:LoadAnimation(Animations.Block)
 

@@ -114,7 +114,8 @@ function DamageService:TryHit(Humanoid: Humanoid, HumanoidHitted: Humanoid, _Dam
 		DeflectPostureDamage = Damage
 		BlockPostureDamage = Damage * 1.2
 	end
-
+ ---not HumanoidHitted:GetAttribute("Unparryable")
+	task.wait()
 	if HumanoidHitted:GetAttribute("DeflectTime") and not HumanoidHitted:GetAttribute("Unparryable") then
 		DamageService:DeflectHit(HumanoidHitted, Humanoid, DeflectPostureDamage)
 		return false

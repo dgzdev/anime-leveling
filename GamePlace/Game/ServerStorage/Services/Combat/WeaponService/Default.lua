@@ -45,10 +45,7 @@ local Default = {
 		local SwingSpeed = Tool:GetAttribute("SwingSpeed") or 0.3
 		local HitEffect = Tool:GetAttribute("HitEffect") or Tool:GetAttribute("Type")
 
-		DebounceService:AddDebounce(Humanoid, "AttackCombo", SwingSpeed + 0.15)
-		DebounceService:AddDebounce(Humanoid, "AttackDebounce", SwingSpeed)
-		Humanoid:SetAttribute("LastAttackTick", tick())
-		CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
+	
 
 		local AnimationsFolder = AnimationService:GetWeaponAnimationFolder(Humanoid)
 
@@ -60,6 +57,11 @@ local Default = {
 		Animation.Priority = Enum.AnimationPriority.Action
 		Animation.Name = "M1_" .. tostring(Counter)
 		Animation:Play()
+
+		DebounceService:AddDebounce(Humanoid, "AttackCombo", SwingSpeed + 0.15)
+		DebounceService:AddDebounce(Humanoid, "AttackDebounce", SwingSpeed)
+		Humanoid:SetAttribute("LastAttackTick", tick())
+		CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
 
 		local Markers = getAllAnimationEventNames(AnimationPath.AnimationId)
 
@@ -85,7 +87,7 @@ local Default = {
 
 				if
 					DamageService:GetHitContext(Enemy.Humanoid) == "Hit"
-					and Humanoid:GetAttribute("ComboCounter") - #AnimationsFolder:GetChildren() == -3
+					and Humanoid:GetAttribute("ComboCounter") - #AnimationsFolder:GetChildren() == -3 and not Enemy.Humanoid:GetAttribute("DeflectTime") and not Enemy.Humanoid:GetAttribute("Block")
 				then
 					RagdollService:Ragdoll(Enemy, 1)
 
