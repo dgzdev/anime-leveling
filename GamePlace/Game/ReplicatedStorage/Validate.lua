@@ -159,6 +159,7 @@ function Validate:CanBlock(Humanoid: Humanoid)
 		"AttackCombo",
 		"Downed",
 		"BlockDebounce",
+		"Unparryable"
 	}
 
 	return check(Humanoid, cant) and Humanoid:GetAttribute("WeaponEquipped")

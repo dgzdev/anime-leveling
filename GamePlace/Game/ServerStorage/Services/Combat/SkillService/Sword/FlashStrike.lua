@@ -89,14 +89,22 @@ function FlashStrike.Attack(Humanoid: Humanoid)
 		if Enemy == Humanoid.Parent then
 			return
 		end
+		if not Enemy:FindFirstChild("Humanoid") then
+			return
+		end
+
+		local EnemyHumanoid = Enemy:FindFirstChild("Humanoid")
+
 		task.spawn(function()
+
 			if DamageService:GetHitContext(Enemy.Humanoid) == "Hit" then
+				DebounceService:AddDebounce(EnemyHumanoid, "Unparryable", 3, true)
 				WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 2.2)
 				table.insert(Enemies, Enemy)
 			else
 				WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 1.5)
 			end
-
+			
 			for _ = 1, 10, 1 do
 				DamageService:TryHit(Humanoid, Enemy.Humanoid, 4, "Sword")
 				task.wait(0.1)
