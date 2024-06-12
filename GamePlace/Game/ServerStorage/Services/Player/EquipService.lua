@@ -51,6 +51,8 @@ function EquipService:EquipItem(Player: Player)
 
 	for _, m6: Motor6D in Tool:GetDescendants() do
 		if m6:IsA("Motor6D") then
+			m6:SetAttribute("CoreMotor6D", true)
+
 			m6.Part0 = Character:FindFirstChild(m6.Name, true)
 			m6.Part1 = m6.Parent
 

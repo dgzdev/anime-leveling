@@ -65,10 +65,9 @@ function AI.Start()
 			AlignOrientation.Name = "LookPlayer"
 			AlignOrientation.AlignType = Enum.AlignType.PrimaryAxisLookAt
 			AlignOrientation.Mode = Enum.OrientationAlignmentMode.OneAttachment
-			AlignOrientation.Attachment0 = Humanoid.RootPart:FindFirstChild("Align", true)
-			AlignOrientation.Responsiveness = 45
-
-			AlignOrientation.Enabled = false
+			AlignOrientation.Attachment0 = Humanoid.RootPart:WaitForChild("RootAttachment")
+			AlignOrientation.Responsiveness = 120
+			AlignOrientation.CFrame = Humanoid.RootPart.CFrame * CFrame.Angles(0, math.rad(math.random(0, 360)), 0)
 
 			local Connection
 			Connection = RunService.Heartbeat:ConnectParallel(function()

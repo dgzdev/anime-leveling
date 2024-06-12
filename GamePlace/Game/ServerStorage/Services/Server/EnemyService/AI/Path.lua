@@ -79,10 +79,10 @@ end
 
 function Path.StartFollowing(from: Humanoid, target: BasePart)
 	local AlignOrientation = from.RootPart:FindFirstChildWhichIsA("AlignOrientation", true)
+
 	if AlignOrientation then
 		task.synchronize()
-		AlignOrientation.Enabled = true
-		AlignOrientation.CFrame = CFrame.lookAt(from.RootPart.Position, target.Position)
+		AlignOrientation.LookAtPosition = target.Position
 	end
 
 	Align = AlignOrientation
@@ -146,7 +146,7 @@ do
 			if not From then
 				return
 			end
-			-- print(Target)
+
 			if
 				math.abs(From.RootPart.Position.Y - Target.Position.Y) > 1
 				and not Path.AlignOriDb
