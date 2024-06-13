@@ -100,16 +100,19 @@ function FlashStrike.Attack(Humanoid: Humanoid, Data)
 
 		local EnemyHumanoid = Enemy:FindFirstChild("Humanoid")
 
+		
 		task.spawn(function()
-
+			local EmitDelayed = false
 			if DamageService:GetHitContext(Enemy.Humanoid) == "Hit" then
 				DebounceService:AddDebounce(EnemyHumanoid, "Unparryable", 3, true)
 				WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 2.2)
 				table.insert(Enemies, Enemy)
+				EmitDelayed = true
 			else
 				WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 1.5)
 			end
-			
+				FlashStrike.Hit(Enemy.Humanoid, EmitDelayed)
+					
 			for _ = 1, 10, 1 do
 				DamageService:TryHit(Humanoid, Enemy.Humanoid, math.ceil(Damage * .4), "Sword")
 				task.wait(0.1)
@@ -137,6 +140,11 @@ function FlashStrike.Attack(Humanoid: Humanoid, Data)
 
 	DebounceService:RemoveDebounce(Humanoid, "UsingSkill")
 	SkillService:SetSkillState(Humanoid, "FlashStrike", nil)
+end
+
+function FlashStrike.Hit(HumanoidHitted: Humanoid, EmitDelayed: boolean?)
+	local HitRenderData = RenderService:CreateRenderData(HumanoidHitted, "FlashStrike", "Hit", {EmitDelayed = EmitDelayed or false})
+	RenderService:RenderForPlayers(HitRenderData)
 end
 
 function FlashStrike.Cancel(Humanoid)

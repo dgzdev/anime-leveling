@@ -1,3 +1,4 @@
+local Debris = game:GetService("Debris")
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
 local FlashStrike = {}
 
@@ -34,10 +35,25 @@ function FlashStrike.Attack(RenderData)
 	local casterRootCFrame = RenderData.casterRootCFrame
 	local particle = VFX:CreateParticle(
 		casterRootCFrame * CFrame.new(0, 0, -13) * CFrame.Angles(0, math.rad(-90), 0),
-		"FlashStrike",
+		"FlashStrikeDash",
 		1
 	)
 	SFX:Create(particle, "JudgeCuts", 0, 128)
+end
+
+function FlashStrike.Hit(RenderData)
+	local casterRootCFrame = RenderData.casterRootCFrame
+	local FlashStrikeMultipleSlashes = game.ReplicatedStorage.VFX.Sword.FlashStrike.MultipleSlashes:Clone()
+	FlashStrikeMultipleSlashes:PivotTo(casterRootCFrame)
+	FlashStrikeMultipleSlashes.Parent = game.Workspace
+	RenderController:EmitParticles(FlashStrikeMultipleSlashes.Main.Attachment)
+	RenderController:EmitParticles(FlashStrikeMultipleSlashes.Stars)
+
+	if RenderData.arguments.EmitDelayed then
+		RenderController:EmitParticles(FlashStrikeMultipleSlashes.Main.DelayedHit)
+	end
+
+	Debris:AddItem(FlashStrikeMultipleSlashes, 5)
 end
 
 function FlashStrike.Cancel(RenderData) end

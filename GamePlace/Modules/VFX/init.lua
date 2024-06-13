@@ -32,7 +32,7 @@ function VFX:_ApplyParticle(
 		return
 	end
 
-	local block = VFXFolder:FindFirstChild(action)
+	local block = VFXFolder:FindFirstChild(action, true)
 	if not block then
 		return error("VFX not found")
 	end
@@ -48,7 +48,7 @@ function VFX:_ApplyParticle(
 		offset = CFrame.new(offset)
 	end
 
-	particle.CFrame = Root.CFrame * (offset or CFrame.new(0, 0, 0))
+	particle:PivotTo(Root.CFrame * (offset or CFrame.new(0, 0, 0)))
 
 	if doNotWeld then
 		particle.Anchored = true
@@ -136,14 +136,14 @@ function VFX:CreateInfinite(target: Model, action: string)
 end
 
 function VFX:CreateParticle(position: CFrame, action: string, time: number?)
-	local block = VFXFolder:FindFirstChild(action)
+	local block = VFXFolder:FindFirstChild(action, true)
 	if not block then
 		return error("VFX not found")
 	end
 
 	local particle = block:Clone() :: BasePart
 	particle.Parent = Workspace.VFXs
-	particle.CFrame = position
+	particle:PivotTo(position)
 	particle.Transparency = 1
 	for _, part in ipairs(particle:GetDescendants()) do
 		if part:IsA("BasePart") then
