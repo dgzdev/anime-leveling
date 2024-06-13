@@ -1,4 +1,5 @@
 local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 --[[
 
@@ -22,26 +23,42 @@ local MenuCamera = {
 local Player = game.Players.LocalPlayer
 local Mouse = Player:GetMouse()
 
+local mouseX = 0
+local mouseY = 0
+
+function MenuCamera.SetCF(self, cf: CFrame)
+	self.CF0 = cf
+end
+
 function MenuCamera.Enable(self)
 	RunService:UnbindFromRenderStep("MenuCamera")
 	self.Camera.CameraType = Enum.CameraType.Scriptable -- Set the CameraType to scriptable
 
-	local function MouseMove()
-		Player = game.Players.LocalPlayer
-		Mouse = Player:GetMouse()
+	Player = game.Players.LocalPlayer
+	Mouse = Player:GetMouse()
 
+	RunService:BindToRenderStep("Camera", Enum.RenderPriority.Last.Value, function(dt: number)
 		local Camera = workspace.CurrentCamera
-		local XFloat = -0.5 + Mouse.X / Camera.ViewportSize.X
-		local YFloat = -0.5 + Mouse.Y / Camera.ViewportSize.Y
+		local XFloat = -0.5 + mouseX / Camera.ViewportSize.X
+		local YFloat = -0.5 + mouseY / Camera.ViewportSize.Y
 
 		local CF = self.CF0
 			* CFrame.fromOrientation(math.rad(self.MaxYRotation * -YFloat), math.rad(self.MaxXRotation * -XFloat), 0)
 
 		Camera.CFrame = CF
-	end
-
-	RunService:BindToRenderStep("MenuCamera", Enum.RenderPriority.Camera.Value, MouseMove)
+	end)
 end
+
+local function MouseMove()
+	mouseX = Mouse.X
+	mouseY = Mouse.Y
+end
+
+UserInputService.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement then
+		MouseMove()
+	end
+end)
 
 function MenuCamera.Disable(self)
 	RunService:UnbindFromRenderStep("MenuCamera")

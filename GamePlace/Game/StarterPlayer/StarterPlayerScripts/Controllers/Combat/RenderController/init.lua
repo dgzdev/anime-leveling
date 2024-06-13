@@ -158,6 +158,11 @@ function RenderController:EmitParticles(parent)
 			task.delay(v:GetAttribute("EmitDelay"), function()
 				RenderController:Emit(v)
 			end)
+		elseif v:GetAttribute("Duration") then
+			v.Enabled = true
+			task.delay(v:GetAttribute("Duration"), function()
+				v.Enabled = false
+			end)
 		else
 			RenderController:Emit(v)
 		end

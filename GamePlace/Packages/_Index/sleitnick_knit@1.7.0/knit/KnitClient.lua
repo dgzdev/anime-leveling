@@ -132,7 +132,7 @@ end
 
 local function GetServicesFolder()
 	if not servicesFolder then
-		servicesFolder = (script.Parent :: Instance):WaitForChild("Services")
+		servicesFolder = (script.Parent :: Instance):WaitForChild("Services", math.huge)
 	end
 
 	return servicesFolder

@@ -2,7 +2,7 @@ local Workspace = game:GetService("Workspace")
 local Finder = {}
 local Path
 
-function Finder.IsOnDot(from: Humanoid, humanoid: Humanoid): boolean
+function Finder.IsOnDot(from: Humanoid, humanoid: Humanoid, debug): boolean
 	if not humanoid:IsDescendantOf(workspace) then
 		return false
 	end
@@ -11,6 +11,26 @@ function Finder.IsOnDot(from: Humanoid, humanoid: Humanoid): boolean
 	local npcLook = from.RootPart.CFrame.LookVector
 
 	local dotProduct = npcToCharacter:Dot(npcLook)
+
+	if debug then
+		local hasDot = tostring(dotProduct):find(".")
+		local isNegative = dotProduct < 0
+
+		local sub = 1
+		if isNegative then
+			sub += 1
+		end
+		if hasDot then
+			sub += 2
+		end
+
+		local dot = tostring(dotProduct)
+		if hasDot then
+			dot = dot:sub(1, dot:find(".") + sub)
+		end
+
+		print(dot)
+	end
 
 	if dotProduct > 0.5 then
 		return dotProduct
@@ -69,7 +89,6 @@ function Finder.GetClosestHumanoid(from: Humanoid, onlyPlayers: boolean, magnitu
 	else
 		for _, hum: Humanoid in Workspace.Test:GetDescendants() do
 			if hum:IsA("Humanoid") then
-
 				if hum.Health <= 0 then
 					continue
 				end

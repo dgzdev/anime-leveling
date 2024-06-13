@@ -1,5 +1,6 @@
 {
     "name": "Anime Leveling (MENU)",
+    "servePort": 800,
     "tree": {
         "$className": "DataModel",
         "ServerScriptService": {

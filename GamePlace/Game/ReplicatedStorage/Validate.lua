@@ -12,6 +12,9 @@ local function check(Humanoid: Humanoid, cant, debug)
 	if Humanoid.Health <= 0 then
 		return false
 	end
+	if Humanoid:GetAttribute("Ragdoll") then
+		return false
+	end
 
 	for _, att in ipairs(cant) do
 		if Humanoid:GetAttribute(att) == true then
@@ -162,7 +165,7 @@ function Validate:CanBlock(Humanoid: Humanoid)
 		"AttackCombo",
 		"Downed",
 		"BlockDebounce",
-		"Unparryable"
+		"Unparryable",
 	}
 
 	return check(Humanoid, cant, false) and Humanoid:GetAttribute("WeaponEquipped")

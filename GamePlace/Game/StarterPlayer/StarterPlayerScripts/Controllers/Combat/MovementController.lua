@@ -21,11 +21,11 @@ local taps = 0
 local lastTap = tick()
 local keys = { Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D }
 
-		local Character = Player.Character or Player.CharacterAdded:Wait()
-		local LeftLeg = Character:WaitForChild("Left Leg")
-		local RightLeg = Character:WaitForChild("Right Leg")
-		local Humanoid = Character:WaitForChild("Humanoid")
-		local RootPart = Character:WaitForChild("HumanoidRootPart")
+local Character = Player.Character or Player.CharacterAdded:Wait()
+local LeftLeg = Character:WaitForChild("Left Leg")
+local RightLeg = Character:WaitForChild("Right Leg")
+local Humanoid = Character:WaitForChild("Humanoid")
+local RootPart = Character:WaitForChild("HumanoidRootPart")
 
 local MovementModule = Knit.CreateController({
 	Name = "MovementController",
@@ -56,8 +56,6 @@ function UpdateRunWalkSpeed()
 end
 
 function MovementModule:ChangeCharacterState(state: CharacterState)
-
-
 	if self.CharacterProperties.CharacterState == state then
 		return
 	end
@@ -68,7 +66,6 @@ function MovementModule:ChangeCharacterState(state: CharacterState)
 	if Humanoid.WalkSpeed ~= Movement.WalkSpeed then
 		Humanoid.WalkSpeed = Movement.WalkSpeed
 		Humanoid.JumpPower = Movement.JumpPower
-
 	end
 
 	Humanoid:SetAttribute("State", state)
@@ -145,61 +142,106 @@ export type CharacterState = "RUN" | "WALK"
 function MovementModule:CreateBinds()
 	MovementModule:ChangeCharacterState("WALK")
 
-		local EF = ReplicatedStorage:WaitForChild("Models"):WaitForChild("ef")
-		local ef1 = EF:Clone()
-		local ef2 = EF:Clone()
-		ef1.Parent = LeftLeg
-		ef2.Parent = RightLeg
+	local EF = ReplicatedStorage:WaitForChild("Models"):WaitForChild("UI"):WaitForChild("ef")
 
-		ef1.Enabled = false
-		ef2.Enabled = false
+	local att1 = Instance.new("Attachment")
+	att1.Parent = LeftLeg
+	att1.CFrame = CFrame.new(0, -1, 0)
 
-		Humanoid.Running:Connect(function(speed)
-			if speed < 0.1 then
-				local keysDown = 0
-				for _, key in ipairs(keys) do
-					if UserInputService:IsKeyDown(key) then
-						keysDown += 1
-					end
+	local att2 = Instance.new("Attachment")
+	att2.Parent = RightLeg
+	att2.CFrame = CFrame.new(0, -1, 0)
+
+	for __index, particle: ParticleEmitter in EF:GetChildren() do
+		local p1 = particle:Clone()
+		local p2 = particle:Clone()
+
+		p1.Parent = att1
+		p2.Parent = att2
+	end
+
+	local ef1 = att1
+	local ef2 = att2
+
+	for _index, effect: ParticleEmitter in ef1:GetChildren() do
+		if effect:IsA("ParticleEmitter") then
+			effect.Enabled = false
+		end
+	end
+	for _index, effect: ParticleEmitter in ef2:GetChildren() do
+		if effect:IsA("ParticleEmitter") then
+			effect.Enabled = false
+		end
+	end
+
+	Humanoid.Running:Connect(function(speed)
+		if speed < 0.1 then
+			local keysDown = 0
+			for _, key in ipairs(keys) do
+				if UserInputService:IsKeyDown(key) then
+					keysDown += 1
 				end
-				if keysDown == 0 then
-					MovementModule:ChangeCharacterState("WALK")
+			end
+			if keysDown == 0 then
+				MovementModule:ChangeCharacterState("WALK")
+			end
+		end
+		if speed > 16 then
+			for _index, effect: ParticleEmitter in ef1:GetChildren() do
+				if effect:IsA("ParticleEmitter") then
+					effect.Enabled = true
 				end
 			end
-			if speed > 16 then
-				ef1.Enabled = true
-				ef2.Enabled = true
-			else
-				ef1.Enabled = false
-				ef2.Enabled = false
+			for _index, effect: ParticleEmitter in ef2:GetChildren() do
+				if effect:IsA("ParticleEmitter") then
+					effect.Enabled = true
+				end
 			end
-		end)
+		else
+			for _index, effect: ParticleEmitter in ef1:GetChildren() do
+				if effect:IsA("ParticleEmitter") then
+					effect.Enabled = false
+				end
+			end
+			for _index, effect: ParticleEmitter in ef2:GetChildren() do
+				if effect:IsA("ParticleEmitter") then
+					effect.Enabled = false
+				end
+			end
+		end
+	end)
 
-		UserInputService.JumpRequest:Connect(function()
-			if RootPart:FindFirstChildWhichIsA("AlignPosition") then
-				Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
-			else
-				Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
-			end
-		end)
+	UserInputService.JumpRequest:Connect(function()
+		if RootPart:FindFirstChildWhichIsA("AlignPosition") then
+			Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
+		else
+			Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
+		end
+	end)
 
-		Humanoid.Jumping:Connect(function(active)
-			if active then
-				ef1.Enabled = false
-				ef2.Enabled = false
+	Humanoid.Jumping:Connect(function(active)
+		if active then
+			for _index, effect: ParticleEmitter in ef1:GetChildren() do
+				if effect:IsA("ParticleEmitter") then
+					effect.Enabled = false
+				end
 			end
-		end)
+			for _index, effect: ParticleEmitter in ef2:GetChildren() do
+				if effect:IsA("ParticleEmitter") then
+					effect.Enabled = false
+				end
+			end
+		end
+	end)
 end
 
 function MovementModule:KnitInit()
 	ProgressionService = Knit.GetService("ProgressionService")
 	StatusController = Knit.GetController("StatusController")
 
-	coroutine.wrap(function()
-		MovementModule:CreateBinds()
-		MovementModule:CreateContextBinder()
-		MovementModule:BindAttribute()
-	end)()
+	MovementModule:CreateBinds()
+	MovementModule:CreateContextBinder()
+	MovementModule:BindAttribute()
 
 	Player.CharacterAdded:Connect(function(character)
 		Character = character

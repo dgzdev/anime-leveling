@@ -18,7 +18,6 @@ Path.LastHitTick = nil
 Path.Stamina = 100
 Path.Data = {}
 
-
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local PathfindingService = game:GetService("PathfindingService")
 local RunService = game:GetService("RunService")
@@ -145,7 +144,7 @@ do
 			end
 
 			if
-				Target and Path.CanLeaveCombat and (From.RootPart.Position - Target.Position).Magnitude > 120
+				Target and (From.RootPart.Position - Target.Position).Magnitude > 120
 				or Target.Parent.Humanoid.Health <= 0
 			then
 				print((From.RootPart.Position - Target.Position).Magnitude)
@@ -156,46 +155,55 @@ do
 
 			task.spawn(function()
 				if Target.Parent.Humanoid.Health > 0 and (From.RootPart.Position - Target.Position).Magnitude < 6 then
-					
 					if Target.Parent.Humanoid:GetAttribute("LastAttackTick") then
 						if math.abs(Target.Parent.Humanoid:GetAttribute("LastAttackTick") - tick()) < 2 then
-							WeaponService:TypeBlockChecker(From,{
+							WeaponService:TypeBlockChecker(From, {
 								ParryChance = Path.Data.ParryChance,
 								BlockChance = Path.Data.BlockChance,
 								AUTO_PARRY = AUTO_PARRY,
 							})
-						else
-							print(math.abs(Target.Parent.Humanoid:GetAttribute("LastAttackTick") - tick()))
 						end
 					end
-					
+
 					local randomNumber = math.random(0, 100) / 100
 					local flashStrikeChance = 10 / 100
 
 					local isFlashStrike = randomNumber <= flashStrikeChance
-				
+
 					if not isFlashStrike then
 						WeaponService:WeaponInput(From.Parent, "Attack")
 					else
 						Path.AlignOriDb = true
-						SkillService:UseSkill(From, "FlashStrike", {Damage = Path.Data.Damage})
+						SkillService:UseSkill(From, "FlashStrike", { Damage = Path.Data.Damage })
 						task.delay(5, function()
 							Path.AlignOriDb = false
 						end)
 					end
 				end
 			end)
-			
+
 			local p = PathfindingService:CreatePath()
 			---print(Finder.IsOnDot(Target.Parent.Humanoid, From))
-			if Finder.IsOnDot(Target.Parent.Humanoid, From) then
+			local Dot = Finder.IsOnDot(Target.Parent.Humanoid, From)
+			if Dot and Target:GetVelocityAtPosition(Target.Position).Magnitude > 3 then
+				local LeftOrRight
 
-				p:ComputeAsync(From.RootPart.Position, (Target.CFrame * CFrame.new(12,0,-5)).Position)
+				if
+					(From.RootPart.Position - Target.Parent:FindFirstChild("Left Arm").Position).Magnitude
+					< (From.RootPart.Position - Target.Parent:FindFirstChild("Right Arm").Position).Magnitude
+				then
+					LeftOrRight = -1
+				else
+					LeftOrRight = 1
+				end
+
+				--print(Finder.IsOnDot(Target.Parent.Humanoid, From))
+				--CFrame.new(12, 0, -5)
+				p:ComputeAsync(From.RootPart.Position, (Target.CFrame * CFrame.new(12 * LeftOrRight, 0, -5)).Position)
 				--DebugService:CreatePartAtPos((Target.CFrame * CFrame.new(8*RightorLeft,0,-15)).Position)
 			else
 				p:ComputeAsync(From.RootPart.Position, Target.Position)
 			end
-			
 
 			local waypoints = p:GetWaypoints()
 			table.remove(waypoints, #waypoints)
@@ -223,7 +231,6 @@ function Path.Start(Humanoid: Humanoid)
 	local Animator: Animator = Humanoid:WaitForChild("Animator")
 	local HittedEvent = script.Parent:WaitForChild("Hitted") :: BindableEvent
 	local Connection: RBXScriptSignal
-
 
 	if Gamedata.gameEnemies[script.Parent.Parent.Parent.Name] then
 		Path.Data = Gamedata.gameEnemies[script.Parent.Parent.Parent.Name]

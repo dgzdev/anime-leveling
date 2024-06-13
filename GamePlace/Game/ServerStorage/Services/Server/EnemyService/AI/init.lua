@@ -89,8 +89,6 @@ function AI.Start()
 
 				if isOnLook and (Humanoid.RootPart.Position - closest.RootPart.Position).Magnitude < 20 then
 					Path.StartFollowing(Humanoid, closest.RootPart)
-				else
-					Path.LeaveFollowing()
 				end
 
 				task.wait()

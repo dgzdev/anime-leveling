@@ -88,6 +88,7 @@ local function SlideIn()
 	LeftSide.Position = UDim2.fromScale(-LeftSide.Size.X.Scale, 0.5)
 	Mid.Position = UDim2.fromScale(0.5, 1 + Mid.Size.Y.Scale)
 
+	task.wait(0.25)
 	SlotSelection.Enabled = true
 
 	local tweenInfo = TweenInfo.new(0.75, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut, 0, false, 0.25)
@@ -152,7 +153,7 @@ local function fadeOut()
 	tw:Play()
 	tw.Completed:Wait()
 
-	MenuCamera.CF0 = Workspace.CurrentCamera.CFrame
+	MenuCamera:SetCF(Workspace.CurrentCamera.CFrame)
 	MenuCamera:Enable()
 
 	SlideIn()
@@ -191,7 +192,7 @@ local Camera = Workspace.CurrentCamera
 Camera.CameraType = Enum.CameraType.Scriptable
 Camera.CFrame = ViewPart.CFrame
 
-MenuCamera.CF0 = Workspace.CurrentCamera.CFrame
+MenuCamera:SetCF(Workspace.CurrentCamera.CFrame)
 MenuCamera:Enable()
 
 PressAnyKey.Parent = PlayerGui
