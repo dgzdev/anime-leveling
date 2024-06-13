@@ -1,6 +1,6 @@
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
 local Gamedata = require(game.ServerStorage.GameData)
-
+local Finder = require(script.Parent.Finder)
 
 local Path = {}
 Path.Combos = {}
@@ -27,6 +27,8 @@ local HitboxService
 local AnimationService
 local WeaponService
 local SkillService
+local DebugService
+local DebounceService
 
 local AnimationsFolder = ReplicatedStorage:WaitForChild("Animations")
 
@@ -98,30 +100,12 @@ function Path.StartFollowing(from: Humanoid, target: BasePart)
 			if not state then
 				return
 			end
-
-			local parryChance = Path.Data.ParryChance / 100
-			local blockChance = Path.Data.BlockChance / 100
-			local randomNumber = math.random(0, 100) / 100
-
-			local isParry = randomNumber <= parryChance
-			local isBlock = (randomNumber <= blockChance) and not isParry
-			if isParry or AUTO_PARRY then
-				if AUTO_PARRY then
-					From:SetAttribute("BlockDebounce", false)
-					From:SetAttribute("Blocked", false)
-					From:SetAttribute("BlockEndLag", false)
-					From:SetAttribute("AttackCombo", false)
-					From:SetAttribute("Block", false)
-					From:SetAttribute("UsingSkill", false)
-				end
-				WeaponService:Block(From.Parent, true)
-			elseif isBlock then
-				WeaponService:Block(From.Parent, true, true)
-			end
-
-			task.delay(0.25, function()
-				WeaponService:Block(From.Parent, false)
-			end)
+			local Data = {
+				ParryChance = Path.Data.ParryChance,
+				BlockChance = Path.Data.BlockChance,
+				AUTO_PARRY = AUTO_PARRY,
+			}
+			WeaponService:TypeBlockChecker(From, Data)
 		end)
 	)
 	From = from
@@ -161,7 +145,7 @@ do
 			end
 
 			if
-				Target and Path.CanLeaveCombat and (From.RootPart.Position - Target.Position).Magnitude > 80
+				Target and Path.CanLeaveCombat and (From.RootPart.Position - Target.Position).Magnitude > 120
 				or Target.Parent.Humanoid.Health <= 0
 			then
 				print((From.RootPart.Position - Target.Position).Magnitude)
@@ -172,11 +156,24 @@ do
 
 			task.spawn(function()
 				if Target.Parent.Humanoid.Health > 0 and (From.RootPart.Position - Target.Position).Magnitude < 6 then
+					
+					if Target.Parent.Humanoid:GetAttribute("LastAttackTick") then
+						if math.abs(Target.Parent.Humanoid:GetAttribute("LastAttackTick") - tick()) < 2 then
+							WeaponService:TypeBlockChecker(From,{
+								ParryChance = Path.Data.ParryChance,
+								BlockChance = Path.Data.BlockChance,
+								AUTO_PARRY = AUTO_PARRY,
+							})
+						else
+							print(math.abs(Target.Parent.Humanoid:GetAttribute("LastAttackTick") - tick()))
+						end
+					end
+					
 					local randomNumber = math.random(0, 100) / 100
-					local flashStrikeChance = 20 / 100
+					local flashStrikeChance = 10 / 100
 
 					local isFlashStrike = randomNumber <= flashStrikeChance
-
+				
 					if not isFlashStrike then
 						WeaponService:WeaponInput(From.Parent, "Attack")
 					else
@@ -188,9 +185,18 @@ do
 					end
 				end
 			end)
-
+			
 			local p = PathfindingService:CreatePath()
-			p:ComputeAsync(From.RootPart.Position, Target.Position)
+			---print(Finder.IsOnDot(Target.Parent.Humanoid, From))
+			if Finder.IsOnDot(Target.Parent.Humanoid, From) then
+
+				p:ComputeAsync(From.RootPart.Position, (Target.CFrame * CFrame.new(12,0,-5)).Position)
+				--DebugService:CreatePartAtPos((Target.CFrame * CFrame.new(8*RightorLeft,0,-15)).Position)
+			else
+				p:ComputeAsync(From.RootPart.Position, Target.Position)
+			end
+			
+
 			local waypoints = p:GetWaypoints()
 			table.remove(waypoints, #waypoints)
 			table.remove(waypoints, #waypoints - 1)
@@ -211,6 +217,9 @@ function Path.Start(Humanoid: Humanoid)
 	AnimationService = Knit.GetService("AnimationService")
 	SkillService = Knit.GetService("SkillService")
 	WeaponService = Knit.GetService("WeaponService")
+	DebugService = Knit.GetService("DebugService")
+	DebounceService = Knit.GetService("DebounceService")
+
 	local Animator: Animator = Humanoid:WaitForChild("Animator")
 	local HittedEvent = script.Parent:WaitForChild("Hitted") :: BindableEvent
 	local Connection: RBXScriptSignal
@@ -224,11 +233,20 @@ function Path.Start(Humanoid: Humanoid)
 		From = script.Parent.Parent.Parent:FindFirstChildWhichIsA("Humanoid")
 	end
 
-	Connection = HittedEvent.Event:Connect(function(target: Humanoid)
-		if Target and Target ~= target then
-			Path.ChangeTarget(From, target)
+	Connection = HittedEvent.Event:Connect(function(Newtarget: Humanoid)
+		if Target and Target.Parent ~= Newtarget then
+			Path.ChangeTarget(From, Newtarget)
 		else
-			Path.StartFollowing(From, target.RootPart)
+			print(Newtarget)
+			Path.StartFollowing(From, Newtarget.RootPart)
+			local AlignOrientation = From.RootPart:FindFirstChildWhichIsA("AlignOrientation", true)
+
+			if AlignOrientation then
+				task.synchronize()
+				AlignOrientation.Enabled = true
+				AlignOrientation.LookAtPosition = Newtarget.RootPart.Position
+				task.desynchronize()
+			end
 		end
 	end)
 

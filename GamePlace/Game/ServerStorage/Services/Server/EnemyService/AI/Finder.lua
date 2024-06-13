@@ -13,7 +13,7 @@ function Finder.IsOnDot(from: Humanoid, humanoid: Humanoid): boolean
 	local dotProduct = npcToCharacter:Dot(npcLook)
 
 	if dotProduct > 0.5 then
-		return true
+		return dotProduct
 	else
 		return false
 	end
@@ -21,9 +21,9 @@ end
 
 function Finder.GetClosestHumanoid(from: Humanoid, onlyPlayers: boolean, magnitude: number): Humanoid?
 	local closest: Humanoid = nil
-	if Path.InPath then
-		return
-	end
+	--if Path.InPath then
+	--	return
+	--end
 
 	if onlyPlayers then
 		for _, player in game.Players:GetPlayers() do
@@ -67,13 +67,14 @@ function Finder.GetClosestHumanoid(from: Humanoid, onlyPlayers: boolean, magnitu
 			end
 		end
 	else
-		for _, hum: Humanoid in Workspace:GetDescendants() do
+		for _, hum: Humanoid in Workspace.Test:GetDescendants() do
 			if hum:IsA("Humanoid") then
+
 				if hum.Health <= 0 then
 					continue
 				end
 
-				if not game.Players:GetPlayerFromCharacter(hum.Parent) then
+				if not game.Players:GetPlayers()[hum.Parent.Name] then
 					if not closest then
 						local distance = (hum.RootPart.Position - from.RootPart.Position).Magnitude
 						if distance < magnitude then

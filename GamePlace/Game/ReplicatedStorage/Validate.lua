@@ -165,7 +165,7 @@ function Validate:CanBlock(Humanoid: Humanoid)
 		"Unparryable"
 	}
 
-	return check(Humanoid, cant) and Humanoid:GetAttribute("WeaponEquipped")
+	return check(Humanoid, cant, false) and Humanoid:GetAttribute("WeaponEquipped")
 end
 
 return Validate

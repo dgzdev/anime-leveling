@@ -60,6 +60,7 @@ local Default = {
 
 		DebounceService:AddDebounce(Humanoid, "AttackCombo", SwingSpeed + 0.15)
 		DebounceService:AddDebounce(Humanoid, "AttackDebounce", SwingSpeed)
+		
 		Humanoid:SetAttribute("LastAttackTick", tick())
 		CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
 

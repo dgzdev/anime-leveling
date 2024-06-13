@@ -43,6 +43,8 @@ function DebugService:CreatePartAtPos(Pos: Vector3)
 	debugPart.Position = Pos
 	debugPart.Shape = Enum.PartType.Ball
 	debugPart.Material = Enum.Material.Neon
+
+	Debris:AddItem(debugPart, 3)
 end
 
 function DebugService.Client:CreatePartAtPos(p, ...)
