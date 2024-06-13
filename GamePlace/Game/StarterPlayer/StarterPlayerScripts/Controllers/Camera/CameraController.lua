@@ -110,7 +110,7 @@ end)
 function CameraModule.CreateContext()
 	ContextActionService:BindAction("MouseMovement", function(actionName, inputState, inputObject)
 		if inputState == Enum.UserInputState.Change then
-			cameraAngleX -= inputObject.Delta.X * 0.4
+			cameraAngleX -= inputObject.Delta.X * 0.4 --> CFrame.new() -> (x=0-360,y,z)
 			cameraAngleY = math.clamp(cameraAngleY - inputObject.Delta.Y * 0.4, -75, 75)
 		else
 			return Enum.ContextActionResult.Pass
