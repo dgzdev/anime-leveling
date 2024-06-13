@@ -196,8 +196,8 @@ return {
 	gameEnemies = {
 		["Test"] = {
 			Health = 1000000000000000000,
-			ParryChance = 50,
-			BlockChance = 60,
+			ParryChance = 5,
+			BlockChance = 90,
 			Damage = 10,
 			Speed = 16,
 			Inteligence = 1,
@@ -208,8 +208,8 @@ return {
 				["Iron Starter Sword"] = 15,
 			},
 		},
-		
-		["Test2"] =  {
+
+		["Test2"] = {
 			Health = 1000000000000000000,
 			ParryChance = 30,
 			BlockChance = 60,

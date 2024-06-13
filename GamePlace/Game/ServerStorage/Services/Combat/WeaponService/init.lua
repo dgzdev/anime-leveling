@@ -42,13 +42,11 @@ end
 function WeaponService:TriggerHittedEvent(Character: Model, HumanoidWhoTriggered: Humanoid)
 	if Character:FindFirstChild("EnemyAI") then
 		if Character:FindFirstChild("EnemyAI"):FindFirstChild("AI"):FindFirstChild("Hitted") then
-			local HittedEvent = Character:FindFirstChild("EnemyAI")
-				:FindFirstChild("AI")
-				:FindFirstChild("Hitted") :: BindableEvent
+			local HittedEvent =
+				Character:FindFirstChild("EnemyAI"):FindFirstChild("AI"):FindFirstChild("Hitted") :: BindableEvent
 			HittedEvent:Fire(HumanoidWhoTriggered)
 		end
 	end
-
 end
 
 function WeaponService:Stun(Character: Model, Position: Vector3, Duration: number)
@@ -67,7 +65,6 @@ end
 
 function WeaponService:Block(Character: Model, state: boolean, cantParry: boolean?)
 	local Humanoid = Character.Humanoid
-
 	if state then
 		if not Validate:CanBlock(Humanoid) then
 			-- Humanoid:SetAttribute("Block", false)
@@ -126,33 +123,40 @@ function WeaponService:WeaponInput(Character: Model, ActionName: string, Data: {
 	end
 end
 
-function WeaponService:TypeBlockChecker(Humanoid : Humanoid, Data) -------------> Só pode ser usada para NPC's
+function WeaponService:TypeBlockChecker(Humanoid: Humanoid, Data) -------------> Só pode ser usada para NPC's
+	if not Data then
+		return
+	end
 
-		if not Data then
-			return
-		end
+	if Humanoid:GetAttribute("BlockChecker") then
+		return
+	end
 
-		local parryChance = Data.ParryChance / 100
-		local blockChance = Data.BlockChance / 100
-		local randomNumber = math.random(0, 100) / 100
-		local isParry = randomNumber <= parryChance
-		local isBlock = (randomNumber <= blockChance) and not isParry
-		if isParry or Data.AUTO_PARRY then
-			if Data.AUTO_PARRY then
-				Humanoid:SetAttribute("BlockDebounce", false)
-				Humanoid:SetAttribute("Blocked", false)
-				Humanoid:SetAttribute("BlockEndLag", false)
-				Humanoid:SetAttribute("AttackCombo", false)
-				Humanoid:SetAttribute("Block", false)
-				Humanoid:SetAttribute("UsingSkill", false)
-			end
-			WeaponService:Block(Humanoid.Parent, true)
-		elseif isBlock then
-			WeaponService:Block(Humanoid.Parent, true, true)
+	DebounceService:AddDebounce(Humanoid, "BlockChecker", 0.3, true)
+
+	local parryChance = Data.ParryChance / 100
+	local blockChance = Data.BlockChance / 100
+	local randomNumber = math.random(0, 100) / 100
+	local isParry = randomNumber <= parryChance
+	local isBlock = (randomNumber <= blockChance) and not isParry
+	if isParry or Data.AUTO_PARRY then
+		--print("Parry")
+		if Data.AUTO_PARRY then
+			Humanoid:SetAttribute("BlockDebounce", false)
+			Humanoid:SetAttribute("Blocked", false)
+			Humanoid:SetAttribute("BlockEndLag", false)
+			Humanoid:SetAttribute("AttackCombo", false)
+			Humanoid:SetAttribute("Block", false)
+			Humanoid:SetAttribute("UsingSkill", false)
 		end
-		task.delay(0.25, function()
-			WeaponService:Block(Humanoid.Parent, false)
-		end)
+		WeaponService:Block(Humanoid.Parent, true)
+	elseif isBlock then
+		--print("Block")
+		WeaponService:Block(Humanoid.Parent, true, true)
+	end
+	task.delay(0.25, function()
+		WeaponService:Block(Humanoid.Parent, false)
+	end)
 end
 
 function WeaponService.Client:WeaponInput(Player: Player, ActionName: string, Data: { [any]: any })
