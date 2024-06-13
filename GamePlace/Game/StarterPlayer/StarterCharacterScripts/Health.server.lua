@@ -1,6 +1,3 @@
-local Players = game:GetService("Players")
--- Gradually regenerates the Humanoid's Health over time.
-
 local REGEN_RATE = 5 / 100 -- Regenerate this fraction of MaxHealth per second.
 local REGEN_STEP = 20 -- Wait this long between each regeneration step.
 
