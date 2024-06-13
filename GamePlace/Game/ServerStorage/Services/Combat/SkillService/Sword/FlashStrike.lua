@@ -53,10 +53,9 @@ function FlashStrike.Attack(Humanoid: Humanoid, Data)
 	Params.FilterDescendantsInstances = { workspace.Enemies, workspace.Characters, workspace.Test }
 	Params.FilterType = Enum.RaycastFilterType.Exclude
 
-	local raycast = workspace:Spherecast(RootPart.CFrame.Position, 3, (RootPart.CFrame.LookVector * 25), Params)
-
-	local Distance = 50
-	local DefaltDistance = 50
+	local Distance = 34
+	local raycast = workspace:Spherecast(RootPart.CFrame.Position, 3, (RootPart.CFrame.LookVector * Distance), Params)
+	local DefaltDistance = 34
 	if raycast then
 		Distance = raycast.Distance
 	end
@@ -65,7 +64,7 @@ function FlashStrike.Attack(Humanoid: Humanoid, Data)
 	RootPart.AssemblyAngularVelocity = Vector3.zero
 	RootPart.AssemblyLinearVelocity = (
 		RootPart.CFrame.LookVector
-		* (600 / (DefaltDistance / Distance))
+		* (500 / (DefaltDistance / Distance))
 		* WeaponService:GetModelMass(Humanoid.Parent)
 	)
 
@@ -85,7 +84,7 @@ function FlashStrike.Attack(Humanoid: Humanoid, Data)
 	AlignOrientation.Parent = Humanoid.RootPart
 	Debris:AddItem(AlignOrientation, 1.4)
 
-	local HitboxSize = Vector3.new(5, 5, Distance)
+	local HitboxSize = Vector3.new(6, 6, Distance)
 	local HitboxCFrame = StartCFrame * CFrame.new(0, 0, -Distance / 2)
 
 	local Enemies = {}
@@ -100,12 +99,13 @@ function FlashStrike.Attack(Humanoid: Humanoid, Data)
 
 		local EnemyHumanoid = Enemy:FindFirstChild("Humanoid")
 
-		
+		WeaponService:TriggerHittedEvent(Enemy, Humanoid)
+
 		task.spawn(function()
 			local EmitDelayed = false
 			if DamageService:GetHitContext(Enemy.Humanoid) == "Hit" then
-				DebounceService:AddDebounce(EnemyHumanoid, "Unparryable", 3, true)
-				WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 2.2)
+				DebounceService:AddDebounce(EnemyHumanoid, "Unparryable", 2.3, true)
+				WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 2.3)
 				table.insert(Enemies, Enemy)
 				EmitDelayed = true
 			else

@@ -45,7 +45,6 @@ local Default = {
 		local SwingSpeed = Tool:GetAttribute("SwingSpeed") or 0.3
 		local HitEffect = Tool:GetAttribute("HitEffect") or Tool:GetAttribute("Type")
 
-	
 
 		local AnimationsFolder = AnimationService:GetWeaponAnimationFolder(Humanoid)
 
@@ -77,14 +76,7 @@ local Default = {
 					return false
 				end
 
-				if Enemy:FindFirstChild("EnemyAI") then
-					if Enemy:FindFirstChild("EnemyAI"):FindFirstChild("AI"):FindFirstChild("Hitted") then
-						local HittedEvent = Enemy:FindFirstChild("EnemyAI")
-							:FindFirstChild("AI")
-							:FindFirstChild("Hitted") :: BindableEvent
-						HittedEvent:Fire(Humanoid)
-					end
-				end
+				WeaponService:TriggerHittedEvent(Enemy, Humanoid)
 
 				if
 					DamageService:GetHitContext(Enemy.Humanoid) == "Hit"

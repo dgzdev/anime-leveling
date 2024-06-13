@@ -104,6 +104,7 @@ function Path.StartFollowing(from: Humanoid, target: BasePart)
 				BlockChance = Path.Data.BlockChance,
 				AUTO_PARRY = AUTO_PARRY,
 			}
+			
 			WeaponService:TypeBlockChecker(From, Data)
 		end)
 	)

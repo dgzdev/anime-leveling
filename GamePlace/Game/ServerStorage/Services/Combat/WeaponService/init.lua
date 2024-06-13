@@ -39,6 +39,18 @@ function WeaponService:IncreaseComboCounter(Humanoid: Humanoid)
 	end
 end
 
+function WeaponService:TriggerHittedEvent(Character: Model, HumanoidWhoTriggered: Humanoid)
+	if Character:FindFirstChild("EnemyAI") then
+		if Character:FindFirstChild("EnemyAI"):FindFirstChild("AI"):FindFirstChild("Hitted") then
+			local HittedEvent = Character:FindFirstChild("EnemyAI")
+				:FindFirstChild("AI")
+				:FindFirstChild("Hitted") :: BindableEvent
+			HittedEvent:Fire(HumanoidWhoTriggered)
+		end
+	end
+
+end
+
 function WeaponService:Stun(Character: Model, Position: Vector3, Duration: number)
 	local AlignPosition = Instance.new("AlignPosition")
 	AlignPosition.Attachment0 = Character.PrimaryPart.RootAttachment

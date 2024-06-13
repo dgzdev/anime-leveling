@@ -34,7 +34,7 @@ function FlashStrike.Attack(RenderData)
 	local casterHumanoid = RenderData.casterHumanoid
 	local casterRootCFrame = RenderData.casterRootCFrame
 	local particle = VFX:CreateParticle(
-		casterRootCFrame * CFrame.new(0, 0, -13) * CFrame.Angles(0, math.rad(-90), 0),
+		casterRootCFrame * CFrame.new(0, 0, -20) * CFrame.Angles(0, math.rad(-90), 0),
 		"FlashStrikeDash",
 		1
 	)
