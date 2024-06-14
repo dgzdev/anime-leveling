@@ -338,6 +338,7 @@ end
 function Functionality:Calibrate()
 	if self:HumanoidCheck() then
 		self.Instance.Humanoid.Died:Connect(function()
+			--print("morreu2")
 			self.Dead = true
 			self:Remove()
 		end)

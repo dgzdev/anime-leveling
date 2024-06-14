@@ -77,7 +77,7 @@ local Default = {
 				end
 
 				WeaponService:TriggerHittedEvent(Enemy, Humanoid)
-
+				
 				if
 					DamageService:GetHitContext(Enemy.Humanoid) == "Hit"
 					and Humanoid:GetAttribute("ComboCounter") - #AnimationsFolder:GetChildren() == -3 and not Enemy.Humanoid:GetAttribute("DeflectTime") and not Enemy.Humanoid:GetAttribute("Block")

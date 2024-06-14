@@ -28,7 +28,6 @@ function DamageService:Hit(HumanoidHitted: Humanoid, Humanoid: Humanoid, Damage:
 	HumanoidHitted:SetAttribute("Running", false)
 	DamageService:DealDamage(HumanoidHitted, Damage, Humanoid)
 
-
 	task.delay(1, function()
 		if not DebounceService:HaveDebounce(HumanoidHitted, "Hit") then
 			CharacterService:UpdateWalkSpeedAndJumpPower(HumanoidHitted)
@@ -44,6 +43,11 @@ function DamageService:Hit(HumanoidHitted: Humanoid, Humanoid: Humanoid, Damage:
 end
 
 function DamageService:BlockHit(HumanoidHitted: Humanoid, Humanoid: Humanoid, BlockPostureDamage: number)
+	if HumanoidHitted:GetAttribute("Hit") then
+		WeaponService:Block(HumanoidHitted.Parent, false)
+		return false
+	end
+
 	HumanoidHitted:SetAttribute("HitCounter", 0)
 
 	-- DebounceService:AddDebounce(Humanoid, "Blocked", 0.35, true)

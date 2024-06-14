@@ -239,7 +239,7 @@ function CLASS:Update()
 		--// Raycast for obstructions //--
 		local raycastParams = RaycastParams.new()
 		raycastParams.FilterDescendantsInstances = { character, Workspace.Enemies, Workspace.NPC }
-		raycastParams.CollisionGroup = "Players"
+		raycastParams.CollisionGroup = "Entity"
 		raycastParams.FilterType = Enum.RaycastFilterType.Exclude
 		raycastParams.RespectCanCollide = true
 		local raycastResult = workspace:Raycast(

@@ -22,17 +22,13 @@ function FlashStrike.Charge(Humanoid: Humanoid, Data: { any })
 	RenderService:RenderForPlayers(ChargeRenderData)
 
 	local Animation: AnimationTrack =
-		Humanoid.Animator:LoadAnimation(game.ReplicatedStorage.Animations.Skills.FlashStrike.FlashStrikeAttack)
+	Humanoid.Animator:LoadAnimation(game.ReplicatedStorage.Animations.Skills.FlashStrike.FlashStrikeAttack)
 	Animation.Priority = Enum.AnimationPriority.Action
 	Animation:Play()
 	DebounceService:AddDebounce(Humanoid, "UsingSkill", 2.7)
 
 	task.wait(0.5)
-	if Data then
-		FlashStrike.Attack(Humanoid, Data)
-	else
-		FlashStrike.Attack(Humanoid, {})
-	end
+	FlashStrike.Attack(Humanoid, Data)
 end
 
 
@@ -111,7 +107,7 @@ function FlashStrike.Attack(Humanoid: Humanoid, Data)
 			else
 				WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 1.5)
 			end
-				FlashStrike.Hit(Enemy.Humanoid, EmitDelayed)
+				FlashStrike.Hit(Enemy.Humanoid, EmitDelayed, Humanoid)
 					
 			for _ = 1, 10, 1 do
 				DamageService:TryHit(Humanoid, Enemy.Humanoid, math.ceil(Damage * .4), "Sword")
@@ -142,8 +138,8 @@ function FlashStrike.Attack(Humanoid: Humanoid, Data)
 	SkillService:SetSkillState(Humanoid, "FlashStrike", nil)
 end
 
-function FlashStrike.Hit(HumanoidHitted: Humanoid, EmitDelayed: boolean?)
-	local HitRenderData = RenderService:CreateRenderData(HumanoidHitted, "FlashStrike", "Hit", {EmitDelayed = EmitDelayed or false})
+function FlashStrike.Hit(HumanoidHitted: Humanoid, EmitDelayed: boolean?, HumanoidWhoHitted: Humanoid)
+	local HitRenderData = RenderService:CreateRenderData(HumanoidHitted, "FlashStrike", "Hit", {EmitDelayed = EmitDelayed or false, HumanoidWhoHitted = HumanoidWhoHitted})
 	RenderService:RenderForPlayers(HitRenderData)
 end
 
@@ -154,8 +150,8 @@ function FlashStrike.Cancel(Humanoid)
 	RenderService:RenderForPlayers(CancelRenderData)
 end
 
-function FlashStrike.Caller(Humanoid: Humanoid, Data: { any })
-	if Validate:CanUseSkill(Humanoid) and not DebounceService:HaveDebounce(Humanoid, "FlashStrike") then
+function FlashStrike.Caller(Humanoid: Humanoid, Data: { any }, NeedWeapon)
+	if Validate:CanUseSkill(Humanoid, NeedWeapon) and not DebounceService:HaveDebounce(Humanoid, "FlashStrike") then
 		FlashStrike.Charge(Humanoid, Data)
 	end
 end

@@ -5,6 +5,5 @@ return {
 
         Class = "Skill",
 		Type = "Sword",
-		Damage = 20,
     }
 }

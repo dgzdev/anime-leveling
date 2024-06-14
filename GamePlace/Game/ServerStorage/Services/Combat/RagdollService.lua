@@ -56,6 +56,7 @@ Players.PlayerAdded:Connect(function(Player)
 		Humanoid.BreakJointsOnDeath = false
 		Humanoid.RequiresNeck = false
 		Humanoid.Died:Connect(function()
+			--print("morreu4")
 			Ragdoll.RagdollCharacter(Character)
 		end)
 	end)

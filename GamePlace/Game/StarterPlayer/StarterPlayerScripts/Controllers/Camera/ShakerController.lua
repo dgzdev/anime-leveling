@@ -18,6 +18,10 @@ function ShakerController:Shake(preset: any)
 	self.Shaker:Shake(preset)
 end
 
+function ShakerController:ShakeOnce(magnitude: number, roughness: number, fadeInTime: number, fadeOutTime: number)
+	self.Shaker:ShakeOnce(magnitude, roughness, fadeInTime, fadeOutTime)
+end
+
 function ShakerController:GetPresets(): typeof(CameraShaker.Presets)
 	return self.Presets
 end

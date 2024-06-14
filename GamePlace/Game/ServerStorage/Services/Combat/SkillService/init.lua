@@ -25,10 +25,10 @@ function SkillService:UseSkill(Humanoid: Humanoid, SkillName: string, Data: {})
 	if not Skills[SkillName] then
 		return
 	end
-
-
-	Skills[SkillName].Caller(Humanoid, Data)
+	local Data = Data or {}
+	Skills[SkillName].Caller(Humanoid, Data, Skills[SkillName]:GetAttribute("NeedWeapon"))
 end
+
 function SkillService.Client:UseSkill(Player: Player, skillName: string, Data: {})
 	local Character = Player.Character
 	if not Character then

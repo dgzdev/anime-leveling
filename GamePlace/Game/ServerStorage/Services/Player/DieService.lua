@@ -17,6 +17,7 @@ function DieService:BindEffects()
 			return
 		end
 		local c = hum.Died:Connect(function()
+			--print("morreu3")
 			VFX:ApplyParticle(hum.Parent, "Death Effect", 5)
 		end)
 		bound[hum] = c

@@ -7,6 +7,7 @@ local CharacterService = Knit.CreateService({
 local CharacterSharedFunctions = require(game.ReplicatedStorage.CharacterSharedFunctions)
 local PlayerService
 local ClothingService
+local PhysicsService = game:GetService("PhysicsService")
 
 function CharacterService:CreatePlayerHealth(Player: Player)
 	local Character = Player.Character
@@ -97,6 +98,12 @@ function CharacterService:LoadCharacter(Player: Player)
 
 	Humanoid:SetAttribute("Loaded", true)
 
+
+	-- for i,v: BasePart in Character:GetDescendants() do
+	-- 	if v:IsA("BasePart") then
+	-- 		v.CollisionGroup = "Players"
+	-- 	end
+	-- end
 	return Character
 end
 
@@ -130,6 +137,14 @@ function CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid: Humanoid)
 end
 
 function CharacterService.KnitInit()
+	PhysicsService:RegisterCollisionGroup("Debris")
+	PhysicsService:CollisionGroupSetCollidable("Debris", "Players", false)
+	PhysicsService:CollisionGroupSetCollidable("Debris", "Enemies", false)
+	PhysicsService:CollisionGroupSetCollidable("Debris", "Swords", false)
+	PhysicsService:CollisionGroupSetCollidable("Debris", "Weapon", false)
+	PhysicsService:CollisionGroupSetCollidable("Debris", "Camera", false)
+	PhysicsService:CollisionGroupSetCollidable("Debris", "NPC", false)
+
 	PlayerService = Knit.GetService("PlayerService")
 	ClothingService = Knit.GetService("ClothingService")
 end

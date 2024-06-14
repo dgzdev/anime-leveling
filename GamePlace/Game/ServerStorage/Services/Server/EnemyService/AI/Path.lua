@@ -28,6 +28,7 @@ local WeaponService
 local SkillService
 local DebugService
 local DebounceService
+local RagdollService
 
 local AnimationsFolder = ReplicatedStorage:WaitForChild("Animations")
 
@@ -228,6 +229,7 @@ function Path.Start(Humanoid: Humanoid)
 	WeaponService = Knit.GetService("WeaponService")
 	DebugService = Knit.GetService("DebugService")
 	DebounceService = Knit.GetService("DebounceService")
+	RagdollService = Knit.GetService("RagdollService")
 
 	local Animator: Animator = Humanoid:WaitForChild("Animator")
 	local HittedEvent = script.Parent:WaitForChild("Hitted") :: BindableEvent
@@ -241,11 +243,19 @@ function Path.Start(Humanoid: Humanoid)
 		From = script.Parent.Parent.Parent:FindFirstChildWhichIsA("Humanoid")
 	end
 
+	From.Died:Once(function()
+		local Char = From.Parent
+		RagdollService:Ragdoll(Char)
+		print(From)
+	end)
+
 	Connection = HittedEvent.Event:Connect(function(Newtarget: Humanoid)
+
+		From:SetAttribute("LastHitFrom", Newtarget.Parent.Name)
+
 		if Target and Target.Parent ~= Newtarget then
 			Path.ChangeTarget(From, Newtarget)
 		else
-			print(Newtarget)
 			Path.StartFollowing(From, Newtarget.RootPart)
 			local AlignOrientation = From.RootPart:FindFirstChildWhichIsA("AlignOrientation", true)
 
@@ -255,6 +265,8 @@ function Path.Start(Humanoid: Humanoid)
 				AlignOrientation.LookAtPosition = Newtarget.RootPart.Position
 				task.desynchronize()
 			end
+			Connection:Disconnect()
+			Connection = nil
 		end
 	end)
 

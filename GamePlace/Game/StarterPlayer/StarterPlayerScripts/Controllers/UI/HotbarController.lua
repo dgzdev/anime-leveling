@@ -18,6 +18,7 @@ local BlockController
 local HotbarService
 local PlayerService
 local SkillService
+local isHolding
 
 local Events = {}
 
@@ -39,7 +40,9 @@ function HotbarController.ChangeItem(tool: Tool)
 
 			tool.Parent = Character
 		else
-			SkillService:UseSkill(tool.Name, {})
+			if not isHolding then
+				SkillService:UseSkill(tool.Name, {})
+			end
 		end
 	else
 		tool.Parent = Player.Backpack
@@ -53,7 +56,6 @@ function HotbarController:BindButton(Template: TextButton)
 		HotbarController.ChangeItem(Tool)
 	end)
 
-	local isHolding
 	local connection
 	local duration = 0
 

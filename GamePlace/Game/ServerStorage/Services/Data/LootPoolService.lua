@@ -2,7 +2,7 @@ local RunService = game:GetService("RunService")
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 local LootPool = Knit.CreateService({
-	Name = "LootPool",
+	Name = "LootPoolService",
 	Client = {},
 })
 

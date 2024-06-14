@@ -133,6 +133,7 @@ function DyingController.ShowInScreen()
 end
 
 function DyingController.OnDie()
+	--print("morri")
 	local player = game.Players.LocalPlayer
 	local character = player.Character or player.CharacterAdded:Wait()
 	local humanoid = character:WaitForChild("Humanoid")

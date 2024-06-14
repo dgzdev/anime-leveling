@@ -38,7 +38,7 @@ function FlashStrike.Attack(RenderData)
 		"FlashStrikeDash",
 		1
 	)
-	SFX:Create(particle, "JudgeCuts", 0, 128)
+	SFX:Create(casterHumanoid.RootPart, "FlashStrikeDash", 0, 76)
 end
 
 function FlashStrike.Hit(RenderData)
@@ -51,7 +51,16 @@ function FlashStrike.Hit(RenderData)
 
 	if RenderData.arguments.EmitDelayed then
 		RenderController:EmitParticles(FlashStrikeMultipleSlashes.Main.DelayedHit)
+
+		task.delay(2.15, function()
+			SFX:Create(RenderData.casterHumanoid.RootPart, "FlashStrikeSlash", 0, 72)
+		end)
 	end
+
+	task.delay(1.65, function()
+		SFX:Create(RenderData.arguments.HumanoidWhoHitted.RootPart, "FlashStrikeSheath", 0, 64)
+		
+	end)
 
 	Debris:AddItem(FlashStrikeMultipleSlashes, 5)
 end

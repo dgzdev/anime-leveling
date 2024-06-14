@@ -6,5 +6,6 @@ local requireAndAdd = function(module)
 end
 
 requireAndAdd(script.Sword)
+requireAndAdd(script.Fire)
 
 return skills

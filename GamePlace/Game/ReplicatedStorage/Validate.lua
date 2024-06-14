@@ -47,7 +47,7 @@ function Validate:CanAttack(Humanoid: Humanoid)
 	return check(Humanoid, cant) and Humanoid:GetAttribute("WeaponEquipped")
 end
 
-function Validate:CanUseSkill(Humanoid: Humanoid)
+function Validate:CanUseSkill(Humanoid: Humanoid, NeedWeapon)
 	local cant = {
 		"Slide",
 		"Roll",
@@ -61,8 +61,11 @@ function Validate:CanUseSkill(Humanoid: Humanoid)
 		"Deflected",
 		"Ragdoll",
 	}
-
-	return check(Humanoid, cant) and Humanoid:GetAttribute("WeaponEquipped")
+	if not NeedWeapon then
+		return check(Humanoid, cant)
+	else
+		return check(Humanoid, cant) and Humanoid:GetAttribute("WeaponEquipped")
+	end
 end
 
 function Validate:CanRoll(Humanoid: Humanoid)
@@ -166,7 +169,6 @@ function Validate:CanBlock(Humanoid: Humanoid)
 		"Downed",
 		"BlockDebounce",
 		"Unparryable",
-		"Hit",
 	}
 
 	return check(Humanoid, cant, false) and Humanoid:GetAttribute("WeaponEquipped")

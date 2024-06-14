@@ -32,6 +32,7 @@ function EffectService:CheckHumanoid(Humanoid: Humanoid)
 		HumanoidsWithEffects[Humanoid] = {}
 
 		Humanoid.Died:Connect(function()
+			--print("morreu5")
 			HumanoidsWithEffects[Humanoid] = nil
 		end)
 
