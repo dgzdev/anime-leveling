@@ -20,6 +20,7 @@ function MoltenSmash.Charge(Humanoid: Humanoid, Data: { any })
 
     local ChargeRenderData = RenderService:CreateRenderData(Humanoid, "MoltenSmash", "Charge")
 	RenderService:RenderForPlayers(ChargeRenderData)
+
     DebounceService:AddDebounce(Humanoid, "UsingSkill", 0.85)
     WeaponService:Stun(Humanoid.Parent, Humanoid.RootPart:GetPivot().Position, 0.85)
     task.wait(0.5)
@@ -29,12 +30,11 @@ end
 function MoltenSmash.Stomp(Humanoid: Humanoid, Data: { any })
     local RootPart = Humanoid.RootPart
     local state = SkillService:GetSkillState(Humanoid, "MoltenSmash")
-    SkillService:SetSkillState(Humanoid, "MoltenSmash", "Stomp")
-
 	local Damage = Data.Damage or 15
 	if state == nil then
 		return
 	end
+    SkillService:SetSkillState(Humanoid, "MoltenSmash", "Stomp")
 
     local ChargeRenderData = RenderService:CreateRenderData(Humanoid, "MoltenSmash", "Stomp")
 	RenderService:RenderForPlayers(ChargeRenderData)
@@ -46,7 +46,7 @@ function MoltenSmash.Stomp(Humanoid: Humanoid, Data: { any })
         end
 
         EffectService:AddEffect(Enemy.Humanoid, "MoltenSmashBurn", "Burn", 3, "int", 5)
-        RagdollService:Ragdoll(Enemy, 1.25)
+        RagdollService:Ragdoll(Enemy, 1)
         Enemy.PrimaryPart.AssemblyLinearVelocity = Vector3.new(0, 180, 0)
         DamageService:Hit(Enemy.Humanoid, Humanoid, Damage)
     end)
@@ -56,8 +56,8 @@ function MoltenSmash.Cancel(Humanoid: Humanoid)
     DebounceService:RemoveDebounce(Humanoid, "UsingSkill")
 end
 --------
-function MoltenSmash.Caller(Humanoid: Humanoid, Data: { any }, NeedWeapon)
-    if Validate:CanUseSkill(Humanoid, NeedWeapon) and not DebounceService:HaveDebounce(Humanoid, "MoltenSmash") then
+function MoltenSmash.Caller(Humanoid: Humanoid, Data: { any })
+    if Validate:CanUseSkill(Humanoid, false) and not DebounceService:HaveDebounce(Humanoid, "MoltenSmash") then
 		MoltenSmash.Charge(Humanoid, Data)
 	end
 end

@@ -5,6 +5,7 @@ local AnimationService = Knit.CreateService({
 })
 
 local AnimationsFolder = game.ReplicatedStorage.Animations
+local KeyframeSequenceProvider = game:GetService("KeyframeSequenceProvider")
 
 function AnimationService:StopAllAnimations(Humanoid: Humanoid, transition: number?, ignore: string?)
 	local Animator: Animator = Humanoid:WaitForChild("Animator")
@@ -14,6 +15,24 @@ function AnimationService:StopAllAnimations(Humanoid: Humanoid, transition: numb
 		end
 		anim:Stop(transition or 0.1)
 	end
+end
+
+function AnimationService:GetAllAnimationEventNames(animID: string): table
+	local markers: table = {}
+	local ks: KeyframeSequence = KeyframeSequenceProvider:GetKeyframeSequenceAsync(animID)
+	local function recurse(parent: Instance)
+		for _, child in pairs(parent:GetChildren()) do
+			if child:IsA("KeyframeMarker") then
+				table.insert(markers, child)
+			end
+			if #child:GetChildren() > 0 then
+				recurse(child)
+			end
+		end
+	end
+	recurse(ks)
+
+	return markers
 end
 
 function AnimationService:GetWeaponAnimationFolder(Humanoid: Humanoid)

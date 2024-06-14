@@ -150,8 +150,8 @@ function FlashStrike.Cancel(Humanoid)
 	RenderService:RenderForPlayers(CancelRenderData)
 end
 
-function FlashStrike.Caller(Humanoid: Humanoid, Data: { any }, NeedWeapon)
-	if Validate:CanUseSkill(Humanoid, NeedWeapon) and not DebounceService:HaveDebounce(Humanoid, "FlashStrike") then
+function FlashStrike.Caller(Humanoid: Humanoid, Data: { any })
+	if Validate:CanUseSkill(Humanoid, true) and not DebounceService:HaveDebounce(Humanoid, "FlashStrike") then
 		FlashStrike.Charge(Humanoid, Data)
 	end
 end

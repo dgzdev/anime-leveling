@@ -10,24 +10,7 @@ local AnimationService
 local RagdollService
 
 local Validate = require(game.ReplicatedStorage.Validate)
-local KeyframeSequenceProvider = game:GetService("KeyframeSequenceProvider")
-local function getAllAnimationEventNames(animID: string): table
-	local markers: table = {}
-	local ks: KeyframeSequence = KeyframeSequenceProvider:GetKeyframeSequenceAsync(animID)
-	local function recurse(parent: Instance)
-		for _, child in pairs(parent:GetChildren()) do
-			if child:IsA("KeyframeMarker") then
-				table.insert(markers, child)
-			end
-			if #child:GetChildren() > 0 then
-				recurse(child)
-			end
-		end
-	end
-	recurse(ks)
 
-	return markers
-end
 
 local Default = {
 	Attack = function(Character, Data)
@@ -63,7 +46,7 @@ local Default = {
 		Humanoid:SetAttribute("LastAttackTick", tick())
 		CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
 
-		local Markers = getAllAnimationEventNames(AnimationPath.AnimationId)
+		local Markers = AnimationService:GetAllAnimationEventNames(AnimationPath.AnimationId)
 
 		local function Attack()
 			DebounceService:AddDebounce(Humanoid, "HitboxStart", 0.05)

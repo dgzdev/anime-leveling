@@ -26,7 +26,7 @@ function SkillService:UseSkill(Humanoid: Humanoid, SkillName: string, Data: {})
 		return
 	end
 	local Data = Data or {}
-	Skills[SkillName].Caller(Humanoid, Data, Skills[SkillName]:GetAttribute("NeedWeapon"))
+	Skills[SkillName].Caller(Humanoid, Data)
 end
 
 function SkillService.Client:UseSkill(Player: Player, skillName: string, Data: {})
