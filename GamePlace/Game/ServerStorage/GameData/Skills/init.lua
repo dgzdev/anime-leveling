@@ -1,11 +1,12 @@
 local skills = {}
 local requireAndAdd = function(module)
-	for i, skill in require(module) do
-		skills[i] = skill
+	for i, weapon in require(module) do
+		skills[i] = weapon
 	end
 end
 
-requireAndAdd(script.Sword)
-requireAndAdd(script.Fire)
+for __index, module in script:GetChildren() do
+	requireAndAdd(module)
+end
 
 return skills

@@ -10,7 +10,15 @@ local EnemyService = knit.CreateService({
 	Client = {},
 })
 
+local CachedInstances = {}
+
 function EnemyService:CreateEnemy(enemy: Model)
+	if CachedInstances[enemy] then
+		return
+	end
+
+	CachedInstances[enemy] = true
+
 	--> criar a ia dele
 	local Actor = Instance.new("Actor", enemy)
 	Actor.Name = "EnemyAI"
@@ -23,6 +31,7 @@ function EnemyService:CreateEnemy(enemy: Model)
 	mainAnimations.Parent = enemy
 
 	--> ativar a ia dele
+	task.wait()
 	require(mainAI)
 
 	--> ativar as animações dele
@@ -37,9 +46,7 @@ function EnemyService.KnitStart()
 		EnemyService:CreateEnemy(enemy)
 	end
 
-	workspace.Test.ChildAdded:Connect(function(enemy)
-		EnemyService:CreateEnemy(enemy)
-	end)
+
 end
 
 return EnemyService

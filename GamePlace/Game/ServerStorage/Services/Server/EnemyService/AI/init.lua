@@ -44,19 +44,20 @@ function AI.Start()
 			Humanoid:SetAttribute("Posture", 0)
 
 			local AnimationsFolder = game.ReplicatedStorage:WaitForChild("Animations")
+			
 
-			AI.AnimationsTable = {
-				["Melee"] = {
-					["Hit"] = {
-						[1] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["0"]:Clone()),
-						[2] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["1"]:Clone()),
-						[3] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["2"]:Clone()),
-						[4] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["3"]:Clone()),
-					},
-					["Ground Slam"] = Animator:LoadAnimation(AnimationsFolder.Melee["Ground Slam"]:Clone()),
-					["Block"] = Animator:LoadAnimation(AnimationsFolder.Melee["Block"]:Clone()),
-				},
-			}
+			--AI.AnimationsTable = {
+			--	["Melee"] = {
+			--		["Hit"] = {
+			--			[1] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["0"]:Clone()),
+			--			[2] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["1"]:Clone()),
+			--			[3] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["2"]:Clone()),
+			--			[4] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["3"]:Clone()),
+			--		},
+			--		["Ground Slam"] = Animator:LoadAnimation(AnimationsFolder.Melee["Ground Slam"]:Clone()),
+			--		["Block"] = Animator:LoadAnimation(AnimationsFolder.Melee["Block"]:Clone()),
+			--	},
+			--}
 
 			Path.Start(Humanoid)
 			Finder.Start(Path)

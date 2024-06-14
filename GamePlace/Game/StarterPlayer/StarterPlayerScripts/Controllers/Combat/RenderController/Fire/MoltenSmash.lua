@@ -22,14 +22,18 @@ function MoltenSmash.Charge(RenderData)
 end
 
 function MoltenSmash.Stomp(RenderData)
+	local arguments = RenderData.arguments
+	local position: CFrame = arguments.position
+	local size: Vector3 = arguments.size
+
 	local casterHumanoid = RenderData.casterHumanoid
 	local casterRootCFrame = RenderData.casterRootCFrame
     local Character = Player.Character
 
     local Explosion = Assets.Explosion:Clone()
-    
-    local ExplosionCFrame = casterRootCFrame * CFrame.new(0, -2, -5)
-    Explosion:PivotTo(ExplosionCFrame) 
+
+    local ExplosionCFrame = position
+    Explosion:PivotTo(ExplosionCFrame)
     Explosion.Parent = workspace
     RenderController:EmitParticles(Explosion)
 
@@ -49,10 +53,8 @@ function MoltenSmash.Stomp(RenderData)
         Ground:PivotTo(CFrame.new(ray.Position) * CFrame.new(0, -1.5, 0))
         Ground.Parent = workspace
         TweenService:Create(Ground.PointLight, TweenInfo.new(0.25), {Brightness = 0}):Play()
-        task.delay(4, function()
-            TweenService:Create(Ground.Crack, TweenInfo.new(2), {Transparency = 1}):Play()
-            Debris:AddItem(Ground, 2)
-        end)
+        TweenService:Create(Ground.Crack, TweenInfo.new(.35, Enum.EasingStyle.Linear, Enum.EasingDirection.In, 0, false, .25), {Transparency = 1}):Play()
+        Debris:AddItem(Ground, 1)
     end
 
 	CraterModule:Spawn({
@@ -60,38 +62,38 @@ function MoltenSmash.Stomp(RenderData)
 		AmountPerUnit = 1, --> Amount of Rocks Per Unit (1 would appear a single rock per angle step.)
 		Amount = 20, --> Amount of rocks that will exist in the circle. (360 / Amount)
 		Angle = {10, 30}, --> Random Angles (Y) axis.
-		Radius = {6, 7}, --> Random Radius;
+		Radius = {size.X, size.X}, --> Random Radius;
 		Size = {2.5, 3}, --> Random Size (number only);
-		
+
 		Offset = {
 			X = 0,
 			Y = 0.5,
 			Z = 0,
 		}, --> Random offset (Y);
 
-		DespawnTime = 5, --> Despawn Time
+		DespawnTime = .70, --> Despawn Time
 	})
 
     CraterModule:ExplosionRocks({
 		Position = ExplosionCFrame.Position, --> Position;
 		Amount = 15, --> Amount of Rocks;
 		Radius = {
-			X = 5,
+			X = size.X,
 			Y = -2,
-			Z = 5,
+			Z = size.X,
 		},
 		Size = {Vector3.one, Vector3.one * 1.35},
 		Force = {
 			X = {-45, 45},
 			Y = {30, 50},
 			Z = {-45, 45},
-		}, 
-		
+		},
+
 		Trail = true, --> Enable / Disable
 		Direction = casterRootCFrame, --> Direction (Gets 'LookVector', 'UpVector' and 'RightVector' automatically)
-		DespawnTime = 4, --> Despawn Time.
+		DespawnTime = 1, --> Despawn Time.
 	})
-	
+
 
     Debris:AddItem(Explosion, 5)
 end

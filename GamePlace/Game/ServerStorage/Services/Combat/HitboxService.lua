@@ -1,6 +1,7 @@
 local Debris = game:GetService("Debris")
 local Workspace = game:GetService("Workspace")
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
+local RunService = game:GetService("RunService")
 
 --[[
     Módulo responsável por fornecer hitboxes de forma mais prática
@@ -163,7 +164,7 @@ function HitboxService:CreateHitboxFromModel(
 				task.spawn(callback, char)
 			end
 
-			task.wait(1 / 60)
+			RunService.Heartbeat:Wait()
 		end
 	end)
 end
@@ -208,12 +209,12 @@ function HitboxService:CreateHitbox(
 				task.spawn(callback, char)
 			end
 
-			task.wait(1 / 60)
+			RunService.Heartbeat:Wait()
 		end
 	end)
 end
 
-function HitboxService:CreateFixedHitbox(CFrame: CFrame, Size: Vector3, Ticks: number, callback, Params: OverlapParams?)
+function HitboxService:CreateFixedHitbox(CFrame: CFrame, Size: Vector3, Ticks: number, callback, Params: OverlapParams?, debug: boolean?)
 	local Hitted = {}
 
 	if not Params then
@@ -232,7 +233,22 @@ function HitboxService:CreateFixedHitbox(CFrame: CFrame, Size: Vector3, Ticks: n
 			table.insert(Hitted, char)
 			task.spawn(callback, char)
 		end
-		task.wait(1 / 60)
+
+		if debug then
+			local Part = Instance.new("Part")
+			Part.Size = Size
+			Part.Anchored = true
+			Part.CFrame = CFrame
+			Part.Parent = game.Workspace
+			Part.Transparency = 0.5
+			Part.Name = "DebugPart"
+			Part.CanCollide = false
+			Part.Color = Color3.fromRGB(255, 0, 0)
+
+			Debris:AddItem(Part, 1)
+		end
+
+		RunService.Heartbeat:Wait()
 	end
 end
 
@@ -281,7 +297,7 @@ function HitboxService:CreatePartHitbox(
 			table.insert(Hitted, char)
 			task.spawn(callback, char)
 		end
-		task.wait(1 / 60)
+		RunService.Heartbeat:Wait()
 	end
 
 	Hitbox:Destroy()

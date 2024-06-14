@@ -105,6 +105,10 @@ function Indication.BindToAllNPCS()
 		for __index, enemy: Model in ipairs(tagged) do
 			local humanoid = enemy:WaitForChild("Humanoid", 3)
 			if humanoid then
+				if instances[enemy] then
+					return
+				end
+
 				local indicator = Indicator.new(humanoid)
 				instances[enemy] = indicator
 				indicator:Start()
@@ -116,6 +120,10 @@ function Indication.BindToAllNPCS()
 		CollectionService:GetInstanceAddedSignal(tag):Connect(function(enemy: Model)
 			local humanoid = enemy:WaitForChild("Humanoid", 3)
 			if humanoid then
+				if instances[enemy] then
+					return
+				end
+
 				local indicator = Indicator.new(humanoid)
 				instances[enemy] = indicator
 				indicator:Start()

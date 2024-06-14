@@ -43,6 +43,7 @@ return {
 						Rank = "E",
 						Id = 1,
 					},
+					
 				},
 				["SkillsTreeUnlocked"] = { ["1"] = true },
 

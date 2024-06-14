@@ -18,6 +18,7 @@ Path.LastHitTick = nil
 Path.Stamina = 100
 Path.Data = {}
 
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local PathfindingService = game:GetService("PathfindingService")
 local RunService = game:GetService("RunService")
@@ -29,6 +30,7 @@ local SkillService
 local DebugService
 local DebounceService
 local RagdollService
+local AriseService
 
 local AnimationsFolder = ReplicatedStorage:WaitForChild("Animations")
 
@@ -105,7 +107,7 @@ function Path.StartFollowing(from: Humanoid, target: BasePart)
 				BlockChance = Path.Data.BlockChance,
 				AUTO_PARRY = AUTO_PARRY,
 			}
-			
+
 			WeaponService:TypeBlockChecker(From, Data)
 		end)
 	)
@@ -134,6 +136,7 @@ do
 				return
 			end
 
+			--print(From, Target)
 			if
 				math.abs(From.RootPart.Position.Y - Target.Position.Y) > 1
 				and not Path.AlignOriDb
@@ -223,6 +226,8 @@ do
 end
 
 function Path.Start(Humanoid: Humanoid)
+	if not script:FindFirstAncestorWhichIsA("Actor") then return end
+	
 	HitboxService = Knit.GetService("HitboxService")
 	AnimationService = Knit.GetService("AnimationService")
 	SkillService = Knit.GetService("SkillService")
@@ -230,6 +235,7 @@ function Path.Start(Humanoid: Humanoid)
 	DebugService = Knit.GetService("DebugService")
 	DebounceService = Knit.GetService("DebounceService")
 	RagdollService = Knit.GetService("RagdollService")
+	AriseService = Knit.GetService("AriseService")
 
 	local Animator: Animator = Humanoid:WaitForChild("Animator")
 	local HittedEvent = script.Parent:WaitForChild("Hitted") :: BindableEvent
@@ -245,8 +251,11 @@ function Path.Start(Humanoid: Humanoid)
 
 	From.Died:Once(function()
 		local Char = From.Parent
+		local LastHit = From:GetAttribute("LastHitFrom")
+		local Player = Players:FindFirstChild(LastHit)
 		RagdollService:Ragdoll(Char)
-		print(From)
+		AriseService:SetPossessionMode(From, Player)
+		print("morreu")
 	end)
 
 	Connection = HittedEvent.Event:Connect(function(Newtarget: Humanoid)
@@ -258,15 +267,15 @@ function Path.Start(Humanoid: Humanoid)
 		else
 			Path.StartFollowing(From, Newtarget.RootPart)
 			local AlignOrientation = From.RootPart:FindFirstChildWhichIsA("AlignOrientation", true)
-
+			task.synchronize()
 			if AlignOrientation then
-				task.synchronize()
 				AlignOrientation.Enabled = true
 				AlignOrientation.LookAtPosition = Newtarget.RootPart.Position
-				task.desynchronize()
+				
 			end
 			Connection:Disconnect()
 			Connection = nil
+			task.desynchronize()
 		end
 	end)
 

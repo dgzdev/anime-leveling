@@ -36,20 +36,45 @@ function MoltenSmash.Stomp(Humanoid: Humanoid, Data: { any })
 	end
     SkillService:SetSkillState(Humanoid, "MoltenSmash", "Stomp")
 
-    local ChargeRenderData = RenderService:CreateRenderData(Humanoid, "MoltenSmash", "Stomp")
-	RenderService:RenderForPlayers(ChargeRenderData)
-
 	DebounceService:AddDebounce(Humanoid, "HitboxStart", 0.05)
-    HitboxService:CreateFixedHitbox(RootPart.CFrame * CFrame.new(0, 0, -3), Vector3.new(8, 8, 8), 1, function(Enemy)
-        if Enemy == RootPart.Parent then
-            return
-        end
 
-        EffectService:AddEffect(Enemy.Humanoid, "MoltenSmashBurn", "Burn", 3, "int", 5)
-        RagdollService:Ragdoll(Enemy, 1)
-        Enemy.PrimaryPart.AssemblyLinearVelocity = Vector3.new(0, 180, 0)
-        DamageService:Hit(Enemy.Humanoid, Humanoid, Damage)
-    end)
+    local initialSize = 1
+    local finalSize = 16
+    local steps = 4
+    local stepPosition = 6
+
+    local stepSize = (finalSize - initialSize) / steps
+
+    local initialPosition = RootPart.CFrame
+
+    for i = 1, steps, 1 do
+        local position = initialPosition * CFrame.new(0,0,-(stepPosition * (i*3)))
+        local size = Vector3.new(initialSize + (stepSize * i), initialSize + (stepSize * i), initialSize + (stepSize * i))
+
+        local ChargeRenderData = RenderService:CreateRenderData(Humanoid, "MoltenSmash", "Stomp", {
+            position = position,
+            size = size
+        })
+        RenderService:RenderForPlayers(ChargeRenderData)
+
+        HitboxService:CreateFixedHitbox(position, size * 2, 1, function(Enemy)
+            if Enemy == RootPart.Parent then
+                return
+            end
+
+            EffectService:AddEffect(Enemy.Humanoid, "MoltenSmashBurn", "Burn", 3, "int", 5)
+
+            Enemy.PrimaryPart.AssemblyLinearVelocity = Vector3.new(0,150,0)  * WeaponService:GetModelMass(Enemy)
+            RagdollService:Ragdoll(Enemy, 1)
+
+                DamageService:Hit(Enemy.Humanoid, Humanoid, Damage)
+            end)
+
+        task.wait(.35)
+    end
+
+
+
 end
 
 function MoltenSmash.Cancel(Humanoid: Humanoid)
