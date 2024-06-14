@@ -15,14 +15,16 @@ local Validate = require(game.ReplicatedStorage.Validate)
 
 
 function Arise.Charge(Humanoid: Humanoid, Data: { any })
+	Arise.Use(Humanoid, Data)
 	--aplicar o debounce,
     -- setar o skill state para Charge,
 	-- stunnar o Humanoid se necessário
 	--esperar um tempo de charge
-	-- chamar o Attack
+	-- chamar o Use
 end
 
-function Arise.Attack(Humanoid: Humanoid, Data: { any })
+function Arise.Use(Humanoid: Humanoid, Data: { any })
+	print("a")
 	-- verifica se o skill state não é nil
 	-- logica da skill
 
