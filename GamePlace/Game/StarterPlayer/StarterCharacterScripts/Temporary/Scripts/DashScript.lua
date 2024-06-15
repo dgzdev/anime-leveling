@@ -117,7 +117,7 @@ function DashScript:Dash()
 	local Animation
 	local Direction
 
-	if not IsMouseLocked() then
+	if IsMouseLocked() then
 		local WalkDirWorld = getWalkDirectionCameraSpace()
 
 		local DashDiretionString = ""
@@ -135,7 +135,6 @@ function DashScript:Dash()
 			return
 		end
 
-		print(DashDiretionString)
 		local id = DashAnimations[DashDiretionString or "F"] or DashAnimations.F
 		Direction = id
 		Animation = id.anim

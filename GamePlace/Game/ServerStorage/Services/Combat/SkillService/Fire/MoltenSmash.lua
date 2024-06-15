@@ -13,7 +13,7 @@ local RagdollService
 
 local Validate = require(game.ReplicatedStorage.Validate)
 
-local Cooldown = 10
+local Cooldown = 0
 function MoltenSmash.Charge(Humanoid: Humanoid, Data: { CasterCFrame: CFrame })
     DebounceService:AddDebounce(Humanoid, "MoltenSmash", Cooldown, false)
 	SkillService:SetSkillState(Humanoid, "MoltenSmash", "Charge")
@@ -21,9 +21,14 @@ function MoltenSmash.Charge(Humanoid: Humanoid, Data: { CasterCFrame: CFrame })
     local ChargeRenderData = RenderService:CreateRenderData(Humanoid, "MoltenSmash", "Charge")
 	RenderService:RenderForPlayers(ChargeRenderData)
 
+    local Animation: AnimationTrack =
+	Humanoid.Animator:LoadAnimation(game.ReplicatedStorage.Animations.Skills.Fire.MoltenSmash.MoltenSmashCharge)
+	Animation.Priority = Enum.AnimationPriority.Action
+	Animation:Play()
+
     DebounceService:AddDebounce(Humanoid, "UsingSkill", 0.85)
     WeaponService:Stun(Humanoid.Parent, Data.CasterCFrame.Position, 0.85)
-    task.wait(0.5)
+    task.wait(0.6)
     MoltenSmash.Stomp(Humanoid, Data)
 end
 
@@ -35,8 +40,6 @@ function MoltenSmash.Stomp(Humanoid: Humanoid, Data: { CasterCFrame: CFrame })
 		return
 	end
     SkillService:SetSkillState(Humanoid, "MoltenSmash", "Stomp")
-
-	DebounceService:AddDebounce(Humanoid, "HitboxStart", 0.05)
 
     local initialSize = 1
     local finalSize = 16
@@ -58,19 +61,20 @@ function MoltenSmash.Stomp(Humanoid: Humanoid, Data: { CasterCFrame: CFrame })
         })
         RenderService:RenderForPlayers(ChargeRenderData)
 
+        DebounceService:AddDebounce(Humanoid, "HitboxStart", 0.05)
         HitboxService:CreateFixedHitbox(position, size * 2, 1, function(Enemy)
             if Enemy == RootPart.Parent then
                 return
             end
 
+            
             EffectService:AddEffect(Enemy.Humanoid, "MoltenSmashBurn", "Burn", 3, "int", 5)
-
             Enemy.PrimaryPart.AssemblyLinearVelocity = Vector3.new(0,150,0)  * WeaponService:GetModelMass(Enemy)
             RagdollService:Ragdoll(Enemy, 1)
-
-                DamageService:Hit(Enemy.Humanoid, Humanoid, Damage)
-            end)
-
+            
+            WeaponService:TriggerHittedEvent(Enemy.Humanoid, Humanoid)
+            DamageService:TryHit(Enemy.Humanoid, Humanoid, Damage)
+        end)
         task.wait(.35)
     end
 

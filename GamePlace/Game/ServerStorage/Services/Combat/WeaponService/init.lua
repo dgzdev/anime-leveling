@@ -39,12 +39,13 @@ function WeaponService:IncreaseComboCounter(Humanoid: Humanoid)
 	end
 end
 
-function WeaponService:TriggerHittedEvent(Character: Model, HumanoidWhoTriggered: Humanoid)
-	if Character:FindFirstChild("EnemyAI") then
-		if Character:FindFirstChild("EnemyAI"):FindFirstChild("AI"):FindFirstChild("Hitted") then
+function WeaponService:TriggerHittedEvent(EnemyHumanoid: Humanoid, HumanoidWhoHitted: Humanoid)
+	local EnemyCharacter = EnemyHumanoid.Parent
+	if EnemyCharacter:FindFirstChild("EnemyAI") then
+		if EnemyCharacter:FindFirstChild("EnemyAI"):FindFirstChild("AI"):FindFirstChild("Hitted") then
 			local HittedEvent =
-				Character:FindFirstChild("EnemyAI"):FindFirstChild("AI"):FindFirstChild("Hitted") :: BindableEvent
-			HittedEvent:Fire(HumanoidWhoTriggered)
+			EnemyCharacter:FindFirstChild("EnemyAI"):FindFirstChild("AI"):FindFirstChild("Hitted") :: BindableEvent
+			HittedEvent:Fire(HumanoidWhoHitted)
 		end
 	end
 end
@@ -64,12 +65,14 @@ function WeaponService:Stun(Character: Model, Position: Vector3, Duration: numbe
 end
 
 function WeaponService:Block(Character: Model, state: boolean, cantParry: boolean?)
+	if not Character then return end
 	local Humanoid = Character.Humanoid
 	if state then
 		if not Validate:CanBlock(Humanoid) then
 			-- Humanoid:SetAttribute("Block", false)
 			return
 		end
+
 		local Animations = AnimationService:GetWeaponAnimationFolder(Humanoid)
 		local BlockAnimation = Humanoid.Animator:LoadAnimation(Animations.Block)
 
@@ -82,6 +85,10 @@ function WeaponService:Block(Character: Model, state: boolean, cantParry: boolea
 			DebounceService:AddDebounce(Humanoid, "DeflectTime", 0.2, true)
 		end
 		Humanoid:SetAttribute("Block", true)
+
+		if Humanoid:GetAttribute("Hit") then
+			WeaponService:Block(Character, false)
+		end
 
 		CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
 	else

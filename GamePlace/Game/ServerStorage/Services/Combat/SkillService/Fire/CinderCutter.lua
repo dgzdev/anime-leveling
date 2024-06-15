@@ -48,7 +48,8 @@ function CinderCutter.Attack(Humanoid: Humanoid, Data: { any })
             continue
         end
 
-        DamageService:Hit(Enemy.Humanoid, Humanoid, Damage)
+        WeaponService:TriggerHittedEvent(Enemy.Humanoid, Humanoid)
+        DamageService:TryHit(Enemy.Humanoid, Humanoid, Damage, "Sword")
     end
 end
 

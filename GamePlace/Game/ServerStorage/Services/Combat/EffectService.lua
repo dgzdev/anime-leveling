@@ -125,7 +125,7 @@ function EffectService:AddEffect(
 
 	EffectService:CheckHumanoid(Humanoid)
 	table.insert(HumanoidsWithEffects[Humanoid], Effect)
-	print("vai")
+
 	EffectService:UpdateHumanoidEffects(Humanoid, EffectType)
 
 	if Duration then

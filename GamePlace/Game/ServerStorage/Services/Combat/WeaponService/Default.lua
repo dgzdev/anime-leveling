@@ -57,10 +57,7 @@ local Default = {
 					or Humanoid:GetAttribute("Deflected")
 				then
 					return false
-				end
-
-				WeaponService:TriggerHittedEvent(Enemy, Humanoid)
-				
+				end				
 				if
 					DamageService:GetHitContext(Enemy.Humanoid) == "Hit"
 					and Humanoid:GetAttribute("ComboCounter") - #AnimationsFolder:GetChildren() == -3 and not Enemy.Humanoid:GetAttribute("DeflectTime") and not Enemy.Humanoid:GetAttribute("Block")
@@ -73,8 +70,9 @@ local Default = {
 						* WeaponService:GetModelMass(Enemy.Parent)
 					)
 				end
-
-				return DamageService:TryHit(Humanoid, Enemy.Humanoid, Damage, HitEffect)
+				
+				WeaponService:TriggerHittedEvent(Enemy.Humanoid, Humanoid)
+				return DamageService:TryHit(Enemy.Humanoid, Humanoid, Damage, HitEffect)
 			end)
 		end
 

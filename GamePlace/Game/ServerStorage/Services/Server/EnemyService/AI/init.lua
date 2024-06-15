@@ -25,7 +25,7 @@ function AI.Start()
 
 
 			local Weapon: Tool = ToolsFolder:FindFirstChild(weaponName) or ToolsFolder:WaitForChild("Fists", 10)
-			
+
 			if Weapon then
 				Weapon = Weapon:Clone()
 				Weapon:SetAttribute("Class", "Weapon")
@@ -47,6 +47,7 @@ function AI.Start()
 			Humanoid:SetAttribute("Posture", 0)
 
 			local AnimationsFolder = game.ReplicatedStorage:WaitForChild("Animations")
+			
 			task.wait()
 			
 			AI.AnimationsTable = {
@@ -95,7 +96,7 @@ function AI.Start()
 					Path.StartFollowing(Humanoid, closest.RootPart)
 				else
 					if closest.Parent.Name == Humanoid:GetAttribute("Ally") then
-						print("a")
+						--print("a")
 						local Player = Players:FindFirstChild(Humanoid:GetAttribute("Ally"))
 						local Char = Player.Character
 						Path.TargetisAlly = true

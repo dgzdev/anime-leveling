@@ -181,15 +181,14 @@ function DyingController.Start()
 	local humanoid = character:WaitForChild("Humanoid")
 
 	do --> create bind
-		humanoid.Died:Connect(DyingController.OnDie)
-
 		local function onCharacterAdded(newCharacter)
 			character = newCharacter
 			humanoid = character:WaitForChild("Humanoid")
-			humanoid.Died:Connect(DyingController.OnDie)
+			humanoid.Died:Once(DyingController.OnDie)
 		end
 
 		player.CharacterAdded:Connect(onCharacterAdded)
+		humanoid.Died:Once(DyingController.OnDie)
 	end
 end
 

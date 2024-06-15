@@ -41,10 +41,10 @@ function DamageService:Hit(HumanoidHitted: Humanoid, Humanoid: Humanoid, Damage:
 end
 
 function DamageService:BlockHit(HumanoidHitted: Humanoid, Humanoid: Humanoid, BlockPostureDamage: number)
-	if HumanoidHitted:GetAttribute("Hit") then
-		WeaponService:Block(HumanoidHitted.Parent, false)
-		return false
-	end
+	-- if HumanoidHitted:GetAttribute("Hit") then
+	-- 	WeaponService:Block(HumanoidHitted.Parent, false)
+	-- 	return false
+	-- end
 
 	HumanoidHitted:SetAttribute("HitCounter", 0)
 
@@ -80,7 +80,7 @@ function DamageService:DeflectHit(HumanoidHitted: Humanoid, Humanoid: Humanoid, 
 end
 
 -- função hit, possui verificações de block e dodge, além de aplicar debuffs de hit
-function DamageService:TryHit(Humanoid: Humanoid, HumanoidHitted: Humanoid, _Damage: number, HitEffect: string?)
+function DamageService:TryHit(HumanoidHitted: Humanoid, Humanoid: Humanoid, _Damage: number, HitEffect: string?)
 	if HumanoidHitted == nil then
 		return
 	end
@@ -114,7 +114,7 @@ function DamageService:TryHit(Humanoid: Humanoid, HumanoidHitted: Humanoid, _Dam
 		BlockPostureDamage = _Damage.Block
 	elseif typeof(Damage) == "number" then
 		DeflectPostureDamage = Damage
-		BlockPostureDamage = Damage * 1.2
+		BlockPostureDamage = Damage * 1.75
 	end
  ---not HumanoidHitted:GetAttribute("Unparryable")
 	task.wait()

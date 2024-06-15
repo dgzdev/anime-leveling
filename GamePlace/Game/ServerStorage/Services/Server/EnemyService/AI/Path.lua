@@ -231,7 +231,7 @@ do
 
 			for i, v in pairs(waypoints) do
 				if Path.TargetisAlly then
-					print((From.RootPart.Position - Target.Position).Magnitude)
+					--print((From.RootPart.Position - Target.Position).Magnitude)
 					if (From.RootPart.Position - Target.Position).Magnitude > 30 then
 						From:MoveTo(v.Position)
 					else
@@ -277,7 +277,6 @@ function Path.Start(Humanoid: Humanoid)
 		local Player = Players:FindFirstChild(LastHit)
 		RagdollService:Ragdoll(Char)
 		AriseService:SetPossessionMode(From, Player)
-		print("morreu")
 	end)
 
 	Connection = HittedEvent.Event:Connect(function(Newtarget: Humanoid)

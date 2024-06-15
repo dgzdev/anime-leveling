@@ -22,7 +22,7 @@ function FlashStrike.Charge(Humanoid: Humanoid, Data: { any })
 	RenderService:RenderForPlayers(ChargeRenderData)
 
 	local Animation: AnimationTrack =
-	Humanoid.Animator:LoadAnimation(game.ReplicatedStorage.Animations.Skills.FlashStrike.FlashStrikeAttack)
+	Humanoid.Animator:LoadAnimation(game.ReplicatedStorage.Animations.Skills.Sword.FlashStrike.FlashStrikeAttack)
 	Animation.Priority = Enum.AnimationPriority.Action
 	Animation:Play()
 	DebounceService:AddDebounce(Humanoid, "UsingSkill", 2.7)
@@ -95,8 +95,6 @@ function FlashStrike.Attack(Humanoid: Humanoid, Data)
 
 		local EnemyHumanoid = Enemy:FindFirstChild("Humanoid")
 
-		WeaponService:TriggerHittedEvent(Enemy, Humanoid)
-
 		task.spawn(function()
 			local EmitDelayed = false
 			if DamageService:GetHitContext(Enemy.Humanoid) == "Hit" then
@@ -107,10 +105,11 @@ function FlashStrike.Attack(Humanoid: Humanoid, Data)
 			else
 				WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 1.5)
 			end
-				FlashStrike.Hit(Enemy.Humanoid, EmitDelayed, Humanoid)
-					
+
+			FlashStrike.Hit(Enemy.Humanoid, EmitDelayed, Humanoid)
+			WeaponService:TriggerHittedEvent(Enemy.Humanoid, Humanoid)
 			for _ = 1, 10, 1 do
-				DamageService:TryHit(Humanoid, Enemy.Humanoid, math.ceil(Damage * .4), "Sword")
+				DamageService:TryHit(Enemy.Humanoid, Humanoid, math.ceil(Damage * .4), "Sword")
 				task.wait(0.1)
 			end
 		end)
@@ -131,7 +130,7 @@ function FlashStrike.Attack(Humanoid: Humanoid, Data)
 
 	task.wait(1.85)
 	for _, Enemy in Enemies do
-		DamageService:TryHit(Humanoid, Enemy.Humanoid, Damage * 2, "Sword")
+		DamageService:TryHit(Enemy.Humanoid, Humanoid, Damage * 2, "Sword")
 	end
 
 	DebounceService:RemoveDebounce(Humanoid, "UsingSkill")
