@@ -5,5 +5,13 @@ return {
 
         Class = "Skill",
 		Type = "Fire",
+    },
+
+    CinderCutter = {
+        Name = "CinderCutter",
+        DisplayName = "Cinder Cutter",
+
+        Class = "Skill",
+		Type = "Fire",
     }
 }

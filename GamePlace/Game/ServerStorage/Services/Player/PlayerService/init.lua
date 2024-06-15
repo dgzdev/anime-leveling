@@ -28,6 +28,36 @@ function PlayerService.Client:Respawn(player: Player)
 	return self.Server:Respawn(player)
 end
 
+local INCOMBAT_DURATION = 5
+function PlayerService:SetInCombat(Player: Player)
+	Player:SetAttribute("InCombatEndTick", tick() + INCOMBAT_DURATION)
+
+	if Player:GetAttribute("InCombat") then
+		return
+	end
+
+	Player:SetAttribute("InCombat", true)
+
+	task.spawn(function()
+		while true do
+			task.wait(1)
+	
+			if (tick() > Player:GetAttribute("InCombatEndTick")) then
+				Player:SetAttribute("InCombatEndTick", nil)
+				Player:SetAttribute("InCombat", false)
+				break
+			end
+		end
+	end)
+end
+
+function PlayerService:SetHumanoidInCombat(Humanoid: Humanoid)
+	local Player = Players:GetPlayerFromCharacter(Humanoid.Parent)
+	if Player then
+		PlayerService:SetInCombat(Player)
+	end
+end
+
 function PlayerService.OnPlayerJoin(player: Player)
 	task.spawn(function()
 		CharacterService:LoadCharacter(player)

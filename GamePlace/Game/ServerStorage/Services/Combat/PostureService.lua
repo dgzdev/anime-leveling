@@ -9,6 +9,7 @@ local CombatService
 local CharacterService
 local RenderService
 local AnimationService
+local PlayerService
 
 function PostureService:PostureBreak(Humanoid: Humanoid)
 	if Humanoid:GetAttribute("PostureBreak") then
@@ -40,6 +41,7 @@ function PostureService:AddPostureDamage(
 	local ByDeflect = ByDeflect or false
 	local DamageClap = math.clamp(Amount, 0, Humanoid:GetAttribute("MaxPosture") - Humanoid:GetAttribute("Posture"))
 	Humanoid:SetAttribute("Posture", Humanoid:GetAttribute("Posture") + DamageClap)
+	PlayerService:SetHumanoidInCombat(Humanoid)
 
 	if not ByDeflect then
 		if
@@ -59,6 +61,7 @@ function PostureService:RemovePostureDamage(Humanoid: Humanoid, Recover: number)
 end
 
 function PostureService.KnitInit()
+	PlayerService = Knit.GetService("PlayerService")
 	AnimationService = Knit.GetService("AnimationService")
 	CombatService = Knit.GetService("CombatService")
 	RenderService = Knit.GetService("RenderService")

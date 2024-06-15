@@ -1,3 +1,4 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 local EffectService = Knit.CreateService({
@@ -71,6 +72,10 @@ function EffectService:UpdateHumanoidEffects(Humanoid: Humanoid, EffectType: str
 		Agility = function()
 			
 		end,
+
+		Necromantic = function()
+
+		end
 	}
 
 	if EffectTypes[EffectType] then
@@ -120,6 +125,7 @@ function EffectService:AddEffect(
 
 	EffectService:CheckHumanoid(Humanoid)
 	table.insert(HumanoidsWithEffects[Humanoid], Effect)
+	print("vai")
 	EffectService:UpdateHumanoidEffects(Humanoid, EffectType)
 
 	if Duration then

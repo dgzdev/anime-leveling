@@ -12,13 +12,11 @@ local RenderService
 local CharacterService
 local WeaponService
 local RagdollService
+local PlayerService
 
 function DamageService:DealDamage(HumanoidToDamage: Humanoid, Damage: number, Humanoid: Humanoid?)
-	--if HumanoidToDamage.Health - 1 < 0 then
-	--	return
-	--end
-	--local DamageClamp = math.clamp(Damage, 0, HumanoidToDamage.Health - 1)
 	HumanoidToDamage:TakeDamage(Damage)
+	PlayerService:SetHumanoidInCombat(HumanoidToDamage)
 end
 
 -- força um hit, ignorando o block
@@ -151,6 +149,7 @@ function DamageService:GetHitContext(HumanoidHitted: Humanoid)
 end
 
 function DamageService.KnitInit()
+	PlayerService = Knit.GetService("PlayerService")
 	RagdollService = Knit.GetService("RagdollService")
 	WeaponService = Knit.GetService("WeaponService")
 	DebounceService = Knit.GetService("DebounceService")

@@ -24,7 +24,7 @@ function Arise.SetSoul(TargetHumanoid, Player)
 end
 
 
-function Arise.Charge(Humanoid: Humanoid, Data: { any })
+function Arise.Charge(Humanoid: Humanoid, Data: { CasterCFrame: CFrame })
 	Arise.Use(Humanoid, Data)
 	--aplicar o debounce,
     -- setar o skill state para Charge,
@@ -33,30 +33,28 @@ function Arise.Charge(Humanoid: Humanoid, Data: { any })
 	-- chamar o Use
 end
 
-function Arise.Use(Humanoid: Humanoid, Data: { any })
+function Arise.Use(Humanoid: Humanoid, Data: { CasterCFrame: CFrame })
 	local Player = Players:FindFirstChild(Humanoid.Parent.Name)
 	local HumanoidsAvailable = AriseService:GetPossessionAvailable(Player)
 
 	local CharPlayer = Player.Character
-
-	print(HumanoidsAvailable)
 	if not HumanoidsAvailable then return end
-	for i,v : Humanoid in pairs(HumanoidsAvailable) do
-		print(math.abs((v.Parent.Torso.Position - CharPlayer.PrimaryPart.Position).Magnitude))
-		if math.abs((v.Parent.Torso.Position - CharPlayer.PrimaryPart.Position).Magnitude) < 5 then
 
-			local TestModel : Model = ReplicatedStorage.Models.Test:Clone()
-
+	for _, v : Humanoid in HumanoidsAvailable do
+		if math.abs((v.Parent.Torso.Position - Data.CasterCFrame.Position).Magnitude) < 8 then
+			local TestModel : Model = ReplicatedStorage.Models.Test:Clone() :: Model
+			local ModelHumanoid : Humanoid = TestModel:WaitForChild("Humanoid")
+			TestModel.Humanoid:SetAttribute("Ally", Player.Name)
+			DebounceService:AddDebounce(TestModel.Humanoid,"JustSpawned", 2.5, true)
 			TestModel.Parent = workspace.Test
-			TestModel:PivotTo(v.Parent.Torso.CFrame)
-
+			TestModel:MoveTo(v.Parent.Torso.Position + Vector3.new(0,3,0))
+			
+			ModelHumanoid:AddTag("AuraDark")
 			AriseService:RemovePossession(Player, v)
 
-			task.wait(.1)
+			task.wait()
 			EnemyService:CreateEnemy(TestModel)
 
-
-	
 
 			v.Parent:Destroy()
 		end

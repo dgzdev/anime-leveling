@@ -36,10 +36,6 @@ function AriseService:RemovePossession(Player, Humanoid)
     end
 end
 
-
-
-
-
 function AriseService:KnitStart()
     DebounceService = Knit.GetService("DebounceService")
 end

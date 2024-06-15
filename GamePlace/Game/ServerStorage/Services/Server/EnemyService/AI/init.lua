@@ -1,4 +1,5 @@
 local CollectionService = game:GetService("CollectionService")
+local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
@@ -13,16 +14,18 @@ function AI.Start()
 		if script.Parent:IsA("Actor") then
 			local Path = require(script.Path)
 			local Finder = require(script.Finder)
-
+			
 			local EquipService = Knit.GetService("EquipService")
-
+			
 			local NPC: Model = script:FindFirstAncestorOfClass("Model")
 			local Humanoid: Humanoid = NPC:FindFirstChildWhichIsA("Humanoid", true)
 			local Animator = Humanoid:FindFirstChildWhichIsA("Animator") :: Animator
 
 			local weaponName = NPC:GetAttribute("Weapon") or "Fists"
 
+
 			local Weapon: Tool = ToolsFolder:FindFirstChild(weaponName) or ToolsFolder:WaitForChild("Fists", 10)
+			
 			if Weapon then
 				Weapon = Weapon:Clone()
 				Weapon:SetAttribute("Class", "Weapon")
@@ -44,20 +47,20 @@ function AI.Start()
 			Humanoid:SetAttribute("Posture", 0)
 
 			local AnimationsFolder = game.ReplicatedStorage:WaitForChild("Animations")
+			task.wait()
 			
-
-			--AI.AnimationsTable = {
-			--	["Melee"] = {
-			--		["Hit"] = {
-			--			[1] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["0"]:Clone()),
-			--			[2] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["1"]:Clone()),
-			--			[3] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["2"]:Clone()),
-			--			[4] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["3"]:Clone()),
-			--		},
-			--		["Ground Slam"] = Animator:LoadAnimation(AnimationsFolder.Melee["Ground Slam"]:Clone()),
-			--		["Block"] = Animator:LoadAnimation(AnimationsFolder.Melee["Block"]:Clone()),
-			--	},
-			--}
+			AI.AnimationsTable = {
+				["Melee"] = {
+					["Hit"] = {
+						[1] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["0"]:Clone()),
+						[2] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["1"]:Clone()),
+						[3] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["2"]:Clone()),
+						[4] = Animator:LoadAnimation(AnimationsFolder.Melee.Hit["3"]:Clone()),
+					},
+					["Ground Slam"] = Animator:LoadAnimation(AnimationsFolder.Melee["Ground Slam"]:Clone()),
+					["Block"] = Animator:LoadAnimation(AnimationsFolder.Melee["Block"]:Clone()),
+				},
+			}
 
 			Path.Start(Humanoid)
 			Finder.Start(Path)
@@ -90,6 +93,15 @@ function AI.Start()
 
 				if isOnLook and (Humanoid.RootPart.Position - closest.RootPart.Position).Magnitude < 20 then
 					Path.StartFollowing(Humanoid, closest.RootPart)
+				else
+					if closest.Parent.Name == Humanoid:GetAttribute("Ally") then
+						print("a")
+						local Player = Players:FindFirstChild(Humanoid:GetAttribute("Ally"))
+						local Char = Player.Character
+						Path.TargetisAlly = true
+						Path.MoveUntilEnough = true
+						Path.StartFollowing(Humanoid, closest.RootPart)
+					end
 				end
 
 				task.wait()

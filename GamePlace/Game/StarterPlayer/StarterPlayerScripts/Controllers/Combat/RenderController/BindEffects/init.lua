@@ -1,0 +1,98 @@
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
+local BindEffects = {}
+
+local RenderController
+local TweenService = game:GetService("TweenService")
+
+function BindEffects.CustomAdd(RenderData)
+	local Effects = {
+		AuraDark = function()
+			local HighlightFind = game.ReplicatedStorage.VFX.Highlight:FindFirstChild("AuraDarkHighlight", true)
+
+			if not HighlightFind then
+				return
+			end
+
+			local Highlight: Highlight = RenderController:CreateInstance(BindEffects, RenderData.casterHumanoid, HighlightFind:Clone())
+			Highlight.FillTransparency = 1
+			Highlight.OutlineTransparency = 1
+
+			TweenService:Create(Highlight, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {FillTransparency = 0, OutlineTransparency = 0}):Play()
+			Highlight.Parent = RenderData.casterHumanoid.Parent
+		end,
+	}
+
+	if Effects[RenderData.arguments] then
+		Effects[RenderData.arguments]()
+	end
+end
+
+function BindEffects.CustomRemove(RenderData)
+	local Effects = {
+		AuraDark = function()
+			RenderController:ClearInstance(BindEffects, RenderData.casterHumanoid, "AuraDarkHighlight")
+		end,
+	}
+
+	if Effects[RenderData.arguments] then
+		Effects[RenderData.arguments]()
+	end
+end
+
+function BindEffects.Add(RenderData)
+	local casterHumanoid: Humanoid = RenderData.casterHumanoid
+	local effect: string = RenderData.arguments 
+
+	local Effect = game.ReplicatedStorage.VFX:FindFirstChild(effect, true)
+
+	if not Effect then
+		return
+	end
+
+	local haveEffect = RenderController:GetInstance(BindEffects, casterHumanoid, effect)
+	if haveEffect then
+		return
+	end
+
+	BindEffects.CustomAdd(RenderData)
+
+	local EffectClone = RenderController:CreateInstance(BindEffects, casterHumanoid, Effect:Clone())
+	local Weld = Instance.new("WeldConstraint")
+	Weld.Part0 = casterHumanoid.RootPart
+	Weld.Part1 = EffectClone
+	Weld.Parent = EffectClone
+	EffectClone:PivotTo(casterHumanoid.RootPart:GetPivot())
+	EffectClone.Parent = casterHumanoid.Parent
+
+	RenderController:EmitParticles(EffectClone)
+end
+
+function BindEffects.Remove(RenderData)
+	local casterHumanoid: Humanoid = RenderData.casterHumanoid
+	local effect: string = RenderData.arguments 
+
+	local haveEffect = RenderController:GetInstance(BindEffects, casterHumanoid, effect)
+	if not haveEffect then
+		return
+	end
+
+	RenderController:ClearInstance(BindEffects, casterHumanoid, effect)
+
+	BindEffects.CustomRemove(RenderData)
+end
+
+function BindEffects.Caller(RenderData)
+	local Effect = RenderData.effect
+
+	if BindEffects[Effect] then
+		BindEffects[Effect](RenderData)
+	else
+		print("Effect not found")
+	end
+end
+
+function BindEffects.Start()
+	RenderController = Knit.GetController("RenderController")
+end
+
+return BindEffects

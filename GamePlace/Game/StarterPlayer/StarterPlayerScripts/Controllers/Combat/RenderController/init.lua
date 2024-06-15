@@ -12,6 +12,8 @@ local Player = game.Players.LocalPlayer
     Executa a parte do client referente as particulas e skills, da emit nas particulas, cria as parts, move as parts, etc
 ]]
 
+local AnimationsFolder = game.ReplicatedStorage.Animations
+
 local RenderingModules = {}
 
 function RenderController:CheckCache(module, casterHumanoid)
@@ -122,6 +124,20 @@ function RenderController:ClearInstances(module, casterHumanoid)
 	end)
 end
 
+function RenderController:ClearInstance(module, casterHumanoid: Humanoid, name: string)
+	task.spawn(function()
+		if module.Cache and module.Cache[casterHumanoid] then
+			for i, v in module.Cache[casterHumanoid].Instances do
+				if v.Name == name then
+					table.remove(module.Cache[casterHumanoid].Instances, i)
+					v:Destroy()
+					module.Cache[casterHumanoid].Instances[i] = nil
+				end
+			end
+		end
+	end)
+end
+
 function RenderController:GetPlayingAnimationTrack(Humanoid: Humanoid, animationName)
 	for i, v: AnimationTrack in Humanoid.Animator:GetPlayingAnimationTracks() do
 		if v.Name == animationName then
@@ -145,11 +161,19 @@ function RenderController:StopAnimationMatch(Humanoid: Humanoid, AnimationName: 
 	end
 end
 
+
+function RenderController:GetWeaponAnimationFolder(Humanoid: Humanoid)
+	local WeaponName = AnimationsFolder:FindFirstChild(Humanoid:GetAttribute("WeaponName") or "")
+	local WeaponType = AnimationsFolder:FindFirstChild(Humanoid:GetAttribute("WeaponType") or "")
+	return WeaponName or WeaponType
+end
+
 function RenderController:Emit(particle)
 	particle:Emit(particle:GetAttribute("EmitCount") or 1)
 end
+
 function RenderController:EmitParticles(parent)
-	for i, v in ipairs(parent:GetDescendants()) do
+	for i, v in parent:GetDescendants() do
 		if not v:IsA("ParticleEmitter") then
 			continue
 		end
@@ -217,31 +241,32 @@ function RenderController:BindRenderingTags()
 	local tags = {
 		"Burn",
 		"Poison",
+		"AuraDark",
 	}
 
 	-- pode ser utilizado para renderizar efeitos, principalmente de buffs e debuffs, utilizando uma tag e o collection service
 
-	-- for i, tag in ipairs(tags) do
-	--     CollectionService:GetInstanceRemovedSignal(tag):Connect(function(Humanoid)
+	for i, tag in ipairs(tags) do
+	    CollectionService:GetInstanceRemovedSignal(tag):Connect(function(Humanoid)
 
-	--         local RenderData = CreateRenderData(Humanoid, "General", "Remove".. tag)
-	--         RenderController.Render(RenderData)
-	--     end)
-	-- end
-	-- -- renderiza os efeitos que foram aplicados antes do jogador entrar
-	-- for i, tag in ipairs(tags) do
-	--     for i,Humanoid in CollectionService:GetTagged(tag) do
-	--         local RenderData = CreateRenderData(Humanoid, "General", tag)
-	--         RenderController.Render(RenderData)
-	--     end
-	-- end
+	        local RenderData = CreateRenderData(Humanoid, "BindEffects", "Add", tag)
+	        RenderController.Render(RenderData)
+	    end)
+	end
+	-- renderiza os efeitos que foram aplicados antes do jogador entrar
+	for i, tag in ipairs(tags) do
+	    for i,Humanoid in CollectionService:GetTagged(tag) do
+	        local RenderData = CreateRenderData(Humanoid, "BindEffects", "Remove", tag)
+	        RenderController.Render(RenderData)
+	    end
+	end
 
-	-- for i, tag in ipairs(tags) do
-	--     CollectionService:GetInstanceAddedSignal(tag):Connect(function(Humanoid)
-	--         local RenderData = CreateRenderData(Humanoid, "General", tag)
-	--         RenderController.Render(RenderData)
-	--     end)
-	-- end
+	for i, tag in ipairs(tags) do
+	    CollectionService:GetInstanceAddedSignal(tag):Connect(function(Humanoid)
+	        local RenderData = CreateRenderData(Humanoid, "BindEffects", "Add", tag)
+	        RenderController.Render(RenderData)
+	    end)
+	end
 end
 
 function RenderController.KnitStart()

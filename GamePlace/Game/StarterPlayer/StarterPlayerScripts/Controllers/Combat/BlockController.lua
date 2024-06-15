@@ -5,6 +5,7 @@ local BlockController = Knit.CreateController({
 })
 
 local WeaponService
+local RenderController
 
 local ContextActionService = game:GetService("ContextActionService")
 
@@ -28,9 +29,10 @@ function BlockController:BindBlock()
 			if not UserInputService:IsKeyDown(Enum.KeyCode.F) then
 				return
 			end
-
+			
 			WeaponService:Block(true)
 		elseif inputState == Enum.UserInputState.End then
+			RenderController:StopAnimationMatch(Humanoid, "Block")
 			WeaponService:Block(false)
 		end
 	end, true, Enum.KeyCode.F)
@@ -42,6 +44,7 @@ function BlockController:UnbindBlock()
 end
 
 function BlockController.KnitInit()
+	RenderController = Knit.GetController("RenderController")
 	WeaponService = Knit.GetService("WeaponService")
 end
 

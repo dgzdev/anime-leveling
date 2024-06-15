@@ -56,7 +56,7 @@ function WeaponService:Stun(Character: Model, Position: Vector3, Duration: numbe
 	AlignPosition.MaxVelocity = math.huge
 	AlignPosition.MaxForce = math.huge
 	AlignPosition.Name = "StunAlignPosition"
-	AlignPosition.Responsiveness = 10
+	AlignPosition.Responsiveness = 100
 	-- AlignPosition.RigidityEnabled = true
 	AlignPosition.Position = Position
 	AlignPosition.Parent = Character.PrimaryPart

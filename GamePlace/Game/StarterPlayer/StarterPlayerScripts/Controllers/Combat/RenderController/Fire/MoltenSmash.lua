@@ -32,7 +32,7 @@ function MoltenSmash.Stomp(RenderData)
 
     local Explosion = Assets.Explosion:Clone()
 
-    local ExplosionCFrame = position
+    local ExplosionCFrame = position * CFrame.new(0, -1.5, 0)
     Explosion:PivotTo(ExplosionCFrame)
     Explosion.Parent = workspace
     RenderController:EmitParticles(Explosion)
@@ -53,8 +53,8 @@ function MoltenSmash.Stomp(RenderData)
         Ground:PivotTo(CFrame.new(ray.Position) * CFrame.new(0, -1.5, 0))
         Ground.Parent = workspace
         TweenService:Create(Ground.PointLight, TweenInfo.new(0.25), {Brightness = 0}):Play()
-        TweenService:Create(Ground.Crack, TweenInfo.new(.35, Enum.EasingStyle.Linear, Enum.EasingDirection.In, 0, false, .25), {Transparency = 1}):Play()
-        Debris:AddItem(Ground, 1)
+        TweenService:Create(Ground.Crack, TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.In), {Transparency = 1}):Play()
+        Debris:AddItem(Ground, 2)
     end
 
 	CraterModule:Spawn({
@@ -62,7 +62,7 @@ function MoltenSmash.Stomp(RenderData)
 		AmountPerUnit = 1, --> Amount of Rocks Per Unit (1 would appear a single rock per angle step.)
 		Amount = 20, --> Amount of rocks that will exist in the circle. (360 / Amount)
 		Angle = {10, 30}, --> Random Angles (Y) axis.
-		Radius = {size.X, size.X}, --> Random Radius;
+		Radius = {6, 7}, --> Random Radius;
 		Size = {2.5, 3}, --> Random Size (number only);
 
 		Offset = {
@@ -71,16 +71,16 @@ function MoltenSmash.Stomp(RenderData)
 			Z = 0,
 		}, --> Random offset (Y);
 
-		DespawnTime = .70, --> Despawn Time
+		DespawnTime = 2, --> Despawn Time
 	})
 
     CraterModule:ExplosionRocks({
 		Position = ExplosionCFrame.Position, --> Position;
-		Amount = 15, --> Amount of Rocks;
+		Amount = 10, --> Amount of Rocks;
 		Radius = {
-			X = size.X,
+			X = 2,
 			Y = -2,
-			Z = size.X,
+			Z = 2,
 		},
 		Size = {Vector3.one, Vector3.one * 1.35},
 		Force = {

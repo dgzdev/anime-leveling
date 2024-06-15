@@ -16,6 +16,8 @@ Path.PlayComboAnim = true
 Path.LoadedAnims = false
 Path.LastHitTick = nil
 Path.Stamina = 100
+Path.TargetisAlly = false
+Path.MoveUntilEnough = false
 Path.Data = {}
 
 local Players = game:GetService("Players")
@@ -117,6 +119,10 @@ end
 
 do
 	loop(function()
+		if not script:FindFirstAncestorWhichIsA("Actor") then
+			return
+		end
+
 		if not Target then
 			return
 		end
@@ -144,22 +150,26 @@ do
 			then
 				From.RootPart:FindFirstChild("LookPlayer").Enabled = false
 			else
-				From.RootPart:FindFirstChild("LookPlayer").Enabled = true
-				Align.LookAtPosition = Target.Position
+
+				if Path.TargetisAlly then
+					From.RootPart:FindFirstChild("LookPlayer").Enabled = false
+				else
+					From.RootPart:FindFirstChild("LookPlayer").Enabled = true
+					Align.LookAtPosition = Target.Position
+				end
 			end
 
 			if
-				Target and (From.RootPart.Position - Target.Position).Magnitude > 120
+				Target and (From.RootPart.Position - Target.Position).Magnitude > 120 and not Path.TargetisAlly
 				or Target.Parent.Humanoid.Health <= 0
 			then
-				print((From.RootPart.Position - Target.Position).Magnitude)
 				Path.LeaveFollowing()
 				Path.InPath = false
 				return
 			end
 
 			task.spawn(function()
-				if Target.Parent.Humanoid.Health > 0 and (From.RootPart.Position - Target.Position).Magnitude < 6 then
+				if Target.Parent.Humanoid.Health > 0 and (From.RootPart.Position - Target.Position).Magnitude < 6 and not Path.TargetisAlly then
 					if Target.Parent.Humanoid:GetAttribute("LastAttackTick") then
 						if math.abs(Target.Parent.Humanoid:GetAttribute("LastAttackTick") - tick()) < 2 then
 							WeaponService:TypeBlockChecker(From, {
@@ -175,14 +185,16 @@ do
 
 					local isFlashStrike = randomNumber <= flashStrikeChance
 
-					if not isFlashStrike then
+					if not isFlashStrike and not Path.TargetisAlly then
 						WeaponService:WeaponInput(From.Parent, "Attack")
 					else
-						Path.AlignOriDb = true
-						SkillService:UseSkill(From, "FlashStrike", { Damage = Path.Data.Damage })
-						task.delay(5, function()
-							Path.AlignOriDb = false
-						end)
+						if not Path.TargetisAlly then
+							Path.AlignOriDb = true
+							SkillService:UseSkill(From, "FlashStrike", { Damage = Path.Data.Damage })
+							task.delay(5, function()
+								Path.AlignOriDb = false
+							end)
+						end
 					end
 				end
 			end)
@@ -190,7 +202,7 @@ do
 			local p = PathfindingService:CreatePath()
 			---print(Finder.IsOnDot(Target.Parent.Humanoid, From))
 			local Dot = Finder.IsOnDot(Target.Parent.Humanoid, From)
-			if Dot and Target:GetVelocityAtPosition(Target.Position).Magnitude > 3 then
+			if Dot and Target:GetVelocityAtPosition(Target.Position).Magnitude > 3 and not Path.TargetisAlly then
 				local LeftOrRight
 
 				if
@@ -201,13 +213,14 @@ do
 				else
 					LeftOrRight = 1
 				end
-
-				--print(Finder.IsOnDot(Target.Parent.Humanoid, From))
-				--CFrame.new(12, 0, -5)
 				p:ComputeAsync(From.RootPart.Position, (Target.CFrame * CFrame.new(12 * LeftOrRight, 0, -5)).Position)
 				--DebugService:CreatePartAtPos((Target.CFrame * CFrame.new(8*RightorLeft,0,-15)).Position)
-			else
+			elseif not Path.TargetisAlly then
 				p:ComputeAsync(From.RootPart.Position, Target.Position)
+			else
+				if (From.RootPart.Position - Target.Position).Magnitude > 30 then
+					p:ComputeAsync(From.RootPart.Position, (Target.CFrame * CFrame.new(6, 0, 7)).Position)
+				end
 			end
 
 			local waypoints = p:GetWaypoints()
@@ -217,7 +230,16 @@ do
 			table.remove(waypoints, #waypoints - 3)
 
 			for i, v in pairs(waypoints) do
-				From:MoveTo(v.Position)
+				if Path.TargetisAlly then
+					print((From.RootPart.Position - Target.Position).Magnitude)
+					if (From.RootPart.Position - Target.Position).Magnitude > 30 then
+						From:MoveTo(v.Position)
+					else
+						return
+					end
+				else
+					From:MoveTo(v.Position)
+				end
 			end
 		end)
 
@@ -227,7 +249,7 @@ end
 
 function Path.Start(Humanoid: Humanoid)
 	if not script:FindFirstAncestorWhichIsA("Actor") then return end
-	
+
 	HitboxService = Knit.GetService("HitboxService")
 	AnimationService = Knit.GetService("AnimationService")
 	SkillService = Knit.GetService("SkillService")
@@ -263,6 +285,8 @@ function Path.Start(Humanoid: Humanoid)
 		From:SetAttribute("LastHitFrom", Newtarget.Parent.Name)
 
 		if Target and Target.Parent ~= Newtarget then
+			Path.TargetisAlly = false
+			Path.MoveUntilEnough = false
 			Path.ChangeTarget(From, Newtarget)
 		else
 			Path.StartFollowing(From, Newtarget.RootPart)
@@ -271,7 +295,6 @@ function Path.Start(Humanoid: Humanoid)
 			if AlignOrientation then
 				AlignOrientation.Enabled = true
 				AlignOrientation.LookAtPosition = Newtarget.RootPart.Position
-				
 			end
 			Connection:Disconnect()
 			Connection = nil

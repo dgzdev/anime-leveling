@@ -21,15 +21,21 @@ local SkillDatas = {}
 local WeaponService
 local RenderService
 
-function SkillService:UseSkill(Humanoid: Humanoid, SkillName: string, Data: {})
+function SkillService:UseSkill(Humanoid: Humanoid, SkillName: string, Data: {CasterCFrame: CFrame})
 	if not Skills[SkillName] then
 		return
 	end
+
+	if not Data.CasterCFrame then
+		Data.CasterCFrame = Humanoid.Parent:GetPivot() 
+	end 
+
 	local Data = Data or {}
 	Skills[SkillName].Caller(Humanoid, Data)
 end
 
-function SkillService.Client:UseSkill(Player: Player, skillName: string, Data: {})
+local RunService = game:GetService("RunService")
+function SkillService.Client:UseSkill(Player: Player, skillName: string, Data: {CasterCFrame: CFrame})
 	local Character = Player.Character
 	if not Character then
 		return

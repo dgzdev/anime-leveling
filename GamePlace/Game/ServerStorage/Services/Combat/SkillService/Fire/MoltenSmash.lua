@@ -13,8 +13,8 @@ local RagdollService
 
 local Validate = require(game.ReplicatedStorage.Validate)
 
-local Cooldown = 5
-function MoltenSmash.Charge(Humanoid: Humanoid, Data: { any })
+local Cooldown = 10
+function MoltenSmash.Charge(Humanoid: Humanoid, Data: { CasterCFrame: CFrame })
     DebounceService:AddDebounce(Humanoid, "MoltenSmash", Cooldown, false)
 	SkillService:SetSkillState(Humanoid, "MoltenSmash", "Charge")
 
@@ -22,12 +22,12 @@ function MoltenSmash.Charge(Humanoid: Humanoid, Data: { any })
 	RenderService:RenderForPlayers(ChargeRenderData)
 
     DebounceService:AddDebounce(Humanoid, "UsingSkill", 0.85)
-    WeaponService:Stun(Humanoid.Parent, Humanoid.RootPart:GetPivot().Position, 0.85)
+    WeaponService:Stun(Humanoid.Parent, Data.CasterCFrame.Position, 0.85)
     task.wait(0.5)
     MoltenSmash.Stomp(Humanoid, Data)
 end
 
-function MoltenSmash.Stomp(Humanoid: Humanoid, Data: { any })
+function MoltenSmash.Stomp(Humanoid: Humanoid, Data: { CasterCFrame: CFrame })
     local RootPart = Humanoid.RootPart
     local state = SkillService:GetSkillState(Humanoid, "MoltenSmash")
 	local Damage = Data.Damage or 15
@@ -40,15 +40,16 @@ function MoltenSmash.Stomp(Humanoid: Humanoid, Data: { any })
 
     local initialSize = 1
     local finalSize = 16
-    local steps = 4
-    local stepPosition = 6
+    local steps = 2
+    local stepPosition = 5
+    local startOffSet = 5
 
     local stepSize = (finalSize - initialSize) / steps
 
-    local initialPosition = RootPart.CFrame
+    local initialPosition = Data.CasterCFrame
 
-    for i = 1, steps, 1 do
-        local position = initialPosition * CFrame.new(0,0,-(stepPosition * (i*3)))
+    for i = 0, steps, 1 do
+        local position = initialPosition * CFrame.new(0,0,-(startOffSet + (stepPosition * (i*3))))
         local size = Vector3.new(initialSize + (stepSize * i), initialSize + (stepSize * i), initialSize + (stepSize * i))
 
         local ChargeRenderData = RenderService:CreateRenderData(Humanoid, "MoltenSmash", "Stomp", {

@@ -13,7 +13,7 @@ local Validate = require(game.ReplicatedStorage.Validate)
 
 local FlashStrike = {}
 
-local Cooldown = 0
+local Cooldown = 10
 function FlashStrike.Charge(Humanoid: Humanoid, Data: { any })
 	DebounceService:AddDebounce(Humanoid, "FlashStrike", Cooldown, false)
 	SkillService:SetSkillState(Humanoid, "FlashStrike", "Charge")
@@ -76,7 +76,7 @@ function FlashStrike.Attack(Humanoid: Humanoid, Data)
 	AlignOrientation.RigidityEnabled = true
 	AlignOrientation.CFrame = CFrame.Angles(Humanoid.RootPart.CFrame:ToEulerAnglesXYZ())
 
-	local StartCFrame = Humanoid.RootPart.CFrame
+	local StartCFrame = Data.CasterCFrame
 	AlignOrientation.Parent = Humanoid.RootPart
 	Debris:AddItem(AlignOrientation, 1.4)
 

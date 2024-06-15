@@ -42,6 +42,7 @@ function Validate:CanAttack(Humanoid: Humanoid)
 		"Deflected",
 		"ComboDebounce",
 		"Ragdoll",
+		"JustSpawned"
 	}
 
 	return check(Humanoid, cant) and Humanoid:GetAttribute("WeaponEquipped")
@@ -60,6 +61,7 @@ function Validate:CanUseSkill(Humanoid: Humanoid, NeedWeapon)
 		"AttackCombo",
 		"Deflected",
 		"Ragdoll",
+		"JustSpawned"
 	}
 	if not NeedWeapon then
 		return check(Humanoid, cant)

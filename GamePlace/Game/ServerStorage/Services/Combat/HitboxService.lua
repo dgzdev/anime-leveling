@@ -75,40 +75,6 @@ local function CheckCharacters(char1, char2)
 	return true
 end
 
-function HitboxService:CreateStun(target: Model, time: number, callback: () -> nil)
-	local Pr = target.PrimaryPart
-	local Stun = Instance.new("LinearVelocity")
-	Stun.VelocityConstraintMode = Enum.VelocityConstraintMode.Vector
-	Stun.MaxForce = math.huge
-
-	Stun.VectorVelocity = Vector3.new(0, 0, 1)
-
-	local Highlight = Instance.new("Highlight")
-	Highlight.FillColor = Color3.new(1, 0, 0)
-	Highlight.FillTransparency = 0.3
-	Highlight.DepthMode = Enum.HighlightDepthMode.Occluded
-	Highlight.OutlineColor = Color3.new(1, 1, 1)
-	Highlight.OutlineTransparency = 0.1
-	Highlight.Parent = target
-	Debris:AddItem(Highlight, time)
-
-	local att0 = Instance.new("Attachment", Pr)
-	Stun.Attachment0 = att0
-
-	Stun.Attachment0 = Pr:FindFirstChildWhichIsA("Attachment")
-	target:SetAttribute("Stun", true)
-
-	Stun.Parent = att0
-
-	task.spawn(function()
-		task.wait(time)
-		att0:Destroy()
-		target:SetAttribute("Stun", false)
-		if callback then
-			callback()
-		end
-	end)
-end
 
 function HitboxService:GetCharactersInCircleArea(position, radius, Params)
 	local Params = Params or OverlapParams.new()
