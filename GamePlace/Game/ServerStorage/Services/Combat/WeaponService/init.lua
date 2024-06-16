@@ -86,9 +86,9 @@ function WeaponService:Block(Character: Model, state: boolean, cantParry: boolea
 		end
 		Humanoid:SetAttribute("Block", true)
 
-		if Humanoid:GetAttribute("Hit") then
-			WeaponService:Block(Character, false)
-		end
+		-- if Humanoid:GetAttribute("Hit") then
+		-- 	WeaponService:Block(Character, false)
+		-- end
 
 		CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
 	else

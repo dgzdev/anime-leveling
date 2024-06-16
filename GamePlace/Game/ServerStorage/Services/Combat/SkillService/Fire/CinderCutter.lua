@@ -49,8 +49,15 @@ function CinderCutter.Attack(Humanoid: Humanoid, Data: { any })
         end
 
         WeaponService:TriggerHittedEvent(Enemy.Humanoid, Humanoid)
-        DamageService:TryHit(Enemy.Humanoid, Humanoid, Damage, "Sword")
+
+        CinderCutter.Hit(Enemy.Humanoid)
+        DamageService:TryHit(Enemy.Humanoid, Humanoid, Damage)
     end
+end
+
+function CinderCutter.Hit(HumanoidHitted: Humanoid)
+    local HitRenderData = RenderService:CreateRenderData(HumanoidHitted, "CinderCutter", "Hit")
+	RenderService:RenderForPlayers(HitRenderData)
 end
 
 function CinderCutter.Cancel(Humanoid: Humanoid)

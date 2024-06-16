@@ -18,19 +18,34 @@ function CinderCutter.Charge(RenderData)
 	local casterHumanoid = RenderData.casterHumanoid
 	local casterRootCFrame = RenderData.casterRootCFrame
 
-    SFX:Create(casterHumanoid.Parent, "DemonStep", 0 , 32)
+    SFX:Create(RenderData.casterHumanoid.Parent, "DemonStep", 0 , 32)
 end
+
+local Angle = CFrame.Angles(0, 0, math.rad(25))
 
 function CinderCutter.Attack(RenderData)
 	local arguments = RenderData.arguments
 	local casterHumanoid = RenderData.casterHumanoid
 	local casterRootCFrame = RenderData.casterRootCFrame
 
-    VFX:CreateParticle(casterRootCFrame, "FireSpin")
+    SFX:Create(casterHumanoid.Parent, "ActivateFire", 0 , 32)
+
+    local FireSpin = VFX:CreateParticle(casterRootCFrame * Angle, "FireSpin")
+	TweenService:Create(FireSpin.PointLight, TweenInfo.new(0.25), {Brightness = 0}):Play()
 end
 
 function CinderCutter.Hit(RenderData)
+	local casterRootCFrame = RenderData.casterRootCFrame
 
+	local Effect = Assets.SlashHit1:Clone()
+	Effect:PivotTo(casterRootCFrame * CFrame.new(0, 0, -0.5))
+	Effect.Parent = game.Workspace
+	RenderController:EmitParticles(Effect)
+
+    SFX:Create(RenderData.casterHumanoid.Parent, "CaughtFireHit", 0 , 32)
+
+
+	Debris:AddItem(Effect, 3)
 end
 
 function CinderCutter.Cancel(RenderData) end
