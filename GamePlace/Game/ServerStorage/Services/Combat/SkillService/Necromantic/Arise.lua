@@ -47,12 +47,37 @@ function Arise.Use(Humanoid: Humanoid, Data: { CasterCFrame: CFrame })
 			TestModel.Humanoid:SetAttribute("Ally", Player.Name)
 			DebounceService:AddDebounce(TestModel.Humanoid,"JustSpawned", 2.5, true)
 			TestModel.Parent = workspace.Test
+			
 			TestModel:MoveTo(v.Parent.Torso.Position + Vector3.new(0,3,0))
 			
-			ModelHumanoid:AddTag("AuraDark")
+			--ModelHumanoid:AddTag("AuraDark")
 			AriseService:RemovePossession(Player, v)
 
-			task.wait()
+			--task.wait(2)
+			if not TestModel:FindFirstChild("Allies") then
+				local AlliesFolder = Instance.new("Folder", TestModel)
+				local PlayerInstance = Instance.new("ObjectValue",AlliesFolder)
+				AlliesFolder.Name = "Allies"
+				PlayerInstance.Name = "Master"
+				PlayerInstance.Value = CharPlayer
+			else
+				local PlayerInstance = Instance.new("ObjectValue", TestModel:FindFirstChild("Allies"))
+				PlayerInstance.Name = "Master"
+				PlayerInstance.Value = CharPlayer
+			end
+
+			if not CharPlayer:FindFirstChild("Allies") then
+				local AlliesFolder = Instance.new("Folder", CharPlayer)
+				local ShadowInstance = Instance.new("ObjectValue",AlliesFolder)
+				AlliesFolder.Name = "Allies"
+				ShadowInstance.Name = "Shadow"
+				ShadowInstance.Value = TestModel
+			else
+				local ShadowInstance = Instance.new("ObjectValue",CharPlayer:FindFirstChild("Allies"))
+				ShadowInstance.Name = "Shadow"
+				ShadowInstance.Value = TestModel
+			end
+
 			EnemyService:CreateEnemy(TestModel)
 
 

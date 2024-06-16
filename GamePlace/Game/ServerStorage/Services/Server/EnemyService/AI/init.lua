@@ -91,17 +91,16 @@ function AI.Start()
 				task.desynchronize()
 
 				local isOnLook = Finder.IsOnDot(Humanoid, closest)
-
 				if isOnLook and (Humanoid.RootPart.Position - closest.RootPart.Position).Magnitude < 20 then
 					Path.StartFollowing(Humanoid, closest.RootPart)
 				else
-					if closest.Parent.Name == Humanoid:GetAttribute("Ally") then
-						--print("a")
-						local Player = Players:FindFirstChild(Humanoid:GetAttribute("Ally"))
-						local Char = Player.Character
-						Path.TargetisAlly = true
-						Path.MoveUntilEnough = true
-						Path.StartFollowing(Humanoid, closest.RootPart)
+					if NPC:FindFirstChild("Allies") then
+						for i,v : ObjectValue in pairs(NPC:FindFirstChild("Allies"):GetChildren()) do
+							if v.Value == closest.Parent then
+								Path.TargetisAlly = true
+								Path.StartFollowing(Humanoid, closest.RootPart)
+							end
+						end
 					end
 				end
 

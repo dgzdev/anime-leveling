@@ -35,6 +35,7 @@ function Finder.IsOnDot(from: Humanoid, humanoid: Humanoid, debug): boolean
 	if dotProduct > 0.5 then
 		return dotProduct
 	else
+		print(from, humanoid ,dotProduct)
 		return false
 	end
 end
@@ -87,8 +88,10 @@ function Finder.GetClosestHumanoid(from: Humanoid, onlyPlayers: boolean, magnitu
 			end
 		end
 	else
-		for _, hum: Humanoid in Workspace.Test:GetDescendants() do
-			if hum:IsA("Humanoid") then
+		
+		for _, char: Humanoid in Workspace.Test:GetChildren() do
+			if char:FindFirstChildWhichIsA("Humanoid") then
+				local hum = char:FindFirstChildWhichIsA("Humanoid")
 				if hum.Health <= 0 then
 					continue
 				end

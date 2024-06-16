@@ -17,7 +17,7 @@ Path.LoadedAnims = false
 Path.LastHitTick = nil
 Path.Stamina = 100
 Path.TargetisAlly = false
-Path.MoveUntilEnough = false
+Path.StopMove = false
 Path.Data = {}
 
 local Players = game:GetService("Players")
@@ -76,7 +76,6 @@ function Path.LeaveFollowing()
 		TargetConnections[k] = nil
 	end
 	Target = nil
-	Op = nil
 	if not From then
 		return
 	end
@@ -89,9 +88,10 @@ end
 
 function Path.StartFollowing(from: Humanoid, target: BasePart)
 	local AlignOrientation = from.RootPart:FindFirstChildWhichIsA("AlignOrientation", true)
-
+	
+	task.synchronize()
 	if AlignOrientation then
-		task.synchronize()
+
 		AlignOrientation.LookAtPosition = target.Position
 	end
 
@@ -118,6 +118,7 @@ function Path.StartFollowing(from: Humanoid, target: BasePart)
 end
 
 do
+	task.wait()
 	loop(function()
 		if not script:FindFirstAncestorWhichIsA("Actor") then
 			return
@@ -144,7 +145,7 @@ do
 
 			--print(From, Target)
 			if
-				math.abs(From.RootPart.Position.Y - Target.Position.Y) > 1
+				math.abs(From.Parent.PrimaryPart.Position.Y - Target.Position.Y) > 1
 				and not Path.AlignOriDb
 				and not From.RootPart.Anchored
 			then
@@ -160,7 +161,7 @@ do
 			end
 
 			if
-				Target and (From.RootPart.Position - Target.Position).Magnitude > 120 and not Path.TargetisAlly
+				Target and (From.Parent.PrimaryPart.Position - Target.Position).Magnitude > 120 and not Path.TargetisAlly
 				or Target.Parent.Humanoid.Health <= 0
 			then
 				Path.LeaveFollowing()
@@ -169,7 +170,7 @@ do
 			end
 
 			task.spawn(function()
-				if Target.Parent.Humanoid.Health > 0 and (From.RootPart.Position - Target.Position).Magnitude < 6 and not Path.TargetisAlly then
+				if Target.Parent.Humanoid.Health > 0 and (From.Parent.PrimaryPart.Position - Target.Position).Magnitude < 6 and not Path.TargetisAlly then
 					if Target.Parent.Humanoid:GetAttribute("LastAttackTick") then
 						if math.abs(Target.Parent.Humanoid:GetAttribute("LastAttackTick") - tick()) < 2 then
 							WeaponService:TypeBlockChecker(From, {
@@ -206,41 +207,44 @@ do
 				local LeftOrRight
 
 				if
-					(From.RootPart.Position - Target.Parent:FindFirstChild("Left Arm").Position).Magnitude
-					< (From.RootPart.Position - Target.Parent:FindFirstChild("Right Arm").Position).Magnitude
+					(From.Parent.PrimaryPart.Position - Target.Parent:FindFirstChild("Left Arm").Position).Magnitude
+					< (From.Parent.PrimaryPart.Position - Target.Parent:FindFirstChild("Right Arm").Position).Magnitude
 				then
 					LeftOrRight = -1
 				else
 					LeftOrRight = 1
 				end
-				p:ComputeAsync(From.RootPart.Position, (Target.CFrame * CFrame.new(12 * LeftOrRight, 0, -5)).Position)
+				
+				p:ComputeAsync(From.Parent.PrimaryPart.Position, (Target.CFrame * CFrame.new(12 * LeftOrRight, 0, -5)).Position)
 				--DebugService:CreatePartAtPos((Target.CFrame * CFrame.new(8*RightorLeft,0,-15)).Position)
 			elseif not Path.TargetisAlly then
-				p:ComputeAsync(From.RootPart.Position, Target.Position)
+				p:ComputeAsync(From.Parent.PrimaryPart.Position, Target.Position)
 			else
-				if (From.RootPart.Position - Target.Position).Magnitude > 30 then
+				if (From.Parent.PrimaryPart.Position - Target.Position).Magnitude > 15 then
+					DebugService:CreatePartAtPos(From.Parent.PrimaryPart.Position)
+					print((From.Parent.PrimaryPart.Position - Target.Position).Magnitude)
 					p:ComputeAsync(From.RootPart.Position, (Target.CFrame * CFrame.new(6, 0, 7)).Position)
+				else
+					Path.StopMove = true
 				end
 			end
 
-			local waypoints = p:GetWaypoints()
-			table.remove(waypoints, #waypoints)
-			table.remove(waypoints, #waypoints - 1)
-			table.remove(waypoints, #waypoints - 2)
-			table.remove(waypoints, #waypoints - 3)
+			--if Path.TargetisAlly then
+			--	print((From.RootPart.Position - Target.Position).Magnitude)
+			--end
 
-			for i, v in pairs(waypoints) do
-				if Path.TargetisAlly then
-					--print((From.RootPart.Position - Target.Position).Magnitude)
-					if (From.RootPart.Position - Target.Position).Magnitude > 30 then
-						From:MoveTo(v.Position)
-					else
-						return
+			if p.Status == Enum.PathStatus.Success then
+				local waypoints = p:GetWaypoints()
+				for i, v in pairs(waypoints) do
+					if not From then return end
+					if (Path.StopMove or (From.Parent.PrimaryPart.Position - Target.Position).Magnitude < 15) and Path.TargetisAlly then
+						Path.StopMove = false
+						break
 					end
-				else
 					From:MoveTo(v.Position)
 				end
 			end
+
 		end)
 
 		task.desynchronize() --> roda em paralelo
@@ -248,6 +252,7 @@ do
 end
 
 function Path.Start(Humanoid: Humanoid)
+
 	if not script:FindFirstAncestorWhichIsA("Actor") then return end
 
 	HitboxService = Knit.GetService("HitboxService")
@@ -285,7 +290,6 @@ function Path.Start(Humanoid: Humanoid)
 
 		if Target and Target.Parent ~= Newtarget then
 			Path.TargetisAlly = false
-			Path.MoveUntilEnough = false
 			Path.ChangeTarget(From, Newtarget)
 		else
 			Path.StartFollowing(From, Newtarget.RootPart)
