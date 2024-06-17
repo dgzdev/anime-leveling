@@ -223,6 +223,40 @@ SettingsController.Data = {
 			end
 		end
 	end,
+	["Texture Quality"] = function(value: number)
+		assert(value, `value is: {value} must be a number`)
+	end,
+	["Physics Quality"] = function(value: number)
+		assert(value, `value is: {value} must be a number`)
+
+		local values = {
+			[0] = function(v: number) end,
+			[10] = function(v: number) end,
+		}
+
+		local closestIndex = SettingsController.GetClosest(values, value)
+		local v = values[closestIndex]
+
+		if typeof(v) == "function" then
+			return v(value)
+		elseif typeof(v) == "table" then
+			for object: Instance | string, props: { [string]: any } in v do
+				if typeof(object) == "string" then
+					for _, obj: Instance in game:GetDescendants() do
+						if obj:IsA(object) then
+							for prop: string, val: any in props do
+								obj[prop] = val
+							end
+						end
+					end
+				else
+					for prop: string, val: any in props do
+						object[prop] = val
+					end
+				end
+			end
+		end
+	end,
 }
 
 function SettingsController:LoadSettings(SettingsFrame: Frame)
