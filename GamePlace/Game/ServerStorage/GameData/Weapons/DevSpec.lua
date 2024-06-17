@@ -7,6 +7,7 @@ return {
 		Type = "Sword",
 		Damage = 20,
 		Rarity = "S",
+		RarityNum = -1,
 		SubRarity = "I", -- "II" | "III" | "IV" | "V"
 	},
 	
@@ -18,6 +19,7 @@ return {
 		Type = "Sword",
 		Damage = 30,
 		Rarity = "S",
+		RarityNum = -1,
 		SubRarity = "I", -- "II" | "III" | "IV" | "V"
 	},
 
@@ -29,6 +31,7 @@ return {
 		Type = "Melee",
 		Damage = 300,
 		Rarity = "S",
+		RarityNum = -1,
 		SubRarity = "I", -- "II" | "III" | "IV" | "V"
 	},
 }

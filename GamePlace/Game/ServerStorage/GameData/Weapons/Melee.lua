@@ -16,6 +16,7 @@ return {
 		Type = "Melee",
 		Damage = 10,
 		Rarity = "A",
+		RarityNum = 10,
 		SubRarity = "I",
 	},
 }

@@ -7,6 +7,7 @@ return {
 		Type = "Sword",
 		Damage = 10,
 		Rarity = "E", --| "D" | "C" | "B" | "A" | "S"
+		RarityNum = 60,
 		SubRarity = "I", --| "II" | "III" | "IV" | "V"
 	},
 	IronStarterSword = {
@@ -16,6 +17,7 @@ return {
 		Class = "Weapon",
 		Type = "Sword",
 		Damage = 20,
+		RarityNum = 50,
 		Rarity = "E",
 		SubRarity = "II", -- "II" | "III" | "IV" | "V"
 	},
@@ -26,6 +28,7 @@ return {
 		Class = "Weapon",
 		Type = "Sword",
 		Damage = 30,
+		RarityNum = 40,
 		Rarity = "D",
 		SubRarity = "I", -- "II" | "III" | "IV" | "V"
 	},
@@ -37,6 +40,7 @@ return {
 		Class = "Weapon",
 		Type = "Sword",
 		Damage = 50,
+		RarityNum = 2,
 		Rarity = "S",
 		SubRarity = "I", -- "II" | "III" | "IV" | "V"
 	},
@@ -47,6 +51,7 @@ return {
 		Class = "Weapon",
 		Type = "Sword",
 		Damage = 40,
+		RarityNum = 10,
 		Rarity = "A",
 		SubRarity = "I", -- "II" | "III" | "IV" | "V"
 	},
@@ -57,6 +62,7 @@ return {
 		Class = "Weapon",
 		Type = "Sword",
 		Damage = 60,
+		RarityNum = 2,
 		Rarity = "S",
 		SubRarity = "I", -- "II" | "III" | "IV" | "V"
 	},

@@ -7,6 +7,7 @@ return {
 		Type = "Dagger",
 		Damage = 5,
 		Rarity = "E",
+		RarityNum = 60,
 		SubRarity = "I", -- "II" | "III" | "IV" | "V"
 	},
 }

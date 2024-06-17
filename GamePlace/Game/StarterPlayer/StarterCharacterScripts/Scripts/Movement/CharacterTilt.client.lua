@@ -28,7 +28,7 @@ end
 
 ORIGINAL_C0 = RootJoint.C0
 
-local function Heartbeat()
+local function Heartbeat(dt: number)
 	if Humanoid.Health > 0 then
 		Velocity = Root:GetVelocityAtPosition(Root.Position) * Vector3.new(1, 0, 1)
 
@@ -51,4 +51,4 @@ local function Heartbeat()
 	end
 end
 
-RunService.Heartbeat:Connect(Heartbeat)
+RunService.RenderStepped:Connect(Heartbeat)

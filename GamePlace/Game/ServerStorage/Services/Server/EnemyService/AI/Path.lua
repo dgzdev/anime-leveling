@@ -25,6 +25,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local PathfindingService = game:GetService("PathfindingService")
 local RunService = game:GetService("RunService")
 
+local LootPoolService
 local HitboxService
 local AnimationService
 local WeaponService
@@ -265,6 +266,7 @@ function Path.Start(Humanoid: Humanoid)
 
 	if not script:FindFirstAncestorWhichIsA("Actor") then return end
 
+	LootPoolService = Knit.GetService("LootPoolService")
 	HitboxService = Knit.GetService("HitboxService")
 	AnimationService = Knit.GetService("AnimationService")
 	SkillService = Knit.GetService("SkillService")
@@ -273,6 +275,9 @@ function Path.Start(Humanoid: Humanoid)
 	DebounceService = Knit.GetService("DebounceService")
 	RagdollService = Knit.GetService("RagdollService")
 	AriseService = Knit.GetService("AriseService")
+
+
+
 
 	local Animator: Animator = Humanoid:WaitForChild("Animator")
 	local HittedEvent = script.Parent:WaitForChild("Hitted") :: BindableEvent
@@ -290,6 +295,8 @@ function Path.Start(Humanoid: Humanoid)
 		local Char = From.Parent
 		local LastHit = From:GetAttribute("LastHitFrom")
 		local Player = Players:FindFirstChild(LastHit)
+
+		print(LootPoolService:Roll())
 		RagdollService:Ragdoll(Char)
 		AriseService:SetPossessionMode(From, Player)
 	end)

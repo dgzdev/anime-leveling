@@ -39,25 +39,24 @@ end)
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Cmdr = require(ReplicatedStorage:WaitForChild("CmdrClient"))
-Cmdr:SetActivationKeys({})
 
 local GroupId = 3158193
-local RunService = game:GetService("RunService")
+
 local function isPlayerAdmin(player: Player)
-	local response = false
-	local succ, rank = pcall(player.GetRankInGroup, player, GroupId or 0)
+	local rank
 
-	if succ then
-		if rank >= 157 then
-			response = true
-		end
-	else
-		warn("Error getting rank:", rank)
-	end
+	repeat
+		local success, err = pcall(function()
+			rank = player:GetRankInGroup(GroupId)
+		end)
+		task.wait()
+	until success
 
-	return response
+	return rank >= 157
 end
 
 if isPlayerAdmin(game.Players.LocalPlayer) then
 	Cmdr:SetActivationKeys({ Enum.KeyCode.F2 })
+else
+	Cmdr:SetActivationKeys({})
 end
