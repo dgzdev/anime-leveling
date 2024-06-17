@@ -24,7 +24,7 @@ function VFX:_ApplyParticle(
 	elseif target:IsA("Model") then
 		Root = target.PrimaryPart
 	else
-		error(`Invalid target type: {target.ClassName} | {target:GetFullName()}`)
+		print(`Invalid target type: {target.ClassName} | {target:GetFullName()}`)
 		return
 	end
 
@@ -34,7 +34,7 @@ function VFX:_ApplyParticle(
 
 	local block = VFXFolder:FindFirstChild(action, true)
 	if not block then
-		return error("VFX not found")
+		return print("VFX not found")
 	end
 
 	local particle = block:Clone() :: BasePart
@@ -102,7 +102,7 @@ end
 function VFX:_CreateInfinite(target: Model | BasePart, action: string)
 	local block = VFXFolder:FindFirstChild(action)
 	if not block then
-		return error("VFX not found")
+		return print("VFX not found")
 	end
 
 	if not target:IsDescendantOf(Workspace) then
@@ -138,7 +138,7 @@ end
 function VFX:CreateParticle(position: CFrame, action: string, time: number?)
 	local block = VFXFolder:FindFirstChild(action, true)
 	if not block then
-		return error("VFX not found")
+		return print("VFX not found")
 	end
 
 	local particle = block:Clone() :: BasePart

@@ -50,7 +50,16 @@ function WeaponService:TriggerHittedEvent(EnemyHumanoid: Humanoid, HumanoidWhoHi
 	end
 end
 
-function WeaponService:Stun(Character: Model, Position: Vector3, Duration: number)
+function WeaponService:Stun(Character: Model, Duration: number)
+	DebounceService:AddDebounce(Character.Humanoid, "Stun", Duration)
+	CharacterService:UpdateWalkSpeedAndJumpPower(Character.Humanoid)
+
+	task.delay(Duration, function()
+		CharacterService:UpdateWalkSpeedAndJumpPower(Character.Humanoid)
+	end)
+end
+
+function WeaponService:StunLock(Character: Model, Position: Vector3, Duration: number)
 	local AlignPosition = Instance.new("AlignPosition")
 	AlignPosition.Attachment0 = Character.PrimaryPart.RootAttachment
 	AlignPosition.Mode = Enum.PositionAlignmentMode.OneAttachment
@@ -85,11 +94,6 @@ function WeaponService:Block(Character: Model, state: boolean, cantParry: boolea
 			DebounceService:AddDebounce(Humanoid, "DeflectTime", 0.2, true)
 		end
 		Humanoid:SetAttribute("Block", true)
-
-		-- if Humanoid:GetAttribute("Hit") then
-		-- 	WeaponService:Block(Character, false)
-		-- end
-
 		CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
 	else
 		repeat
@@ -114,6 +118,10 @@ function WeaponService:WeaponInput(Character: Model, ActionName: string, Data: {
 	local WeaponName = Humanoid:GetAttribute("WeaponName")
 	local WeaponTypeModule = Weapons[WeaponType]
 	local WeaponNameModule = Weapons[WeaponName]
+
+	if Data and not Data.CasterCFrame then
+		Data.CasterCFrame = Humanoid.Parent:GetPivot()
+	end
 
 	if WeaponNameModule and WeaponNameModule[ActionName] then
 		WeaponNameModule[ActionName](Character, Data)

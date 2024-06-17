@@ -10,6 +10,7 @@ local MenuController = Knit.CreateController({
 
 local CameraController
 local HumanoidManagerController
+local SettingsController
 
 ------------------------------------------------
 -- Menu
@@ -284,6 +285,12 @@ end
 function MenuController.KnitInit()
 	CameraController = Knit.GetController("CameraController")
 	HumanoidManagerController = Knit.GetController("HumanoidManagerController")
+	SettingsController = Knit.GetController("SettingsController")
+
+	local Sections: Folder = menu:WaitForChild("Background"):WaitForChild("Sections")
+	local SETTINGS: Frame = Sections:WaitForChild("SETTINGS")
+
+	SettingsController:LoadSettings(SETTINGS)
 
 	MenuController.CreateContext()
 	MenuController.CreateRunService()

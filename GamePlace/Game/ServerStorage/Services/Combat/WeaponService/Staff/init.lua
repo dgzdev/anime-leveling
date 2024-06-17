@@ -1,4 +1,6 @@
+local Debris = game:GetService("Debris")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
 
 local Knit = require(ReplicatedStorage.Packages.Knit)
 
@@ -15,9 +17,25 @@ local Validate = require(game.ReplicatedStorage.Validate)
 local FastCast = require(game.ReplicatedStorage.Modules.FastCastRedux)
 
 local Default
+
+local function DestroyBullet(Bullet)
+	for i, v in Bullet:GetDescendants() do
+		if v:IsA("ParticleEmitter") then
+			v.Enabled = false
+		end
+	end
+
+	local PointLight = Bullet:FindFirstChildWhichIsA("PointLight")
+	if PointLight then
+		TweenService:Create(PointLight, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Brightness = 0}):Play()
+	end
+	Debris:AddItem(Bullet, 0.5)
+end
+
 Staff = {
 	Attack = function(Character, Data)
         local Humanoid = Character.Humanoid
+		local CasterCFrame = Data.CasterCFrame* CFrame.new(1.5, 0, 0)
 		local Tool = HotbarService:GetEquippedTool(Character)
 
 		if not Tool then
@@ -47,6 +65,49 @@ Staff = {
 		local HitEffect = Tool:GetAttribute("HitEffect") or Tool:GetAttribute("Type")
 		local Markers = AnimationService:GetAllAnimationEventNames(AnimationPath.AnimationId)
 
+		local Caster = FastCast.new()
+		local Origin = (CasterCFrame * CFrame.new(0, 0, -3)).Position
+		local Direction = CasterCFrame.LookVector
+		local Variant = 75
+		local Behavior = FastCast.newBehavior()
+
+		local Params = RaycastParams.new()
+		Params.FilterType = Enum.RaycastFilterType.Exclude
+		Params.FilterDescendantsInstances = {Character} -- pensar em aliados
+		Behavior.RaycastParams = Params
+		Behavior.AutoIgnoreContainer = true
+		Behavior.CosmeticBulletTemplate  = game.ReplicatedStorage.VFX.Staff.MageM1
+		Behavior.CosmeticBulletContainer = workspace.CastContainer
+		Behavior.MaxDistance = 60
+
+		Caster:Fire(Origin, Direction, Variant, Behavior)
+		Caster.LengthChanged:Connect(function(Caster, LastPoint, RayDir, Displacement, Velocity, CosmeticBullet)
+			local NewPosition = LastPoint + (RayDir * Displacement)
+			CosmeticBullet:PivotTo(CFrame.new(NewPosition))
+		end)
+
+		Caster.RayHit:Connect(function(Caster, Result, Velocity, CosmeticBullet)
+			DestroyBullet(CosmeticBullet)
+			local Enemy = HitboxService:GetCharacterFromRaycastResult(Result)
+			if not Enemy then
+				return
+			end
+			DebounceService:AddDebounce(Humanoid, "HitboxStart", 0.05)
+			WeaponService:TriggerHittedEvent(Enemy.Humanoid, Humanoid)
+			DamageService:TryHit(Enemy.Humanoid, Humanoid, Damage, "ManaStaff", false)
+		end)
+
+		Caster.CastTerminating:Connect(function(Caster)
+			local Bullet = Caster.RayInfo.CosmeticBulletObject
+			if Bullet then
+				DestroyBullet(Bullet)
+			end
+		end)
+
+		WeaponService:IncreaseComboCounter(Humanoid)
+		task.delay(SwingSpeed + 0.15, function()
+			CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
+		end)
 	end,
 
 	StrongAttack = function(...)
@@ -55,6 +116,10 @@ Staff = {
 }
 
 function Staff.Start(default)
+	local CastContainer = Instance.new("Folder")
+	CastContainer.Name = "CastContainer"
+	CastContainer.Parent = game.Workspace
+
 	Default = default
     RagdollService = Knit.GetService("RagdollService")
 	WeaponService = Knit.GetService("WeaponService")

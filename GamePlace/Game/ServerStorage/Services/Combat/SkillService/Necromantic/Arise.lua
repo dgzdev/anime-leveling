@@ -50,7 +50,7 @@ function Arise.Use(Humanoid: Humanoid, Data: { CasterCFrame: CFrame })
 			
 			TestModel:MoveTo(v.Parent.Torso.Position + Vector3.new(0,3,0))
 			
-			--ModelHumanoid:AddTag("AuraDark")
+			ModelHumanoid:AddTag("AuraDark")
 			AriseService:RemovePossession(Player, v)
 
 			--task.wait(2)

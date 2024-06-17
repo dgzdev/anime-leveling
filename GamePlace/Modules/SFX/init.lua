@@ -26,7 +26,7 @@ function Sounds:_Apply(target: Model, action: string)
 
 	local newFolder = SFXFolder:FindFirstChild(action)
 	if not newFolder then
-		return error("SFX not found")
+		return print("SFX not found")
 	end
 
 	local sound = self:GetRandomFrom(newFolder):Clone()
@@ -55,7 +55,7 @@ function Sounds:_Create(target: Model, action: string, min: number?, max: number
 
 	local SFX = SoundService:FindFirstChild(action, true)
 	if not SFX then
-		return error("SFX not found")
+		return print("SFX not found")
 	end
 
 	local sound: Sound | Folder = SFX:Clone()

@@ -9,6 +9,10 @@ function CharacterSharedFunctions:ChangeWalkSpeed(humanoid: Humanoid, amount: nu
 	end
 
 	local Walkspeeds = {
+		Stun = function()
+			change("Stun", 0)
+		end,
+
 		PostureBreak = function()
 			change("PostureBreak", 0)
 		end,
@@ -72,6 +76,11 @@ function CharacterSharedFunctions:ChangeJumpPower(humanoid, amount, overwrite)
 	end
 
 	local JumpPowers = {
+		Stun = function()
+			change("Stun", 0)
+		end,
+
+		
 		PostureBreak = function()
 			change("PostureBreak", 0)
 		end,

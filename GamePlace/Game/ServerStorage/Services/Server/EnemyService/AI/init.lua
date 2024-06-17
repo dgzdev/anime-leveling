@@ -16,6 +16,7 @@ function AI.Start()
 			local Finder = require(script.Finder)
 			
 			local EquipService = Knit.GetService("EquipService")
+			local DebounceService = Knit.GetService("DebounceService")
 			
 			local NPC: Model = script:FindFirstAncestorOfClass("Model")
 			local Humanoid: Humanoid = NPC:FindFirstChildWhichIsA("Humanoid", true)
@@ -47,6 +48,14 @@ function AI.Start()
 			Humanoid:SetAttribute("Posture", 0)
 
 			local AnimationsFolder = game.ReplicatedStorage:WaitForChild("Animations")
+
+			for _, part: BasePart in NPC:GetDescendants() do
+				if part:IsA("BasePart") then
+					if part:CanSetNetworkOwnership() then
+						part:SetNetworkOwnershipAuto()
+					end
+				end
+			end
 			
 			task.wait()
 			
@@ -92,6 +101,7 @@ function AI.Start()
 
 				local isOnLook = Finder.IsOnDot(Humanoid, closest)
 				if isOnLook and (Humanoid.RootPart.Position - closest.RootPart.Position).Magnitude < 20 then
+				
 					Path.StartFollowing(Humanoid, closest.RootPart)
 				else
 					if NPC:FindFirstChild("Allies") then

@@ -298,7 +298,7 @@ function HotbarController.OnBackpackAdded(tool: Tool)
 	end
 
 	Events[tool][#Events[tool] + 1] = tool.Activated:Connect(function()
-		HotbarService:OnFireServer("Activate", tool)
+		HotbarService:OnFireServer("Activate", {CasterCFrame = Character:GetPivot()})
 	end)
 	Events[tool][#Events[tool] + 1] = tool.Equipped:Connect(function()
 		local isActivated = UITemplate:FindFirstChild("IsActivated") :: UIStroke

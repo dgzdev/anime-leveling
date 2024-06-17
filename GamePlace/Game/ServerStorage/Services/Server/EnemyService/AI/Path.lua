@@ -48,6 +48,12 @@ local Task: thread = nil
 local Align: AlignOrientation = nil
 local Randomizer = Random.new()
 
+local Skills = {
+	"FlashStrike",
+	"CinderCutter",
+	"MoltenSmash"
+}
+
 local loop = function(thread: () -> any, ...)
 	return task.spawn(function(...)
 		while true do
@@ -88,7 +94,7 @@ end
 
 function Path.StartFollowing(from: Humanoid, target: BasePart)
 	local AlignOrientation = from.RootPart:FindFirstChildWhichIsA("AlignOrientation", true)
-	
+
 	task.synchronize()
 	if AlignOrientation then
 
@@ -182,16 +188,21 @@ do
 					end
 
 					local randomNumber = math.random(0, 100) / 100
-					local flashStrikeChance = 10 / 100
+					local isSkillChance = 10 / 100
 
-					local isFlashStrike = randomNumber <= flashStrikeChance
+					local isSkill = randomNumber <= isSkillChance
 
-					if not isFlashStrike and not Path.TargetisAlly then
+					if not isSkill and not Path.TargetisAlly and (not Target.Parent.Humanoid:GetAttribute("BeingAttacked") or From:GetAttribute("Attacking")) then
+						DebounceService:AddDebounce(Target.Parent.Humanoid, "BeingAttacked", 1, true)
+						DebounceService:AddDebounce(From, "Attacking", 1, true)
 						WeaponService:WeaponInput(From.Parent, "Attack")
 					else
-						if not Path.TargetisAlly then
+						if not Path.TargetisAlly and (not Target.Parent.Humanoid:GetAttribute("BeingAttacked") or From:GetAttribute("Attacking")) then
+							DebounceService:AddDebounce(Target.Parent.Humanoid, "BeingAttacked", 1, true)
+							DebounceService:AddDebounce(From, "Attacking", 1, true)
 							Path.AlignOriDb = true
-							SkillService:UseSkill(From, "FlashStrike", { Damage = Path.Data.Damage })
+							local Skill = Skills[math.random(1, #Skills)]
+							SkillService:UseSkill(From, Skill, { Damage = Path.Data.Damage })
 							task.delay(5, function()
 								Path.AlignOriDb = false
 							end)
@@ -203,7 +214,7 @@ do
 			local p = PathfindingService:CreatePath()
 			---print(Finder.IsOnDot(Target.Parent.Humanoid, From))
 			local Dot = Finder.IsOnDot(Target.Parent.Humanoid, From)
-			if Dot and Target:GetVelocityAtPosition(Target.Position).Magnitude > 3 and not Path.TargetisAlly then
+			if (Dot and Target:GetVelocityAtPosition(Target.Position).Magnitude > 3 and not Path.TargetisAlly) or (Target.Parent.Humanoid:GetAttribute("BeingAttacked") and Dot)then
 				local LeftOrRight
 
 				if
@@ -214,7 +225,7 @@ do
 				else
 					LeftOrRight = 1
 				end
-				
+
 				p:ComputeAsync(From.Parent.PrimaryPart.Position, (Target.CFrame * CFrame.new(12 * LeftOrRight, 0, -5)).Position)
 				--DebugService:CreatePartAtPos((Target.CFrame * CFrame.new(8*RightorLeft,0,-15)).Position)
 			elseif not Path.TargetisAlly then
@@ -222,7 +233,6 @@ do
 			else
 				if (From.Parent.PrimaryPart.Position - Target.Position).Magnitude > 15 then
 					DebugService:CreatePartAtPos(From.Parent.PrimaryPart.Position)
-					print((From.Parent.PrimaryPart.Position - Target.Position).Magnitude)
 					p:ComputeAsync(From.RootPart.Position, (Target.CFrame * CFrame.new(6, 0, 7)).Position)
 				else
 					Path.StopMove = true
@@ -236,7 +246,7 @@ do
 			if p.Status == Enum.PathStatus.Success then
 				local waypoints = p:GetWaypoints()
 				for i, v in pairs(waypoints) do
-					if not From then return end
+					if not From.Parent.PrimaryPart or not Target then return end
 					if (Path.StopMove or (From.Parent.PrimaryPart.Position - Target.Position).Magnitude < 15) and Path.TargetisAlly then
 						Path.StopMove = false
 						break
@@ -287,7 +297,8 @@ function Path.Start(Humanoid: Humanoid)
 	Connection = HittedEvent.Event:Connect(function(Newtarget: Humanoid)
 
 		From:SetAttribute("LastHitFrom", Newtarget.Parent.Name)
-
+		DebounceService:AddDebounce(Newtarget, "BeingAttacked", 1, true)
+		DebounceService:AddDebounce(From, "Attacking", 1, true)
 		if Target and Target.Parent ~= Newtarget then
 			Path.TargetisAlly = false
 			Path.ChangeTarget(From, Newtarget)

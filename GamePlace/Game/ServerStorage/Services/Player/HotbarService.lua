@@ -11,7 +11,7 @@ local EquipService
 local WeaponService
 
 local Events = {
-	Activate = function(Player: Player, data)
+	Activate = function(Player: Player, data: {})
 		local Tool = HotbarService:GetEquippedTool(Player.Character)
 		if not Tool then
 			return
@@ -22,6 +22,7 @@ local Events = {
 				WeaponService:WeaponInput(Player.Character, "Attack", data)
 			end,
 		}
+
 		local Class = Tool:GetAttribute("Class")
 		if Classes[Class] then
 			Classes[Class]()

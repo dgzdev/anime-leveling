@@ -27,7 +27,7 @@ function MoltenSmash.Charge(Humanoid: Humanoid, Data: { CasterCFrame: CFrame })
 	Animation:Play()
 
     DebounceService:AddDebounce(Humanoid, "UsingSkill", 0.85)
-    WeaponService:Stun(Humanoid.Parent, Data.CasterCFrame.Position, 0.85)
+    WeaponService:Stun(Humanoid.Parent, 0.85)
     task.wait(0.6)
     MoltenSmash.Stomp(Humanoid, Data)
 end
@@ -61,18 +61,17 @@ function MoltenSmash.Stomp(Humanoid: Humanoid, Data: { CasterCFrame: CFrame })
         })
         RenderService:RenderForPlayers(ChargeRenderData)
 
-        DebounceService:AddDebounce(Humanoid, "HitboxStart", 0.05)
         HitboxService:CreateFixedHitbox(position, size * 2, 1, function(Enemy)
             if Enemy == RootPart.Parent then
                 return
             end
 
-            
-            EffectService:AddEffect(Enemy.Humanoid, "MoltenSmashBurn", "Burn", 3, "int", 5)
-            Enemy.PrimaryPart.AssemblyLinearVelocity = Vector3.new(0,150,0)  * WeaponService:GetModelMass(Enemy)
-            RagdollService:Ragdoll(Enemy, 1)
-            
             WeaponService:TriggerHittedEvent(Enemy.Humanoid, Humanoid)
+            if DamageService:GetHitContext(Enemy.Humanoid) == "Hit" then
+                RagdollService:Ragdoll(Enemy, 1)
+                Enemy.PrimaryPart.AssemblyLinearVelocity = Vector3.new(0,150,0)  * WeaponService:GetModelMass(Enemy)
+                EffectService:AddEffect(Enemy.Humanoid, "MoltenSmashBurn", "Burn", 3, "int", 5)
+            end
             DamageService:TryHit(Enemy.Humanoid, Humanoid, Damage)
         end)
         task.wait(.35)

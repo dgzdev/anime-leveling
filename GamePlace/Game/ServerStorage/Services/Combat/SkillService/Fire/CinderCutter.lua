@@ -9,6 +9,7 @@ local DamageService
 local WeaponService
 local EffectService
 local RagdollService
+local AnimationService
 
 
 local Validate = require(game.ReplicatedStorage.Validate)
@@ -21,10 +22,17 @@ function CinderCutter.Charge(Humanoid: Humanoid, Data: { CasterCFrame: CFrame })
     local ChargeRenderData = RenderService:CreateRenderData(Humanoid, "CinderCutter", "Charge")
 	RenderService:RenderForPlayers(ChargeRenderData)
 
-    DebounceService:AddDebounce(Humanoid, "UsingSkill", 0.5)
-    WeaponService:Stun(Humanoid.Parent, Data.CasterCFrame.Position, 0.5)
+    AnimationService:StopAllAnimations(Humanoid)
+    local Animation: AnimationTrack =
+	Humanoid.Animator:LoadAnimation(game.ReplicatedStorage.Animations.Skills.Fire.CinderCutter.CinderCutterCharge)
+	Animation.Priority = Enum.AnimationPriority.Action
+    Animation.Looped = false
+	Animation:Play()
 
-    task.wait(0.5)
+    DebounceService:AddDebounce(Humanoid, "UsingSkill", 0.8)
+    WeaponService:Stun(Humanoid.Parent, 0.8)
+
+    task.wait(0.45)
     CinderCutter.Attack(Humanoid, Data)
 end
 
@@ -33,12 +41,12 @@ function CinderCutter.Attack(Humanoid: Humanoid, Data: { any })
 	if state == nil then
 		return
 	end
-    
+
     local RootPart = Humanoid.RootPart
 	local Damage = Data.Damage or 15
     SkillService:SetSkillState(Humanoid, "CinderCutter", "Attack")
 
-	DebounceService:AddDebounce(Humanoid, "HitboxStart", 0.05)
+	-- DebounceService:AddDebounce(Humanoid, "HitboxStart", 0.05)
     local AttackRenderData = RenderService:CreateRenderData(Humanoid, "CinderCutter", "Attack")
 	RenderService:RenderForPlayers(AttackRenderData)
 
@@ -48,10 +56,10 @@ function CinderCutter.Attack(Humanoid: Humanoid, Data: { any })
             continue
         end
 
-        WeaponService:TriggerHittedEvent(Enemy.Humanoid, Humanoid)
+        -- WeaponService:TriggerHittedEvent(Enemy.Humanoid, Humanoid)
 
         CinderCutter.Hit(Enemy.Humanoid)
-        DamageService:TryHit(Enemy.Humanoid, Humanoid, Damage)
+        DamageService:Hit(Enemy.Humanoid, Humanoid, Damage)
     end
 end
 
@@ -61,16 +69,18 @@ function CinderCutter.Hit(HumanoidHitted: Humanoid)
 end
 
 function CinderCutter.Cancel(Humanoid: Humanoid)
+    AnimationService:StopAnimationMatch(Humanoid, "CinderCutterCharge")
     DebounceService:RemoveDebounce(Humanoid, "UsingSkill")
 end
 --------
 function CinderCutter.Caller(Humanoid: Humanoid, Data: { any })
-    if Validate:CanUseSkill(Humanoid, false) and not DebounceService:HaveDebounce(Humanoid, "CinderCutter") then
+    if Validate:CanUseSkill(Humanoid, true) and not DebounceService:HaveDebounce(Humanoid, "CinderCutter") then
 		CinderCutter.Charge(Humanoid, Data)
 	end
 end
 
 function CinderCutter.Start()
+    AnimationService = Knit.GetService("AnimationService")
     EffectService = Knit.GetService("EffectService")
 	WeaponService = Knit.GetService("WeaponService")
 	DebounceService = Knit.GetService("DebounceService")

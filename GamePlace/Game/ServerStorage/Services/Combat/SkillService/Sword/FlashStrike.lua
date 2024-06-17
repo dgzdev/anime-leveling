@@ -99,11 +99,11 @@ function FlashStrike.Attack(Humanoid: Humanoid, Data)
 			local EmitDelayed = false
 			if DamageService:GetHitContext(Enemy.Humanoid) == "Hit" then
 				DebounceService:AddDebounce(EnemyHumanoid, "Unparryable", 2.3, true)
-				WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 2.3)
+				WeaponService:Stun(Enemy, 2.3)
 				table.insert(Enemies, Enemy)
 				EmitDelayed = true
 			else
-				WeaponService:Stun(Enemy, Enemy:GetPivot().Position, 1.5)
+				WeaponService:Stun(Enemy, 1.5)
 			end
 
 			FlashStrike.Hit(Enemy.Humanoid, EmitDelayed, Humanoid)
@@ -125,7 +125,7 @@ function FlashStrike.Attack(Humanoid: Humanoid, Data)
 		SkillService:SetSkillState(Humanoid, "FlashStrike", nil)
 		return
 	else
-		WeaponService:Stun(Character, Character:GetPivot().Position, 1.85)
+		WeaponService:Stun(Character, 1.85)
 	end
 
 	task.wait(1.85)

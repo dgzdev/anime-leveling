@@ -218,6 +218,22 @@ function HitboxService:CreateFixedHitbox(CFrame: CFrame, Size: Vector3, Ticks: n
 	end
 end
 
+function HitboxService:GetCharacterFromRaycastResult(Result: RaycastResult)
+	if not Result then
+		return false
+	end
+
+	local Model = Result.Instance:FindFirstAncestorWhichIsA("Model")
+	if Model then
+		local Humanoid = Model:FindFirstChildWhichIsA("Humanoid")
+		if Humanoid then
+			return Humanoid.Parent
+		end
+	end
+	
+	return false
+end
+
 -- cria uma hitbox com part, welda, posiciona na frente do character fornecido com base no tamanho da hitbox, o callback retornara o character hitado
 -- ticks é quantas vezes ele vai verificar a hitbox: 5 ticks = 5 vezes com o intervalo a cada frame
 function HitboxService:CreatePartHitbox(

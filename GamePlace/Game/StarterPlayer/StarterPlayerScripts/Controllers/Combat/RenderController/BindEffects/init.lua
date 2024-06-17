@@ -39,6 +39,14 @@ function BindEffects.CustomRemove(RenderData)
 	end
 end
 
+local function AssemblyPart(BasePart: BasePart)
+	BasePart.CanCollide = false
+	BasePart.CanQuery = false
+	BasePart.CanTouch = false
+	BasePart.Massless = true
+	BasePart.Anchored = false
+end
+
 function BindEffects.Add(RenderData)
 	local casterHumanoid: Humanoid = RenderData.casterHumanoid
 	local effect: string = RenderData.arguments 
@@ -57,10 +65,22 @@ function BindEffects.Add(RenderData)
 	BindEffects.CustomAdd(RenderData)
 
 	local EffectClone = RenderController:CreateInstance(BindEffects, casterHumanoid, Effect:Clone())
+
+	if EffectClone:IsA("BasePart") then
+		AssemblyPart(EffectClone)
+	end
+
+	for _, v: BasePart in EffectClone:GetDescendants() do
+		if v:IsA("BasePart") then
+			AssemblyPart(v)
+		end
+	end
+	
 	local Weld = Instance.new("WeldConstraint")
 	Weld.Part0 = casterHumanoid.RootPart
 	Weld.Part1 = EffectClone
 	Weld.Parent = EffectClone
+
 	EffectClone:PivotTo(casterHumanoid.RootPart:GetPivot())
 	EffectClone.Parent = casterHumanoid.Parent
 

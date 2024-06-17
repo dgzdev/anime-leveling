@@ -82,13 +82,14 @@ function MoltenSmash.Stomp(RenderData)
 			Y = -2,
 			Z = 2,
 		},
-		Size = {Vector3.one, Vector3.one * 1.35},
+		Size = {Vector3.one, Vector3.one},
 		Force = {
 			X = {-45, 45},
 			Y = {30, 50},
 			Z = {-45, 45},
 		},
 
+		DebrisTemplate = game.ReplicatedStorage.VFX.Debris.OnFire,
 		Trail = true, --> Enable / Disable
 		Direction = casterRootCFrame, --> Direction (Gets 'LookVector', 'UpVector' and 'RightVector' automatically)
 		DespawnTime = 1, --> Despawn Time.

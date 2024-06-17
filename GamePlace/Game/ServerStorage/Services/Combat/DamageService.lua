@@ -20,10 +20,19 @@ function DamageService:DealDamage(HumanoidToDamage: Humanoid, Damage: number, Hu
 end
 
 -- força um hit, ignorando o block
-function DamageService:Hit(HumanoidHitted: Humanoid, Humanoid: Humanoid, Damage: number, HitEffect: string?)
+function DamageService:Hit(HumanoidHitted: Humanoid, Humanoid: Humanoid, Damage: number, HitEffect: string, ShouldStun: boolean?)
+	
+	if ShouldStun == nil then
+		ShouldStun = true
+	end
+
 	SkillService:TryCancelSkillsStates(HumanoidHitted)
-	DebounceService:AddDebounce(HumanoidHitted, "Hit", 1, true)
-	HumanoidHitted:SetAttribute("Running", false)
+	if ShouldStun then
+		DebounceService:AddDebounce(HumanoidHitted, "Hit", 1, true)
+		HumanoidHitted:SetAttribute("Running", false)		
+		AnimationService:StopM1Animation(HumanoidHitted)
+	end
+
 	DamageService:DealDamage(HumanoidHitted, Damage, Humanoid)
 
 	task.delay(1, function()
@@ -33,9 +42,6 @@ function DamageService:Hit(HumanoidHitted: Humanoid, Humanoid: Humanoid, Damage:
 	end)
 
 	PostureService:RemovePostureDamage(Humanoid, Damage / 2.5)
-
-	AnimationService:StopM1Animation(HumanoidHitted)
-
 	local hitEffectRenderData = RenderService:CreateRenderData(HumanoidHitted, "HitEffects", HitEffect or "None")
 	RenderService:RenderForPlayers(hitEffectRenderData)
 end
@@ -80,7 +86,7 @@ function DamageService:DeflectHit(HumanoidHitted: Humanoid, Humanoid: Humanoid, 
 end
 
 -- função hit, possui verificações de block e dodge, além de aplicar debuffs de hit
-function DamageService:TryHit(HumanoidHitted: Humanoid, Humanoid: Humanoid, _Damage: number, HitEffect: string?)
+function DamageService:TryHit(HumanoidHitted: Humanoid, Humanoid: Humanoid, _Damage: number, HitEffect: string, ShouldStun: boolean?)
 	if HumanoidHitted == nil then
 		return
 	end
@@ -126,7 +132,7 @@ function DamageService:TryHit(HumanoidHitted: Humanoid, Humanoid: Humanoid, _Dam
 			DamageService:BlockHit(HumanoidHitted, Humanoid, BlockPostureDamage)
 			return false
 		else
-			DamageService:Hit(HumanoidHitted, Humanoid, Damage, HitEffect)
+			DamageService:Hit(HumanoidHitted, Humanoid, Damage, HitEffect, ShouldStun)
 		end
 	end
 

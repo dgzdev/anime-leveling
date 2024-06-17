@@ -32,12 +32,7 @@ function EffectService:CheckHumanoid(Humanoid: Humanoid)
 	if HumanoidsWithEffects[Humanoid] == nil then
 		HumanoidsWithEffects[Humanoid] = {}
 
-		Humanoid.Died:Connect(function()
-			--print("morreu5")
-			HumanoidsWithEffects[Humanoid] = nil
-		end)
-
-		Humanoid.Destroying:Connect(function()
+		Humanoid.Died:Once(function()
 			HumanoidsWithEffects[Humanoid] = nil
 		end)
 	end
@@ -46,31 +41,31 @@ end
 function EffectService:UpdateHumanoidEffects(Humanoid: Humanoid, EffectType: string)
 	local EffectTypes = {
 		Health = function()
-			
+
 		end,
 
 		HealthRegeneration = function()
-			
+
 		end,
 
 		Mana = function()
-			
+
 		end,
 
 		ManaRegeneration = function()
-			
+
 		end,
 
 		Damage = function()
-			
+
 		end,
 
 		SpellDamage = function()
-			
+
 		end,
 
 		Agility = function()
-			
+
 		end,
 
 		Necromantic = function()
