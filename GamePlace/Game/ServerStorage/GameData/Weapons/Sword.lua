@@ -8,7 +8,7 @@ return {
 		Damage = 10,
 		Rarity = "E", --| "D" | "C" | "B" | "A" | "S"
 		RarityNum = 60,
-		SubRarity = "I", --| "II" | "III" | "IV" | "V"
+		SubRarity = "I", --| "II" | "III" | "IV" | "V"				
 	},
 	IronStarterSword = {
 		Name = "IronStarterSword",

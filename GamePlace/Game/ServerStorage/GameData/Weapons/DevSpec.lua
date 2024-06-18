@@ -2,7 +2,7 @@ return {
 	Nyon = {
 		Name = "Nyon",
 		DisplayName = "Nyon",
-
+		DevSpec = true,
 		Class = "Weapon",
 		Type = "Sword",
 		Damage = 20,
@@ -14,7 +14,7 @@ return {
 	Mister = {
 		Name = "Mister",
 		DisplayName = "Mister",
-
+		DevSpec = true,
 		Class = "Weapon",
 		Type = "Sword",
 		Damage = 30,
@@ -26,7 +26,7 @@ return {
 	Omnitrix = {
 		Name = "Omnitrix",
 		DisplayName = "Omnitrix",
-
+		DevSpec = true,
 		Class = "Weapon",
 		Type = "Melee",
 		Damage = 300,

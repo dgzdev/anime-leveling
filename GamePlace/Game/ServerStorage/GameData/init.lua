@@ -101,6 +101,7 @@ local function addId()
 	local index = 1
 
 	for i, _weapon in require(script.Weapons) do
+		if type(_weapon) ~= "table" then continue end
 		local weapon = table.clone(_weapon)
 		weapon.Id = index
 		index += 1
@@ -108,6 +109,7 @@ local function addId()
 	end
 
 	for i, _skill in require(script.Skills) do
+		if type(_skill) ~= "table" then continue end
 		local skill = table.clone(_skill)
 		skill.Id = index
 		index += 1
@@ -124,6 +126,8 @@ return {
 	gameWeapons = require(script.Weapons),
 	gameSkills = require(script.Skills),
 	newbieBadge = 2066631008828576,
+
+
 
 	rarity = {
 		["S"] = Color3.fromRGB(162, 72, 247),
@@ -204,8 +208,13 @@ return {
 			Experience = 100,
 			AttackType = "Melee",
 			Gold = 100,
-			Drops = {
-				["Iron Starter Sword"] = 15,
+			PoolDrop = {
+				["S"] = 2,
+				["A"] = 10,
+				["B"] = 30,
+				["C"] = 40,
+				["D"] = 90,
+				["E"] = 10,
 			},
 		},
 
@@ -219,9 +228,6 @@ return {
 			Experience = 100,
 			AttackType = "Melee",
 			Gold = 100,
-			Drops = {
-				["Iron Starter Sword"] = 15,
-			},
 		},
 
 		["Goblin"] = {

@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 --[[
-    Se comunica com o client para realizara renderização de efeitos
+    Se comunica com o client para realizar a renderização de efeitos
 ]]
 
 local RenderService = Knit.CreateService({

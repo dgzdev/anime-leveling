@@ -202,7 +202,7 @@ function RenderController:EmitParticles(parent)
 	end
 end
 function RenderController.Render(RenderData)
-	local casterHumanoid: Humanoid = RenderData.casterHumanoid
+	local casterHumanoid: Instance | Humanoid = RenderData.casterHumanoid
 	if not casterHumanoid or not casterHumanoid:IsDescendantOf(workspace) then
 		return
 	end
@@ -226,13 +226,27 @@ function RenderController:ExecuteForHumanoid(Humanoid: Humanoid, func)
 end
 
 local function CreateRenderData(casterHumanoid: Humanoid, module: string, effect: string, arguments: {}?)
-	local RenderData = {
-		casterHumanoid = casterHumanoid,
-		module = module,
-		effect = effect,
-		arguments = arguments,
-		casterRootCFrame = casterHumanoid.Parent.HumanoidRootPart.CFrame,
-	}
+
+	local RenderData
+
+	if casterHumanoid:IsA("Humanoid") then
+		RenderData = {
+			casterHumanoid = casterHumanoid,
+			module = module,
+			effect = effect,
+			arguments = arguments,
+			casterRootCFrame = casterHumanoid.Parent.HumanoidRootPart.CFrame,
+		}
+	else
+		RenderData = {
+			casterHumanoid = casterHumanoid,
+			NotHumanoid = true,
+			module = module,
+			effect = effect,
+			arguments = arguments,
+		}
+	end 
+
 
 	return RenderData
 end
@@ -242,6 +256,11 @@ function RenderController:BindRenderingTags()
 		"Burn",
 		"Poison",
 		"AuraDark",
+		"Loot_E",
+		"Loot_D",
+		"Loot_C",
+		"Loot_B",
+		"Loot_A"
 	}
 
 	-- pode ser utilizado para renderizar efeitos, principalmente de buffs e debuffs, utilizando uma tag e o collection service

@@ -1,5 +1,7 @@
 local RunService = game:GetService("RunService")
+local ServerStorage = game:GetService("ServerStorage")
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
+local GameDataWeapons = require(ServerStorage.GameData.Weapons)
 
 local LootPool = Knit.CreateService({
 	Name = "LootPoolService",
@@ -23,9 +25,9 @@ function Pool.new(variants: Chances, divider: number?)
 		["S"] = 2,
 		["A"] = 10,
 		["B"] = 30,
-		["C"] = 50,
-		["D"] = 65,
-		["E"] = 80,
+		["C"] = 40,
+		["D"] = 90,
+		["E"] = 120,
 	}
 
 	local sum = 0
@@ -48,7 +50,7 @@ function Pool:Roll(): string
 
 		for index: string, value: number in self.variants do
 			value = value / self.divider
-			print(value, roll, self.divider)
+			--print(value, roll, self.divider)
 			if roll <= value then
 				if rarest then
 					if value < self.variants[rarest] then
@@ -74,9 +76,13 @@ function LootPool.Create(variants: Chances, divider: number?)
 	return Pool.new(variants, divider)
 end
 
-function LootPool:Roll()
+function LootPool:GetAllWeaponsWithRank(Rank)
+	return GameDataWeapons:GetAllWeaponsWithRank(Rank)
+end
 
-	return Pool.new():Roll()
+function LootPool:Roll(Loop)
+	local Pool = Pool.new(Loop)
+	return Pool:Roll()
 end
 
 function LootPool.KnitInit()

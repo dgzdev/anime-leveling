@@ -20,6 +20,24 @@ function BindEffects.CustomAdd(RenderData)
 			TweenService:Create(Highlight, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {FillTransparency = 0, OutlineTransparency = 0}):Play()
 			Highlight.Parent = RenderData.casterHumanoid.Parent
 		end,
+		Loot_E = function()
+			print("lootE")
+		end,
+		Loot_D = function()
+			print("lootD")
+		end,
+		Loot_C = function()
+			print("lootC")
+		end,
+		Loot_B = function()
+			print("lootB")
+		end,
+		Loot_A = function()
+			print("lootA")
+		end,
+		Loot_S = function()
+			print("lootS")
+		end
 	}
 
 	if Effects[RenderData.arguments] then
@@ -64,7 +82,7 @@ function BindEffects.Add(RenderData)
 
 	BindEffects.CustomAdd(RenderData)
 
-	local EffectClone = RenderController:CreateInstance(BindEffects, casterHumanoid, Effect:Clone())
+	local EffectClone = RenderController:CreateInstance(BindEffects, casterHumanoid, Effect:Clone()) :: BasePart
 
 	if EffectClone:IsA("BasePart") then
 		AssemblyPart(EffectClone)
@@ -76,13 +94,24 @@ function BindEffects.Add(RenderData)
 		end
 	end
 	
-	local Weld = Instance.new("WeldConstraint")
-	Weld.Part0 = casterHumanoid.RootPart
-	Weld.Part1 = EffectClone
-	Weld.Parent = EffectClone
+	if RenderData.NotHumanoid :: boolean then
+		local Weld = Instance.new("WeldConstraint")
+		Weld.Part0 = casterHumanoid
+		Weld.Part1 = EffectClone
+		Weld.Parent = EffectClone
 
-	EffectClone:PivotTo(casterHumanoid.RootPart:GetPivot())
-	EffectClone.Parent = casterHumanoid.Parent
+		EffectClone:PivotTo(casterHumanoid.CFrame)
+		EffectClone.Parent = casterHumanoid
+	else
+		local Weld = Instance.new("WeldConstraint")
+		Weld.Part0 = casterHumanoid.RootPart
+		Weld.Part1 = EffectClone
+		Weld.Parent = EffectClone
+
+		EffectClone:PivotTo(casterHumanoid.RootPart:GetPivot())
+		EffectClone.Parent = casterHumanoid.Parent
+	end
+
 
 	RenderController:EmitParticles(EffectClone)
 end

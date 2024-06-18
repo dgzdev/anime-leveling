@@ -34,6 +34,7 @@ local DebugService
 local DebounceService
 local RagdollService
 local AriseService
+local DropService
 
 local AnimationsFolder = ReplicatedStorage:WaitForChild("Animations")
 
@@ -275,7 +276,7 @@ function Path.Start(Humanoid: Humanoid)
 	DebounceService = Knit.GetService("DebounceService")
 	RagdollService = Knit.GetService("RagdollService")
 	AriseService = Knit.GetService("AriseService")
-
+	DropService = Knit.GetService("DropService")
 
 
 
@@ -295,8 +296,17 @@ function Path.Start(Humanoid: Humanoid)
 		local Char = From.Parent
 		local LastHit = From:GetAttribute("LastHitFrom")
 		local Player = Players:FindFirstChild(LastHit)
+		local Rank = LootPoolService:Roll(Path.Data.PoolDrop)
+		local Wps = LootPoolService:GetAllWeaponsWithRank(Rank)
+		local Choosed
+		local Random 
+		if #Wps == 1 then
+			Random = 1
+		end
+		Choosed = Wps[Random]
+		print(Choosed)
 
-		print(LootPoolService:Roll())
+		DropService:DropWeapon(Choosed, (From.Parent.Torso.CFrame))
 		RagdollService:Ragdoll(Char)
 		AriseService:SetPossessionMode(From, Player)
 	end)
