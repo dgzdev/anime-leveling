@@ -91,7 +91,7 @@ Events.Buttons = {
 		end
 		--print(PointType)
 	end,
-
+	
 	["ItemClick"] = function(Gui: GuiButton) --> item
 		--[[
 			newItem:SetAttribute("ID", item.Id)

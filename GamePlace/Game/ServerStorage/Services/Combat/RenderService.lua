@@ -51,13 +51,24 @@ function RenderService:RenderForPlayersExceptCaster(RenderData: RenderDataType)
 end
 
 function RenderService:CreateRenderData(casterHumanoid: Humanoid, module: string, effect: string, arguments: {}?): RenderDataType
-	local RenderData = {
-		casterHumanoid = casterHumanoid,
-		module = module,
-		effect = effect,
-		arguments = arguments,
-		casterRootCFrame = casterHumanoid.RootPart.CFrame,
-	}
+	local RenderData
+	if casterHumanoid:IsA("Humanoid") then
+		RenderData = {
+			casterHumanoid = casterHumanoid,
+			module = module,
+			effect = effect,
+			arguments = arguments,
+			casterRootCFrame = casterHumanoid.Parent.HumanoidRootPart.CFrame,
+		}
+	else
+		RenderData = {
+			casterHumanoid = casterHumanoid,
+			NotHumanoid = true,
+			module = module,
+			effect = effect,
+			arguments = arguments,
+		}
+	end 
 
 	return RenderData
 end

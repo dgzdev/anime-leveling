@@ -306,7 +306,7 @@ function Path.Start(Humanoid: Humanoid)
 		Choosed = Wps[Random]
 		print(Choosed)
 
-		DropService:DropWeapon(Choosed, (From.Parent.Torso.CFrame))
+		DropService:DropWeapon(From,Choosed,Rank)
 		RagdollService:Ragdoll(Char)
 		AriseService:SetPossessionMode(From, Player)
 	end)

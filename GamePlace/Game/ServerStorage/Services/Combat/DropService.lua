@@ -11,8 +11,9 @@ local DropService = Knit.CreateService({
 	Client = {},
 })
 
-function DropService:DropWeapon(Name : string, CFrame : CFrame)
-  
+function DropService:DropWeapon(HumanoidDied : Humanoid , Name : string, Rank)
+	local DropRenderData = RenderService:CreateRenderData(HumanoidDied, "DropEffects", "LootDrop", {Rank = Rank, Offset = HumanoidDied.RootPart.CFrame.Position + Vector3.new(0,-2,0)})
+	RenderService:RenderForPlayers(DropRenderData)
 end
 
 function DropService.KnitInit()
