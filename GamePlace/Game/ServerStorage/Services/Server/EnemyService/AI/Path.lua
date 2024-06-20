@@ -248,6 +248,7 @@ do
 			if p.Status == Enum.PathStatus.Success then
 				local waypoints = p:GetWaypoints()
 				for i, v in pairs(waypoints) do
+					if not From.Parent then return end
 					if not From.Parent.PrimaryPart or not Target then return end
 					if (Path.StopMove or (From.Parent.PrimaryPart.Position - Target.Position).Magnitude < 15) and Path.TargetisAlly then
 						Path.StopMove = false

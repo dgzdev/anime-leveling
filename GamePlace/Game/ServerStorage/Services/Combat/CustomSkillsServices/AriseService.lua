@@ -1,5 +1,6 @@
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
-
+local TweenService = game:GetService("TweenService")
+local TweenInfo = TweenInfo.new(2,Enum.EasingStyle.Sine, Enum.EasingDirection.In)
 local AriseService = Knit.CreateService({
 	Name = "AriseService",
 })
@@ -16,6 +17,17 @@ function AriseService:SetPossessionMode(TargetHumanoid, Player)
 
         task.delay(10, function()
             table.remove(AriseService[Player.Name], Index)
+            local Char = TargetHumanoid.Parent
+            for i,v in pairs(Char:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    local Tween = TweenService:Create(v, TweenInfo, {Transparency = 1}) :: Tween
+                    Tween:Play()
+                    Tween.Completed:Once(function()
+                        v:Destroy()
+                    end)
+                end
+            end
+            Char:Destroy()
         end)
     end
 end
