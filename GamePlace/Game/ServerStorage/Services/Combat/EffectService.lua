@@ -44,6 +44,15 @@ function EffectService:UpdateHumanoidEffects(Humanoid: Humanoid, EffectType: str
 
 		end,
 
+		Burn = function()
+			if #EffectService:GetEffectsByType(Humanoid, "Burn") == 0 then
+				Humanoid:RemoveTag("Burn")
+				print("remove")
+			else
+				Humanoid:AddTag("Burn")
+			end
+		end,
+
 		HealthRegeneration = function()
 
 		end,
@@ -76,6 +85,19 @@ function EffectService:UpdateHumanoidEffects(Humanoid: Humanoid, EffectType: str
 	if EffectTypes[EffectType] then
 		EffectTypes[EffectType]()
 	end
+end
+
+
+function EffectService:RemoveEffectsByType(Humanoid: Humanoid, EffectType: string)
+	EffectService:CheckHumanoid(Humanoid)
+
+	for _, effect: EffectDataType in HumanoidsWithEffects[Humanoid] do
+		if effect.EffectType == EffectType then
+			EffectService:RemoveEffect(Humanoid, effect.EffectName)
+		end
+	end
+
+	EffectService:UpdateHumanoidEffects(Humanoid, EffectType)
 end
 
 function EffectService:GetEffectsByType(Humanoid: Humanoid, EffectType: string): {}
@@ -125,8 +147,8 @@ function EffectService:AddEffect(
 
 	if Duration then
 		task.delay(Duration, function()
-			local index = table.find(HumanoidsWithEffects, Effect)
-			table.remove(HumanoidsWithEffects, index)
+			local index = table.find(HumanoidsWithEffects[Humanoid], Effect)
+			table.remove(HumanoidsWithEffects[Humanoid], index)
 			EffectService:UpdateHumanoidEffects(Humanoid, EffectType)
 		end)
 	end

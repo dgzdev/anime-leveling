@@ -21,22 +21,16 @@ function BindEffects.CustomAdd(RenderData)
 			Highlight.Parent = RenderData.casterHumanoid.Parent
 		end,
 		Loot_E = function()
-			print("lootE")
 		end,
 		Loot_D = function()
-			print("lootD")
 		end,
 		Loot_C = function()
-			print("lootC")
 		end,
 		Loot_B = function()
-			print("lootB")
 		end,
 		Loot_A = function()
-			print("lootA")
 		end,
 		Loot_S = function()
-			print("lootS")
 		end
 	}
 
@@ -80,6 +74,7 @@ function BindEffects.Add(RenderData)
 		return
 	end
 
+	print(RenderData)
 	BindEffects.CustomAdd(RenderData)
 
 	local EffectClone = RenderController:CreateInstance(BindEffects, casterHumanoid, Effect:Clone()) :: BasePart
@@ -121,6 +116,7 @@ function BindEffects.Remove(RenderData)
 	local effect: string = RenderData.arguments 
 
 	local haveEffect = RenderController:GetInstance(BindEffects, casterHumanoid, effect)
+	print(haveEffect)
 	if not haveEffect then
 		return
 	end

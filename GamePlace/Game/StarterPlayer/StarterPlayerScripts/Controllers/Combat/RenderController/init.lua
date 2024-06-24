@@ -267,15 +267,14 @@ function RenderController:BindRenderingTags()
 
 	for i, tag in ipairs(tags) do
 	    CollectionService:GetInstanceRemovedSignal(tag):Connect(function(Humanoid)
-
-	        local RenderData = CreateRenderData(Humanoid, "BindEffects", "Add", tag)
+	        local RenderData = CreateRenderData(Humanoid, "BindEffects", "Remove", tag)
 	        RenderController.Render(RenderData)
 	    end)
 	end
 	-- renderiza os efeitos que foram aplicados antes do jogador entrar
 	for i, tag in ipairs(tags) do
 	    for i,Humanoid in CollectionService:GetTagged(tag) do
-	        local RenderData = CreateRenderData(Humanoid, "BindEffects", "Remove", tag)
+	        local RenderData = CreateRenderData(Humanoid, "BindEffects", "Add", tag)
 	        RenderController.Render(RenderData)
 	    end
 	end

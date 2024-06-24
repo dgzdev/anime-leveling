@@ -7,10 +7,8 @@ local SkillService
 local DebounceService
 local DamageService
 local WeaponService
-local EffectService
-local RagdollService
 local AnimationService
-
+local EffectService
 
 local Validate = require(game.ReplicatedStorage.Validate)
 
@@ -56,9 +54,10 @@ function CinderCutter.Attack(Humanoid: Humanoid, Data: { any })
             continue
         end
 
-        -- WeaponService:TriggerHittedEvent(Enemy.Humanoid, Humanoid)
+        WeaponService:TriggerHittedEvent(Enemy.Humanoid, Humanoid)
 
         CinderCutter.Hit(Enemy.Humanoid)
+        EffectService:AddEffect(Enemy.Humanoid, "CinderCutterBurn", "Burn", 3, "int", 5)
         DamageService:Hit(Enemy.Humanoid, Humanoid, Damage)
     end
 end
@@ -72,7 +71,7 @@ function CinderCutter.Cancel(Humanoid: Humanoid)
     AnimationService:StopAnimationMatch(Humanoid, "CinderCutterCharge")
     DebounceService:RemoveDebounce(Humanoid, "UsingSkill")
 end
---------
+
 function CinderCutter.Caller(Humanoid: Humanoid, Data: { any })
     if Validate:CanUseSkill(Humanoid, true) and not DebounceService:HaveDebounce(Humanoid, "CinderCutter") then
 		CinderCutter.Charge(Humanoid, Data)
@@ -81,14 +80,13 @@ end
 
 function CinderCutter.Start()
     AnimationService = Knit.GetService("AnimationService")
-    EffectService = Knit.GetService("EffectService")
 	WeaponService = Knit.GetService("WeaponService")
 	DebounceService = Knit.GetService("DebounceService")
 	SkillService = Knit.GetService("SkillService")
-    RagdollService = Knit.GetService("RagdollService")
 	HitboxService = Knit.GetService("HitboxService")
 	DamageService = Knit.GetService("DamageService")
 	RenderService = Knit.GetService("RenderService")
+    EffectService = Knit.GetService("EffectService")
 end
 
 return CinderCutter
