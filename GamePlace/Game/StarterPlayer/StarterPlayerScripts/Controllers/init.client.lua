@@ -38,18 +38,27 @@ Knit.Start({ ServicePromises = false }):andThen(function()
 end)
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local Cmdr = require(ReplicatedStorage:WaitForChild("CmdrClient"))
 
 local GroupId = 3158193
 
 local function isPlayerAdmin(player: Player)
 	local rank
+	local success
+	local err
 
 	repeat
-		local success, err = pcall(function()
+		success, err = pcall(function()
 			rank = player:GetRankInGroup(GroupId)
 		end)
-		task.wait()
+
+		if not success then
+			warn("Failed to get player rank:", err)
+		end
+
+		RunService.RenderStepped:Wait()
+
 	until success
 
 	return rank >= 157

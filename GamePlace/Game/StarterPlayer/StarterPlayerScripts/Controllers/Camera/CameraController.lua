@@ -171,6 +171,7 @@ function CameraModule:DisableCamera()
 	Workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
 end
 function CameraModule:EnableCamera()
+	print(debug.traceback("a"))
 	CameraModule.CreateContext()
 
 	Workspace.CurrentCamera.CameraType = Enum.CameraType.Custom

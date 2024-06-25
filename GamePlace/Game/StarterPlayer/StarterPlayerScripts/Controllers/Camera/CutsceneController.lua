@@ -37,7 +37,7 @@ local function AnimateCamera(animation: string)
 	local Connections = {}
 
 	local cameraCFrame = Camera.CFrame
-	local lerp = .85
+	local lerp = 0.85
 
 	RunService:BindToRenderStep("AnimateCamera", Enum.RenderPriority.Camera.Value, function(deltaTime: number)
 		workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame:Lerp(cameraCFrame, lerp)
@@ -283,10 +283,10 @@ function CutsceneController:KnitInit()
 		ReplicatedStorage:SetAttribute("FirstTimeAnimationEnd", true)
 		Root.Anchored = false
 		PlayerGui:WaitForChild("PlayerHud").Enabled = true
-		CameraController:EnableCamera()
 		return
+	else
+		self.Init()
 	end
-	self.Init()
 end
 
 return CutsceneController
