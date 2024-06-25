@@ -282,7 +282,6 @@ function CutsceneController:KnitInit()
 	if shouldSkipCutscene then
 		ReplicatedStorage:SetAttribute("FirstTimeAnimationEnd", true)
 		Root.Anchored = false
-		PlayerGui:WaitForChild("Cutscene").Enabled = false
 		PlayerGui:WaitForChild("PlayerHud").Enabled = true
 		CameraController:EnableCamera()
 		return

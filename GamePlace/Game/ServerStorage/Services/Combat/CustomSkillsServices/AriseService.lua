@@ -17,17 +17,17 @@ function AriseService:SetPossessionMode(TargetHumanoid, Player)
 
         task.delay(10, function()
             table.remove(AriseService[Player.Name], Index)
-            local Char = TargetHumanoid.Parent
-            for i,v in pairs(Char:GetDescendants()) do
-                if v:IsA("BasePart") then
-                    local Tween = TweenService:Create(v, TweenInfo, {Transparency = 1}) :: Tween
-                    Tween:Play()
-                    Tween.Completed:Once(function()
-                        v:Destroy()
-                    end)
-                end
-            end
-            Char:Destroy()
+            --local Char = TargetHumanoid.Parent
+            --for i,v in pairs(Char:GetDescendants()) do
+            --    if v:IsA("BasePart") then
+            --        local Tween = TweenService:Create(v, TweenInfo, {Transparency = 1}) :: Tween
+            --        Tween:Play()
+            --        Tween.Completed:Once(function()
+            --            v:Destroy()
+            --        end)
+            --    end
+            --end
+            --Char:Destroy()
         end)
     end
 end
