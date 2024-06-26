@@ -65,15 +65,23 @@ function DramaticController:AnimateCamera(animation: CameraAnimation, yield: boo
 
 	Workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
 
+	local TargetCFrame = Workspace.CurrentCamera.CFrame
+	local TargetFOV = Workspace.CurrentCamera.FieldOfView
+
+	RunService:BindToRenderStep("Cutscene", Enum.RenderPriority.Camera.Value, function()
+		Workspace.CurrentCamera.CFrame = Workspace.CurrentCamera.CFrame:Lerp(TargetCFrame, 0.5)
+		Workspace.CurrentCamera.FieldOfView = lerp(Workspace.CurrentCamera.FieldOfView, TargetFOV, 0.5)
+	end)
+
 	local function renderFrame(_, frame)
 		assert(frame.ClassName == "CFrameValue", "Child in 'Frames' must be a CFrameValue")
 
-		Workspace.CurrentCamera.CFrame = frame.Value
+		TargetCFrame = frame.Value
 
 		local fovChange = FovFolder:FindFirstChild(tostring(_))
 		if fovChange then
 			assert(fovChange.ClassName == "NumberValue", "Child in 'Fov' must be a NumberValue")
-			Workspace.CurrentCamera.FieldOfView = fovChange.Value
+			TargetFOV = fovChange.Value
 		end
 	end
 
@@ -89,6 +97,7 @@ function DramaticController:AnimateCamera(animation: CameraAnimation, yield: boo
 		end
 
 		CameraController:EnableCamera()
+		RunService:UnbindFromRenderStep("Cutscene")
 	else
 		task.spawn(function()
 			for i, frame in Frames do
@@ -97,6 +106,7 @@ function DramaticController:AnimateCamera(animation: CameraAnimation, yield: boo
 			end
 
 			CameraController:EnableCamera()
+			RunService:UnbindFromRenderStep("Cutscene")
 		end)
 	end
 end
