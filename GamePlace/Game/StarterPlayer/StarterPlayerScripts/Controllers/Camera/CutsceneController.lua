@@ -283,6 +283,7 @@ function CutsceneController:KnitInit()
 		ReplicatedStorage:SetAttribute("FirstTimeAnimationEnd", true)
 		Root.Anchored = false
 		PlayerGui:WaitForChild("PlayerHud").Enabled = true
+		CameraController:EnableCamera()
 		return
 	else
 		self.Init()

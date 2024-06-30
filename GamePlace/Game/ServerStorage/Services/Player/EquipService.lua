@@ -28,27 +28,6 @@ function EquipService:EquipItem(Player: Player)
 		Tool:FindFirstChild("ToolGrip", true):Destroy()
 	end
 
-	local exclude = { "RightHand", "LeftHand", "RootPart", "HumanoidRootPart", "Root", "Hitbox", "VFX", "Cloth" }
-
-	for _, obj: BasePart in Character:GetDescendants() do
-		if obj:IsA("BasePart") then
-			if table.find(exclude, obj.Name) then
-				continue
-			end
-
-			for _, tag: string in exclude do
-				if obj:HasTag(tag) then
-					continue
-				end
-				if obj.Name:find(tag) then
-					continue
-				end
-			end
-
-			obj.Transparency = 0
-		end
-	end
-
 	for _, m6: Motor6D in Tool:GetDescendants() do
 		if m6:IsA("Motor6D") then
 			m6:SetAttribute("CoreMotor6D", true)
@@ -58,27 +37,6 @@ function EquipService:EquipItem(Player: Player)
 
 			if not m6:GetAttribute("NoGrip") then
 				m6.C0 = Tool.Grip
-			end
-
-			if m6:GetAttribute("Hide") then
-				for _, obj in Character:GetDescendants() do
-					if obj:IsA("BasePart") then
-						if table.find(exclude, obj.Name) then
-							continue
-						end
-
-						for _, tag: string in exclude do
-							if obj:HasTag(tag) then
-								continue
-							end
-							if obj.Name:find(tag) then
-								continue
-							end
-						end
-
-						obj.Transparency = 1
-					end
-				end
 			end
 		end
 	end
@@ -92,27 +50,6 @@ function EquipService:UnequipItem(Player)
 		Character = Player
 	else
 		return error("Invalid argument #1 to 'EquipItem' (Player expected, got " .. typeof(Player) .. ")")
-	end
-
-	local exclude = { "RightHand", "LeftHand", "RootPart", "HumanoidRootPart", "Root", "Hitbox", "VFX", "Cloth" }
-
-	for _, obj: BasePart in Character:GetDescendants() do
-		if obj:IsA("BasePart") then
-			if table.find(exclude, obj.Name) then
-				continue
-			end
-
-			for _, tag: string in exclude do
-				if obj:HasTag(tag) then
-					continue
-				end
-				if obj.Name:find(tag) then
-					continue
-				end
-			end
-
-			obj.Transparency = 0
-		end
 	end
 end
 

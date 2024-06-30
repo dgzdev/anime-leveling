@@ -19,7 +19,7 @@ local Camera = workspace.CurrentCamera
 
 local cameraAngleX = 0
 local cameraAngleY = 0
-local cameraOffset = Vector3.new(2, 0, 9.5)
+local cameraOffset = Vector3.new(2, 0.5, 9.5)
 
 local cameraOffsetMin = 3
 local cameraOffsetMax = 25
@@ -66,7 +66,7 @@ function CameraModule.SetCameraLock(deltaTime: number)
 		finalCF = CFrame.lookAt(point.Position, cameraFocus)
 	end
 
-	Workspace.CurrentCamera.CFrame = c:Lerp(finalCF, 0.5)
+	Workspace.CurrentCamera.CFrame = c:Lerp(finalCF, 0.5) * CFrame.new(Humanoid.CameraOffset)
 
 	local LookingCFrame = CFrame.lookAt(RootPart.Position, Camera.CFrame:PointToWorldSpace(Vector3.new(0, 0, -100000)))
 
@@ -176,7 +176,6 @@ function CameraModule:DisableCamera()
 	Workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
 end
 function CameraModule:EnableCamera()
-	print(debug.traceback("a"))
 	CameraModule.CreateContext()
 
 	Workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
