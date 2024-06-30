@@ -302,9 +302,10 @@ end
 
 function GuiController:RenderPoints(points: {
 	Attack: number,
-	Endurance: number,
+	Vitality: number,
 	Agility: number,
 	Inteligence: number,
+	Sense: number,
 }?)
 	local Background = Points:WaitForChild("Background")
 	local PointsGui = Background:WaitForChild("Points")

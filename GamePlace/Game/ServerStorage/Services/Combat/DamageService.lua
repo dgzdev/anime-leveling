@@ -13,9 +13,16 @@ local CharacterService
 local WeaponService
 local RagdollService
 local PlayerService
+local CombatService
 
 function DamageService:DealDamage(HumanoidToDamage: Humanoid, Damage: number, Humanoid: Humanoid?)
 	HumanoidToDamage:TakeDamage(Damage)
+
+	if HumanoidToDamage.Health <= 0 and not HumanoidToDamage:GetAttribute("Died") then
+		HumanoidToDamage:SetAttribute("Died", true)
+		CombatService:RegisterHumanoidKilled(Humanoid.Parent, HumanoidToDamage)
+	end
+
 	PlayerService:SetHumanoidInCombat(HumanoidToDamage)
 end
 
@@ -155,6 +162,7 @@ function DamageService:GetHitContext(HumanoidHitted: Humanoid)
 end
 
 function DamageService.KnitInit()
+	CombatService = Knit.GetService("CombatService")
 	PlayerService = Knit.GetService("PlayerService")
 	RagdollService = Knit.GetService("RagdollService")
 	WeaponService = Knit.GetService("WeaponService")

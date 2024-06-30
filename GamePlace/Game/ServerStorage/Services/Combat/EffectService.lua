@@ -147,9 +147,11 @@ function EffectService:AddEffect(
 
 	if Duration then
 		task.delay(Duration, function()
-			local index = table.find(HumanoidsWithEffects[Humanoid], Effect)
-			table.remove(HumanoidsWithEffects[Humanoid], index)
-			EffectService:UpdateHumanoidEffects(Humanoid, EffectType)
+			if HumanoidsWithEffects[Humanoid] then
+				local index = table.find(HumanoidsWithEffects[Humanoid], Effect)
+				table.remove(HumanoidsWithEffects[Humanoid], index)
+				EffectService:UpdateHumanoidEffects(Humanoid, EffectType)
+			end
 		end)
 	end
 end

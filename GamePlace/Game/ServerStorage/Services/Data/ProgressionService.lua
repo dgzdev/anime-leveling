@@ -10,6 +10,8 @@ local GameData = require(ServerStorage.GameData)
 local ProgressionService = Knit.CreateService({
 	Name = "ProgressionService",
 	Client = {
+		UpdatePoints = Knit.CreateSignal(),
+
 		LevelUp = Knit.CreateSignal(),
 		ExpChanged = Knit.CreateSignal(),
 
@@ -19,6 +21,20 @@ local ProgressionService = Knit.CreateService({
 })
 
 ProgressionService.LocalStatus = {}
+
+function ProgressionService:TriggerUpdatePoints(Player, Points, PointsAvailable)
+	ProgressionService.Client.UpdatePoints:Fire(Player, Points, PointsAvailable)
+end
+
+function ProgressionService:GetPointsAndPointsAvailable(Player)
+	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
+
+	return PlayerData.Points, PlayerData.PointsAvailable
+end
+
+function ProgressionService.Client:GetPointsAndPointsAvailable(Player)
+	return self.Server:GetPointsAndPointsAvailable(Player)
+end
 
 function ProgressionService:GetCurrentLevel(Player)
 	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
@@ -34,6 +50,8 @@ function ProgressionService:UpdateLocalStatus(Player)
 		end
 		self.LocalStatus[Player.Name][i] = v
 	end
+
+	ProgressionService:TriggerUpdatePoints(Player, PlayerData.Points, PlayerData.PointsAvailable)
 end
 
 function ProgressionService:GetPointsAvailable(Player)
@@ -102,7 +120,6 @@ end
 function ProgressionService:AddExp(Player, Amount)
 	local PlayerData: GameData.SlotData = PlayerService:GetData(Player)
 	local ExpToNextLevel = self:ExpToNextLevel(Player)
-	local Character = Player.Character
 
 	if Amount >= ExpToNextLevel or (PlayerData.Experience + Amount >= ExpToNextLevel) then
 		PlayerData.Level += 1
@@ -111,6 +128,7 @@ function ProgressionService:AddExp(Player, Amount)
 		PlayerData.PointsAvailable = Points + 1
 
 		self:AddExp(Player, Amount - ExpToNextLevel)
+		ProgressionService:TriggerUpdatePoints(Player, PlayerData.Points, PlayerData.PointsAvailable)
 		self.Client.LevelUp:Fire(Player, PlayerData.Level)
 	end
 

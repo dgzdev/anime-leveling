@@ -265,21 +265,21 @@ function RenderController:BindRenderingTags()
 
 	-- pode ser utilizado para renderizar efeitos, principalmente de buffs e debuffs, utilizando uma tag e o collection service
 
-	for i, tag in ipairs(tags) do
+	for _, tag in ipairs(tags) do
 	    CollectionService:GetInstanceRemovedSignal(tag):Connect(function(Humanoid)
 	        local RenderData = CreateRenderData(Humanoid, "BindEffects", "Remove", tag)
 	        RenderController.Render(RenderData)
 	    end)
 	end
 	-- renderiza os efeitos que foram aplicados antes do jogador entrar
-	for i, tag in ipairs(tags) do
-	    for i,Humanoid in CollectionService:GetTagged(tag) do
+	for _, tag in ipairs(tags) do
+	    for _,Humanoid in CollectionService:GetTagged(tag) do
 	        local RenderData = CreateRenderData(Humanoid, "BindEffects", "Add", tag)
 	        RenderController.Render(RenderData)
 	    end
 	end
 
-	for i, tag in ipairs(tags) do
+	for _, tag in ipairs(tags) do
 	    CollectionService:GetInstanceAddedSignal(tag):Connect(function(Humanoid)
 	        local RenderData = CreateRenderData(Humanoid, "BindEffects", "Add", tag)
 	        RenderController.Render(RenderData)

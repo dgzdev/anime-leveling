@@ -72,7 +72,8 @@ export type SlotData = {
 		Inteligence: number,
 		Strength: number,
 		Agility: number,
-		Endurance: number,
+		Vitality: number,
+		Sense: number,
 	},
 }
 
@@ -120,7 +121,7 @@ local function addId()
 end
 
 return {
-	profileKey = "DEVELOPMENT_7",
+	profileKey = "DEVELOPMENT_8",
 	profileTemplate = ProfileTemplate,
 	defaultInventory = addId(),
 	gameWeapons = require(script.Weapons),

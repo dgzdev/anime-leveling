@@ -12,7 +12,7 @@ local PlayerService
 local BuffService = Knit.CreateService({
 	Name = "BuffService",
 	Client = {
-		killedEnemy = Knit.CreateSignal(),
+
 	},
 })
 

@@ -49,10 +49,11 @@ return {
 
 				["PointsAvailable"] = 0,
 				["Points"] = {
-					["Inteligence"] = 0,
+					["Intelligence"] = 0,
 					["Strength"] = 0,
 					["Agility"] = 0,
-					["Endurance"] = 0,
+					["Vitality"] = 0,
+					["Sense"] = 0,
 				},
 			},
 		},

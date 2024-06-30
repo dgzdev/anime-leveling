@@ -73,8 +73,8 @@ function CharacterService:LoadCharacter(Player: Player)
 
 	CharacterService:ApplyHumanoidDefaultAttributes(Humanoid)
 
-	Humanoid.MaxHealth = math.floor(math.sqrt(100 * (Data.Points.Endurance + 1)) * 10)
-	Humanoid.Health = math.floor(math.sqrt(100 * (Data.Points.Endurance + 1)) * 10)
+	Humanoid.MaxHealth = math.floor(math.sqrt(100 * (Data.Points.Vitality + 1)) * 10)
+	Humanoid.Health = math.floor(math.sqrt(100 * (Data.Points.Vitality + 1)) * 10)
 
 	CharacterService:BindAttackTick(Humanoid)
 
