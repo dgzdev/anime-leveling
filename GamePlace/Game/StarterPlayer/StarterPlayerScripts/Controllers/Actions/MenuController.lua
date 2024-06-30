@@ -143,7 +143,10 @@ function MenuController.ShowMenu()
 	end
 
 	menuPart.Parent = workspace
-	menuPart.CFrame = Humanoid.RootPart.CFrame * CFrame.new(7, 1.5, -6)
+	menuPart.CFrame = Humanoid.RootPart.CFrame * CFrame.new(7, 1.5, -3)
+
+
+	local LookAt = CFrame.lookAt(Humanoid.RootPart.Position, menuPart.Position)
 
 	Humanoid.RootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
 	Humanoid.RootPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
@@ -156,7 +159,7 @@ function MenuController.ShowMenu()
 		anim:Stop(0.5)
 	end
 
-	TargetCFrame = (Humanoid.RootPart.CFrame * CFrame.new(7, 2, 6.5)) * CFrame.Angles(0, math.rad(2), 0)
+	TargetCFrame = (Humanoid.RootPart.CFrame * CFrame.new(7, 2, 5))
 	shouldStepRunService = true
 	workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
 
@@ -175,6 +178,8 @@ function MenuController.ShowMenu()
 		table.insert(modifiedParts, part)
 		part.LocalTransparencyModifier = 1
 	end
+
+	Humanoid.Parent:PivotTo(Humanoid.RootPart.CFrame * CFrame.Angles(0,math.rad(-20),0))
 
 	task.delay(0.6, function()
 		menuIsTweening = false

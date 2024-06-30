@@ -85,9 +85,14 @@ function CameraModule:IsLocked()
 	return isLocked == true
 end
 
+local function lerp(a, b, t)
+	return a + (b - a) * t
+end
+
 local function BindHumanoid()
 	Humanoid.Died:Once(function()
 		CameraModule:DisableCamera()
+		RunService:UnbindFromRenderStep("CameraSteps")
 		workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
 	end)
 end

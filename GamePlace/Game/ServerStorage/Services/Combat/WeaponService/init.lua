@@ -27,6 +27,9 @@ local Weapons = {}
 
 function WeaponService:IsLastHit(Humanoid: Humanoid)
 	local AnimationsFolder = AnimationService:GetWeaponAnimationFolder(Humanoid)
+	if not AnimationsFolder then
+		return
+	end
 	return not (Humanoid:GetAttribute("ComboCounter") < #AnimationsFolder.Hit:GetChildren() - 1)
 end
 

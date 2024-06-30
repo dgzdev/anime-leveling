@@ -224,7 +224,7 @@ function DramaticController:ShowDialogs(text: string, time: number?, reverses: b
 		DialogsClone:Destroy()
 	end)
 end
-
+--[[
 task.spawn(function()
 	task.wait(10)
 	local QuestDialog1 = function()
@@ -246,6 +246,9 @@ task.spawn(function()
 
 	QuestDialog1()
 end)
+]]
+
+
 
 function DramaticController.KnitInit()
 	CameraController = Knit.GetController("CameraController")
