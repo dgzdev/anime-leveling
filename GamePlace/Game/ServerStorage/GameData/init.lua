@@ -129,7 +129,6 @@ return {
 	newbieBadge = 2066631008828576,
 
 
-
 	rarity = {
 		["S"] = Color3.fromRGB(162, 72, 247),
 		["A"] = Color3.fromRGB(255, 65, 65),

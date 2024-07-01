@@ -53,10 +53,9 @@ function PromptController.OnPrompt(prompt: ProximityPrompt, player: Player)
 end
 
 function PromptController:KnitInit()
-	coroutine.wrap(function()
-		local ProximityPromptService = game:GetService("ProximityPromptService")
-		ProximityPromptService.PromptTriggered:Connect(PromptController.OnPrompt)
-	end)()
+	local ProximityPromptService = game:GetService("ProximityPromptService")
+	ProximityPromptService.PromptTriggered:Connect(PromptController.OnPrompt)
+
 	MarketController = Knit.GetController("MarketController")
 	CameraController = Knit.GetController("CameraController")
 	PortalService = Knit.GetService("PortalService")

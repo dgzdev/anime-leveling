@@ -74,7 +74,6 @@ function BindEffects.Add(RenderData)
 		return
 	end
 
-	print(RenderData)
 	BindEffects.CustomAdd(RenderData)
 
 	local EffectClone = RenderController:CreateInstance(BindEffects, casterHumanoid, Effect:Clone()) :: BasePart
@@ -116,7 +115,6 @@ function BindEffects.Remove(RenderData)
 	local effect: string = RenderData.arguments 
 
 	local haveEffect = RenderController:GetInstance(BindEffects, casterHumanoid, effect)
-	print(haveEffect)
 	if not haveEffect then
 		return
 	end

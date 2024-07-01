@@ -13,14 +13,27 @@ local Player = game.Players.LocalPlayer
 
 local Assets = game.ReplicatedStorage.VFX.LootDrops
 
+local rarityValues = {
+    ["S"] = 6,
+    ["A"] = 5,
+    ["B"] = 4,
+    ["C"] = 3,
+    ["D"] = 2,
+    ["E"] = 1,
+}
 
 function Drop.LootDrop(RenderData)
     local Args = RenderData.arguments
     for i,v in pairs(Assets:GetChildren()) do
-        if v:GetAttribute("Rank") == Args.Rank then
+        if v:GetAttribute("Rank") == Args.HighestRank then
+            print("a")
             local DropClone = v:Clone() :: Model
+            local Prompt = Instance.new("ProximityPrompt", DropClone.PrimaryPart)
+            Prompt:SetAttribute("Event", "CheckLoot")
             DropClone.Parent = workspace
             DropClone:MoveTo(Args.Offset)
+        else
+            print(Args)
         end
     end
 end

@@ -45,7 +45,7 @@ function Arise.Use(Humanoid: Humanoid, Data: { CasterCFrame: CFrame })
 			local TestModel : Model = ReplicatedStorage.Models.Test:Clone() :: Model
 			local ModelHumanoid : Humanoid = TestModel:WaitForChild("Humanoid")
 			TestModel.Humanoid:SetAttribute("Ally", Player.Name)
-			DebounceService:AddDebounce(TestModel.Humanoid,"JustSpawned", 2.5, true)
+			DebounceService:AddDebounce(TestModel.Humanoid,"JustSpawned", 2.5)
 			TestModel.Parent = workspace.Test
 			
 			TestModel:MoveTo(v.Parent.Torso.Position + Vector3.new(0,3,0))

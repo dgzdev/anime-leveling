@@ -200,8 +200,8 @@ do
 						WeaponService:WeaponInput(From.Parent, "Attack")
 					else
 						if not Path.TargetisAlly and (not Target.Parent.Humanoid:GetAttribute("BeingAttacked") or From:GetAttribute("Attacking")) then
-							DebounceService:AddDebounce(Target.Parent.Humanoid, "BeingAttacked", 1, true)
-							DebounceService:AddDebounce(From, "Attacking", 1, true)
+							DebounceService:AddDebounce(Target.Parent.Humanoid, "BeingAttacked", 1)
+							DebounceService:AddDebounce(From, "Attacking", 1)
 							Path.AlignOriDb = true
 							local Skill = Skills[math.random(1, #Skills)]
 							SkillService:UseSkill(From, Skill, { Damage = Path.Data.Damage })
@@ -297,17 +297,10 @@ function Path.Start(Humanoid: Humanoid)
 		local Char = From.Parent
 		local LastHit = From:GetAttribute("LastHitFrom")
 		local Player = Players:FindFirstChild(LastHit)
-		local Rank = LootPoolService:Roll(Path.Data.PoolDrop)
-		local Wps = LootPoolService:GetAllWeaponsWithRank(Rank)
-		local Choosed
-		local Random 
-		if #Wps == 1 then
-			Random = 1
-		end
-		Choosed = Wps[Random]
-		print(Choosed)
-
-		DropService:DropWeapon(From,Choosed,Rank)
+		
+		local Drops, HighestRank = DropService:RandomDrop(1, Path.Data.PoolDrop)
+		print(Drops, HighestRank)
+		DropService:DropWeapon(From,Drops,HighestRank)
 		RagdollService:Ragdoll(Char)
 		AriseService:SetPossessionMode(From, Player)
 	end)
@@ -315,8 +308,8 @@ function Path.Start(Humanoid: Humanoid)
 	Connection = HittedEvent.Event:Connect(function(Newtarget: Humanoid)
 
 		From:SetAttribute("LastHitFrom", Newtarget.Parent.Name)
-		DebounceService:AddDebounce(Newtarget, "BeingAttacked", 1, true)
-		DebounceService:AddDebounce(From, "Attacking", 1, true)
+		DebounceService:AddDebounce(Newtarget, "BeingAttacked", 1)
+		DebounceService:AddDebounce(From, "Attacking", 1)
 		if Target and Target.Parent ~= Newtarget then
 			Path.TargetisAlly = false
 			Path.ChangeTarget(From, Newtarget)

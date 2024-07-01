@@ -47,7 +47,6 @@ function EffectService:UpdateHumanoidEffects(Humanoid: Humanoid, EffectType: str
 		Burn = function()
 			if #EffectService:GetEffectsByType(Humanoid, "Burn") == 0 then
 				Humanoid:RemoveTag("Burn")
-				print("remove")
 			else
 				Humanoid:AddTag("Burn")
 			end

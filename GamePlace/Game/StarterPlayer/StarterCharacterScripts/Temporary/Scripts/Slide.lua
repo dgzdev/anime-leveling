@@ -94,7 +94,9 @@ function Slide.Slide()
 			end
 
 			local angle = math.acos(Vector3.new(0, 1, 0):Dot(Incline))
-			local spd = math.abs(Normal.X) + math.abs(Normal.Z)
+			local spd = math.abs(Normal.X) + math.abs(Normal.Z) * dt
+
+
 			local anglediff = (RootPart.CFrame.LookVector - PartRay.CFrame.LookVector).Magnitude
 			if spd > 0.25 and anglediff <= 1.2 then
 				if not Humanoid:GetAttribute("Slide") then

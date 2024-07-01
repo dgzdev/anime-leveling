@@ -7,6 +7,7 @@ Knit.OnStart():await()
 
 local StatusController = Knit.GetController("StatusController")
 local CameraController = Knit.GetController("CameraController")
+local UIDebounceController = Knit.GetController("UIDebounceController")
 
 local Debris = game:GetService("Debris")
 local Player = game:GetService("Players").LocalPlayer
@@ -113,6 +114,8 @@ function DashScript:Dash()
 	end
 
 	Cooldown = tick() + 1.5
+
+	UIDebounceController:AddDebounce("Dash", 1.5)
 
 	local Animation
 	local Direction

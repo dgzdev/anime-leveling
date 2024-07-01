@@ -35,7 +35,7 @@ function DamageService:Hit(HumanoidHitted: Humanoid, Humanoid: Humanoid, Damage:
 
 	SkillService:TryCancelSkillsStates(HumanoidHitted)
 	if ShouldStun then
-		DebounceService:AddDebounce(HumanoidHitted, "Hit", 1, true)
+		DebounceService:AddDebounce(HumanoidHitted, "Hit", 1)
 		HumanoidHitted:SetAttribute("Running", false)		
 		AnimationService:StopM1Animation(HumanoidHitted)
 	end
@@ -71,7 +71,7 @@ end
 
 function DamageService:DeflectHit(HumanoidHitted: Humanoid, Humanoid: Humanoid, DeflectPostureDamage: number)
 	HumanoidHitted:SetAttribute("HitCounter", 0)
-	DebounceService:AddDebounce(HumanoidHitted, "DeflectTime", 0.125, true)
+	DebounceService:AddDebounce(HumanoidHitted, "DeflectTime", 0.125)
 	PostureService:RemovePostureDamage(HumanoidHitted, 10)
 	Humanoid:SetAttribute("Deflected", true)
 	PostureService:AddPostureDamage(Humanoid, HumanoidHitted, DeflectPostureDamage, true)

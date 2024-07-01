@@ -37,7 +37,7 @@ function WeaponService:IncreaseComboCounter(Humanoid: Humanoid)
 	if not WeaponService:IsLastHit(Humanoid) then
 		Humanoid:SetAttribute("ComboCounter", Humanoid:GetAttribute("ComboCounter") + 1)
 	else
-		DebounceService:AddDebounce(Humanoid, "ComboDebounce", 1.5)
+		DebounceService:AddDebounce(Humanoid, "ComboDebounce", 1.5, true)
 		Humanoid:SetAttribute("ComboCounter", 0)
 	end
 end
@@ -94,7 +94,7 @@ function WeaponService:Block(Character: Model, state: boolean, cantParry: boolea
 		DebounceService:AddDebounce(Humanoid, "BlockEndLag", 0.125)
 
 		if not cantParry then --> se for true, não pode parry
-			DebounceService:AddDebounce(Humanoid, "DeflectTime", 0.2, true)
+			DebounceService:AddDebounce(Humanoid, "DeflectTime", 0.2)
 		end
 		Humanoid:SetAttribute("Block", true)
 		CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid)
@@ -150,7 +150,7 @@ function WeaponService:TypeBlockChecker(Humanoid: Humanoid, Data) ------------->
 		return
 	end
 
-	DebounceService:AddDebounce(Humanoid, "BlockChecker", 0.3, true)
+	DebounceService:AddDebounce(Humanoid, "BlockChecker", 0.3, false, true)
 
 	local parryChance = Data.ParryChance / 100
 	local blockChance = Data.BlockChance / 100

@@ -12,9 +12,9 @@ local EffectService
 
 local Validate = require(game.ReplicatedStorage.Validate)
 
-local Cooldown = 0
+local Cooldown = 20
 function CinderCutter.Charge(Humanoid: Humanoid, Data: { CasterCFrame: CFrame })
-    DebounceService:AddDebounce(Humanoid, "CinderCutter", Cooldown, false)
+    DebounceService:AddDebounce(Humanoid, "CinderCutter", Cooldown, true)
 	SkillService:SetSkillState(Humanoid, "CinderCutter", "Charge")
 
     local ChargeRenderData = RenderService:CreateRenderData(Humanoid, "CinderCutter", "Charge")

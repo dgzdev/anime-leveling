@@ -13,9 +13,9 @@ local Validate = require(game.ReplicatedStorage.Validate)
 
 local FlashStrike = {}
 
-local Cooldown = 10
+local Cooldown = 20
 function FlashStrike.Charge(Humanoid: Humanoid, Data: { any })
-	DebounceService:AddDebounce(Humanoid, "FlashStrike", Cooldown, false)
+	DebounceService:AddDebounce(Humanoid, "FlashStrike", Cooldown, true)
 	SkillService:SetSkillState(Humanoid, "FlashStrike", "Charge")
 
 	local ChargeRenderData = RenderService:CreateRenderData(Humanoid, "FlashStrike", "Charge")
@@ -98,7 +98,7 @@ function FlashStrike.Attack(Humanoid: Humanoid, Data)
 		task.spawn(function()
 			local EmitDelayed = false
 			if DamageService:GetHitContext(Enemy.Humanoid) == "Hit" then
-				DebounceService:AddDebounce(EnemyHumanoid, "Unparryable", 2.3, true)
+				DebounceService:AddDebounce(EnemyHumanoid, "Unparryable", 2.3, false, true)
 				WeaponService:Stun(Enemy, 2.3)
 				table.insert(Enemies, Enemy)
 				EmitDelayed = true
