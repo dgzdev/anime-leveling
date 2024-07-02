@@ -52,6 +52,7 @@ end
 
 function RenderService:CreateRenderData(casterHumanoid: Humanoid, module: string, effect: string, arguments: {}?): RenderDataType
 	local RenderData
+	print(arguments)
 	if casterHumanoid:IsA("Humanoid") then
 		RenderData = {
 			casterHumanoid = casterHumanoid,
@@ -69,7 +70,7 @@ function RenderService:CreateRenderData(casterHumanoid: Humanoid, module: string
 			arguments = arguments,
 		}
 	end 
-
+	print(RenderData)
 	return RenderData
 end
 

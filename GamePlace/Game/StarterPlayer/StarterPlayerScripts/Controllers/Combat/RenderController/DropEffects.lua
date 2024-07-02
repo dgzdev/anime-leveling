@@ -25,7 +25,7 @@ local rarityValues = {
 function Drop.LootDrop(RenderData)
     local Args = RenderData.arguments
     for i,v in pairs(Assets:GetChildren()) do
-        if v:GetAttribute("Rank") == Args.HighestRank then
+        if v:GetAttribute("Rank") == Args.HRank then
             print("a")
             local DropClone = v:Clone() :: Model
             local Prompt = Instance.new("ProximityPrompt", DropClone.PrimaryPart)

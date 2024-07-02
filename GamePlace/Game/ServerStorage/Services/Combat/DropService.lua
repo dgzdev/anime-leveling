@@ -46,11 +46,15 @@ function DropService:RandomDrop(AmountItems,PoolDrop)
 		end
 	end
 
-	return t, HighestDrop
+	print(HighestDrop)
+
+	return {Table = t, HDrop = HighestDrop}
 end
 
 function DropService:DropWeapon(HumanoidDied : Humanoid , Drops, HighestRank)
-	local DropRenderData = RenderService:CreateRenderData(HumanoidDied, "DropEffects", "LootDrop", {Drops = Drops, HighestRank = HighestRank, Offset = HumanoidDied.RootPart.CFrame.Position + Vector3.new(0,-2,0)})
+	print(HighestRank)
+	local DropRenderData = RenderService:CreateRenderData(HumanoidDied, "DropEffects", "LootDrop", {Drops = Drops, HRank = HighestRank, Offset = HumanoidDied.RootPart.CFrame.Position + Vector3.new(0,-2,0)})
+	print(DropRenderData)
 	RenderService:RenderForPlayers(DropRenderData)
 end
 
