@@ -1,27 +1,35 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ProximityPromptService = game:GetService("ProximityPromptService")
+local MainEvents = ReplicatedStorage.Events:FindFirstChild("MainEvents") :: RemoteEvent
 
 local Knit = require(ReplicatedStorage.Packages.Knit)
 
 local QuestService
+local DropService
 
 local PromptService = Knit.CreateService({
 	Name = "PromptService",
 	Client = {},
 })
 
-function PromptService:Prompt(player: Player, prompt: ProximityPrompt)
-	--[[
+PromptService.Prompts = {
+	["CheckLoot"] = function(prompt: ProximityPrompt, player: Player)
+		local DropsInfo = DropService:GetDrop(prompt)
+		
+		MainEvents:FireClient(player, "CheckLoot", DropsInfo.Drops)
+	end
+}
 
-
-    ]]
-end
-
-function PromptService.Client:Prompt(player: Player, prompt: ProximityPrompt)
-	return self.Server:Prompt(player, prompt)
-end
-
-function PromptService.KnitStart()
+function PromptService.KnitInit()
 	QuestService = Knit.GetService("QuestService")
+	DropService = Knit.GetService("DropService")
+
+	ProximityPromptService.PromptTriggered:Connect(function(prompt, player)
+		local event: string? = prompt:GetAttribute("Event")
+		if PromptService.Prompts[event] then
+			PromptService.Prompts[event](prompt, player)
+		end
+	end)
 end
 
 return PromptService

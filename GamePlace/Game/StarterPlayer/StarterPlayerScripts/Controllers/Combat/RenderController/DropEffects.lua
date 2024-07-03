@@ -8,6 +8,7 @@ local SFX = require(game.ReplicatedStorage.Modules.SFX)
 
 local RenderController
 local ShakerController
+local PromptController
 
 local Player = game.Players.LocalPlayer
 
@@ -26,14 +27,10 @@ function Drop.LootDrop(RenderData)
     local Args = RenderData.arguments
     for i,v in pairs(Assets:GetChildren()) do
         if v:GetAttribute("Rank") == Args.HRank then
-            print("a")
             local DropClone = v:Clone() :: Model
-            local Prompt = Instance.new("ProximityPrompt", DropClone.PrimaryPart)
-            Prompt:SetAttribute("Event", "CheckLoot")
-            DropClone.Parent = workspace
+
+            DropClone.Parent = workspace.CurrentCamera
             DropClone:MoveTo(Args.Offset)
-        else
-            print(Args)
         end
     end
 end
@@ -42,6 +39,7 @@ end
 function Drop.Start()
 	RenderController = Knit.GetController("RenderController")
 	ShakerController = Knit.GetController("ShakerController")
+    PromptController = Knit.GetController("PromptController")
 end
 
 function Drop.Caller(RenderData)

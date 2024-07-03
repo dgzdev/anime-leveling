@@ -7,10 +7,36 @@ local GameDataWeapons = require(ServerStorage.GameData.Weapons)
 local RenderService
 local LootPoolService
 
+local CachedDrops = {}
+
 local DropService = Knit.CreateService({
 	Name = "DropService",
 	Client = {},
 })
+
+
+function DropService:GetDrop(prompt)
+	if self:DropExist(prompt) then
+		return CachedDrops[prompt]
+	end
+end
+
+function DropService:DropExist(prompt)
+	if CachedDrops[prompt] then
+		return true
+	else
+		return false
+	end
+end
+
+function DropService:CacheDrop(Drops, prompt)
+	if not CachedDrops[prompt] then
+		CachedDrops[prompt] = {
+			Drops = Drops,
+			prompt = prompt
+		}
+	end
+end
 
 function DropService:RandomDrop(AmountItems,PoolDrop)
 
@@ -32,7 +58,7 @@ function DropService:RandomDrop(AmountItems,PoolDrop)
 		end
 		local Wps = LootPoolService:GetAllWeaponsWithRank(Rank)
 		local Choosed
-		local Random 
+		local Random
 		if #Wps == 1 then
 			Random = 1
 		end
@@ -46,15 +72,27 @@ function DropService:RandomDrop(AmountItems,PoolDrop)
 		end
 	end
 
-	print(HighestDrop)
 
 	return {Table = t, HDrop = HighestDrop}
 end
 
 function DropService:DropWeapon(HumanoidDied : Humanoid , Drops, HighestRank)
-	print(HighestRank)
+	local PromptPart = Instance.new("Part", workspace)
+	PromptPart.Anchored = true
+	PromptPart.CanCollide = false
+	PromptPart.Transparency = 1
+	PromptPart.Position = HumanoidDied.RootPart.CFrame.Position + Vector3.new(0,-2,0)
+	local Prompt = Instance.new("ProximityPrompt", PromptPart)
+	Prompt.ActionText = "Loot"
+	Prompt.RequiresLineOfSight = false
+	Prompt.ObjectText = "ItemName"
+	Prompt.MaxActivationDistance = 25
+	Prompt.HoldDuration = 1
+	Prompt.Style = Enum.ProximityPromptStyle.Custom
+	Prompt:SetAttribute("Theme", "Default")
+    Prompt:SetAttribute("Event", "CheckLoot")
+	self:CacheDrop(Drops,Prompt)
 	local DropRenderData = RenderService:CreateRenderData(HumanoidDied, "DropEffects", "LootDrop", {Drops = Drops, HRank = HighestRank, Offset = HumanoidDied.RootPart.CFrame.Position + Vector3.new(0,-2,0)})
-	print(DropRenderData)
 	RenderService:RenderForPlayers(DropRenderData)
 end
 

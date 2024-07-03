@@ -15,6 +15,9 @@ PromptController.ShopController = {}
 PromptController.ShopController.debounce = false
 
 PromptController.Prompts = {
+	["CheckLoot"] = function(prompt,player)
+		print("a")
+	end,
 	["OpenShop"] = function(prompt: ProximityPrompt, player: Player)
 		if PromptController.ShopController.debounce then
 			return
@@ -45,7 +48,7 @@ PromptController.Prompts = {
 	end,
 }
 
-function PromptController.OnPrompt(prompt: ProximityPrompt, player: Player)
+function PromptController:OnPrompt(self, prompt: ProximityPrompt, player: Player)
 	local event: string = prompt:GetAttribute("Event")
 	if PromptController.Prompts[event] then
 		PromptController.Prompts[event](prompt, player)
@@ -54,7 +57,9 @@ end
 
 function PromptController:KnitInit()
 	local ProximityPromptService = game:GetService("ProximityPromptService")
-	ProximityPromptService.PromptTriggered:Connect(PromptController.OnPrompt)
+	ProximityPromptService.PromptTriggered:Connect(function(prompt, playerWhoTriggered)
+		self:OnPrompt(prompt, playerWhoTriggered)
+	end)
 
 	MarketController = Knit.GetController("MarketController")
 	CameraController = Knit.GetController("CameraController")

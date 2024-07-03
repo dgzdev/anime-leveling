@@ -284,6 +284,7 @@ function CutsceneController:KnitInit()
 		Root.Anchored = false
 		PlayerGui:WaitForChild("PlayerHud").Enabled = true
 		CameraController:EnableCamera()
+		Workspace.City.JoinPortal:Destroy()
 		return
 	else
 		self.Init()
