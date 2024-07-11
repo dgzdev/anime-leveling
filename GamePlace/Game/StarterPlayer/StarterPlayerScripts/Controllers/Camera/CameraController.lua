@@ -12,7 +12,7 @@ local CameraModule = Knit.CreateController({
 local Player = game.Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
 local Humanoid = Character:WaitForChild("Humanoid")
-local RootPart = Character.PrimaryPart
+local RootPart = Character:WaitForChild("HumanoidRootPart")
 local Subject: BasePart = workspace.CurrentCamera:WaitForChild("CameraSubject")
 
 local Camera = workspace.CurrentCamera
@@ -107,7 +107,7 @@ Player.CharacterAdded:Connect(function(character)
 	Character = Player.Character or Player.CharacterAdded:Wait()
 	Humanoid = Character:WaitForChild("Humanoid")
 
-	RootPart = Character.PrimaryPart
+	RootPart = Character:WaitForChild("HumanoidRootPart")
 	Subject = workspace.CurrentCamera:WaitForChild("CameraSubject")
 
 	BindHumanoid()

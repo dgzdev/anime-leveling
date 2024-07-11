@@ -176,11 +176,10 @@ function DramaticController:HideCutsceneBars()
 end
 
 -- SHOW DIALOG
-function DramaticController:ShowDialogs(text: string, time: number?, reverses: boolean?)
+function DramaticController:ShowDialogs(text: string, time: number?)
 	assert(text, "Missing argument #1: text")
 	assert(type(text) == "string", "Argument #1 must be a string")
 
-	reverses = reverses or false
 	time = time or 1 --> tempo padrão de 1 segundo
 
 	local Tinfo = TweenInfo.new(1, Enum.EasingStyle.Sine)
