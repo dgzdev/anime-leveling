@@ -87,7 +87,19 @@ Start.OnServerEvent:Connect(function(player)
 	if RunService:IsStudio() then
 		return player:Kick("[Teleporting] You cannot teleport in studio.")
 	end
-	TeleportService:TeleportAsync(16437088851, { player })
+
+	local TeleportGui = game.ReplicatedFirst:WaitForChild("LoadingScreen"):WaitForChild("loadingScreen")
+
+	local Success, error_message
+	repeat
+		Success, error_message = pcall(function()
+			TeleportService:Teleport(16437088851, player, nil, TeleportGui)
+		end)
+		if not Success then
+			warn(error_message)
+			task.wait(1)
+		end
+	until Success == true
 end)
 
 Players.PlayerAdded:Connect(OnPlayerAdded)

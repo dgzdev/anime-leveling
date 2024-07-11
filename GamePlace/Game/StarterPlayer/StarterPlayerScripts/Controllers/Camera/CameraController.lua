@@ -22,7 +22,7 @@ local cameraAngleY = 0
 local cameraOffset = Vector3.new(2, 0.5, 9.5)
 
 local cameraOffsetMin = 3
-local cameraOffsetMax = 25
+local cameraOffsetMax = 11
 
 function CameraModule.GetLockCFrame()
 	--CFrame.new(Root.Position, Root.Position + Vector3.new(cammer.CFrame.LookVector.X,0,cammer.CFrame.LookVector.Z))
@@ -66,8 +66,6 @@ function CameraModule.SetCameraLock(deltaTime: number)
 		finalCF = CFrame.lookAt(point.Position, cameraFocus)
 	end
 
-	finalCF *= CFrame.new(Humanoid.CameraOffset)
-
 	Workspace.CurrentCamera.CFrame = c:Lerp(finalCF, 0.5)
 
 	local LookingCFrame = CFrame.lookAt(RootPart.Position, Camera.CFrame:PointToWorldSpace(Vector3.new(0, 0, -100000)))
@@ -97,6 +95,8 @@ local function BindHumanoid()
 		RunService:UnbindFromRenderStep("CameraSteps")
 		workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
 	end)
+
+	Humanoid.CameraOffset = Vector3.new(0, 0.5, 0)
 end
 
 BindHumanoid()
@@ -106,6 +106,7 @@ Player.CharacterAdded:Connect(function(character)
 
 	Character = Player.Character or Player.CharacterAdded:Wait()
 	Humanoid = Character:WaitForChild("Humanoid")
+
 	RootPart = Character.PrimaryPart
 	Subject = workspace.CurrentCamera:WaitForChild("CameraSubject")
 

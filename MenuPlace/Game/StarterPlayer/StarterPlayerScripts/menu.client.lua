@@ -180,8 +180,8 @@ end
 SlotSelection.Parent = PlayerGui
 SlotSelection.Enabled = false
 
-if not Players:GetAttribute("Loaded") then
-	Players:GetAttributeChangedSignal("Loaded"):Wait()
+if not game:GetAttribute("Loaded") then
+	game:GetAttributeChangedSignal("Loaded"):Wait()
 end
 
 CharacterPart.Anchored = true
