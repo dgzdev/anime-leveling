@@ -66,7 +66,9 @@ function CameraModule.SetCameraLock(deltaTime: number)
 		finalCF = CFrame.lookAt(point.Position, cameraFocus)
 	end
 
-	Workspace.CurrentCamera.CFrame = c:Lerp(finalCF, 0.5) * CFrame.new(Humanoid.CameraOffset)
+	finalCF *= CFrame.new(Humanoid.CameraOffset)
+
+	Workspace.CurrentCamera.CFrame = c:Lerp(finalCF, 0.5)
 
 	local LookingCFrame = CFrame.lookAt(RootPart.Position, Camera.CFrame:PointToWorldSpace(Vector3.new(0, 0, -100000)))
 
