@@ -90,10 +90,14 @@ Start.OnServerEvent:Connect(function(player)
 
 	local TeleportGui = game.ReplicatedFirst:WaitForChild("LoadingScreen"):WaitForChild("loadingScreen")
 
+	local TeleportData = {
+		Tutorial = false,
+	}
+
 	local Success, error_message
 	repeat
 		Success, error_message = pcall(function()
-			TeleportService:Teleport(16437088851, player, nil, TeleportGui)
+			TeleportService:Teleport(16437088851, player, TeleportData, TeleportGui)
 		end)
 		if not Success then
 			warn(error_message)

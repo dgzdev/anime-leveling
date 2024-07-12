@@ -41,7 +41,7 @@ function HotbarController.ChangeItem(tool: Tool)
 			tool.Parent = Character
 		else
 			if not isHolding then
-				SkillService:UseSkill(tool.Name, {CasterCFrame = Character:GetPivot()})
+				SkillService:UseSkill(tool.Name, { CasterCFrame = Character:GetPivot() })
 			end
 		end
 	else
@@ -75,7 +75,8 @@ function HotbarController:BindButton(Template: TextButton)
 				Player.PlayerGui.Inventory.Inventory.Background.ScrollingFrame.Equipments.InventoryTemplate
 
 			connection = UserInputService.InputEnded:Connect(function(input)
-				if input.UserInputType == Enum.UserInputType.MouseButton1 then
+				local endInputs = { Enum.UserInputType.MouseButton1, Enum.KeyCode.ButtonA }
+				if table.find(endInputs, input.KeyCode) or table.find(endInputs, input.UserInputType) then
 					connection:Disconnect()
 					isHolding = false
 					duration = 0
@@ -230,7 +231,13 @@ end
 
 function HotbarController.OnBackpackAdded(tool: Tool)
 	local HotbarFrame = Player.PlayerGui:WaitForChild("Inventory"):WaitForChild("Hotbar"):WaitForChild("Background")
-	local InventoryFrame = Player.PlayerGui:WaitForChild("Inventory"):WaitForChild("Inventory"):WaitForChild("Background"):WaitForChild("ScrollingFrame"):WaitForChild("Equipments"):WaitForChild("InventoryTemplate")
+	local InventoryFrame = Player.PlayerGui
+		:WaitForChild("Inventory")
+		:WaitForChild("Inventory")
+		:WaitForChild("Background")
+		:WaitForChild("ScrollingFrame")
+		:WaitForChild("Equipments")
+		:WaitForChild("InventoryTemplate")
 
 	local Numbers = {
 		[1] = Enum.KeyCode.One,
@@ -298,7 +305,7 @@ function HotbarController.OnBackpackAdded(tool: Tool)
 	end
 
 	Events[tool][#Events[tool] + 1] = tool.Activated:Connect(function()
-		HotbarService:OnFireServer("Activate", {CasterCFrame = Character:GetPivot()})
+		HotbarService:OnFireServer("Activate", { CasterCFrame = Character:GetPivot() })
 	end)
 	Events[tool][#Events[tool] + 1] = tool.Equipped:Connect(function()
 		local isActivated = UITemplate:FindFirstChild("IsActivated") :: UIStroke
@@ -329,7 +336,13 @@ function HotbarController.OnBackpackAdded(tool: Tool)
 end
 
 function HotbarController:RenderHotbar()
-	local InventoryFrame = Player.PlayerGui:WaitForChild("Inventory"):WaitForChild("Inventory"):WaitForChild("Background"):WaitForChild("ScrollingFrame"):WaitForChild("Equipments"):WaitForChild("InventoryTemplate")
+	local InventoryFrame = Player.PlayerGui
+		:WaitForChild("Inventory")
+		:WaitForChild("Inventory")
+		:WaitForChild("Background")
+		:WaitForChild("ScrollingFrame")
+		:WaitForChild("Equipments")
+		:WaitForChild("InventoryTemplate")
 
 	HotbarService:RenderItems(Player)
 

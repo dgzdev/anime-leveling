@@ -10,15 +10,6 @@ local ClothingService = Knit.CreateService({
 	Client = {},
 })
 
---[[
-    O que é necessário?
-    -> salvar o número da shirt e da pants
-    -> salvar a cor da shirt e da pants
-    -> salvar a cor do personagem
-
-    -> aplicar os mesmos
-]]
-
 local Rig: Model = Workspace:WaitForChild("Characters"):WaitForChild("Rig")
 local RigHumanoid: Humanoid = Rig:WaitForChild("Humanoid")
 

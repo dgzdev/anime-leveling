@@ -23,8 +23,8 @@ local MenuCamera = {
 local Player = game.Players.LocalPlayer
 local Mouse = Player:GetMouse()
 
-local mouseX = 0
-local mouseY = 0
+local mouseX = workspace.CurrentCamera.ViewportSize.X / 2
+local mouseY = workspace.CurrentCamera.ViewportSize.Y / 2
 
 function MenuCamera.SetCF(self, cf: CFrame)
 	self.CF0 = cf
@@ -45,7 +45,7 @@ function MenuCamera.Enable(self)
 		local CF = self.CF0
 			* CFrame.fromOrientation(math.rad(self.MaxYRotation * -YFloat), math.rad(self.MaxXRotation * -XFloat), 0)
 
-		Camera.CFrame = CF
+		Camera.CFrame = Camera.CFrame:Lerp(CF, 0.1)
 	end)
 end
 
@@ -56,6 +56,9 @@ end
 
 UserInputService.InputChanged:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseMovement then
+		MouseMove()
+	end
+	if input.KeyCode == Enum.KeyCode.Thumbstick1 then
 		MouseMove()
 	end
 end)

@@ -4,43 +4,51 @@ local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
 local DramaticController
 
-
-
-
 local TutorialController = Knit.CreateController({
 	Name = "TutorialController",
 })
 
 function TutorialController:StartTutorial(Player)
-    if not game:GetAttribute("Loaded") then
-        game:GetAttributeChangedSignal("Loaded"):Wait()
-    end
+	if not game:GetAttribute("Loaded") then
+		game:GetAttributeChangedSignal("Loaded"):Wait()
+	end
 
-    DramaticController:ShowCutsceneBars()
-    DramaticController:ShowDialogs("Teste", 1)
-    DramaticController:ShowDialogs("Teste2",1)
+	DramaticController:ShowCutsceneBars()
+	DramaticController:ShowDialogs("Aperta F", -1)
 
-    local Connection
-    Connection = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-        if input.KeyCode == Enum.KeyCode.F then
-            Connection:Disconnect()
-            print("apertou")
-        end
-    end)
-    local Connection2
-    Connection2 = game.Players.LocalPlayer.Character.DescendantAdded:Connect(function(descendant)
-        if descendant:IsA("Tool") then
-            Connection2:Disconnect()
-            print("pegou a ferramenta")
-        end
-    end)
+	local function createInputConnection(keys: { Enum.KeyCode }, callback: (Enum.KeyCode) -> any)
+		local Connection
+		Connection = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+			if table.find(keys, input.KeyCode) then
+				Connection:Disconnect()
+				callback(input.KeyCode)
+			end
+		end)
+		return Connection
+	end
 
+	local function onSwordEquip()
+		task.wait(1)
+		DramaticController:ShowDialogs("Parabéns!", -1)
+		task.wait(1)
+		DramaticController:ShowDialogs("Agora mate esse monstro!", 1)
+		task.wait(2)
+		DramaticController:HideCutsceneBars()
+	end
 
+	local function onKeyPress()
+		DramaticController:ShowDialogs("Nice!", 3)
+		task.wait(2)
+		DramaticController:ShowDialogs("Agora pegue a espada para me ajudar", -1)
 
+		createInputConnection({ Enum.KeyCode.One }, onSwordEquip)
+	end
+
+	createInputConnection({ Enum.KeyCode.F }, onKeyPress)
 end
 
 function TutorialController.KnitInit()
-    DramaticController = Knit.GetController("DramaticController")
+	DramaticController = Knit.GetController("DramaticController")
 end
 
 return TutorialController

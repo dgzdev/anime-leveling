@@ -100,6 +100,9 @@ local Cooldown = 0
 
 function DashScript:Dash()
 	local DashDirection = Humanoid.MoveDirection
+	if DashDirection.Magnitude < 0.1 then
+		DashDirection = HumanoidRootPart.CFrame.LookVector.Unit
+	end
 
 	if tick() < Cooldown then
 		return
@@ -118,7 +121,6 @@ function DashScript:Dash()
 	UIDebounceController:AddDebounce("Dash", 1.5)
 
 	local Animation
-	local Direction
 
 	if IsMouseLocked() then
 		local WalkDirWorld = getWalkDirectionCameraSpace()
@@ -139,14 +141,12 @@ function DashScript:Dash()
 		end
 
 		local id = DashAnimations[DashDiretionString or "F"] or DashAnimations.F
-		Direction = id
 		Animation = id.anim
 	else
-		Direction = DashAnimations.F
 		Animation = DashAnimations.F.anim
 	end
 
-	Animation:Play(0.1, 1, Direction.speed)
+	Animation:Play()
 
 	SFX:Apply(Character, "Dash")
 
@@ -157,6 +157,8 @@ function DashScript:Dash()
 	Animation.Ended:Wait()
 end
 
+local DashButtons = { Enum.KeyCode.Q, Enum.KeyCode.ButtonL1 }
+
 function DashScript:Init(Modules)
 	Slide = Modules.Slide
 
@@ -164,14 +166,9 @@ function DashScript:Init(Modules)
 		if state ~= Enum.UserInputState.Begin then
 			return
 		end
-		local Stamina = StatusController:GetStamina()
 
-		if Stamina - 10 < 0 then
-			return
-		end
-		StatusController:WasteStamina(10)
 		self:Dash()
-	end, true, Enum.KeyCode.Q)
+	end, true, table.unpack(DashButtons))
 end
 
 return DashScript

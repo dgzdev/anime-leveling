@@ -3,34 +3,27 @@ local ClientEvent = ReplicatedStorage.Events:FindFirstChild("MainEvents") :: Rem
 
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
-local ClientListener = Knit.CreateController {
-    Name = "ClientListener"
-}
+local ClientListener = Knit.CreateController({
+	Name = "ClientListener",
+})
 
 local TutorialController
 
 local Handler = {
-    ["CheckLoot"] = function(Data)
-        print(Data)
-    end
+	["CheckLoot"] = function(Data)
+		print(Data)
+	end,
 }
 
 ClientEvent.OnClientEvent:Connect(function(callbackName, Data)
-    if Handler[callbackName] then
-        Handler[callbackName](Data)
-    end
+	if Handler[callbackName] then
+		Handler[callbackName](Data)
+	end
 end)
 
-
 function ClientListener.KnitInit()
-
-    TutorialController = Knit.GetController("TutorialController")
-
-    --> tutorial
-    TutorialController:StartTutorial(game.Players.LocalPlayer)
+	TutorialController = Knit.GetController("TutorialController")
+	--TutorialController:StartTutorial(game.Players.LocalPlayer)
 end
 
 return ClientListener
-
-
-

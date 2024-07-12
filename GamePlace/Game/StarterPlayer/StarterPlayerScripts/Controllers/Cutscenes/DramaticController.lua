@@ -181,12 +181,24 @@ function DramaticController:ShowDialogs(text: string, time: number?)
 	assert(type(text) == "string", "Argument #1 must be a string")
 
 	time = time or 1 --> tempo padrão de 1 segundo
+	assert(type(time) == "number", "Argument #2 must be a number")
 
 	local Tinfo = TweenInfo.new(1, Enum.EasingStyle.Sine)
 
 	if CurrentDialog then
 		local TweenD =
 			TweenService:Create(CurrentDialog.Frame, Tinfo, { Position = UDim2.fromScale(0.5, 0.6) }) :: Tween
+		if CurrentDialog.time < 0 then
+			local DialogText = CurrentDialog.Frame.DialogTemplate
+			local TextStroke = DialogText:FindFirstChild("UIStroke") :: UIStroke
+			local TweenTS = TweenService:Create(TextStroke, Tinfo, { Transparency = 1 }) :: Tween
+			local TweenText = TweenService:Create(DialogText, Tinfo, { TextTransparency = 1 }) :: Tween
+			TweenText:Play()
+			TweenTS:Play()
+
+			TweenTS.Completed:Wait()
+			CurrentDialog.Frame:Destroy()
+		end
 		TweenD:Play()
 	end
 
@@ -213,15 +225,17 @@ function DramaticController:ShowDialogs(text: string, time: number?)
 	TweenD:Play()
 
 	TweenTS.Completed:Wait()
-	task.delay(time, function()
-		local TweenTS = TweenService:Create(TextStroke, Tinfo, { Transparency = 1 }) :: Tween
-		local TweenText = TweenService:Create(DialogText, Tinfo, { TextTransparency = 1 }) :: Tween
-		TweenText:Play()
-		TweenTS:Play()
+	if time > 0 then
+		task.delay(time, function()
+			local TweenTS = TweenService:Create(TextStroke, Tinfo, { Transparency = 1 }) :: Tween
+			local TweenText = TweenService:Create(DialogText, Tinfo, { TextTransparency = 1 }) :: Tween
+			TweenText:Play()
+			TweenTS:Play()
 
-		TweenTS.Completed:Wait()
-		DialogsClone:Destroy()
-	end)
+			TweenTS.Completed:Wait()
+			DialogsClone:Destroy()
+		end)
+	end
 end
 --[[
 task.spawn(function()
@@ -246,8 +260,6 @@ task.spawn(function()
 	QuestDialog1()
 end)
 ]]
-
-
 
 function DramaticController.KnitInit()
 	CameraController = Knit.GetController("CameraController")

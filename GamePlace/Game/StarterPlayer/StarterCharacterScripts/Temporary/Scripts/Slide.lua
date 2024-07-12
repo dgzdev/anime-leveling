@@ -96,7 +96,6 @@ function Slide.Slide()
 			local angle = math.acos(Vector3.new(0, 1, 0):Dot(Incline))
 			local spd = math.abs(Normal.X) + math.abs(Normal.Z) * dt
 
-
 			local anglediff = (RootPart.CFrame.LookVector - PartRay.CFrame.LookVector).Magnitude
 			if spd > 0.25 and anglediff <= 1.2 then
 				if not Humanoid:GetAttribute("Slide") then
@@ -152,15 +151,18 @@ end
 function Slide:Init(modules)
 	local uis = game:GetService("UserInputService")
 
+	local SlideButtons = { Enum.KeyCode.LeftControl, Enum.KeyCode.ButtonB }
+	local GetUpButtons = { Enum.KeyCode.Space, Enum.KeyCode.ButtonA }
+
 	uis.InputBegan:Connect(function(key, gp)
 		if gp then
 			return
 		end
-		if (key.KeyCode == Enum.KeyCode.Space) or (key.KeyCode == Enum.KeyCode.ButtonA) then
+		if table.find(GetUpButtons, key.KeyCode) then
 			if Humanoid:GetAttribute("Slide") then
 				Slide.GetUp(true)
 			end
-		elseif key.KeyCode == Enum.KeyCode.LeftControl then
+		elseif table.find(SlideButtons, key.KeyCode) then
 			Slide.Slide()
 		end
 	end)

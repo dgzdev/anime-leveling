@@ -43,11 +43,19 @@ function GuiObject.new(object: GuiButton)
 	end)
 
 	self.Object.MouseEnter:Connect(function(x, y)
-		local Event = self.Object:GetAttribute("Event")
+		local Event = self.Object:GetAttribute("Hover")
 		if Events.Hover[Event] then
 			Events.Hover[Event](self.Object, self)
 		else
 			Events.Hover.Default(self.Object, self)
+		end
+	end)
+	self.Object.MouseLeave:Connect(function(x, y)
+		local Event = self.Object:GetAttribute("Hover")
+		if Events.Leave[Event] then
+			Events.Leave[Event](self.Object, self)
+		else
+			Events.Leave.Default(self.Object, self)
 		end
 	end)
 

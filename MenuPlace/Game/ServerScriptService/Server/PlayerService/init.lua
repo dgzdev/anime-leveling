@@ -22,6 +22,8 @@ function PlayerService.OnPlayerJoin(player: Player)
 	local Manager = PlayerManager.new(player)
 	Manager:LoadProfile()
 
+	print(Manager.Profile)
+
 	if player:IsDescendantOf(Players) then
 		if Manager.Profile then
 			Manager.Profile:ListenToRelease(function()
@@ -75,6 +77,11 @@ function PlayerService:GetData(player: Player | Model)
 	return Manager:GetData()
 end
 
+function PlayerService.Client:GetData(player: Player)
+	local data = self.Server:GetData(player)
+	return data
+end
+
 function PlayerService:GetProfile(player)
 	local Manager = Managers[player.UserId]
 
@@ -86,6 +93,30 @@ function PlayerService:GetProfile(player)
 	end
 
 	return Manager.Profile
+end
+function PlayerService.Client:GetProfile(player)
+	local profile = self.Server:GetProfile(player)
+	return profile.Data
+end
+
+function PlayerService.Client:ChangeSelectedSlot(player, Slot)
+	local profile = self.Server:GetProfile(player).Data
+	profile.Selected_Slot = Slot
+
+	local SlotData = profile.Slots[Slot]
+	print(SlotData)
+	if SlotData == "false" then
+		print(self.Server:GetSlotTemplate())
+		profile.Slots[Slot] = self.Server:GetSlotTemplate()
+	end
+end
+
+function PlayerService:GetSlotTemplate()
+	return GameData.StarterSlot
+end
+
+function PlayerService.Client:GetSlotTemplate()
+	return self.Server:GetSlotTemplate()
 end
 
 function PlayerService:GetSlot(player)

@@ -50,8 +50,12 @@ function DoubleJump:Init()
 
 	local uis = game:GetService("UserInputService")
 
+	local DoubleJumpKeys = {
+		Enum.KeyCode.Space,
+		Enum.KeyCode.ButtonA,
+	}
 	uis.InputBegan:Connect(function(key, gp)
-		if (key.KeyCode == Enum.KeyCode.Space) or (key.KeyCode == Enum.KeyCode.ButtonA) and not gp then
+		if table.find(DoubleJumpKeys, key.KeyCode) and not gp then
 			if humanoidRootPart and humanoid then
 				if humanoid:GetState() == Enum.HumanoidStateType.Freefall then
 					if jumpUsage >= 1 and Validate:CanDoubleJump(humanoid) then

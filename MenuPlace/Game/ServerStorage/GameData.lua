@@ -84,6 +84,97 @@ export type Inventory = {
 		Id: number,
 	},
 }
+
+local StarterSlot = {
+	["Character"] = {
+		["Shirt"] = {
+			Id = 1,
+			Color = "#ff0000",
+		},
+		["Pants"] = {
+			Id = 1,
+			Color = "#ff0000",
+		},
+		["Shoes"] = {
+			Id = 1,
+			Color = "#ff0000",
+		},
+		["Hair"] = {
+			Id = 1,
+			Color = "#ff0000",
+		},
+		["Colors"] = { 255, 204, 153 },
+	},
+	["Location"] = "Character Creation",
+	["LastJoin"] = os.date("%x"),
+	["Data"] = {
+		["Level"] = 1,
+
+		["Experience"] = 0,
+		["Mana"] = 50,
+
+		["Gold"] = 0,
+
+		["Equiped"] = {
+			["Weapon"] = "Melee",
+			["Id"] = 1,
+		},
+		["Quests"] = {},
+		["Hotbar"] = { 1, 3, 4, 5 },
+		["Inventory"] = {
+			["Melee"] = {
+				AchiveDate = os.time(),
+				Rank = "E",
+				Id = 1,
+			},
+			["Starter Sword"] = {
+				AchiveDate = os.time(),
+				Rank = "E",
+				Id = 2,
+			},
+			["Iron Starter Sword"] = {
+				AchiveDate = os.time(),
+				Rank = "E",
+				Id = 3,
+			},
+			["Luxury Sword"] = {
+				AchiveDate = os.time(),
+				Rank = "D",
+				Id = 4,
+			},
+			["King's Longsword"] = {
+				AchiveDate = os.time(),
+				Rank = "S",
+				Id = 5,
+			},
+		},
+		["Skills"] = {
+			["Inteligence"] = {
+				["AchiveDate"] = os.time(),
+				["Level"] = 1,
+			},
+			["Strength"] = {
+				["AchiveDate"] = os.time(),
+				["Level"] = 1,
+			},
+			["Agility"] = {
+				["AchiveDate"] = os.time(),
+				["Level"] = 1,
+			},
+			["Endurance"] = {
+				["AchiveDate"] = os.time(),
+				["Level"] = 1,
+			},
+		},
+		["Points"] = {
+			["Inteligence"] = 0,
+			["Strength"] = 0,
+			["Agility"] = 0,
+			["Endurance"] = 0,
+		},
+	},
+}
+
 local ProfileTemplate: ProfileData = {
 	Slots = {
 		[1] = {
@@ -182,16 +273,8 @@ local ProfileTemplate: ProfileData = {
 	Selected_Slot = 1,
 }
 
-local function CreateHumanoidDescription(desc: { [string]: any }): HumanoidDescription
-	local hd = Instance.new("HumanoidDescription")
-
-	for index, value in pairs(desc) do
-		hd[index] = value
-	end
-	return hd
-end
-
 return {
-	profileKey = "DEVELOPMENT_7",
+	profileKey = "DEVELOPMENT_10",
 	profileTemplate = ProfileTemplate,
+	StarterSlot = StarterSlot,
 }

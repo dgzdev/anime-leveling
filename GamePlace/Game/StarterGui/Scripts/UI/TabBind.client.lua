@@ -4,6 +4,8 @@ local LocalizationService = game:GetService("LocalizationService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local GamepadService = game:GetService("GamepadService")
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
@@ -31,7 +33,19 @@ local function toggleTabGui(TabGui: ScreenGui)
 		return
 	end
 
-	TabGui:WaitForChild("Inventory").Enabled = not TabGui:WaitForChild("Inventory").Enabled
+	local Inventory = TabGui:WaitForChild("Inventory")
+
+	Inventory.Enabled = not Inventory.Enabled
+	if Inventory.Enabled then
+		if UserInputService.GamepadEnabled then
+			GamepadService:EnableGamepadCursor(Inventory:WaitForChild("Background"))
+		end
+	else
+		if UserInputService.GamepadEnabled then
+			GamepadService:DisableGamepadCursor()
+		end
+	end
+
 	for _, a in TabGui:WaitForChild("Hotbar"):GetDescendants() do
 		if not a:IsA("TextButton") then
 			continue
@@ -40,18 +54,20 @@ local function toggleTabGui(TabGui: ScreenGui)
 		local slotContainer = a:FindFirstChild("SlotContainer", true)
 		if slotContainer then
 			if #slotContainer:GetChildren() == 0 then
-				a.Visible = TabGui:WaitForChild("Inventory").Enabled
+				a.Visible = Inventory.Enabled
 			end
 		end
 	end
 end
 
+local TabKeys = { Enum.KeyCode.Tab, Enum.KeyCode.ButtonY }
+
 ContextActionService:BindAction("Menu_Tab", function(action, state)
 	if state ~= Enum.UserInputState.Begin then
-		return
+		return Enum.ContextActionResult.Pass
 	end
 
 	local TabGui = PlayerGui:WaitForChild("Inventory")
 
 	toggleTabGui(TabGui)
-end, false, Enum.KeyCode.Tab)
+end, false, table.unpack(TabKeys))

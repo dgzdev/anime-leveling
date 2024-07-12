@@ -19,7 +19,9 @@ local StatusController
 
 local taps = 0
 local lastTap = tick()
+
 local keys = { Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D }
+local otherKeys = { Enum.KeyCode.ButtonL3 }
 
 local Character = Player.Character or Player.CharacterAdded:Wait()
 local LeftLeg = Character:WaitForChild("Left Leg")
@@ -100,6 +102,16 @@ function MovementModule:BindAttribute()
 end
 
 function MovementModule:CreateContextBinder(): string
+	ContextActionService:BindAction("RunContext", function(actionName, inputState, inputObject)
+		if inputState == Enum.UserInputState.Begin then
+			if MovementModule.CharacterProperties.CharacterState == "WALK" then
+				if Validate:CanRun(Humanoid) then
+					MovementModule:ChangeCharacterState("RUN")
+				end
+			end
+		end
+	end, false, unpack(otherKeys))
+
 	UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
 		if gameProcessedEvent then
 			return

@@ -58,7 +58,7 @@ function CharacterService:LoadCharacter(Player: Player)
 	end
 
 	Player:LoadCharacter()
-	
+
 	local Data = PlayerService:GetData(Player)
 	local SlotData = PlayerService:GetSlot(Player)
 	local Character = Player.Character or Player.CharacterAdded:Wait()
@@ -73,8 +73,11 @@ function CharacterService:LoadCharacter(Player: Player)
 
 	CharacterService:ApplyHumanoidDefaultAttributes(Humanoid)
 
-	Humanoid.MaxHealth = math.floor(math.sqrt(100 * (Data.Points.Vitality + 1)) * 10)
-	Humanoid.Health = math.floor(math.sqrt(100 * (Data.Points.Vitality + 1)) * 10)
+	local points = Data.Points or {}
+	local Vitality = points.Vitality or 0
+
+	Humanoid.MaxHealth = math.floor(math.sqrt(100 * (Vitality + 1)) * 10)
+	Humanoid.Health = math.floor(math.sqrt(100 * (Vitality + 1)) * 10)
 
 	CharacterService:BindAttackTick(Humanoid)
 

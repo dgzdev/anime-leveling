@@ -5,15 +5,23 @@ local StarterGui = game:GetService("StarterGui")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
+local GamepadService = game:GetService("GamepadService")
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
 local CustomizationGui: ScreenGui = StarterGui:WaitForChild("CharacterCustomization"):Clone()
+local MainMenu: ScreenGui = StarterGui:WaitForChild("MainMenu"):Clone()
+local Vignette: ScreenGui = StarterGui:WaitForChild("Vignette"):Clone()
 local PressAnyKey: ScreenGui = StarterGui:WaitForChild("PressAnyKey"):Clone()
 local SlotSelection = StarterGui:WaitForChild("SlotSelection"):Clone()
 
+MainMenu.Parent = PlayerGui
 CustomizationGui.Parent = PlayerGui
+Vignette.Parent = PlayerGui
+
+local Knit = require(game.ReplicatedStorage.Packages.Knit)
+Knit.Start({ ServicePromises = false }):await()
 
 local title1: ImageLabel = PressAnyKey:WaitForChild("Logo")
 local pressanykey: TextLabel = PressAnyKey:WaitForChild("pressanykey")
@@ -102,15 +110,6 @@ local function SlideIn()
 end
 
 local function fadeIn()
-	local clouds = Workspace:WaitForChild("Map"):WaitForChild("clouds")
-	task.spawn(function()
-		for _, v: ParticleEmitter in ipairs(clouds:GetDescendants()) do
-			if v:IsA("ParticleEmitter") then
-				v:Emit(2500)
-			end
-		end
-	end)
-
 	local sound1 = SoundService:WaitForChild("Music"):WaitForChild("desolateSting")
 	sound1.Ended:Once(function(soundId)
 		SoundService:WaitForChild("Music"):WaitForChild("desolate"):Play()
@@ -129,6 +128,38 @@ local function fadeIn()
 	tween:Play()
 end
 
+local function SetUpCustomization()
+	local TweenStyle = TweenInfo.new(3, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut, 0, false, 0.8)
+	local tw = TweenService:Create(Workspace.CurrentCamera, TweenStyle, {
+		CFrame = CharacterPart.CFrame,
+		FieldOfView = 90,
+	})
+	tw:Play()
+	tw.Completed:Wait()
+
+	MenuCamera:SetCF(Workspace.CurrentCamera.CFrame)
+	MenuCamera:Enable()
+
+	SlideIn()
+end
+
+local function SlideInMain1()
+	local PlayerGui = Player.PlayerGui
+	local Main1Frame = PlayerGui.MainMenu:WaitForChild("Background1") :: Frame
+	local ActualPos = Main1Frame.Position :: UDim2
+
+	if UserInputService.GamepadEnabled then
+		GamepadService:EnableGamepadCursor(Main1Frame)
+	end
+
+	Main1Frame.Position = UDim2.fromScale(-1, ActualPos.Y.Scale)
+
+	local tweenInfo = TweenInfo.new(0.75, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut, 0, false, 0.25)
+
+	TweenService:Create(Main1Frame, tweenInfo, { Position = ActualPos }):Play()
+	Main1Frame.Visible = true
+end
+
 local function fadeOut()
 	hasPressedButton = true
 
@@ -145,18 +176,7 @@ local function fadeOut()
 
 	PressAnyKey.Enabled = false
 
-	local TweenStyle = TweenInfo.new(3, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut, 0, false, 0.8)
-	local tw = TweenService:Create(Workspace.CurrentCamera, TweenStyle, {
-		CFrame = CharacterPart.CFrame,
-		FieldOfView = 90,
-	})
-	tw:Play()
-	tw.Completed:Wait()
-
-	MenuCamera:SetCF(Workspace.CurrentCamera.CFrame)
-	MenuCamera:Enable()
-
-	SlideIn()
+	SlideInMain1()
 end
 
 local function onInputBegan(input)
@@ -178,6 +198,7 @@ local function onInputBegan(input)
 end
 
 SlotSelection.Parent = PlayerGui
+
 SlotSelection.Enabled = false
 
 if not game:GetAttribute("Loaded") then
@@ -203,5 +224,11 @@ UserInputService.InputBegan:Connect(onInputBegan)
 
 title1.ImageTransparency = 1
 pressanykey.TextTransparency = 1
+
+UserInputService.GamepadDisconnected:Connect(function(gamepadNum)
+	if GamepadService.GamepadCursorEnabled then
+		GamepadService:DisableGamepadCursor()
+	end
+end)
 
 fadeIn()

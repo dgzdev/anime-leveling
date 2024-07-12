@@ -102,7 +102,9 @@ local function addId()
 	local index = 1
 
 	for i, _weapon in require(script.Weapons) do
-		if type(_weapon) ~= "table" then continue end
+		if type(_weapon) ~= "table" then
+			continue
+		end
 		local weapon = table.clone(_weapon)
 		weapon.Id = index
 		index += 1
@@ -110,7 +112,9 @@ local function addId()
 	end
 
 	for i, _skill in require(script.Skills) do
-		if type(_skill) ~= "table" then continue end
+		if type(_skill) ~= "table" then
+			continue
+		end
 		local skill = table.clone(_skill)
 		skill.Id = index
 		index += 1
@@ -121,13 +125,12 @@ local function addId()
 end
 
 return {
-	profileKey = "DEVELOPMENT_8",
+	profileKey = "DEVELOPMENT_10",
 	profileTemplate = ProfileTemplate,
 	defaultInventory = addId(),
 	gameWeapons = require(script.Weapons),
 	gameSkills = require(script.Skills),
 	newbieBadge = 2066631008828576,
-
 
 	rarity = {
 		["S"] = Color3.fromRGB(162, 72, 247),

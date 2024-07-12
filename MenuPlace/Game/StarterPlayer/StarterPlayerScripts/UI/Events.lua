@@ -7,6 +7,8 @@ local SoundService = game:GetService("SoundService")
 local StarterGui = game:GetService("StarterGui")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
+local UserInputService = game:GetService("UserInputService")
+local GamepadService = game:GetService("GamepadService")
 
 local Start = ReplicatedStorage:WaitForChild("Start")
 
@@ -14,11 +16,62 @@ local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
 local Knit = require(ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit"))
-Knit.Start({ ServicePromises = false }):await()
 
 local ClothingService = Knit.GetService("ClothingService")
+local PlayerService = Knit.GetService("PlayerService")
 
 local ColorPickerModule = require(game.ReplicatedStorage.Color)
+
+local function SlideInMain2()
+	local PlayerGui = Player.PlayerGui
+	local Main1Frame = PlayerGui.MainMenu:WaitForChild("Background2") :: Frame
+	local ActualPos = Main1Frame.Position :: UDim2
+
+	Main1Frame.Position = UDim2.fromScale(-1, ActualPos.Y.Scale)
+
+	local tweenInfo = TweenInfo.new(0.75, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut, 0, false)
+
+	TweenService:Create(Main1Frame, tweenInfo, { Position = ActualPos }):Play()
+	Main1Frame.Visible = true
+end
+
+local function SlideOutMain1()
+	local PlayerGui = Player.PlayerGui
+	local Main1Frame = PlayerGui.MainMenu:WaitForChild("Background1") :: Frame
+	local ActualPos = Main1Frame.Position :: UDim2
+
+	if UserInputService.GamepadEnabled then
+		GamepadService:EnableGamepadCursor(Main1Frame)
+	end
+
+	local tweenInfo = TweenInfo.new(0.75, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut, 0, false)
+
+	local a = TweenService:Create(Main1Frame, tweenInfo, { Position = UDim2.fromScale(-1, ActualPos.Y.Scale) })
+
+	a:Play()
+	a.Completed:Wait()
+
+	Main1Frame.Position = ActualPos
+
+	Main1Frame.Visible = false
+end
+
+local function SlideInMain1()
+	local PlayerGui = Player.PlayerGui
+	local Main1Frame = PlayerGui.MainMenu:WaitForChild("Background1") :: Frame
+	local ActualPos = Main1Frame.Position :: UDim2
+
+	if UserInputService.GamepadEnabled then
+		GamepadService:EnableGamepadCursor(Main1Frame)
+	end
+
+	Main1Frame.Position = UDim2.fromScale(-1, ActualPos.Y.Scale)
+
+	local tweenInfo = TweenInfo.new(0.75, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut, 0, false)
+
+	TweenService:Create(Main1Frame, tweenInfo, { Position = ActualPos }):Play()
+	Main1Frame.Visible = true
+end
 
 local function SlideOut()
 	local SlotSelection = PlayerGui:WaitForChild("SlotSelection")
@@ -58,8 +111,6 @@ local function fadeInLoading(loadingGui: ScreenGui)
 end
 
 local Requests = ReplicatedStorage:WaitForChild("Request")
-
-local camera = Workspace.CurrentCamera
 
 local CharacterCustomization: ScreenGui = PlayerGui:WaitForChild("CharacterCustomization")
 local RightSide: Frame = CharacterCustomization:WaitForChild("RightSide")
@@ -123,38 +174,79 @@ Events.Buttons = {
 		activeFrame = Gui.Parent.Name
 	end,
 
-	["Play"] = function()
-		local c: Model = Workspace:WaitForChild("Characters"):WaitForChild("Rig")
-		local head: BasePart = c:WaitForChild("Head")
+	["Teleport"] = function(Gui: GuiButton)
+		local Slot = Gui:GetAttribute("SlotNumber")
+		local profile = PlayerService:GetProfile(Player)
 
-		MenuCamera.CF0 = Workspace.CurrentCamera.CFrame
-		MenuCamera:Disable()
+		PlayerService:ChangeSelectedSlot(Slot)
 
-		SlideOut()
+		local Loading = StarterGui:WaitForChild("Loading"):Clone()
+		Loading.Parent = PlayerGui
 
-		RunService:BindToRenderStep("Camera", Enum.RenderPriority.Camera.Value, function()
-			camera.CFrame = camera.CFrame:Lerp(CFrame.new(head.Position + Vector3.new(5, 0, 0), head.Position), 0.5)
-		end)
-
-		local portalPosition = Workspace:WaitForChild("CharacterPortalPosition")
-
-		task.spawn(function()
-			while true do
-				local distance = (head.Position - portalPosition.Position).Magnitude
-				if distance < 30 then
-					local Loading = StarterGui:WaitForChild("Loading"):Clone()
-					Loading.Parent = PlayerGui
-
-					fadeInLoading(Loading)
-					RunService:UnbindFromRenderStep("Camera")
-
-					break
-				end
-				RunService.RenderStepped:Wait()
-			end
-		end)
+		fadeInLoading(Loading)
 
 		Start:FireServer()
+	end,
+
+	["Play"] = function(Gui: GuiButton)
+		SlideOutMain1()
+		SlideInMain2()
+
+		local profile = PlayerService:GetProfile(Player)
+		if not profile then
+			return game.Players.LocalPlayer:Kick(
+				"Profile Error, Please, Rejoin (If you think this is a bug, please, contact the developers)"
+			)
+		end
+		print(profile)
+
+		for slotNumber, slotData in profile.Slots do
+			local slotFrame = PlayerGui.MainMenu.Background2:WaitForChild("Slot" .. slotNumber)
+
+			if slotData ~= "false" then
+				slotFrame.Description.Text = `Last Join: {slotData.LastJoin}`
+				slotFrame.Title.Text = `LvL: {slotData.Data.Level}`
+			else
+				slotFrame.Description.Text = `Create a new character`
+				slotFrame.Title.Text = `SLOT #{slotNumber}`
+			end
+		end
+
+		--local c: Model = Workspace:WaitForChild("Characters"):WaitForChild("Rig")
+		--local head: BasePart = c:WaitForChild("Head")
+		--
+		--MenuCamera.CF0 = Workspace.CurrentCamera.CFrame
+		--MenuCamera:Disable()
+		--
+		--SlideOut()
+		--
+		--local camera = Workspace.CurrentCamera
+		--
+		--local portalPosition = Workspace:WaitForChild("CharacterPortalPosition")
+		--
+		--task.spawn(function()
+		--	while true do
+		--		local distance = (head.Position - portalPosition.Position).Magnitude
+		--		if distance < 30 then
+		--			local Loading = StarterGui:WaitForChild("Loading"):Clone()
+		--			Loading.Parent = PlayerGui
+		--
+		--			fadeInLoading(Loading)
+		--
+		--			break
+		--		end
+		--		RunService.RenderStepped:Wait()
+		--	end
+		--end)
+		--
+		--local camera = Workspace.CurrentCamera
+		--RunService:BindToRenderStep("Camera", Enum.RenderPriority.Last.Value, function()
+		--	local position = head.CFrame * CFrame.new(0, 0, 3)
+		--	local cframe = CFrame.lookAt(position.Position, head.Position)
+		--	camera.CFrame = camera.CFrame:Lerp(cframe, 0.5)
+		--end)
+		--
+		--Start:FireServer()
 	end,
 
 	["CreateSlot"] = function()
@@ -276,10 +368,6 @@ Events.Buttons = {
 			{ CFrame = Workspace.CurrentCamera.CFrame * CFrame.new(0, 0, 1.5) }
 		):Play()
 
-		RunService:BindToRenderStep("Camera", Enum.RenderPriority.Camera.Value, function()
-			camera.CFrame = camera.CFrame:Lerp(CFrame.new(head.Position + Vector3.new(5, 0, 0), head.Position), 0.1)
-		end)
-
 		local portalPosition = Workspace:WaitForChild("CharacterPortalPosition")
 
 		task.spawn(function()
@@ -290,7 +378,6 @@ Events.Buttons = {
 					Loading.Parent = PlayerGui
 
 					fadeInLoading(Loading)
-					RunService:UnbindFromRenderStep("Camera")
 
 					break
 				end
@@ -299,6 +386,12 @@ Events.Buttons = {
 		end)
 
 		Start:FireServer()
+		local camera = Workspace.CurrentCamera
+		RunService:BindToRenderStep("Camera", Enum.RenderPriority.Last.Value, function()
+			local position = head.CFrame * CFrame.new(0, 0, 3)
+			local cframe = CFrame.lookAt(position.Position, head.Position)
+			camera.CFrame = camera.CFrame:Lerp(cframe, 0.5)
+		end)
 	end,
 
 	["Edit"] = function(Gui: GuiButton)
@@ -344,12 +437,42 @@ Events.Buttons = {
 	end,
 }
 Events.Hover = {
+	["Scale"] = function(Gui: GuiButton)
+		SoundService:WaitForChild("SFX"):WaitForChild("UIHover"):Play()
+
+		local scale = Gui:FindFirstChildWhichIsA("UIScale", true)
+		if not scale then
+			scale = Gui.Parent:FindFirstChildWhichIsA("UIScale", true)
+		end
+
+		local tweenInfo = TweenInfo.new(0.25, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out)
+		TweenService:Create(scale, tweenInfo, { Scale = 1.2 }):Play()
+	end,
+
 	["Default"] = function(Gui: GuiButton)
 		if Gui:GetAttribute("Ignore") then
 			return
 		end
 
 		SoundService:WaitForChild("SFX"):WaitForChild("UIHover"):Play()
+	end,
+}
+Events.Leave = {
+	["Default"] = function(Gui: GuiButton)
+		if Gui:GetAttribute("Ignore") then
+			return
+		end
+
+		SoundService:WaitForChild("SFX"):WaitForChild("UIHover"):Play()
+	end,
+	["Scale"] = function(Gui: GuiButton)
+		local scale = Gui:FindFirstChildWhichIsA("UIScale", true)
+		if not scale then
+			scale = Gui.Parent:FindFirstChildWhichIsA("UIScale", true)
+		end
+
+		local tweenInfo = TweenInfo.new(0.25, Enum.EasingStyle.Cubic, Enum.EasingDirection.In)
+		TweenService:Create(scale, tweenInfo, { Scale = 1 }):Play()
 	end,
 }
 

@@ -116,14 +116,58 @@ Player.CharacterAdded:Connect(function(character)
 end)
 
 function CameraModule.CreateContext()
-	ContextActionService:BindAction("MouseMovement", function(actionName, inputState, inputObject)
-		if inputState == Enum.UserInputState.Change then
-			cameraAngleX -= inputObject.Delta.X * 0.4 --> CFrame.new() -> (x=0-360,y,z)
-			cameraAngleY = math.clamp(cameraAngleY - inputObject.Delta.Y * 0.4, -75, 75)
-		else
-			return Enum.ContextActionResult.Pass
+	local function lockCursor()
+		UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
+	end
+	local function unlockCursor()
+		UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+	end
+
+	UserInputService.GamepadConnected:Connect(lockCursor)
+	UserInputService.GamepadDisconnected:Connect(unlockCursor)
+
+	local lockCameraKeys = { Enum.KeyCode.LeftShift, Enum.KeyCode.DPadUp }
+	local movementCameraKeys = { Enum.UserInputType.MouseMovement, Enum.KeyCode.Thumbstick2 }
+
+	local x = 0
+	local y = 0
+
+	task.spawn(function()
+		while true do
+			if not UserInputService.GamepadEnabled then
+				UserInputService.GamepadConnected:Wait()
+			end
+
+			cameraAngleX -= x
+			cameraAngleY = math.clamp(cameraAngleY - y, -75, 75)
+
+			RunService.RenderStepped:Wait()
 		end
-	end, false, Enum.UserInputType.MouseMovement)
+	end)
+
+	ContextActionService:BindAction("MouseMovement", function(actionName, inputState, inputObject)
+		if inputObject.UserInputType == Enum.UserInputType.MouseMovement then
+			if inputState == Enum.UserInputState.Change then
+				cameraAngleX -= inputObject.Delta.X * 0.4 --> CFrame.new() -> (x=0-360,y,z)
+				cameraAngleY = math.clamp(cameraAngleY - inputObject.Delta.Y * 0.4, -75, 75)
+			end
+		else
+			if inputState == Enum.UserInputState.Change then
+				if math.abs(inputObject.Position.X * 2) > 0.1 then
+					x = inputObject.Position.X * 2
+				else
+					x = 0
+				end
+
+				if math.abs(inputObject.Position.Y * 2) > 0.1 then
+					y = -inputObject.Position.Y * 2
+				else
+					y = 0
+				end
+			end
+		end
+		return Enum.ContextActionResult.Pass
+	end, false, table.unpack(movementCameraKeys))
 
 	ContextActionService:BindAction("CameraOffset", function(actionName, inputState, inputObject)
 		if not isLocked then
@@ -162,7 +206,7 @@ function CameraModule.CreateContext()
 		else
 			return Enum.ContextActionResult.Pass
 		end
-	end, false, Enum.KeyCode.LeftShift)
+	end, false, table.unpack(lockCameraKeys))
 end
 
 function CameraModule:DisableCamera()
