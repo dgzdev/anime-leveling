@@ -72,7 +72,7 @@ export type SlotData = {
 		Inteligence: number,
 		Strength: number,
 		Agility: number,
-		Vitality: number,
+		Endurance: number,
 		Sense: number,
 	},
 }

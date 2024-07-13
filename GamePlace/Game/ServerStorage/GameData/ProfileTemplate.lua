@@ -52,7 +52,7 @@ return {
 					["Intelligence"] = 0,
 					["Strength"] = 0,
 					["Agility"] = 0,
-					["Vitality"] = 0,
+					["Endurance"] = 0,
 					["Sense"] = 0,
 				},
 			},

@@ -37,6 +37,10 @@ function RenderService:RenderForPlayersInRadius(RenderData: RenderDataType, Posi
 	end
 end
 
+function RenderService:RenderForPlayer(RenderData: RenderDataType, Player: Player)
+	RenderService.Client.Render:Fire(Player, RenderData)
+end
+
 function RenderService:RenderForPlayersExceptCaster(RenderData: RenderDataType)
 	local casterPlayer = Players:GetPlayerFromCharacter(RenderData.casterHumanoid.Parent)
 	local playersToRender = game.Players:GetPlayers()

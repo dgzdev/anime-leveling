@@ -5,8 +5,8 @@ local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
 local Player = game.Players.LocalPlayer :: Player
-local FadeFrame = Player.PlayerGui.FadeEffect:WaitForChild("Frame") :: Frame
-local UPBAR = Player.PlayerGui.Cutscene:WaitForChild("UP")
+local FadeFrame = Player:WaitForChild("PlayerGui"):WaitForChild("FadeEffect"):WaitForChild("Frame") :: Frame
+local UPBAR = Player.PlayerGui:WaitForChild("Cutscene"):WaitForChild("UP")
 local DOWNBAR = Player.PlayerGui.Cutscene:WaitForChild("DOWN")
 local Dialogs = Player.PlayerGui.Cutscene:WaitForChild("Dialogs")
 

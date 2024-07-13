@@ -302,7 +302,7 @@ end
 
 function GuiController:RenderPoints(points: {
 	Attack: number,
-	Vitality: number,
+	Endurance: number,
 	Agility: number,
 	Inteligence: number,
 	Sense: number,

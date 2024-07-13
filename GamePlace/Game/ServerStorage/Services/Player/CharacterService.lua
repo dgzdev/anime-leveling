@@ -8,6 +8,7 @@ local CharacterSharedFunctions = require(game.ReplicatedStorage.CharacterSharedF
 local PlayerService
 local ClothingService
 local WeaponService
+local PostureService
 
 local PhysicsService = game:GetService("PhysicsService")
 
@@ -74,10 +75,10 @@ function CharacterService:LoadCharacter(Player: Player)
 	CharacterService:ApplyHumanoidDefaultAttributes(Humanoid)
 
 	local points = Data.Points or {}
-	local Vitality = points.Vitality or 0
+	local Endurance = points.Endurance or 0
 
-	Humanoid.MaxHealth = math.floor(math.sqrt(100 * (Vitality + 1)) * 10)
-	Humanoid.Health = math.floor(math.sqrt(100 * (Vitality + 1)) * 10)
+	Humanoid.MaxHealth = math.floor(math.sqrt(100 * (Endurance + 1)) * 10)
+	Humanoid.Health = math.floor(math.sqrt(100 * (Endurance + 1)) * 10)
 
 	CharacterService:BindAttackTick(Humanoid)
 
@@ -101,6 +102,8 @@ function CharacterService:LoadCharacter(Player: Player)
 		end
 	end)
 
+
+	PostureService:BindPostureRegeneration(Humanoid)
 	Humanoid:SetAttribute("Loaded", true)
 
 	return Character
@@ -144,6 +147,7 @@ function CharacterService.KnitInit()
 	PhysicsService:CollisionGroupSetCollidable("Debris", "Camera", false)
 	PhysicsService:CollisionGroupSetCollidable("Debris", "NPC", false)
 
+	PostureService = Knit.GetService("PostureService")
 	WeaponService = Knit.GetService("WeaponService")
 	PlayerService = Knit.GetService("PlayerService")
 	ClothingService = Knit.GetService("ClothingService")

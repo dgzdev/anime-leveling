@@ -11,4 +11,7 @@
     ],
 	"editor.codeActionsOnSave": {},
     "editor.defaultFormatter": "lixvbnet.styluafork",
+    "robloxLsp.diagnostics.globals": [
+        "SakasamaNoSekaiSeNaSeNaSeNaSakasamaNoSekaiSakasamaNoSekaiSeNaSeNaSakasamaNoSekaiSakasamaNoSekaiSeNaSakasamaNoSekaiSakasamaNSakasamaNoSekaiSakasamaNoSekai"
+    ],
 }

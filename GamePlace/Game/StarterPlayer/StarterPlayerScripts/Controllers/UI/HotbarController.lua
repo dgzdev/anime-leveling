@@ -41,6 +41,7 @@ function HotbarController.ChangeItem(tool: Tool)
 			tool.Parent = Character
 		else
 			if not isHolding then
+				print(tool)
 				SkillService:UseSkill(tool.Name, { CasterCFrame = Character:GetPivot() })
 			end
 		end
