@@ -53,7 +53,11 @@ function EffectService:UpdateHumanoidEffects(Humanoid: Humanoid, EffectType: str
 		end,
 
 		HealthRegeneration = function()
-
+			if #EffectService:GetEffectsByType(Humanoid, "HealthRegeneration") == 0 then
+				Humanoid:RemoveTag("HealingEffect")
+			else
+				Humanoid:AddTag("HealingEffect")
+			end
 		end,
 
 		Mana = function()

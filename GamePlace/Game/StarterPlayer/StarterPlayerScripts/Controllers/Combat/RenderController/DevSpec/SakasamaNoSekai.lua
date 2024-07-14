@@ -4,16 +4,11 @@ local TweenService = game:GetService("TweenService")
 local SakasamaNoSekai = {}
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
 
-local RenderController
-local ShakerController
 local DramaticController
 
 local Camera: Camera = workspace.CurrentCamera
 local SFX = require(game.ReplicatedStorage.Modules.SFX)
 
-function SakasamaNoSekai.Charge(RenderData)
-    
-end
 
 local function easeInOutQuint(x: number): number
     return if x < 0.5 then 16 * x * x * x * x * x else 1 - math.pow(-2 * x + 2, 5) / 2
@@ -94,8 +89,6 @@ end
 
 function SakasamaNoSekai.Start()
     DramaticController = Knit.GetController("DramaticController")
-	RenderController = Knit.GetController("RenderController")
-	ShakerController = Knit.GetController("ShakerController")
 end
 
 function SakasamaNoSekai.Caller(RenderData)

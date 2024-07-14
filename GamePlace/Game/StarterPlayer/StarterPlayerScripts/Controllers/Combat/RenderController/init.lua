@@ -255,6 +255,7 @@ function RenderController:BindRenderingTags()
 	local tags = {
 		"Burn",
 		"Poison",
+		"HealingEffect",
 		"AuraDark",
 		"Loot_E",
 		"Loot_D",

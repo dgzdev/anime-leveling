@@ -12,35 +12,30 @@ local RagdollService
 
 local Validate = require(game.ReplicatedStorage.Validate)
 
-local Cooldown = 180
+local Cooldown = 1
 function SakasamaNoSekai.Charge(Humanoid: Humanoid, Data: { CasterCFrame: CFrame })
     DebounceService:AddDebounce(Humanoid, "SakasamaNoSekai", Cooldown, true)
-	SkillService:SetSkillState(Humanoid, "SakasamaNoSekai", "Charge")
-
-    local ChargeRenderData = RenderService:CreateRenderData(Humanoid, "SakasamaNoSekai", "Charge")
-	RenderService:RenderForPlayers(ChargeRenderData)
 
     DebounceService:AddDebounce(Humanoid, "UsingSkill", 4)
+    DebounceService:AddDebounce(Humanoid, "IFrame", 4)
     WeaponService:Stun(Humanoid.Parent, 4)
-    task.wait(1)
+
     SakasamaNoSekai.Activate(Humanoid, Data)
 end
 
 function SakasamaNoSekai.Activate(Humanoid: Humanoid, Data: { CasterCFrame: CFrame })
     local RootPart = Humanoid.RootPart
-    local state = SkillService:GetSkillState(Humanoid, "SakasamaNoSekai")
-    if state == nil then
-        return
-    end
     SkillService:SetSkillState(Humanoid, "SakasamaNoSekai", "Activate")
 
     local CharactersInArea = HitboxService:GetCharactersInCircleArea(RootPart.CFrame.Position, 25)
 
     local Affected = {}
     for _, Character in CharactersInArea do
-        -- if Character == Humanoid.Parent then
-        --     continue
-        -- end
+        if Character.Humanoid ~= Humanoid then
+            WeaponService:Stun(Character, 4)
+            DebounceService:AddDebounce(Character.Humanoid, "IFrame", 4)
+        end
+
         local Player = game.Players:GetPlayerFromCharacter(Character)
         if Player then
             table.insert(Affected, Player) 
@@ -49,6 +44,9 @@ function SakasamaNoSekai.Activate(Humanoid: Humanoid, Data: { CasterCFrame: CFra
 
     local RenderData = RenderService:CreateRenderData(Humanoid, "SakasamaNoSekai", "UpsideDown")
     RenderService:RenderForPlayers(RenderData, Affected)
+
+    task.wait(4)
+    SkillService:SetSkillState(Humanoid, "SakasamaNoSekai", nil)
 end
 
 function SakasamaNoSekai.Cancel(Humanoid: Humanoid)

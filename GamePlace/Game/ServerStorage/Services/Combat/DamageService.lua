@@ -98,6 +98,10 @@ function DamageService:TryHit(HumanoidHitted: Humanoid, Humanoid: Humanoid, _Dam
 		return
 	end
 
+	if HumanoidHitted:GetAttribute("IFrame") then
+		return
+	end
+	
 	CharacterService:UpdateWalkSpeedAndJumpPower(HumanoidHitted)
 
 	if _Damage == nil then
@@ -148,6 +152,9 @@ end
 
 -- retorna a ação que aconteceria caso um humanoid caso seja atacado
 function DamageService:GetHitContext(HumanoidHitted: Humanoid)
+	if HumanoidHitted:GetAttribute("IFrame") then
+		return "IFrame"
+	end
 	if HumanoidHitted:GetAttribute("DeflectTime") and not HumanoidHitted:GetAttribute("Unparryable") then
 		return "Deflect"
 	else

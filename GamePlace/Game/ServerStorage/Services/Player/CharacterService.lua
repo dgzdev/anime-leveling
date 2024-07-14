@@ -121,6 +121,7 @@ function CharacterService:ApplyHumanoidDefaultAttributes(Humanoid: Humanoid)
 
 	Humanoid:SetAttribute("MaxPosture", 100)
 	Humanoid:SetAttribute("Posture", 0)
+	Humanoid:SetAttribute("IsAPlayer", true)
 end
 
 function CharacterService:UpdateWalkSpeed(Humanoid: Humanoid, newWalkspeed: number?, overwrite: string)

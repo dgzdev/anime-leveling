@@ -80,21 +80,29 @@ Staff = {
 		Behavior.CosmeticBulletContainer = workspace.CastContainer
 		Behavior.MaxDistance = 60
 
-		Caster:Fire(Origin, Direction, Variant, Behavior)
-		Caster.LengthChanged:Connect(function(Caster, LastPoint, RayDir, Displacement, Velocity, CosmeticBullet)
+		local Overlap = OverlapParams.new()
+		Overlap.FilterType = Enum.RaycastFilterType.Exclude
+		Overlap.FilterDescendantsInstances = {Character}
+
+		local activeCast = Caster:Fire(Origin, Direction, Variant, Behavior)
+		Caster.LengthChanged:Connect(function(activeCast, LastPoint, RayDir, Displacement, Velocity, CosmeticBullet)
 			local NewPosition = LastPoint + (RayDir * Displacement)
 			CosmeticBullet:PivotTo(CFrame.new(NewPosition))
+			
+			local enemies = HitboxService:GetCharactersInCircleArea(NewPosition, 1.5, Overlap)
+			for _, Enemy in enemies do
+				DebounceService:AddDebounce(Humanoid, "HitboxStart", 0.05)
+				WeaponService:TriggerHittedEvent(Enemy.Humanoid, Humanoid)
+				DamageService:TryHit(Enemy.Humanoid, Humanoid, Damage, "ManaStaff", false)
+			end
+
+			if #enemies > 0 then
+				activeCast:Terminate()					
+			end
 		end)
 
 		Caster.RayHit:Connect(function(Caster, Result, Velocity, CosmeticBullet)
 			DestroyBullet(CosmeticBullet)
-			local Enemy = HitboxService:GetCharacterFromRaycastResult(Result)
-			if not Enemy then
-				return
-			end
-			DebounceService:AddDebounce(Humanoid, "HitboxStart", 0.05)
-			WeaponService:TriggerHittedEvent(Enemy.Humanoid, Humanoid)
-			DamageService:TryHit(Enemy.Humanoid, Humanoid, Damage, "ManaStaff", false)
 		end)
 
 		Caster.CastTerminating:Connect(function(Caster)
