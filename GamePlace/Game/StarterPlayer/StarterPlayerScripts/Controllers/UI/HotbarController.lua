@@ -360,6 +360,11 @@ function HotbarController:RenderHotbar()
 	Player.Backpack.ChildAdded:Connect(function(tool: Tool)
 		HotbarController.OnBackpackAdded(tool)
 	end)
+
+	Player.Backpack.ChildRemoved:Connect(function(tool: Tool)
+		HotbarController.OnBackpackRemoved(tool)
+	end)
+
 end
 
 function HotbarController.KnitInit()

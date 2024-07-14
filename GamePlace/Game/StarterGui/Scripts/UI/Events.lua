@@ -91,7 +91,7 @@ Events.Buttons = {
 		end
 		--print(PointType)
 	end,
-	
+
 	["ItemClick"] = function(Gui: GuiButton) --> item
 		--[[
 			newItem:SetAttribute("ID", item.Id)
@@ -137,7 +137,7 @@ Events.Buttons = {
 		local ItemId = SlotInfo:GetAttribute("ID")
 		local posInHotbar = Gui:GetAttribute("Slot")
 
-		local response = InventoryService:AddItemToHotbar(ItemName, posInHotbar)
+		local response = InventoryService:AddItemToHotbar(ItemId, posInHotbar)
 		--> clicou no numero do slot pra equipar
 	end,
 

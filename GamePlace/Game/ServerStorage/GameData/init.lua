@@ -1,3 +1,4 @@
+local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 export type Rank = "E" | "D" | "C" | "B" | "A" | "S"
 export type SubRank = "I" | "II" | "III" | "IV" | "V"
@@ -97,38 +98,11 @@ local function CreateHumanoidDescription(desc: { [string]: any }): HumanoidDescr
 	return hd
 end
 
-local function addId()
-	local newItems = {}
-	local index = 1
-
-	for i, _weapon in require(script.Weapons) do
-		if type(_weapon) ~= "table" then
-			continue
-		end
-		local weapon = table.clone(_weapon)
-		weapon.Id = index
-		index += 1
-		table.insert(newItems, weapon)
-	end
-
-	for i, _skill in require(script.Skills) do
-		if type(_skill) ~= "table" then
-			continue
-		end
-		local skill = table.clone(_skill)
-		skill.Id = index
-		index += 1
-		table.insert(newItems, skill)
-	end
-
-	return newItems
-end
-
 return {
-	profileKey = "DEVELOPMENT_11",
+	profileKey = "DEVELOPMENT_13",
 	profileTemplate = ProfileTemplate,
-	defaultInventory = addId(),
-	gameWeapons = require(script.Weapons),
+	defaultInventory = {},
+	gameItems = require(script.Items),
 	gameSkills = require(script.Skills),
 	newbieBadge = 2066631008828576,
 
@@ -377,13 +351,6 @@ return {
 		["Woo Jin-Cheol"] = {
 			"I have to admit, I had my doubts about you, But you've proven me wrong time and again. It's an honor to fight alongside you.",
 			"Until next time, Keep your guard up and your spirits high.",
-		},
-	},
-
-	weaponSupport = {
-		["Sword"] = {
-			Model = ReplicatedStorage.Models.WeaponSupports.Sword,
-			Position = CFrame.new(1.3, 1.1, 1) * CFrame.fromOrientation(math.rad(0), math.rad(-60), math.rad(-90)),
 		},
 	},
 }

@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local ServerStorage = game:GetService("ServerStorage")
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
-local GameDataWeapons = require(ServerStorage.GameData.Weapons)
+local GameDataWeapons = require(ServerStorage.GameData.Items)
 
 local RenderService
 local LootPoolService
@@ -76,12 +76,18 @@ function DropService:RandomDrop(AmountItems,PoolDrop)
 	return {Table = t, HDrop = HighestDrop}
 end
 
-function DropService:DropWeapon(HumanoidDied : Humanoid , Drops, HighestRank)
+function DropService:DropItems(HumanoidDied : Humanoid , Drops, HighestRank)
+	if #Drops == 0 then
+		print("No items")
+		return
+	end
+
 	local PromptPart = Instance.new("Part", workspace)
 	PromptPart.Anchored = true
 	PromptPart.CanCollide = false
 	PromptPart.Transparency = 1
 	PromptPart.Position = HumanoidDied.RootPart.CFrame.Position + Vector3.new(0,-2,0)
+
 	local Prompt = Instance.new("ProximityPrompt", PromptPart)
 	Prompt.ActionText = "Loot"
 	Prompt.RequiresLineOfSight = false
@@ -91,7 +97,8 @@ function DropService:DropWeapon(HumanoidDied : Humanoid , Drops, HighestRank)
 	Prompt.Style = Enum.ProximityPromptStyle.Custom
 	Prompt:SetAttribute("Theme", "Default")
     Prompt:SetAttribute("Event", "CheckLoot")
-	self:CacheDrop(Drops,Prompt)
+	self:CacheDrop(Drops, Prompt)
+
 	local DropRenderData = RenderService:CreateRenderData(HumanoidDied, "DropEffects", "LootDrop", {Drops = Drops, HRank = HighestRank, Offset = HumanoidDied.RootPart.CFrame.Position + Vector3.new(0,-2,0)})
 	RenderService:RenderForPlayers(DropRenderData)
 end

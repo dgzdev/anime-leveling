@@ -175,6 +175,18 @@ function DramaticController:HideCutsceneBars()
 	TweenUp.Completed:Wait()
 end
 
+function DramaticController:CheckDialog()
+
+	if CurrentDialog then
+		local Tinfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+		local CheckFrame = CurrentDialog.Frame.DialogTemplate.Check
+		CheckFrame.Visible = true
+		local TweenCheck = TweenService:Create(CheckFrame, Tinfo, { Size = UDim2.fromScale(1.3, CurrentDialog.Frame.DialogTemplate.Check.Size.Y) }) :: Tween
+		TweenCheck:Play()
+		TweenCheck.Completed:Wait()
+	end
+end
+
 -- SHOW DIALOG
 function DramaticController:ShowDialogs(text: string, time: number?)
 	assert(text, "Missing argument #1: text")
@@ -190,6 +202,7 @@ function DramaticController:ShowDialogs(text: string, time: number?)
 			TweenService:Create(CurrentDialog.Frame, Tinfo, { Position = UDim2.fromScale(0.5, 0.6) }) :: Tween
 		if CurrentDialog.time < 0 then
 			local DialogText = CurrentDialog.Frame.DialogTemplate
+			local CheckFrame = DialogText.Check
 			local TextStroke = DialogText:FindFirstChild("UIStroke") :: UIStroke
 			local TweenTS = TweenService:Create(TextStroke, Tinfo, { Transparency = 1 }) :: Tween
 			local TweenText = TweenService:Create(DialogText, Tinfo, { TextTransparency = 1 }) :: Tween

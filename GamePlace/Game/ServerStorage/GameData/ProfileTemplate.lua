@@ -30,21 +30,8 @@ return {
 
 				["Gold"] = 0,
 
-				["Equiped"] = {
-					["Weapon"] = "Fists",
-					["Id"] = 1,
-				},
-
 				["Quests"] = {},
-				["Hotbar"] = { 1 },
-				["Inventory"] = {
-					["Fists"] = {
-						AchiveDate = os.time(),
-						Rank = "E",
-						Id = 1,
-					},
-					
-				},
+				["Inventory"] = {},
 				["SkillsTreeUnlocked"] = { ["1"] = true },
 
 				["PointsAvailable"] = 0,

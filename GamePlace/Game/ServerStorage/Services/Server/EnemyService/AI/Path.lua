@@ -299,7 +299,7 @@ function Path.Start(Humanoid: Humanoid)
 		local Player = Players:FindFirstChild(LastHit)
 		
 		local Info = DropService:RandomDrop(1, Path.Data.PoolDrop)
-		DropService:DropWeapon(From,Info.Table,Info.HDrop)
+		DropService:DropItems(From,Info.Table, Info.HDrop)
 		RagdollService:Ragdoll(Char)
 		AriseService:SetPossessionMode(From, Player)
 	end)

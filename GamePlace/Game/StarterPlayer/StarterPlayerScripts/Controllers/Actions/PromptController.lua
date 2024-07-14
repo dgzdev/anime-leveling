@@ -18,6 +18,7 @@ PromptController.Prompts = {
 	["CheckLoot"] = function(prompt,player)
 		print("a")
 	end,
+	
 	["OpenShop"] = function(prompt: ProximityPrompt, player: Player)
 		if PromptController.ShopController.debounce then
 			return

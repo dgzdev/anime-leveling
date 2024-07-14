@@ -53,6 +53,13 @@ end
 function HotbarService:RenderItems(Player: Player)
 	local PlayerData = PlayerService:GetData(Player)
 
+	Player.Backpack:ClearAllChildren()
+	for i,child in Player.Character:GetChildren() do
+		if child:IsA("Tool") then
+			child:Destroy()
+		end
+	end
+
 	for _, item in PlayerData.Inventory do
 		if item.Class == "Skill" then
 			local ToolSkill = Instance.new("Tool")

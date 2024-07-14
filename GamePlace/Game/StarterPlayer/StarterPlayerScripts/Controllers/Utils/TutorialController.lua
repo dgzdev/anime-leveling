@@ -28,6 +28,7 @@ function TutorialController:StartTutorial(Player)
 	end
 
 	local function onSwordEquip()
+		DramaticController:CheckDialog()
 		task.wait(1)
 		DramaticController:ShowDialogs("Parabéns!", -1)
 		task.wait(1)
@@ -37,6 +38,7 @@ function TutorialController:StartTutorial(Player)
 	end
 
 	local function onKeyPress()
+		DramaticController:CheckDialog()
 		DramaticController:ShowDialogs("Nice!", 3)
 		task.wait(2)
 		DramaticController:ShowDialogs("Agora pegue a espada para me ajudar", -1)
