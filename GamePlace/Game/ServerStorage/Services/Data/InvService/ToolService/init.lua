@@ -10,6 +10,7 @@ local PlayerService
 local InventoryService
 
 local ToolsFolder = game.ReplicatedStorage.Models.Tools
+local ToolsModules = {}
 
 function ToolService:ToolInput(Character: Model, Action: string)
 	local Player = Players:GetPlayerFromCharacter(Character)
@@ -19,6 +20,23 @@ function ToolService:ToolInput(Character: Model, Action: string)
 
 	local Item = InventoryService:GetItemById(Player, Tool)
 	assert(Item, "Item not found")
+
+	local SpecificToolModule = ToolsModules[Item.Name]
+	local ClassToolModule = ToolsModules[Item.Class]
+
+	local CalledSpecific = false
+	if SpecificToolModule then
+		if SpecificToolModule[Action] then
+			SpecificToolModule[Action](Character, Item)
+			CalledSpecific = true
+		end
+	end
+
+	if not CalledSpecific then
+		if ClassToolModule[Action] then
+			ClassToolModule[Action](Character, Item)
+		end
+	end
 end
 
 function ToolService:GetEquippedTool(Player: Player): Tool
@@ -105,8 +123,22 @@ function ToolService:LoadPlayerTools(Player: Player)
 	end
 end
 
+function ToolService.KnitInit()
+	for _, tool in script:GetDescendants() do
+		if tool:IsA("ModuleScript") then
+			ToolsModules[tool.Name] = tool
+		end
+	end
+end
+
 function ToolService.KnitStart()
 	InventoryService = Knit.GetService("InvService")
+
+	for _, tool in ToolsModules do
+		if tool.Start then
+			tool:Start(ToolsModules)
+		end
+	end
 end
 
 return ToolService

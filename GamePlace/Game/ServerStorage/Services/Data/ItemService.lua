@@ -27,7 +27,7 @@ function ItemService:DeleteItem(Item)
 end
 
 function ItemService:GenerateId()
-	return HttpService:GenerateGUID(false):sub(1, 12)
+	return HttpService:GenerateGUID(false):sub(1, 16)
 end
 
 function ItemService:CreateItem(ItemName: string, Amount: number?)
