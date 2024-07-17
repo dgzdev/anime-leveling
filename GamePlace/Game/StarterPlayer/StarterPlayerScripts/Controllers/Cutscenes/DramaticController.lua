@@ -176,12 +176,12 @@ function DramaticController:HideCutsceneBars()
 end
 
 function DramaticController:CheckDialog()
-
 	if CurrentDialog then
-		local Tinfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+		local Tinfo = TweenInfo.new(1, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
 		local CheckFrame = CurrentDialog.Frame.DialogTemplate.Check
 		CheckFrame.Visible = true
-		local TweenCheck = TweenService:Create(CheckFrame, Tinfo, { Size = UDim2.fromScale(1.3, CurrentDialog.Frame.DialogTemplate.Check.Size.Y) }) :: Tween
+		local TweenCheck =
+			TweenService:Create(CheckFrame, Tinfo, { Size = UDim2.fromScale(1.3, CheckFrame.Size.Y.Scale) }) :: Tween
 		TweenCheck:Play()
 		TweenCheck.Completed:Wait()
 	end
@@ -206,9 +206,10 @@ function DramaticController:ShowDialogs(text: string, time: number?)
 			local TextStroke = DialogText:FindFirstChild("UIStroke") :: UIStroke
 			local TweenTS = TweenService:Create(TextStroke, Tinfo, { Transparency = 1 }) :: Tween
 			local TweenText = TweenService:Create(DialogText, Tinfo, { TextTransparency = 1 }) :: Tween
+			local CheckTween = TweenService:Create(CheckFrame, Tinfo, { Transparency = 1 }) :: Tween
 			TweenText:Play()
 			TweenTS:Play()
-
+			CheckTween:Play()
 			TweenTS.Completed:Wait()
 			CurrentDialog.Frame:Destroy()
 		end
@@ -274,7 +275,7 @@ task.spawn(function()
 end)
 ]]
 
-function DramaticController.KnitInit()
+function DramaticController.KnitStart()
 	CameraController = Knit.GetController("CameraController")
 end
 

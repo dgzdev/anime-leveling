@@ -25,6 +25,6 @@ function HumanoidManagerController:RunForAllHumanoidsExcept(callback: (humanoid:
 	end
 end
 
-function HumanoidManagerController.KnitInit() end
+function HumanoidManagerController.KnitStart() end
 
 return HumanoidManagerController

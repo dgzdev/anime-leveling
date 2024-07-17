@@ -69,9 +69,8 @@ function GuildService:CreateGuild(Player: Player, GuildName: string, GuildIcon: 
 	return "Guild created"
 end
 
-function GuildService:KnitInit()
+function GuildService:KnitStart()
 	PlayerService = Knit.GetService("PlayerService")
 end
-function GuildService:KnitStart() end
 
 return GuildService

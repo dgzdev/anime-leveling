@@ -67,7 +67,7 @@ function InventoryService:AddItem(player: Player, item)
 	local Data = PlayerService:GetData(player)
 
 	local firstpos
-	for i,v in Data.Hotbar do
+	for i, v in Data.Hotbar do
 		if v == nil then
 			firstpos = i
 			break
@@ -76,11 +76,10 @@ function InventoryService:AddItem(player: Player, item)
 
 	table.insert(Data.Inventory, item)
 	if firstpos then
-		InventoryService:AddItemToHotbar(player, item.Id, firstpos )
+		InventoryService:AddItemToHotbar(player, item.Id, firstpos)
 	end
 
 	HotbarService:RenderItems(player)
-	
 end
 
 function InventoryService:RemoveItem(player: Player, item: string)
@@ -93,7 +92,6 @@ function InventoryService:RemoveItem(player: Player, item: string)
 			id = _id
 		end
 	end
-
 end
 
 function InventoryService:GetGameWeapons()

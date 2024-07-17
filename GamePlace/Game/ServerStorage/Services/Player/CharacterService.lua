@@ -102,7 +102,6 @@ function CharacterService:LoadCharacter(Player: Player)
 		end
 	end)
 
-
 	PostureService:BindPostureRegeneration(Humanoid)
 	Humanoid:SetAttribute("Loaded", true)
 
@@ -139,7 +138,7 @@ function CharacterService:UpdateWalkSpeedAndJumpPower(Humanoid: Humanoid)
 	CharacterService:UpdateJumpPower(Humanoid)
 end
 
-function CharacterService.KnitInit()
+function CharacterService.KnitStart()
 	PhysicsService:RegisterCollisionGroup("Debris")
 	PhysicsService:CollisionGroupSetCollidable("Debris", "Players", false)
 	PhysicsService:CollisionGroupSetCollidable("Debris", "Enemies", false)

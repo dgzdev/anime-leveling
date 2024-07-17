@@ -141,14 +141,12 @@ function DialogService.Client:StartDialog(player, npc)
 	return self.Server:StartDialog(player, npc)
 end
 
-function DialogService.KnitInit()
+function DialogService.KnitStart()
 	for _, v in ipairs(game.ServerStorage.Index.Dialogs:GetChildren()) do
 		if v:IsA("ModuleScript") then
 			Dialogs[v.Name] = require(v)
 		end
 	end
 end
-
-function DialogService.KnitStart() end
 
 return DialogService

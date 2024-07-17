@@ -332,14 +332,12 @@ function GuiController:RenderPoints(points: {
 	PointsValue.Text = Text:format(PTS)
 end
 
-function GuiController:KnitInit()
+function GuiController:KnitStart()
 	PlayerService = Knit.GetService("PlayerService")
 	ProgressionService = Knit.GetService("ProgressionService")
 	QuestService = Knit.GetService("QuestService")
 	InventoryService = Knit.GetService("InventoryService")
-end
 
-function GuiController:KnitStart()
 	coroutine.wrap(function()
 		local camera = Workspace.CurrentCamera
 

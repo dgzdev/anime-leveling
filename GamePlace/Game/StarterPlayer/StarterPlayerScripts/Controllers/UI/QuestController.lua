@@ -30,11 +30,9 @@ function QuestController:CreatePrompt(QuestData: { [string]: string })
 	Background.message.Text = QuestData.Description or ""
 end
 
-function QuestController.KnitInit()
-	QuestService = Knit.GetService("QuestService")
-end
-
 function QuestController.KnitStart()
+	QuestService = Knit.GetService("QuestService")
+
 	coroutine.wrap(function()
 		QuestService.PromptRequest:Connect(function(questPrompt: {})
 			QuestController:CreatePrompt(questPrompt)

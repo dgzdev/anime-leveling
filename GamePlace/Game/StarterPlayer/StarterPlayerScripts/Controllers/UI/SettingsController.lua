@@ -302,7 +302,7 @@ function SettingsController:LoadSettings(SettingsFrame: Frame)
 	end
 end
 
-function SettingsController.KnitInit()
+function SettingsController.KnitStart()
 	return
 end
 

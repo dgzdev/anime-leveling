@@ -11,9 +11,7 @@ local PlayerService
 
 local BuffService = Knit.CreateService({
 	Name = "BuffService",
-	Client = {
-
-	},
+	Client = {},
 })
 
 function BuffService:GetAppliedBuffsToPlayer(Player)
@@ -75,7 +73,7 @@ function BuffService:ApplyBuffToPlayer(Player: Player, BuffType: string, Info: {
 	end
 end
 
-function BuffService.KnitInit()
+function BuffService.KnitStart()
 	PlayerService = Knit.GetService("PlayerService")
 end
 

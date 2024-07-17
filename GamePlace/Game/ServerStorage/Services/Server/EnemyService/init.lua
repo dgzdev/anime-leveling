@@ -47,8 +47,6 @@ function EnemyService.KnitStart()
 			EnemyService:CreateEnemy(enemy)
 		end
 	end
-
-
 end
 
 return EnemyService

@@ -64,6 +64,6 @@ function AnimationService:StopM1Animation(Humanoid: Humanoid)
 	end
 end
 
-function AnimationService.KnitInit() end
+function AnimationService.KnitStart() end
 
 return AnimationService

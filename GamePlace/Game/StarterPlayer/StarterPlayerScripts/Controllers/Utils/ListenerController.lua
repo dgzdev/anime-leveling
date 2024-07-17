@@ -21,7 +21,7 @@ ClientEvent.OnClientEvent:Connect(function(callbackName, Data)
 	end
 end)
 
-function ListenerController.KnitInit()
+function ListenerController.KnitStart()
 	TutorialController = Knit.GetController("TutorialController")
 	TutorialController:StartTutorial(game.Players.LocalPlayer)
 end

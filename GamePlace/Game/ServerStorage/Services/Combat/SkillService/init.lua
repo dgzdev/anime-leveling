@@ -21,21 +21,21 @@ local SkillDatas = {}
 local WeaponService
 local RenderService
 
-function SkillService:UseSkill(Humanoid: Humanoid, SkillName: string, Data: {CasterCFrame: CFrame})
+function SkillService:UseSkill(Humanoid: Humanoid, SkillName: string, Data: { CasterCFrame: CFrame })
 	if not Skills[SkillName] then
 		return
 	end
 
 	if not Data.CasterCFrame then
-		Data.CasterCFrame = Humanoid.Parent:GetPivot() 
-	end 
+		Data.CasterCFrame = Humanoid.Parent:GetPivot()
+	end
 
 	local Data = Data or {}
 	Skills[SkillName].Caller(Humanoid, Data)
 end
 
 local RunService = game:GetService("RunService")
-function SkillService.Client:UseSkill(Player: Player, skillName: string, Data: {CasterCFrame: CFrame})
+function SkillService.Client:UseSkill(Player: Player, skillName: string, Data: { CasterCFrame: CFrame })
 	local Character = Player.Character
 	if not Character then
 		return
@@ -108,7 +108,7 @@ function SkillService:RemoveAttackOverwrite(Humanoid: Humanoid)
 	WeaponService.AttackOverwrites[Humanoid] = nil
 end
 
-function SkillService.KnitInit()
+function SkillService.KnitStart()
 	WeaponService = Knit.GetService("WeaponService")
 	RenderService = Knit.GetService("RenderService")
 
@@ -119,11 +119,10 @@ function SkillService.KnitInit()
 	end
 
 	for _, v in pairs(Skills) do
-	    if v.Start then
-	        v.Start(Skills)
-	    end
+		if v.Start then
+			v.Start(Skills)
+		end
 	end
 end
-function SkillService.KnitStart() end
 
 return SkillService

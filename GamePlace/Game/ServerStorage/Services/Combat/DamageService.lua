@@ -27,8 +27,13 @@ function DamageService:DealDamage(HumanoidToDamage: Humanoid, Damage: number, Hu
 end
 
 -- força um hit, ignorando o block
-function DamageService:Hit(HumanoidHitted: Humanoid, Humanoid: Humanoid, Damage: number, HitEffect: string, ShouldStun: boolean?)
-	
+function DamageService:Hit(
+	HumanoidHitted: Humanoid,
+	Humanoid: Humanoid,
+	Damage: number,
+	HitEffect: string,
+	ShouldStun: boolean?
+)
 	if ShouldStun == nil then
 		ShouldStun = true
 	end
@@ -36,7 +41,7 @@ function DamageService:Hit(HumanoidHitted: Humanoid, Humanoid: Humanoid, Damage:
 	SkillService:TryCancelSkillsStates(HumanoidHitted)
 	if ShouldStun then
 		DebounceService:AddDebounce(HumanoidHitted, "Hit", 1)
-		HumanoidHitted:SetAttribute("Running", false)		
+		HumanoidHitted:SetAttribute("Running", false)
 		AnimationService:StopM1Animation(HumanoidHitted)
 	end
 
@@ -93,7 +98,13 @@ function DamageService:DeflectHit(HumanoidHitted: Humanoid, Humanoid: Humanoid, 
 end
 
 -- função hit, possui verificações de block e dodge, além de aplicar debuffs de hit
-function DamageService:TryHit(HumanoidHitted: Humanoid, Humanoid: Humanoid, _Damage: number, HitEffect: string, ShouldStun: boolean?)
+function DamageService:TryHit(
+	HumanoidHitted: Humanoid,
+	Humanoid: Humanoid,
+	_Damage: number,
+	HitEffect: string,
+	ShouldStun: boolean?
+)
 	if HumanoidHitted == nil then
 		return
 	end
@@ -101,7 +112,7 @@ function DamageService:TryHit(HumanoidHitted: Humanoid, Humanoid: Humanoid, _Dam
 	if HumanoidHitted:GetAttribute("IFrame") then
 		return
 	end
-	
+
 	CharacterService:UpdateWalkSpeedAndJumpPower(HumanoidHitted)
 
 	if _Damage == nil then
@@ -133,7 +144,7 @@ function DamageService:TryHit(HumanoidHitted: Humanoid, Humanoid: Humanoid, _Dam
 		DeflectPostureDamage = Damage
 		BlockPostureDamage = Damage * 1.75
 	end
- ---not HumanoidHitted:GetAttribute("Unparryable")
+	---not HumanoidHitted:GetAttribute("Unparryable")
 	task.wait()
 	if HumanoidHitted:GetAttribute("DeflectTime") and not HumanoidHitted:GetAttribute("Unparryable") then
 		DamageService:DeflectHit(HumanoidHitted, Humanoid, DeflectPostureDamage)
@@ -168,7 +179,7 @@ function DamageService:GetHitContext(HumanoidHitted: Humanoid)
 	end
 end
 
-function DamageService.KnitInit()
+function DamageService.KnitStart()
 	CombatService = Knit.GetService("CombatService")
 	PlayerService = Knit.GetService("PlayerService")
 	RagdollService = Knit.GetService("RagdollService")

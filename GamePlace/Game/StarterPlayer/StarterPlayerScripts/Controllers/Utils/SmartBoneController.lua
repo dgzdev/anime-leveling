@@ -18,7 +18,7 @@ function SmartBoneController.StopRuntime()
 	Runtime = nil
 end
 
-function SmartBoneController.KnitInit()
+function SmartBoneController.KnitStart()
 	SmartBoneController.StartRuntime()
 end
 

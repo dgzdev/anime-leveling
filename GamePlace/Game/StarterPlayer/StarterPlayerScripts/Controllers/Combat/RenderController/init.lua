@@ -161,7 +161,6 @@ function RenderController:StopAnimationMatch(Humanoid: Humanoid, AnimationName: 
 	end
 end
 
-
 function RenderController:GetWeaponAnimationFolder(Humanoid: Humanoid)
 	local WeaponName = AnimationsFolder:FindFirstChild(Humanoid:GetAttribute("WeaponName") or "")
 	local WeaponType = AnimationsFolder:FindFirstChild(Humanoid:GetAttribute("WeaponType") or "")
@@ -226,7 +225,6 @@ function RenderController:ExecuteForHumanoid(Humanoid: Humanoid, func)
 end
 
 local function CreateRenderData(casterHumanoid: Humanoid, module: string, effect: string, arguments: {}?)
-
 	local RenderData
 
 	if casterHumanoid:IsA("Humanoid") then
@@ -245,8 +243,7 @@ local function CreateRenderData(casterHumanoid: Humanoid, module: string, effect
 			effect = effect,
 			arguments = arguments,
 		}
-	end 
-
+	end
 
 	return RenderData
 end
@@ -261,30 +258,30 @@ function RenderController:BindRenderingTags()
 		"Loot_D",
 		"Loot_C",
 		"Loot_B",
-		"Loot_A"
+		"Loot_A",
 	}
 
 	-- pode ser utilizado para renderizar efeitos, principalmente de buffs e debuffs, utilizando uma tag e o collection service
 
 	for _, tag in ipairs(tags) do
-	    CollectionService:GetInstanceRemovedSignal(tag):Connect(function(Humanoid)
-	        local RenderData = CreateRenderData(Humanoid, "BindEffects", "Remove", tag)
-	        RenderController.Render(RenderData)
-	    end)
+		CollectionService:GetInstanceRemovedSignal(tag):Connect(function(Humanoid)
+			local RenderData = CreateRenderData(Humanoid, "BindEffects", "Remove", tag)
+			RenderController.Render(RenderData)
+		end)
 	end
 	-- renderiza os efeitos que foram aplicados antes do jogador entrar
 	for _, tag in ipairs(tags) do
-	    for _,Humanoid in CollectionService:GetTagged(tag) do
-	        local RenderData = CreateRenderData(Humanoid, "BindEffects", "Add", tag)
-	        RenderController.Render(RenderData)
-	    end
+		for _, Humanoid in CollectionService:GetTagged(tag) do
+			local RenderData = CreateRenderData(Humanoid, "BindEffects", "Add", tag)
+			RenderController.Render(RenderData)
+		end
 	end
 
 	for _, tag in ipairs(tags) do
-	    CollectionService:GetInstanceAddedSignal(tag):Connect(function(Humanoid)
-	        local RenderData = CreateRenderData(Humanoid, "BindEffects", "Add", tag)
-	        RenderController.Render(RenderData)
-	    end)
+		CollectionService:GetInstanceAddedSignal(tag):Connect(function(Humanoid)
+			local RenderData = CreateRenderData(Humanoid, "BindEffects", "Add", tag)
+			RenderController.Render(RenderData)
+		end)
 	end
 end
 

@@ -139,7 +139,7 @@ function Indication.BindToAllNPCS()
 	end
 end
 
-function Indication.KnitInit()
+function Indication.KnitStart()
 	Indication.BindToAllNPCS()
 end
 

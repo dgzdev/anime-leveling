@@ -60,7 +60,7 @@ function BlockController:UnbindBlock()
 	WeaponService:Block(false)
 end
 
-function BlockController.KnitInit()
+function BlockController.KnitStart()
 	RenderController = Knit.GetController("RenderController")
 	WeaponService = Knit.GetService("WeaponService")
 end

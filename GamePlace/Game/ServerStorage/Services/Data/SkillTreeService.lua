@@ -110,7 +110,7 @@ function SkillTreeService.Client:GetSkillsAvailableToUnlock(Player)
 	return self.Server:GetAvailableSkillsToUnlock(Player)
 end
 
-function SkillTreeService.KnitInit()
+function SkillTreeService.KnitStart()
 	PlayerService = Knit.GetService("PlayerService")
 	RaidService = Knit.GetService("RaidService")
 end

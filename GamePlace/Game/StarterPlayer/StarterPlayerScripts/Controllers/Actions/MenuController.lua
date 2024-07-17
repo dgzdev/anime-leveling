@@ -145,7 +145,6 @@ function MenuController.ShowMenu()
 	menuPart.Parent = workspace
 	menuPart.CFrame = Humanoid.RootPart.CFrame * CFrame.new(7, 1.5, -3)
 
-
 	local LookAt = CFrame.lookAt(Humanoid.RootPart.Position, menuPart.Position)
 
 	Humanoid.RootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
@@ -179,7 +178,7 @@ function MenuController.ShowMenu()
 		part.LocalTransparencyModifier = 1
 	end
 
-	Humanoid.Parent:PivotTo(Humanoid.RootPart.CFrame * CFrame.Angles(0,math.rad(-20),0))
+	Humanoid.Parent:PivotTo(Humanoid.RootPart.CFrame * CFrame.Angles(0, math.rad(-20), 0))
 
 	task.delay(0.6, function()
 		menuIsTweening = false
@@ -287,7 +286,7 @@ function MenuController.DisableContext()
 	ContextActionService:UnbindAction("MenuShow")
 end
 
-function MenuController.KnitInit()
+function MenuController.KnitStart()
 	CameraController = Knit.GetController("CameraController")
 	HumanoidManagerController = Knit.GetController("HumanoidManagerController")
 	SettingsController = Knit.GetController("SettingsController")

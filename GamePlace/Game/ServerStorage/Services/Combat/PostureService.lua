@@ -60,22 +60,24 @@ function PostureService:RemovePostureDamage(Humanoid: Humanoid, Recover: number)
 	Humanoid:SetAttribute("Posture", Humanoid:GetAttribute("Posture") - DamageClamp)
 end
 
-
 function PostureService:BindPostureRegeneration(Humanoid: Humanoid)
 	while Humanoid.Parent ~= nil do
 		repeat
-			local NewPosture = math.clamp(Humanoid:GetAttribute("Posture") - Humanoid:GetAttribute("MaxPosture") * 0.0065, 0, Humanoid:GetAttribute("MaxPosture"))
+			local NewPosture = math.clamp(
+				Humanoid:GetAttribute("Posture") - Humanoid:GetAttribute("MaxPosture") * 0.0065,
+				0,
+				Humanoid:GetAttribute("MaxPosture")
+			)
 			Humanoid:SetAttribute("Posture", NewPosture)
 			task.wait(1)
 		until Humanoid:GetAttribute("Posture") <= 0
 
 		Humanoid:GetAttributeChangedSignal("Posture"):Wait()
-
 	end
 	print("Stopped regen")
 end
 
-function PostureService.KnitInit()
+function PostureService.KnitStart()
 	PlayerService = Knit.GetService("PlayerService")
 	AnimationService = Knit.GetService("AnimationService")
 	CombatService = Knit.GetService("CombatService")

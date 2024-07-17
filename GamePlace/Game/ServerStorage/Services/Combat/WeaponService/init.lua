@@ -47,7 +47,7 @@ function WeaponService:TriggerHittedEvent(EnemyHumanoid: Humanoid, HumanoidWhoHi
 	if EnemyCharacter:FindFirstChild("EnemyAI") then
 		if EnemyCharacter:FindFirstChild("EnemyAI"):FindFirstChild("AI"):FindFirstChild("Hitted") then
 			local HittedEvent =
-			EnemyCharacter:FindFirstChild("EnemyAI"):FindFirstChild("AI"):FindFirstChild("Hitted") :: BindableEvent
+				EnemyCharacter:FindFirstChild("EnemyAI"):FindFirstChild("AI"):FindFirstChild("Hitted") :: BindableEvent
 			HittedEvent:Fire(HumanoidWhoHitted)
 		end
 	end
@@ -77,7 +77,9 @@ function WeaponService:StunLock(Character: Model, Position: Vector3, Duration: n
 end
 
 function WeaponService:Block(Character: Model, state: boolean, cantParry: boolean?)
-	if not Character then return end
+	if not Character then
+		return
+	end
 	local Humanoid = Character.Humanoid
 	if state then
 		if not Validate:CanBlock(Humanoid) then
@@ -217,7 +219,7 @@ function WeaponService:GetModelMass(model: Model): number
 	return mass
 end
 
-function WeaponService.KnitInit()
+function WeaponService.KnitStart()
 	DebounceService = Knit.GetService("DebounceService")
 	CharacterService = Knit.GetService("CharacterService")
 	HotbarService = Knit.GetService("HotbarService")
@@ -232,7 +234,7 @@ function WeaponService.KnitInit()
 		Weapons[weapon.Name] = require(weapon)
 	end
 end
-function WeaponService.KnitStart()
+function WeaponService.KnitInit()
 	print(Weapons)
 	for _, weapon in Weapons do
 		if weapon.Start then

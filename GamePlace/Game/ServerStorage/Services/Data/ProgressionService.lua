@@ -161,7 +161,7 @@ function ProgressionService.Client:AddExp(Player, Amount)
 	return self.Server:AddExp(Player, Amount)
 end
 
-function ProgressionService.KnitInit()
+function ProgressionService.KnitStart()
 	PlayerService = Knit.GetService("PlayerService")
 end
 

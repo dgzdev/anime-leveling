@@ -1,64 +1,62 @@
 local Knit = require(game.ReplicatedStorage.Packages.Knit)
-local ToolsFolder: Folder = game.ReplicatedStorage.Models.Tools
-
-local HotbarService = Knit.CreateService({
-	Name = "HotbarService",
+local ToolService = Knit.CreateService({
+	Name = "ToolService",
 	Client = {},
 })
 
+local Players = game:GetService("Players")
+
 local PlayerService
-local EquipService
-local WeaponService
+local InventoryService
 
-local Events = {
-	Activate = function(Player: Player, data: {})
-		local Tool = HotbarService:GetEquippedTool(Player.Character)
-		if not Tool then
-			return
-		end
+local ToolsFolder = game.ReplicatedStorage.Models.Tools
 
-		local Classes = {
-			Weapon = function()
-				WeaponService:WeaponInput(Player.Character, "Attack", data)
-			end,
-		}
+function ToolService:ToolInput(Character: Model, Action: string)
+	local Player = Players:GetPlayerFromCharacter(Character)
+	local Tool = ToolService:GetEquippedTool(Player)
+	assert(Tool, `Tool not found\n{debug.traceback()}`)
+	assert(Player, `Player not found\n{debug.traceback()}`)
 
-		local Class = Tool:GetAttribute("Class")
-		if Classes[Class] then
-			Classes[Class]()
-		end
-	end,
-	Equip = function(Player: Player)
-		EquipService:EquipItem(Player)
-	end,
-	Unequip = function(Player: Player)
-		EquipService:UnequipItem(Player)
-	end,
-}
+	local Item = InventoryService:GetItemById(Player, Tool)
+	assert(Item, "Item not found")
+end
 
-function HotbarService:GetEquippedTool(Character: Model)
+function ToolService:GetEquippedTool(Player: Player): Tool
+	local Character = Player.Character
+	if not Character then
+		return
+	end
+
 	return Character:FindFirstChildWhichIsA("Tool")
 end
 
-function HotbarService:OnFireServer(player: Player, event: string, data: { any })
-	if Events[event] then
-		return Events[event](player, data)
+function ToolService:RemoveEquippedTool(Player: Player)
+	local Tool = ToolService:GetEquippedTool(Player)
+
+	if Tool then
+		Tool:Destroy()
 	end
 end
-
-function HotbarService.Client:OnFireServer(...)
-	return self.Server:OnFireServer(...)
+function ToolService:ClearPlayerTools(Player: Player)
+	Player.Backpack:ClearAllChildren()
+	ToolService:RemoveEquippedTool(Player)
 end
 
-function HotbarService:RenderItems(Player: Player)
+function ToolService:GetItemFromEquippedTool(Player: Player)
+	local Tool = ToolService:GetEquippedTool(Player)
+
+	if not Tool then
+		return
+	end
+
+	local ToolId = Tool:GetAttribute("Id")
+	return InventoryService:GetItemById(ToolId)
+end
+
+function ToolService:LoadPlayerTools(Player: Player)
 	local PlayerData = PlayerService:GetData(Player)
 
-	Player.Backpack:ClearAllChildren()
-	for i,child in Player.Character:GetChildren() do
-		if child:IsA("Tool") then
-			child:Destroy()
-		end
-	end
+	ToolService:ClearPlayerTools(Player)
 
 	for _, item in PlayerData.Inventory do
 		if item.Class == "Skill" then
@@ -106,14 +104,9 @@ function HotbarService:RenderItems(Player: Player)
 		ToolClone.Parent = Player.Backpack
 	end
 end
-function HotbarService.Client:RenderItems(...)
-	return self.Server:RenderItems(...)
+
+function ToolService.KnitStart()
+	InventoryService = Knit.GetService("InvService")
 end
 
-function HotbarService:KnitStart()
-	PlayerService = Knit.GetService("PlayerService")
-	EquipService = Knit.GetService("EquipService")
-	WeaponService = Knit.GetService("WeaponService")
-end
-
-return HotbarService
+return ToolService

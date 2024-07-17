@@ -28,10 +28,10 @@ PromptService.Prompts = {
 		print(PlayerService:GetData(player))
 
 		MainEvents:FireClient(player, "CheckLoot", DropsInfo.Drops)
-	end
+	end,
 }
 
-function PromptService.KnitInit()
+function PromptService.KnitStart()
 	InventoryService = Knit.GetService("InventoryService")
 	QuestService = Knit.GetService("QuestService")
 	DropService = Knit.GetService("DropService")

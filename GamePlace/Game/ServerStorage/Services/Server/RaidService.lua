@@ -145,7 +145,7 @@ function RaidService:Init()
 	end)
 end
 
-function RaidService.KnitInit()
+function RaidService.KnitStart()
 	--> knit ta iniciado
 	RaidService:Init()
 end

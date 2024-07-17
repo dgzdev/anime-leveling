@@ -62,8 +62,8 @@ function Service:CreateParty(Player)
 	})
 end
 
-function Service.KnitInit()
-	PortalService:KnitInit()
+function Service.KnitStart()
+	PortalService:KnitStart()
 end
 
 type Party = {

@@ -49,7 +49,7 @@ function TutorialController:StartTutorial(Player)
 	createInputConnection({ Enum.KeyCode.F }, onKeyPress)
 end
 
-function TutorialController.KnitInit()
+function TutorialController.KnitStart()
 	DramaticController = Knit.GetController("DramaticController")
 end
 

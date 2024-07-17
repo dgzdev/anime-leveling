@@ -247,7 +247,7 @@ function MovementModule:CreateBinds()
 	end)
 end
 
-function MovementModule:KnitInit()
+function MovementModule:KnitStart()
 	ProgressionService = Knit.GetService("ProgressionService")
 	StatusController = Knit.GetController("StatusController")
 

@@ -93,7 +93,7 @@ function MarketController.Hide()
 	--> esconder a gui
 end
 
-function MarketController:KnitInit()
+function MarketController:KnitStart()
 	CameraController = Knit.GetController("CameraController")
 end
 

@@ -15,10 +15,10 @@ PromptController.ShopController = {}
 PromptController.ShopController.debounce = false
 
 PromptController.Prompts = {
-	["CheckLoot"] = function(prompt,player)
+	["CheckLoot"] = function(prompt, player)
 		print("a")
 	end,
-	
+
 	["OpenShop"] = function(prompt: ProximityPrompt, player: Player)
 		if PromptController.ShopController.debounce then
 			return
@@ -56,7 +56,7 @@ function PromptController:OnPrompt(self, prompt: ProximityPrompt, player: Player
 	end
 end
 
-function PromptController:KnitInit()
+function PromptController:KnitStart()
 	local ProximityPromptService = game:GetService("ProximityPromptService")
 	ProximityPromptService.PromptTriggered:Connect(function(prompt, playerWhoTriggered)
 		self:OnPrompt(prompt, playerWhoTriggered)

@@ -84,12 +84,12 @@ function HumanoidHandler:BindHumanoid(Humanoid: Humanoid)
 	end)
 end
 
-function HumanoidHandler:KnitInit()
+function HumanoidHandler:KnitStart()
 	PlayerService = Knit.GetService("PlayerService")
 	CameraController = Knit.GetController("CameraController")
 end
 
-function HumanoidHandler:KnitStart()
+function HumanoidHandler:KnitInit()
 	coroutine.wrap(function()
 		Character = Player.Character or Player.CharacterAdded:Wait()
 		Humanoid = Character:WaitForChild("Humanoid")

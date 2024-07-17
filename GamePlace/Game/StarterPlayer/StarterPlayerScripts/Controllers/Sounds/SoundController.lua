@@ -87,7 +87,7 @@ function SoundController:StartLoop()
 	end)
 end
 
-function SoundController:KnitInit()
+function SoundController:KnitStart()
 	self:StartLoop()
 end
 

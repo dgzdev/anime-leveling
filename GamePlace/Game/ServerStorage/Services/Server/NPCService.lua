@@ -200,7 +200,7 @@ function NPC:Prepare()
 	end
 end
 
-function Module.KnitInit()
+function Module.KnitStart()
 	QuestService = Knit.GetService("QuestService")
 	DialogService = Knit.GetService("DialogService")
 

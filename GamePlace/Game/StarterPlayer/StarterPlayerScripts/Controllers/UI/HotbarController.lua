@@ -364,10 +364,9 @@ function HotbarController:RenderHotbar()
 	Player.Backpack.ChildRemoved:Connect(function(tool: Tool)
 		HotbarController.OnBackpackRemoved(tool)
 	end)
-
 end
 
-function HotbarController.KnitInit()
+function HotbarController.KnitStart()
 	HotbarService = Knit.GetService("HotbarService")
 	BlockController = Knit.GetController("BlockController")
 	PlayerService = Knit.GetService("PlayerService")

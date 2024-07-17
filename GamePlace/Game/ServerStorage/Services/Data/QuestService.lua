@@ -149,7 +149,7 @@ function QuestService.Client:DenyQuest(Player: Player)
 	return self.Server:DenyQuest(Player)
 end
 
-function QuestService.KnitInit()
+function QuestService.KnitStart()
 	PlayerService = Knit.GetService("PlayerService")
 	ProgressionService = Knit.GetService("ProgressionService")
 end

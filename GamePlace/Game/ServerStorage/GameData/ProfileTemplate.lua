@@ -27,11 +27,11 @@ return {
 				["Level"] = 1,
 
 				["Experience"] = 0,
-
 				["Gold"] = 0,
 
 				["Quests"] = {},
 				["Inventory"] = {},
+				["Hotbar"] = {},
 				["SkillsTreeUnlocked"] = { ["1"] = true },
 
 				["PointsAvailable"] = 0,

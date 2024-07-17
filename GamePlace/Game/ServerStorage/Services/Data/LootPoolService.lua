@@ -12,10 +12,6 @@ local Pool = {}
 Pool.__index = Pool
 Pool.ClassName = "LootPool"
 
-
-
-
-
 export type Chances = { [string]: number }
 
 function Pool.new(variants: Chances, divider: number?)
@@ -32,7 +28,7 @@ function Pool.new(variants: Chances, divider: number?)
 
 	local sum = 0
 
-	for i,v in self.variants do
+	for i, v in self.variants do
 		sum += v
 	end
 
@@ -85,7 +81,7 @@ function LootPool:Roll(Loop)
 	return Pool:Roll()
 end
 
-function LootPool.KnitInit()
+function LootPool.KnitStart()
 	return
 end
 

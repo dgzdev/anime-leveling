@@ -14,7 +14,6 @@ local DropService = Knit.CreateService({
 	Client = {},
 })
 
-
 function DropService:GetDrop(prompt)
 	if self:DropExist(prompt) then
 		return CachedDrops[prompt]
@@ -33,13 +32,12 @@ function DropService:CacheDrop(Drops, prompt)
 	if not CachedDrops[prompt] then
 		CachedDrops[prompt] = {
 			Drops = Drops,
-			prompt = prompt
+			prompt = prompt,
 		}
 	end
 end
 
-function DropService:RandomDrop(AmountItems,PoolDrop)
-
+function DropService:RandomDrop(AmountItems, PoolDrop)
 	local t = {}
 	local HighestDrop = 0
 	local rarityValues = {
@@ -66,17 +64,16 @@ function DropService:RandomDrop(AmountItems,PoolDrop)
 		table.insert(t, Choosed)
 	end
 
-	for i,v in pairs(rarityValues) do
+	for i, v in pairs(rarityValues) do
 		if v == HighestDrop then
 			HighestDrop = i
 		end
 	end
 
-
-	return {Table = t, HDrop = HighestDrop}
+	return { Table = t, HDrop = HighestDrop }
 end
 
-function DropService:DropItems(HumanoidDied : Humanoid , Drops, HighestRank)
+function DropService:DropItems(HumanoidDied: Humanoid, Drops, HighestRank)
 	if #Drops == 0 then
 		print("No items")
 		return
@@ -86,7 +83,7 @@ function DropService:DropItems(HumanoidDied : Humanoid , Drops, HighestRank)
 	PromptPart.Anchored = true
 	PromptPart.CanCollide = false
 	PromptPart.Transparency = 1
-	PromptPart.Position = HumanoidDied.RootPart.CFrame.Position + Vector3.new(0,-2,0)
+	PromptPart.Position = HumanoidDied.RootPart.CFrame.Position + Vector3.new(0, -2, 0)
 
 	local Prompt = Instance.new("ProximityPrompt", PromptPart)
 	Prompt.ActionText = "Loot"
@@ -96,17 +93,21 @@ function DropService:DropItems(HumanoidDied : Humanoid , Drops, HighestRank)
 	Prompt.HoldDuration = 1
 	Prompt.Style = Enum.ProximityPromptStyle.Custom
 	Prompt:SetAttribute("Theme", "Default")
-    Prompt:SetAttribute("Event", "CheckLoot")
+	Prompt:SetAttribute("Event", "CheckLoot")
 	self:CacheDrop(Drops, Prompt)
 
-	local DropRenderData = RenderService:CreateRenderData(HumanoidDied, "DropEffects", "LootDrop", {Drops = Drops, HRank = HighestRank, Offset = HumanoidDied.RootPart.CFrame.Position + Vector3.new(0,-2,0)})
+	local DropRenderData = RenderService:CreateRenderData(
+		HumanoidDied,
+		"DropEffects",
+		"LootDrop",
+		{ Drops = Drops, HRank = HighestRank, Offset = HumanoidDied.RootPart.CFrame.Position + Vector3.new(0, -2, 0) }
+	)
 	RenderService:RenderForPlayers(DropRenderData)
 end
 
-function DropService.KnitInit()
+function DropService.KnitStart()
 	RenderService = Knit.GetService("RenderService")
 	LootPoolService = Knit.GetService("LootPoolService")
-
 end
 
 return DropService

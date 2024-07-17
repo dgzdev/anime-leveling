@@ -228,7 +228,7 @@ function PortalService:GeneratePortal()
 		self:GeneratePortal()
 	end)
 end
-function PortalService:KnitInit()
+function PortalService:KnitStart()
 	local keepPortals = 5
 	for _i = 1, keepPortals, 1 do
 		task.delay(math.random(1, 10), function()

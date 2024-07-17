@@ -41,8 +41,8 @@ function PlayerService:SetInCombat(Player: Player)
 	task.spawn(function()
 		while true do
 			task.wait(1)
-	
-			if (tick() > Player:GetAttribute("InCombatEndTick")) then
+
+			if tick() > Player:GetAttribute("InCombatEndTick") then
 				Player:SetAttribute("InCombatEndTick", nil)
 				Player:SetAttribute("InCombat", false)
 				break
@@ -92,6 +92,8 @@ function PlayerService.OnPlayerJoin(player: Player)
 
 	local Manager = PlayerManager.new(player)
 	Manager:LoadProfile()
+
+	print(Manager.Profile)
 
 	if player:IsDescendantOf(Players) then
 		if Manager.Profile then
@@ -191,13 +193,11 @@ end
 -- Knit
 -- ========================================
 
-function PlayerService:KnitInit()
+function PlayerService:KnitStart()
 	InventoryService = Knit.GetService("InventoryService")
 	ProgressionService = Knit.GetService("ProgressionService")
 	CharacterService = Knit.GetService("CharacterService")
 end
-
-function PlayerService:KnitStart() end
 
 game:BindToClose(function()
 	for playerId: number, manager in Managers do

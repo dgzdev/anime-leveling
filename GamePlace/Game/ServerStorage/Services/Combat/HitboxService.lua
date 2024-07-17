@@ -75,7 +75,6 @@ local function CheckCharacters(char1, char2)
 	return true
 end
 
-
 function HitboxService:GetCharactersInCircleArea(position, radius, Params)
 	local Params = Params or OverlapParams.new()
 
@@ -180,7 +179,14 @@ function HitboxService:CreateHitbox(
 	end)
 end
 
-function HitboxService:CreateFixedHitbox(CFrame: CFrame, Size: Vector3, Ticks: number, callback, Params: OverlapParams?, debug: boolean?)
+function HitboxService:CreateFixedHitbox(
+	CFrame: CFrame,
+	Size: Vector3,
+	Ticks: number,
+	callback,
+	Params: OverlapParams?,
+	debug: boolean?
+)
 	local Hitted = {}
 
 	if not Params then
@@ -230,7 +236,7 @@ function HitboxService:GetCharacterFromRaycastResult(Result: RaycastResult)
 			return Humanoid.Parent
 		end
 	end
-	
+
 	return false
 end
 
@@ -285,6 +291,6 @@ function HitboxService:CreatePartHitbox(
 	Hitbox:Destroy()
 end
 
-function HitboxService.KnitInit() end
+function HitboxService.KnitStart() end
 
 return HitboxService

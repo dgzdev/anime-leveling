@@ -265,7 +265,7 @@ function CutsceneController.Init()
 	AnimateCamera("Portal Leave")
 end
 
-function CutsceneController:KnitInit()
+function CutsceneController:KnitStart()
 	PlayerEnterService = Knit.GetService("PlayerEnterService")
 	CameraController = Knit.GetController("CameraController")
 	HumanoidManagerController = Knit.GetController("HumanoidManagerController")

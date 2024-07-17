@@ -58,11 +58,11 @@ end
 
 local Zones = {}
 
-function ZoneController:KnitInit()
+function ZoneController:KnitStart()
 	SoundController = Knit.GetController("SoundController")
 end
 
-function ZoneController:KnitStart()
+function ZoneController:KnitInit()
 	coroutine.wrap(function()
 		local ZoneFolder = game.Workspace:FindFirstChild("Zones")
 

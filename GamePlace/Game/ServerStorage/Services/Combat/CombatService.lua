@@ -13,9 +13,7 @@ local GameData = require(ServerStorage.GameData)
 
 local CombatService = Knit.CreateService({
 	Name = "CombatService",
-	Client = {
-
-	},
+	Client = {},
 })
 
 function CombatService:GetExperienceByName(EnemyHumanoid: Humanoid)

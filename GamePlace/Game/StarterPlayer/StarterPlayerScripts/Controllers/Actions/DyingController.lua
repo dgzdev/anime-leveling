@@ -191,7 +191,7 @@ function DyingController.Start()
 	end
 end
 
-function DyingController.KnitInit()
+function DyingController.KnitStart()
 	DyingController.Start()
 end
 
