@@ -1,19 +1,20 @@
-local weapons = {}
+local items = {}
 local Loaded = false
 local requireAndAdd = function(module)
 	for i, weapon in require(module) do
-		weapons[i] = weapon
+		items[i] = weapon
 	end
 end
 
 for __index, module in script:GetChildren() do
+	if module then continue end 
 	if Loaded then break end 
 	requireAndAdd(module)
 end
 
-function weapons:GetAllWeaponsWithRank(Rank)
+function items:GetAllWeaponsWithRank(Rank)
 	local finalT = {}
-	for i,v in pairs(weapons) do
+	for i,v in pairs(items) do
 		if type(v) ~= "table" then continue end
 		if v.DevSpec then continue end
 		if v.Rarity == Rank then
@@ -24,4 +25,4 @@ function weapons:GetAllWeaponsWithRank(Rank)
 	return finalT
 end
 
-return weapons
+return items

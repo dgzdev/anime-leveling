@@ -31,7 +31,12 @@ return {
 
 				["Quests"] = {},
 				["Inventory"] = {},
-				["Hotbar"] = {},
+				["Hotbar"] = {
+					["1"] = false,
+					["2"] = false,
+					["3"] = false,
+					
+				},
 				["SkillsTreeUnlocked"] = { ["1"] = true },
 
 				["PointsAvailable"] = 0,

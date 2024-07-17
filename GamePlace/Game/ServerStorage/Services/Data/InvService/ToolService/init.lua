@@ -12,7 +12,18 @@ local InventoryService
 local ToolsFolder = game.ReplicatedStorage.Models.Tools
 local ToolsModules = {}
 
-function ToolService:ToolInput(Character: Model, Action: string)
+--[[
+	Service responsavel por carregar as tools do player com base no inventário dele,
+	receber os inputs eventos/inputs das tools (Equipped, Unequipped e Activated) e chamar 
+	as funcoes de cada uma.
+]]
+
+
+--[[
+	Recebe os eventos das tools, é possivel criar modulos para cada Classe de tool assim fazendo todas as tools que 
+	tiverem aquela classe utilizarem ela como "Default" ou abstrair para um modulo especifico da tool, utilizando o nome da tool.
+]]
+function ToolService:ToolInput(Character: Model, Action: string, Data: {any})
 	local Player = Players:GetPlayerFromCharacter(Character)
 	local Tool = ToolService:GetEquippedTool(Player)
 	assert(Tool, `Tool not found\n{debug.traceback()}`)
@@ -38,7 +49,11 @@ function ToolService:ToolInput(Character: Model, Action: string)
 		end
 	end
 end
+function ToolService.Client:ToolInput(Player: Player, Action: string, Data: {any})
+	self.Server:ToolInput(Player.Character, Action, Data)
+end
 
+--[[ Retorna a tool que esta atualmente no Character do player ]]
 function ToolService:GetEquippedTool(Player: Player): Tool
 	local Character = Player.Character
 	if not Character then
@@ -48,6 +63,7 @@ function ToolService:GetEquippedTool(Player: Player): Tool
 	return Character:FindFirstChildWhichIsA("Tool")
 end
 
+--[[ Remove a tool que esta no Character do player ]]
 function ToolService:RemoveEquippedTool(Player: Player)
 	local Tool = ToolService:GetEquippedTool(Player)
 
@@ -55,11 +71,14 @@ function ToolService:RemoveEquippedTool(Player: Player)
 		Tool:Destroy()
 	end
 end
+
+--[[ Remove todas as tools do Character e da Backpack do Player ]]
 function ToolService:ClearPlayerTools(Player: Player)
 	Player.Backpack:ClearAllChildren()
 	ToolService:RemoveEquippedTool(Player)
 end
 
+--[[ Retorna o item da Data do player (Inventory) referente a Tool que ele está segurando na mao ]]
 function ToolService:GetItemFromEquippedTool(Player: Player)
 	local Tool = ToolService:GetEquippedTool(Player)
 
@@ -68,9 +87,13 @@ function ToolService:GetItemFromEquippedTool(Player: Player)
 	end
 
 	local ToolId = Tool:GetAttribute("Id")
+	if not ToolId then
+		return
+	end
 	return InventoryService:GetItemById(ToolId)
 end
 
+-- [[ Carrega todas as tools que estão na Data do player (Inventory) ]]
 function ToolService:LoadPlayerTools(Player: Player)
 	local PlayerData = PlayerService:GetData(Player)
 
