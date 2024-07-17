@@ -69,8 +69,3 @@ if isPlayerAdmin(game.Players.LocalPlayer) then
 else
 	Cmdr:SetActivationKeys({})
 end
-
-local ClientListener = script:FindFirstChild("ClientListener", true)
-if ClientListener then
-	require(ClientListener).Start()
-end
